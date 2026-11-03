@@ -246,6 +246,7 @@ async function openSettings() {
   $('#setPassword').value = (cfg.server && cfg.server.password) || '';
   $('#setCollection').value = cfg.collectionId || '';
   $('#setHeap').value = cfg.jvmMaxMb || 8192;
+  $('#setUpdateCheckUrl').value = cfg.updateCheckUrl || '';
   $('#setShortcut').checked = false;
 
   await updateRamBox(Number(cfg.jvmMaxMb) || 8192);
@@ -286,6 +287,7 @@ async function saveSettings() {
     },
     collectionId: $('#setCollection').value.trim(),
     jvmMaxMb: Number($('#setHeap').value) || 8192,
+    updateCheckUrl: $('#setUpdateCheckUrl').value.trim(),
   };
   try {
     await bridge.setConfig(next);

@@ -104,6 +104,7 @@ function createWindow() {
   if (cfg.updateCheckUrl) {
     setTimeout(async () => {
       try {
+        log('✓ Frissítés-ellenőrzés indítva…');
         const res = await update.checkForUpdate(cfg);
         if (res.update && res.remoteVersion && res.remoteUrl) {
           log(`✓ Frissítés elérhető: ${res.remoteVersion} – letöltés és alkalmazás…`);
@@ -163,6 +164,7 @@ ipcMain.handle('config:set', (e, next) => {
   cfg = {
     ...cfg,
     ...patch,
+    updateCheckUrl: patch.updateCheckUrl != null ? String(patch.updateCheckUrl).trim() : cfg.updateCheckUrl,
     server: { ...cfg.server, ...(patch.server || {}) },
     collectionId:
       patch.collectionId !== undefined
