@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <title>End of The Living Launcher</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-grain"></div>
+
+  <div id="browserBanner" class="browser-banner">
+    Böngészős előnézet — a launcher funkciói az asztali (Electron) változatban élnek.
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="33" fill="none" stroke="#e8452f" stroke-width="3" opacity="0.9"/>
+          <g fill="#c0271c">
+            <circle cx="50" cy="35" r="15"/>
+            <circle cx="37" cy="57" r="15"/>
+            <circle cx="63" cy="57" r="15"/>
+          </g>
+          <g fill="#0d0706">
+            <circle cx="50" cy="50" r="7.5"/>
+            <circle cx="35" cy="27" r="10"/>
+            <circle cx="65" cy="27" r="10"/>
+            <circle cx="50" cy="73" r="10"/>
+          </g>
+          <circle cx="50" cy="50" r="10.5" fill="none" stroke="#e8452f" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>END OF THE LIVING</h1>
+        <p>Project Zomboid Launcher</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span id="steamBadge" class="badge">…</span>
+      <button id="btnSettings" class="ghost-btn" type="button">
+        <span class="gear">⚙</span> Beállítások
+      </button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-title">
+      <span class="word">END</span>
+      <span class="of">OF THE</span>
+      <span class="word">LIVING</span>
+    </div>
+    <div class="hero-sub">THE FORGOTTEN</div>
+    <div class="hero-phase"><i></i>TEST PHASE<i></i></div>
+  </section>
+
+  <main class="layout">
+    <section class="panel server-panel">
+      <div class="panel-head">
+        <span class="head-icon crimson"></span>
+        <span>SZERVER</span>
+      </div>
+
+      <div class="server-name" id="serverName">—</div>
+      <div class="server-addr" id="serverAddr">—</div>
+      <div class="server-meta" id="serverPass">—</div>
+
+      <div class="server-status" id="serverStatus">
+        <span class="status-dot"></span>
+        <span class="status-text">Szerver állapot ellenőrzése…</span>
+        <span class="status-sub"></span>
+      </div>
+
+      <button id="btnPlay" class="play-btn" type="button" disabled>
+        <span class="play-icon">▶</span> JÁTÉK INDÍTÁSA
+      </button>
+      <div class="hint" id="playHint"></div>
+
+      <div class="memory" id="memoryBox">
+        <span class="mem-label">RAM</span>
+        <span class="mem-value" id="memoryValue">…</span>
+      </div>
+
+      <div class="server-note">
+        A launcher feliratkozik a teljes Steam kollekcióra, kivárja a letöltést,
+        engedélyezi a modokat, lefuttatja a ZombieBuddy telepítőt, majd közvetlenül
+        a szerverre csatlakoztat.
+      </div>
+    </section>
+
+    <section class="panel status-panel">
+      <div class="panel-head">
+        <span class="head-icon green">🔧</span>
+        <span>ELLENŐRZÉS</span>
+      </div>
+
+      <ul class="checklist" id="checklist"></ul>
+
+      <div class="progress-wrap hidden" id="progressWrap">
+        <div class="progress-label" id="progressLabel"></div>
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+      </div>
+
+      <button id="btnInstall" class="install-btn" type="button" disabled>
+        <span class="check-glyph">✓</span> MODOK TELEPÍTÉSE / FRISSÍTÉSE
+      </button>
+
+      <div class="action-row">
+        <button id="btnRefreshCollection" class="mini-btn" type="button">Kollekció frissítése</button>
+        <button id="btnSubscribe" class="mini-btn" type="button">Feliratkozás</button>
+        <button id="btnZombieBuddy" class="mini-btn" type="button">ZombieBuddy</button>
+        <button id="btnModsFolder" class="mini-btn" type="button">Mod mappa</button>
+      </div>
+    </section>
+
+    <section class="panel log-panel">
+      <div class="panel-head">
+        <span class="head-icon gray"></span>
+        <span>NAPLÓ</span>
+        <button id="btnClear" class="link-btn" type="button">törlés</button>
+      </div>
+      <div class="log" id="log"></div>
+    </section>
+  </main>
+
+  <div id="settingsOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal">
+      <h2 id="settingsTitle">Beállítások</h2>
+
+      <label class="field">
+        <span>Project Zomboid mappája</span>
+        <div class="row">
+          <input id="setGamePath" type="text" placeholder="Üres = automatikus keresés (Steam)" spellcheck="false" />
+          <button id="btnBrowse" class="ghost-btn" type="button">Böngészés…</button>
+        </div>
+      </label>
+
+      <label class="field">
+        <span>Szerver neve</span>
+        <input id="setName" type="text" placeholder="End of The Living" />
+      </label>
+
+      <div class="grid2">
+        <label class="field">
+          <span>Szerver címe</span>
+          <input id="setIp" type="text" placeholder="endofthelivingpz.ddns.net" spellcheck="false" />
+        </label>
+        <label class="field">
+          <span>Port</span>
+          <input id="setPort" type="text" placeholder="16261" spellcheck="false" />
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Jelszó</span>
+        <input id="setPassword" type="text" placeholder="Üres, ha nincs jelszó" />
+      </label>
+
+      <div class="grid2 wide-right">
+        <label class="field">
+          <span>Steam Workshop kollekció ID</span>
+          <input id="setCollection" type="text" placeholder="3832006850" spellcheck="false" />
+        </label>
+        <label class="field">
+          <span>JVM heap (MB)</span>
+          <input id="setHeap" type="number" min="1024" step="512" placeholder="8192" />
+        </label>
+      </div>
+
+      <div class="ram-box" id="ramBox">
+        <strong id="ramTitle">RAM ellenőrzés</strong>
+        <p id="ramText">…</p>
+      </div>
+
+      <label class="field checkbox-row">
+        <input id="setShortcut" type="checkbox" />
+        <span>Parancsikon létrehozása az asztalra (ikonnal)</span>
+      </label>
+
+      <div class="modal-actions">
+        <button id="btnCancel" class="ghost-btn" type="button">Mégse</button>
+        <button id="btnSave" class="primary-btn" type="button">Mentés</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

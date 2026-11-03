@@ -1,0 +1,24 @@
+{
+  "name": "end-of-the-living-launcher",
+  "productName": "End of The Living Launcher",
+  "version": "0.1.0",
+  "description": "Project Zomboid launcher: automatic mod install and direct server connect",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "preview": "node scripts/serve.js 5173",
+    "build": "node scripts/package.js",
+    "icon": "electron scripts/make-icon.js",
+    "bg": "node scripts/make-bg.js",
+    "test:installer": "node scripts/test-installer-flow.js",
+    "test:approvals": "node scripts/test-approvals.js"
+  },
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ENDOFWORLDS/end-of-the-living-launcher.git"
+  },
+  "devDependencies": {
+    "electron": "^45.2.1"
+  }
+}
