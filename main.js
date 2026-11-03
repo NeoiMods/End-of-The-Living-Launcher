@@ -13,8 +13,10 @@ const system = require('./src/system');
 const zbInstaller = require('./src/zb-installer');
 const shortcuts = require('./src/shortcut');
 const update = require('./src/update');
-const update = require('./src/update');
-const update = require('./src/update');
+
+// A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
+// A GitHub projektben át lett állítva erre a repo-ra:
+//   https://github.com/NeoiMods/End-of-The-Living-Launcher.git
 
 const ICON = path.join(__dirname, 'assets', 'icon.png');
 
@@ -96,10 +98,9 @@ function createWindow() {
   }
 
   // Frissítések ellenőrzése: háttérben, aszinkron, ha van updateCheckUrl
-  // Megjegyzés: a cfg.updateCheckUrl és cfg.updateLocalVersion config kulcsokat
-  // be kell állítani (pl. Beállítások → szerver → GitHub/nem nyílt forrás esetén nem
-  // þjutik be) – a launcherban később, vagy manuálisan.
-  // (Most: ha nincs updateCheckUrl, nem csinál semmit.)
+  // A config fájlban a cfg.updateCheckUrl kell legyen beállítva.
+  // Követi a GitHub repository-t, és minden indításnál megnézi,
+  // hogy van-e új verzió a GitHub-on.
   if (cfg.updateCheckUrl) {
     setTimeout(async () => {
       try {

@@ -16,7 +16,7 @@
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ENDOFWORLDS/end-of-the-living-launcher.git"
+    "url": "git+https://github.com/NeoiMods/End-of-The-Living-Launcher.git"
   },
   "devDependencies": {
     "electron": "^45.2.1"
