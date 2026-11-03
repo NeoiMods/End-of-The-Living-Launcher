@@ -110,7 +110,7 @@ async function applyUpdate(cfg, res, log, progress) {
       `Expand-Archive -Force -LiteralPath '${zipLocal}' -DestinationPath '${extractDir}'`,
     ], { windowsHide: true, stdio: 'pipe' });
 
-    const newExe = path.join(extractDir, 'EndOfTheLivingLauncher.exe');
+    const newExe = path.join(extractDir, 'EndOfTheLivingLauncher', 'EndOfTheLivingLauncher.exe');
     if (!fs.existsSync(newExe)) {
       const alt = path.join(extractDir, 'EndOfTheLivingLauncher', 'EndOfTheLivingLauncher.exe');
       if (fs.existsSync(alt)) {
