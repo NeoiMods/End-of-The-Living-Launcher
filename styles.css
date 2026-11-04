@@ -310,22 +310,6 @@ body.browser-mode .browser-banner { display: flex; }
     linear-gradient(180deg, rgba(255, 120, 70, 0.1), transparent 16%),
     radial-gradient(140% 60% at 50% 100%, rgba(140, 30, 20, 0.12), transparent 70%);
 }
-/* sarokcsavarok */
-.panel::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 9px;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle, rgba(226, 190, 170, 0.55) 0 1.6px, rgba(0, 0, 0, 0.9) 1.6px 3px, transparent 3px),
-    radial-gradient(circle, rgba(226, 190, 170, 0.55) 0 1.6px, rgba(0, 0, 0, 0.9) 1.6px 3px, transparent 3px),
-    radial-gradient(circle, rgba(226, 190, 170, 0.55) 0 1.6px, rgba(0, 0, 0, 0.9) 1.6px 3px, transparent 3px),
-    radial-gradient(circle, rgba(226, 190, 170, 0.55) 0 1.6px, rgba(0, 0, 0, 0.9) 1.6px 3px, transparent 3px);
-  background-position: 7px 7px, calc(100% - 7px) 7px, 7px calc(100% - 7px), calc(100% - 7px) calc(100% - 7px);
-  background-repeat: no-repeat;
-}
-
 .server-panel { grid-column: 1; grid-row: 1; }
 .status-panel { grid-column: 2; grid-row: 1; }
 /* A panelek a saját keretükön belül görgethetnek, hogy kis ablaknál se csússzon szét a rács. */
