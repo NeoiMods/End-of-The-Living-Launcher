@@ -22,6 +22,9 @@ contextBridge.exposeInMainWorld('api', {
   // ---- események ----
   getEvent: (force) => ipcRenderer.invoke('events:get', force),
 
+  // ---- csomagok (mod / optimalizáló zip-ek) ----
+  syncPacks: (force) => ipcRenderer.invoke('packs:sync', force),
+
   installMods: () => ipcRenderer.invoke('mods:install'),
   installZombieBuddy: () => ipcRenderer.invoke('zb:install'),
   openModsFolder: () => ipcRenderer.invoke('mods:openFolder'),

@@ -249,6 +249,8 @@ async function openSettings() {
   $('#setHeap').value = cfg.jvmMaxMb || 8192;
   $('#setUpdateCheckUrl').value = cfg.updateCheckUrl || '';
   $('#setEventsUrl').value = cfg.eventsUrl || '';
+  $('#setPacksRepo').value = cfg.packsRepo || '';
+  $('#setGithubToken').value = cfg.githubToken || '';
   savedUpdateUrl = cfg.updateCheckUrl || '';
   $('#setShortcut').checked = false;
 
@@ -359,6 +361,8 @@ async function saveSettings() {
     jvmMaxMb: Number($('#setHeap').value) || 8192,
     updateCheckUrl: $('#setUpdateCheckUrl').value.trim(),
     eventsUrl: $('#setEventsUrl').value.trim(),
+    packsRepo: $('#setPacksRepo').value.trim(),
+    githubToken: $('#setGithubToken').value.trim(),
   };
   try {
     await bridge.setConfig(next);
@@ -556,21 +560,19 @@ function markEventSeen() {
 }
 
 function tickCountdown() {
-  const cd = $('#countdown');
+  const chip = $('#headCountdown');
   if (!currentEvent) return;
   const diff = currentEvent.time - Date.now();
   const live = diff <= 0;
   const total = Math.floor(Math.abs(diff) / 1000);
 
-  $('#cdDays').textContent = pad2(total / 86400);
-  $('#cdHours').textContent = pad2((total % 86400) / 3600);
-  $('#cdMins').textContent = pad2((total % 3600) / 60);
-  $('#cdSecs').textContent = pad2(total % 60);
+  $('#hcDays').textContent = pad2(total / 86400);
+  $('#hcHours').textContent = pad2((total % 86400) / 3600);
+  $('#hcMins').textContent = pad2((total % 3600) / 60);
+  $('#hcSecs').textContent = pad2(total % 60);
 
-  cd.classList.toggle('is-live', live);
-  $('#cdCaption').textContent = live
-    ? 'AZ ESEMÉNY ELINDULT — ennyi ideje tart'
-    : 'VISSZASZÁMLÁLÁS AZ ESEMÉNYIG';
+  chip.classList.toggle('is-live', live);
+  $('#hcCap').textContent = live ? 'ELTELT' : 'ESEMÉNYIG';
 }
 
 function renderEvent(res) {
@@ -587,8 +589,7 @@ function renderEvent(res) {
       (res && res.error) || (res && res.reason) || 'Amint feltöltünk egyet a GitHubra, itt megjelenik.';
     when.textContent = '—';
     tag.textContent = 'ESEMÉNY';
-    $('#countdown').classList.add('hidden');
-    $('#cdCaption').textContent = '';
+    $('#headCountdown').classList.add('hidden');
     $('#btnEventOpen').classList.add('hidden');
     card.classList.remove('is-new');
     $('#eventDot').classList.remove('is-on');
@@ -603,7 +604,7 @@ function renderEvent(res) {
   text.textContent = ev.text || '';
   when.textContent = ev.dateText;
   tag.textContent = ev.tag || 'ESEMÉNY';
-  $('#countdown').classList.remove('hidden');
+  $('#headCountdown').classList.remove('hidden');
   $('#btnEventOpen').classList.toggle('hidden', !ev.url);
 
   tickCountdown();
@@ -662,6 +663,15 @@ function runOptAction(action) {
   }
   if (action === 'modsFolder') {
     runBusy(() => bridge.openModsFolder(), { reload: false });
+    return;
+  }
+  if (action === 'packs') {
+    runBusy(async () => {
+      const res = await bridge.syncPacks(true);
+      if (res && !res.ok && res.reason) appendLog('! ' + res.reason);
+      else if (res && res.ok && !res.installed.length) appendLog('✓ ' + (res.reason || 'Minden csomag naprakész.'));
+      return res;
+    });
   }
 }
 

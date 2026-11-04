@@ -26,6 +26,12 @@ const DEFAULT_CONFIG = {
   updateCheckUrl: '',
   // Események forrása: üresen a fenti repo /events.json fájlja.
   eventsUrl: '',
+  // Csomagforrás: mod / optimalizáló zip-ek repója (owner/name). Üresen kikapcsolva.
+  packsRepo: '',
+  // A repón belüli mappa, ahonnan a csomagokat figyeli.
+  packsFolder: 'packs',
+  // Opcionális, csak olvasható token privát repóhoz (GitHub contents API).
+  githubToken: '',
 };
 
 function loadConfig(dir) {

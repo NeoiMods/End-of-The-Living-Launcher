@@ -202,9 +202,9 @@ body.bg-photo .tab,
 body.bg-photo .event-title,
 body.bg-photo .event-text,
 body.bg-photo .event-when,
-body.bg-photo .cd-cell b,
-body.bg-photo .cd-cell i,
-body.bg-photo .cd-caption {
+body.bg-photo .hc-num b,
+body.bg-photo .hc-num i,
+body.bg-photo .hc-cap {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 1), 0 0 16px rgba(0, 0, 0, 0.9);
 }
 
@@ -1222,8 +1222,8 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
 .event-card {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 10px 14px 11px;
+  gap: 3px;
+  padding: 9px 13px 8px;
   border: 1px solid rgba(190, 65, 40, 0.45);
   border-radius: 3px;
   background:
@@ -1271,24 +1271,53 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
   color: var(--muted);
 }
 
-.event-body {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  min-width: 0;
-}
-
-.event-main {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-.event-side {
-  flex: 0 0 auto;
+/* -------- visszaszámláló a napló fejlécében (nem kell görgetni) -------- */
+.head-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   margin-left: auto;
+  padding: 2px 9px;
+  border: 1px solid rgba(230, 90, 50, 0.42);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.24);
+  box-shadow: inset 0 1px 0 rgba(255, 190, 150, 0.1);
 }
+
+.hc-cap {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  color: #e2c8b8;
+  text-transform: uppercase;
+}
+
+.hc-num {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.hc-num b {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #ffd7c2;
+  font-variant-numeric: tabular-nums;
+}
+
+.hc-num i {
+  font-style: normal;
+  font-size: 8px;
+  letter-spacing: 0.6px;
+  color: #d7bfae;
+  text-transform: uppercase;
+}
+
+.head-countdown.is-live { border-color: rgba(150, 220, 90, 0.45); }
+.head-countdown.is-live .hc-num b { color: #b7f07a; }
+.head-countdown.is-live .hc-cap { color: #b7f07a; }
 
 .event-title {
   margin: 5px 0 0;
@@ -1304,72 +1333,15 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
 .event-text {
   margin: 2px 0 0;
   font-size: 12px;
-  line-height: 1.45;
+  line-height: 1.5;
   color: #e8d6c6;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  white-space: pre-wrap;
 }
-
-.countdown {
-  display: flex;
-  align-items: flex-end;
-  gap: 5px;
-}
-
-.cd-cell {
-  min-width: 56px;
-  padding: 5px 4px 3px;
-  text-align: center;
-  border: 1px solid rgba(230, 90, 50, 0.35);
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.26);
-  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.65);
-}
-
-.cd-cell b {
-  display: block;
-  font-family: var(--mono);
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: 1px;
-  color: #ffd7c2;
-  font-variant-numeric: tabular-nums;
-}
-
-.cd-cell i {
-  display: block;
-  margin-top: 2px;
-  font-style: normal;
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--muted);
-}
-
-.cd-sep {
-  padding-bottom: 12px;
-  font-size: 18px;
-  color: rgba(255, 140, 100, 0.55);
-}
-
-.cd-caption {
-  margin-top: 5px;
-  font-size: 9.5px;
-  letter-spacing: 1.2px;
-  text-align: right;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.countdown.is-live .cd-cell b { color: #b7f07a; }
-.countdown.is-live ~ .cd-caption { color: #b7f07a; }
 
 .event-actions {
   display: flex;
   gap: 7px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 /* =====================================================================

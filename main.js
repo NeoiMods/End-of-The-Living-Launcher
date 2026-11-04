@@ -14,6 +14,7 @@ const zbInstaller = require('./src/zb-installer');
 const shortcuts = require('./src/shortcut');
 const update = require('./src/update');
 const events = require('./src/events');
+const packs = require('./src/packs');
 
 // A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
 // A GitHub projektben át lett állítva erre a repo-ra:
@@ -93,6 +94,18 @@ app.whenReady().then(() => {
       }
     }, 1500);
   }
+
+  // ---- Csomagfigyelő --------------------------------------------------
+  // Ha a Beállításokban van csomagforrás, induláskor megnézi, került-e fel új
+  // .zip / .exe a repóba, és ha igen, letölti és a helyére teszi.
+  setTimeout(async () => {
+    if (!cfg.packsRepo) return;
+    try {
+      await packs.sync({ cfg, userDataDir: app.getPath('userData'), log });
+    } catch (err) {
+      log('! Csomagok: ' + (err && err.message ? err.message : err));
+    }
+  }, 6000);
 
   // ---- Auto-updater ---------------------------------------------------
   // A GitHub repó main ágát követi: ha új commit van, letölti és lecseréli
@@ -217,6 +230,21 @@ ipcMain.handle('update:apply', async () => {
       log('✗ Frissítés sikertelen: ' + applied.error);
     }
     return applied;
+  } catch (err) {
+    return reportError(err);
+  }
+});
+
+// ---- csomagok (modok / optimalizáló zip-ek a GitHubról) ------------------
+
+ipcMain.handle('packs:sync', async (e, force) => {
+  try {
+    return await packs.sync({
+      cfg,
+      userDataDir: app.getPath('userData'),
+      log,
+      force: !!force,
+    });
   } catch (err) {
     return reportError(err);
   }

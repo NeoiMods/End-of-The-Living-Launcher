@@ -145,6 +145,13 @@
             <span class="tab-dot" id="eventDot"></span>ESEMÉNY
           </button>
         </div>
+        <div class="head-countdown hidden" id="headCountdown">
+          <span class="hc-cap" id="hcCap">ESEMÉNYIG</span>
+          <span class="hc-num"><b id="hcDays">--</b><i>n</i></span>
+          <span class="hc-num"><b id="hcHours">--</b><i>ó</i></span>
+          <span class="hc-num"><b id="hcMins">--</b><i>p</i></span>
+          <span class="hc-num"><b id="hcSecs">--</b><i>mp</i></span>
+        </div>
         <button id="btnClear" class="link-btn" type="button">törlés</button>
       </div>
 
@@ -156,28 +163,11 @@
             <span class="event-tag" id="eventTag">ESEMÉNY</span>
             <span class="event-when" id="eventWhen">—</span>
           </div>
-          <div class="event-body">
-            <div class="event-main">
-              <h3 class="event-title" id="eventTitle">Esemény betöltése…</h3>
-              <p class="event-text" id="eventText"></p>
-              <div class="event-actions">
-                <button id="btnEventReload" class="mini-btn" type="button">Esemény frissítése</button>
-                <button id="btnEventOpen" class="mini-btn hidden" type="button">Részletek</button>
-              </div>
-            </div>
-
-            <div class="event-side">
-              <div class="countdown" id="countdown">
-                <div class="cd-cell"><b id="cdDays">--</b><i>NAP</i></div>
-                <div class="cd-sep">:</div>
-                <div class="cd-cell"><b id="cdHours">--</b><i>ÓRA</i></div>
-                <div class="cd-sep">:</div>
-                <div class="cd-cell"><b id="cdMins">--</b><i>PERC</i></div>
-                <div class="cd-sep">:</div>
-                <div class="cd-cell"><b id="cdSecs">--</b><i>MP</i></div>
-              </div>
-              <div class="cd-caption" id="cdCaption"></div>
-            </div>
+          <h3 class="event-title" id="eventTitle">Esemény betöltése…</h3>
+          <p class="event-text" id="eventText"></p>
+          <div class="event-actions">
+            <button id="btnEventReload" class="mini-btn" type="button">Esemény frissítése</button>
+            <button id="btnEventOpen" class="mini-btn hidden" type="button">Részletek</button>
           </div>
         </div>
       </div>
@@ -248,6 +238,17 @@
         <input id="setEventsUrl" type="text" placeholder="Üres = a fenti repo /events.json" spellcheck="false" />
       </label>
 
+      <div class="grid2 wide-right">
+        <label class="field">
+          <span>Csomagok repója (modok / optimalizáló)</span>
+          <input id="setPacksRepo" type="text" placeholder="pl. NeoiMods/EOTL-Packs" spellcheck="false" />
+        </label>
+        <label class="field">
+          <span>GitHub token (csak privát repóhoz)</span>
+          <input id="setGithubToken" type="password" placeholder="opcionális, gh…" spellcheck="false" autocomplete="off" />
+        </label>
+      </div>
+
       <div class="update-box" id="updateBox">
         <div class="update-head">
           <strong>Frissítés</strong>
@@ -313,11 +314,11 @@
             <small>A letöltött modellek megnyitása</small>
             <span class="opt-state">MEGVAN</span>
           </button>
-          <button class="opt-card soon" type="button" disabled>
+          <button class="opt-card ready" data-opt="packs" type="button">
             <span class="opt-icon">◈</span>
-            <b>Modellek telepítése</b>
-            <small>Külső modellcsomag letöltése GitHubról</small>
-            <span class="opt-state">HAMAROSAN</span>
+            <b>Modellek / csomagok</b>
+            <small>Zip letöltése és kicsomagolása a repóból</small>
+            <span class="opt-state">MŰKÖDIK</span>
           </button>
         </div>
       </div>
