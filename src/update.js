@@ -222,6 +222,18 @@ function sleep(ms) {
 }
 
 // Windows alatt előfordulhat, hogy egy fájl pillanatnyig foglalt – újrapróbáljuk.
+// Byte-azonos-e a két fájl? Ha igen, nem írjuk újra (felesleges írás, zárolás).
+function sameFile(a, b) {
+  try {
+    const sa = fs.statSync(a);
+    const sb = fs.statSync(b);
+    if (!sa.isFile() || !sb.isFile() || sa.size !== sb.size) return false;
+    return fs.readFileSync(a).equals(fs.readFileSync(b));
+  } catch {
+    return false;
+  }
+}
+
 async function copyFileRetry(src, dest, attempts = 8) {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   let lastErr = null;
@@ -251,6 +263,7 @@ async function copyTree(srcDir, destDir, changed, failed) {
     if (entry.isDirectory()) {
       await copyTree(src, dest, changed, failed);
     } else if (entry.isFile()) {
+      if (sameFile(src, dest)) continue;
       try {
         await copyFileRetry(src, dest);
         changed.push(path.relative(path.join(srcDir, '..'), src).replace(/\\/g, '/'));
@@ -326,6 +339,7 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
     for (const file of APP_FILES) {
       const src = path.join(srcRoot, file);
       if (!fs.existsSync(src)) continue;
+      if (sameFile(src, path.join(appRoot, file))) continue;
       try {
         await copyFileRetry(src, path.join(appRoot, file));
         changed.push(file);
@@ -339,10 +353,6 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
       await copyTree(src, path.join(appRoot, dir), changed, failed);
     }
 
-    if (!changed.length) {
-      throw new Error('nem sikerült egyetlen fájlt sem frissíteni');
-    }
-
     const remoteSha = (res && res.remoteSha) || (await fetchLatestCommit(repo)).sha;
     writeState(userDataDir, {
       installedSha: remoteSha,
@@ -353,6 +363,20 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
     });
 
     progress({ label: 'Frissítés kész.' });
+    if (!changed.length) {
+      // A commit csak olyan fájlt érintett, ami nem része a launchernek
+      // (pl. scripts/), vagy a fájlok már azonosak: nincs mit cserélni.
+      log('• Nincs cserélendő launcher-fájl – a verzió megjelölve.');
+      return {
+        ok: true,
+        newVersion: remoteSha.slice(0, 7),
+        remoteSha,
+        changed: 0,
+        failed,
+        restartRequired: false,
+      };
+    }
+
     log(`✓ ${changed.length} fájl frissítve${failed.length ? `, ${failed.length} sikertelen` : ''}.`);
 
     return {
@@ -401,6 +425,9 @@ async function autoUpdateOnLaunch({ cfg = {}, userDataDir, appRoot, log = () => 
   if (!applied.ok) {
     log('✗ Frissítés sikertelen: ' + applied.error);
     return { ok: false, updated: false, reason: applied.error };
+  }
+  if (applied.restartRequired === false) {
+    return { ok: true, updated: false, reason: 'nincs launcher-változás', ...applied };
   }
   log(`✓ Frissítve: ${applied.newVersion}. A launcher újraindul…`);
   return { ok: true, updated: true, ...applied };

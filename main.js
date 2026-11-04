@@ -204,7 +204,9 @@ ipcMain.handle('update:apply', async () => {
       progress,
     });
 
-    if (applied.ok) {
+    if (applied.ok && applied.restartRequired === false) {
+      log('• A fájlok már naprakészek, nincs szükség újraindításra.');
+    } else if (applied.ok) {
       log(`✓ Frissítve: ${applied.newVersion}. A launcher újraindul…`);
       setTimeout(() => {
         app.relaunch();
