@@ -107,6 +107,15 @@ Beállítások
 -----------
 Beállítások gomb: játékmappa, szerver cím/port/jelszó, kollekció ID,
 JVM heap méret, parancsikon létrehozása.
+
+Automatikus frissítés
+----------------------
+A launcher minden indításnál megnézi a GitHub repót, és ha új commit van,
+magától letölti és lecseréli a saját fájljait, majd újraindul. Ehhez nincs
+szükség új ZIP-re: elég a repóba pusholni.
+A Beállítások ablakban látszik a jelenlegi verzió (#commit), a forrás repó,
+és ott kézzel is lehet ellenőrizni / telepíteni a frissítést.
+A forrás mező üresen is működik: ilyenkor a beégetett repo az alapértelmezés.
 `;
 
 function buildApp() {
