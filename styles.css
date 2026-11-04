@@ -1223,7 +1223,7 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: 9px 13px 8px;
+  padding: 7px 13px 6px;
   border: 1px solid rgba(190, 65, 40, 0.45);
   border-radius: 3px;
   background:
@@ -1275,49 +1275,57 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
 .head-countdown {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 11px;
   margin-left: auto;
-  padding: 2px 9px;
-  border: 1px solid rgba(230, 90, 50, 0.42);
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.24);
-  box-shadow: inset 0 1px 0 rgba(255, 190, 150, 0.1);
+  padding: 3px 13px;
+  border: 1px solid rgba(245, 115, 70, 0.75);
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(20, 8, 4, 0.62), rgba(6, 3, 2, 0.7));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 200, 160, 0.22),
+    0 0 18px rgba(200, 60, 25, 0.35);
 }
 
 .hc-cap {
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 1.6px;
-  color: #e2c8b8;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ffd9c4;
   text-transform: uppercase;
 }
 
 .hc-num {
   display: inline-flex;
   align-items: baseline;
-  gap: 2px;
+  gap: 3px;
 }
 
 .hc-num b {
   font-family: var(--mono);
-  font-size: 13.5px;
+  font-size: 19px;
   font-weight: 800;
+  line-height: 1;
   letter-spacing: 0.5px;
-  color: #ffd7c2;
+  color: #ffe4d2;
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 12px rgba(255, 120, 60, 0.55), 0 1px 2px rgba(0, 0, 0, 0.9);
 }
 
 .hc-num i {
   font-style: normal;
-  font-size: 8px;
-  letter-spacing: 0.6px;
-  color: #d7bfae;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #e6cbb9;
   text-transform: uppercase;
 }
 
-.head-countdown.is-live { border-color: rgba(150, 220, 90, 0.45); }
-.head-countdown.is-live .hc-num b { color: #b7f07a; }
-.head-countdown.is-live .hc-cap { color: #b7f07a; }
+.head-countdown.is-live {
+  border-color: rgba(160, 230, 90, 0.7);
+  box-shadow: inset 0 1px 0 rgba(220, 255, 190, 0.22), 0 0 18px rgba(120, 200, 60, 0.35);
+}
+.head-countdown.is-live .hc-num b { color: #bdf77f; text-shadow: 0 0 12px rgba(140, 230, 80, 0.55); }
+.head-countdown.is-live .hc-cap { color: #bdf77f; }
 
 .event-title {
   margin: 5px 0 0;
@@ -1333,7 +1341,7 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
 .event-text {
   margin: 2px 0 0;
   font-size: 12px;
-  line-height: 1.5;
+  line-height: 1.45;
   color: #e8d6c6;
   white-space: pre-wrap;
 }
