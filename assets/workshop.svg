@@ -1,0 +1,304 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="7680" height="4320" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="woodA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6b4526"/>
+      <stop offset="45%" stop-color="#5c3a1f"/>
+      <stop offset="100%" stop-color="#472b16"/>
+    </linearGradient>
+    <linearGradient id="woodB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#754c29"/>
+      <stop offset="50%" stop-color="#5f3c20"/>
+      <stop offset="100%" stop-color="#4a2d17"/>
+    </linearGradient>
+    <linearGradient id="woodC" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2b1a0f"/>
+      <stop offset="50%" stop-color="#3d2717"/>
+      <stop offset="100%" stop-color="#2b1a0f"/>
+    </linearGradient>
+
+    <pattern id="grain" width="420" height="180" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke-linecap="round">
+        <path d="M0 18 C 90 12, 150 26, 240 20 S 380 14, 420 22" stroke="#1b0f07" stroke-width="1.1" opacity="0.45"/>
+        <path d="M0 32 C 110 40, 170 24, 260 34 S 390 44, 420 34" stroke="#120a04" stroke-width="0.9" opacity="0.4"/>
+        <path d="M0 52 C 70 46, 140 62, 230 54 S 380 46, 420 58" stroke="#5a3a22" stroke-width="0.8" opacity="0.28"/>
+        <path d="M0 70 C 100 78, 180 60, 270 72 S 400 84, 420 70" stroke="#1b0f07" stroke-width="1.2" opacity="0.42"/>
+        <path d="M0 92 C 80 86, 150 100, 250 92 S 370 84, 420 96" stroke="#120a04" stroke-width="0.8" opacity="0.36"/>
+        <path d="M0 108 C 95 114, 160 98, 255 110 S 390 120, 420 108" stroke="#5a3a22" stroke-width="0.7" opacity="0.24"/>
+        <path d="M0 130 C 85 124, 155 140, 245 130 S 385 122, 420 136" stroke="#1b0f07" stroke-width="1" opacity="0.38"/>
+        <path d="M0 152 C 105 158, 175 144, 265 154 S 395 164, 420 154" stroke="#120a04" stroke-width="0.9" opacity="0.34"/>
+        <path d="M0 168 C 90 162, 145 176, 240 168 S 380 160, 420 172" stroke="#5a3a22" stroke-width="0.6" opacity="0.2"/>
+      </g>
+    </pattern>
+
+    <radialGradient id="lamp" cx="0.24" cy="0.08" r="0.95">
+      <stop offset="0%" stop-color="#ffb264" stop-opacity="0.3"/>
+      <stop offset="38%" stop-color="#c05a1e" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="vignette" cx="0.42" cy="0.4" r="0.86">
+      <stop offset="52%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="82%" stop-color="#0a0503" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.55"/>
+    </radialGradient>
+
+    <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a7adb3"/>
+      <stop offset="30%" stop-color="#6b7075"/>
+      <stop offset="64%" stop-color="#3a3d41"/>
+      <stop offset="100%" stop-color="#5c6165"/>
+    </linearGradient>
+    <linearGradient id="steelDark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2a2c2f"/>
+      <stop offset="50%" stop-color="#15171a"/>
+      <stop offset="100%" stop-color="#33363a"/>
+    </linearGradient>
+    <linearGradient id="brass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e2c078"/>
+      <stop offset="45%" stop-color="#b48a3c"/>
+      <stop offset="100%" stop-color="#7d5a1f"/>
+    </linearGradient>
+    <linearGradient id="canvas" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#6b563c"/>
+      <stop offset="55%" stop-color="#4a3a28"/>
+      <stop offset="100%" stop-color="#2e2418"/>
+    </linearGradient>
+    <linearGradient id="gunWood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9a5a2c"/>
+      <stop offset="50%" stop-color="#6d3a1a"/>
+      <stop offset="100%" stop-color="#45220e"/>
+    </linearGradient>
+    <linearGradient id="redMetal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8d2318"/>
+      <stop offset="55%" stop-color="#5e1109"/>
+      <stop offset="100%" stop-color="#3a0a05"/>
+    </linearGradient>
+    <filter id="blurL"><feGaussianBlur stdDeviation="26"/></filter>
+    <filter id="blurM"><feGaussianBlur stdDeviation="9"/></filter>
+    <filter id="blurS"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+
+  <!-- ============ asztallap ============ -->
+  <rect width="1920" height="1080" fill="#241509"/>
+  <g>
+    <rect x="0" y="0" width="1920" height="180" fill="url(#woodA)"/>
+    <rect x="0" y="180" width="1920" height="180" fill="url(#woodB)"/>
+    <rect x="0" y="360" width="1920" height="180" fill="url(#woodA)"/>
+    <rect x="0" y="540" width="1920" height="180" fill="url(#woodB)"/>
+    <rect x="0" y="720" width="1920" height="180" fill="url(#woodA)"/>
+    <rect x="0" y="900" width="1920" height="180" fill="url(#woodB)"/>
+  </g>
+  <rect width="1920" height="1080" fill="url(#grain)" opacity="0.85"/>
+  <rect width="1920" height="1080" fill="url(#grain)" opacity="0.35" transform="translate(160 40) scale(1 -1)"/>
+
+  <!-- deszkák illesztései -->
+  <g fill="#120a04">
+    <rect x="0" y="177" width="1920" height="6" opacity="0.85"/>
+    <rect x="0" y="357" width="1920" height="6" opacity="0.85"/>
+    <rect x="0" y="537" width="1920" height="6" opacity="0.85"/>
+    <rect x="0" y="717" width="1920" height="6" opacity="0.85"/>
+    <rect x="0" y="897" width="1920" height="6" opacity="0.85"/>
+  </g>
+  <g fill="#6b4527" opacity="0.16">
+    <rect x="0" y="183" width="1920" height="2"/>
+    <rect x="0" y="363" width="1920" height="2"/>
+    <rect x="0" y="543" width="1920" height="2"/>
+    <rect x="0" y="723" width="1920" height="2"/>
+    <rect x="0" y="903" width="1920" height="2"/>
+  </g>
+
+  <!-- repedések, karcolások -->
+  <g stroke="#c9a06a" stroke-linecap="round" fill="none" opacity="0.1">
+    <path d="M120 96 L 250 130" stroke-width="1.4"/>
+    <path d="M300 250 L 402 214" stroke-width="1"/>
+    <path d="M60 430 L 210 462" stroke-width="1.2"/>
+    <path d="M470 610 L 560 566" stroke-width="1"/>
+    <path d="M980 120 L 1090 150" stroke-width="1.3"/>
+    <path d="M1180 300 L 1300 268" stroke-width="0.9"/>
+    <path d="M1640 470 L 1780 508" stroke-width="1.1"/>
+    <path d="M1420 640 L 1520 600" stroke-width="1"/>
+    <path d="M760 830 L 880 866" stroke-width="1.2"/>
+    <path d="M1120 940 L 1240 900" stroke-width="0.9"/>
+  </g>
+  <g stroke="#120a04" stroke-linecap="round" fill="none" opacity="0.5">
+    <path d="M180 340 L 280 372" stroke-width="1.6"/>
+    <path d="M620 200 L 700 236" stroke-width="1.2"/>
+    <path d="M1340 120 L 1430 96" stroke-width="1.4"/>
+    <path d="M1000 760 L 1100 792" stroke-width="1.2"/>
+    <path d="M1700 860 L 1800 830" stroke-width="1.3"/>
+  </g>
+
+  <!-- csomók -->
+  <g opacity="0.45">
+    <g transform="translate(1420 240)">
+      <ellipse rx="26" ry="15" fill="#1a0f07"/>
+      <ellipse rx="17" ry="9" fill="#2b1a0e"/>
+      <ellipse rx="8" ry="4" fill="#150c05"/>
+    </g>
+    <g transform="translate(520 780)">
+      <ellipse rx="22" ry="12" fill="#1a0f07"/>
+      <ellipse rx="13" ry="6" fill="#2b1a0e"/>
+    </g>
+  </g>
+
+  <!-- vörös foltok -->
+  <g filter="url(#blurL)" opacity="0.5">
+    <ellipse cx="640" cy="470" rx="130" ry="70" fill="#4d0a05"/>
+    <ellipse cx="1520" cy="620" rx="160" ry="60" fill="#3d0804"/>
+  </g>
+  <g filter="url(#blurM)" opacity="0.4">
+    <ellipse cx="300" cy="960" rx="90" ry="34" fill="#5a0d06"/>
+    <ellipse cx="1180" cy="180" rx="70" ry="26" fill="#470a05"/>
+  </g>
+
+  <!-- ============ TÁSKA (jobb felső sarok) ============ -->
+  <g transform="translate(1382 44) rotate(-8)">
+    <!-- heveder a falon -->
+    <path d="M60 40 C 90 -20, 250 -20, 285 40" fill="none" stroke="#1d1409" stroke-width="15" stroke-linecap="round"/>
+    <!-- test -->
+    <path d="M20 60 h300 c 18 0 30 12 30 30 v 250 c 0 18 -12 30 -30 30 H 20 c -18 0 -30 -12 -30 -30 V 90 c 0 -18 12 -30 30 -30 z" fill="url(#canvas)"/>
+    <!-- vászon textúra -->
+    <path d="M20 60 h300 c 18 0 30 12 30 30 v 250 c 0 18 -12 30 -30 30 H 20 c -18 0 -30 -12 -30 -30 V 90 c 0 -18 12 -30 30 -30 z" fill="none" stroke="#120b06" stroke-width="5" opacity="0.8"/>
+    <!-- fedél -->
+    <path d="M-10 92 H 360 v 78 c 0 12 -8 20 -20 20 H 10 c -12 0 -20 -8 -20 -20 z" fill="#3d2e1f" opacity="0.95"/>
+    <path d="M-10 92 H 360" stroke="#5a4630" stroke-width="4" opacity="0.7"/>
+    <!-- cipzár -->
+    <path d="M-6 188 H 356" stroke="#8a7a5e" stroke-width="5" stroke-dasharray="7 6" opacity="0.55"/>
+    <!-- szíjak -->
+    <g fill="#241a10" stroke="#120b06" stroke-width="2">
+      <rect x="52" y="150" width="34" height="120" rx="5"/>
+      <rect x="252" y="150" width="34" height="120" rx="5"/>
+    </g>
+    <g fill="url(#steel)" stroke="#0d0e10" stroke-width="2">
+      <rect x="44" y="200" width="50" height="26" rx="4"/>
+      <rect x="244" y="200" width="50" height="26" rx="4"/>
+    </g>
+    <!-- füles zseb -->
+    <rect x="90" y="230" width="150" height="86" rx="8" fill="#2e2216" stroke="#120b06" stroke-width="3"/>
+    <path d="M90 246 H 240" stroke="#5a4630" stroke-width="3" opacity="0.6"/>
+    <!-- felirat -->
+    <g transform="rotate(1)">
+      <text x="176" y="136" text-anchor="middle" font-family="Impact, Haettenschweiler, sans-serif" font-size="40" fill="#c8331d" letter-spacing="2" opacity="0.92">END OF THE LIVING</text>
+      <text x="176" y="170" text-anchor="middle" font-family="Impact, Haettenschweiler, sans-serif" font-size="30" fill="#d9c8b2" letter-spacing="7" opacity="0.85">FORGOTTEN</text>
+    </g>
+    <!-- biohazard matrica -->
+    <g transform="translate(300 300) scale(0.55)" opacity="0.75">
+      <circle r="42" fill="none" stroke="#b8331d" stroke-width="5"/>
+      <circle cy="-17" r="18" fill="#b8331d"/>
+      <circle cx="-15" cy="9" r="18" fill="#b8331d"/>
+      <circle cx="15" cy="9" r="18" fill="#b8331d"/>
+      <circle r="9" fill="#1c1208"/>
+    </g>
+  </g>
+
+  <!-- ============ PUSKA (bal oldal, átlósan) ============ -->
+  <g transform="translate(150 1010) rotate(-33)">
+    <!-- tus -->
+    <path d="M0 0 h120 l 60 18 v 34 l -60 16 H 0 c -12 0 -20 -8 -20 -20 V 20 C -20 8 -12 0 0 0 z" fill="url(#gunWood)" stroke="#1a0c04" stroke-width="3"/>
+    <!-- test -->
+    <rect x="150" y="12" width="300" height="42" rx="6" fill="url(#steelDark)" stroke="#0a0b0c" stroke-width="3"/>
+    <!-- tár -->
+    <path d="M250 54 q 14 60 -18 78 l -34 -6 q 26 -34 20 -72 z" fill="#1a1c1f" stroke="#0a0b0c" stroke-width="3"/>
+    <!-- markolat -->
+    <path d="M190 54 q 18 40 4 62 l -30 -4 q 4 -26 -8 -58 z" fill="#2a1a0d" stroke="#120a04" stroke-width="3"/>
+    <!-- cső -->
+    <rect x="450" y="22" width="330" height="20" rx="8" fill="url(#steel)" stroke="#0d0e10" stroke-width="2"/>
+    <!-- előagy -->
+    <rect x="440" y="6" width="150" height="52" rx="10" fill="#4a2712" stroke="#1a0c04" stroke-width="3"/>
+    <!-- irányzék -->
+    <path d="M300 12 v -22 h 26 v 22 z" fill="#202325" stroke="#0a0b0c" stroke-width="2"/>
+    <!-- tusvég -->
+    <rect x="-24" y="4" width="16" height="62" rx="6" fill="#16100a"/>
+    <!-- fény a fémen -->
+    <rect x="152" y="16" width="296" height="4" fill="#8f9498" opacity="0.28"/>
+    <rect x="452" y="26" width="326" height="3" fill="#8f9498" opacity="0.3"/>
+  </g>
+
+  <!-- ============ FEJSZE (bal alsó) ============ -->
+  <g transform="translate(90 870) rotate(24)">
+    <rect x="0" y="0" width="26" height="330" rx="10" fill="#4a2d15" stroke="#1c0f05" stroke-width="3"/>
+    <rect x="4" y="4" width="7" height="322" rx="4" fill="#6b4527" opacity="0.5"/>
+    <path d="M-6 -6 h 44 l 58 -22 v 78 l -58 -22 h -44 z" fill="url(#steel)" stroke="#0d0e10" stroke-width="3"/>
+    <path d="M96 -26 q 20 16 0 54 l -12 -4 q 12 -22 0 -46 z" fill="#b9bec2" opacity="0.55"/>
+  </g>
+
+  <!-- ============ KALAPÁCS (jobb alsó) ============ -->
+  <g transform="translate(1180 1000) rotate(-18)">
+    <rect x="0" y="0" width="22" height="250" rx="8" fill="#5a3618" stroke="#1c0f05" stroke-width="3"/>
+    <path d="M-34 -14 h 92 v 40 h -92 z" fill="url(#steel)" stroke="#0d0e10" stroke-width="3"/>
+    <path d="M58 -14 q 16 20 0 40" fill="none" stroke="#0d0e10" stroke-width="3"/>
+    <rect x="2" y="4" width="6" height="242" rx="3" fill="#7d5330" opacity="0.45"/>
+  </g>
+
+  <!-- ============ FOGÓ + CSAVAROK (jobb szél) ============ -->
+  <g transform="translate(1700 760) rotate(38)" fill="url(#steel)" stroke="#0d0e10" stroke-width="3">
+    <path d="M0 0 l 26 0 l 8 46 l -12 10 l -18 -6 z"/>
+    <path d="M34 0 l 26 0 l -8 52 l -18 6 l -12 -10 z"/>
+    <rect x="10" y="52" width="40" height="120" rx="10" fill="#2c2f32"/>
+    <rect x="16" y="60" width="10" height="104" rx="5" fill="#8f9498" opacity="0.25"/>
+  </g>
+
+  <!-- ============ PIROS SZERSZÁMOSLÁDA (jobb alsó) ============ -->
+  <g transform="translate(1560 930) rotate(-4)">
+    <rect x="0" y="0" width="300" height="150" rx="10" fill="url(#redMetal)" stroke="#2a0703" stroke-width="4"/>
+    <rect x="0" y="0" width="300" height="46" rx="10" fill="#a02a1c" opacity="0.55"/>
+    <rect x="-8" y="40" width="316" height="10" fill="#2a0703" opacity="0.7"/>
+    <path d="M110 40 q 40 -44 80 0" fill="none" stroke="#1d1f22" stroke-width="12" stroke-linecap="round"/>
+    <g fill="#d9d2c4" opacity="0.5">
+      <circle cx="22" cy="24" r="5"/><circle cx="278" cy="24" r="5"/>
+      <circle cx="22" cy="130" r="5"/><circle cx="278" cy="130" r="5"/>
+    </g>
+    <text x="150" y="112" text-anchor="middle" font-family="Impact, sans-serif" font-size="26" fill="#e8d9c6" opacity="0.35" letter-spacing="4">TOOLS</text>
+  </g>
+
+  <!-- ============ RONGY ============ -->
+  <g transform="translate(760 620) rotate(-12)" opacity="0.9">
+    <path d="M0 0 q 60 -26 120 -6 q 40 14 30 52 q -12 44 -70 40 q -66 -4 -80 -40 q -10 -30 0 -46 z" fill="#8d8272" opacity="0.35"/>
+    <path d="M20 24 q 40 -14 80 -2 q 26 10 20 32 q -10 28 -50 26 q -46 -4 -54 -26 q -6 -20 4 -30 z" fill="#4d0a05" opacity="0.45"/>
+  </g>
+
+  <!-- ============ TÖLTEKÉNYEK, CSISZOLÓK ============ -->
+  <g>
+    <g fill="url(#brass)" stroke="#5d3f10" stroke-width="1.5">
+      <rect x="470" y="360" width="10" height="34" rx="4" transform="rotate(14 470 360)"/>
+      <rect x="492" y="378" width="10" height="34" rx="4" transform="rotate(-8 492 378)"/>
+      <rect x="516" y="352" width="10" height="34" rx="4" transform="rotate(26 516 352)"/>
+      <rect x="1260" y="700" width="10" height="34" rx="4" transform="rotate(-22 1260 700)"/>
+      <rect x="1290" y="726" width="10" height="34" rx="4" transform="rotate(8 1290 726)"/>
+      <rect x="700" y="880" width="10" height="34" rx="4" transform="rotate(-14 700 880)"/>
+      <rect x="1460" y="470" width="10" height="34" rx="4" transform="rotate(18 1460 470)"/>
+    </g>
+    <g fill="#9aa0a6" opacity="0.6">
+      <circle cx="620" cy="280" r="3.5"/><circle cx="640" cy="292" r="3.5"/>
+      <circle cx="1110" cy="430" r="3.5"/><circle cx="1130" cy="420" r="3.5"/>
+      <circle cx="880" cy="1010" r="3.5"/><circle cx="906" cy="1018" r="3.5"/>
+      <circle cx="1660" cy="392" r="3.5"/><circle cx="1690" cy="404" r="3.5"/>
+    </g>
+    <!-- csavarok -->
+    <g stroke="#8a8278" stroke-width="2.5" opacity="0.55" fill="none" stroke-linecap="round">
+      <path d="M600 500 l 16 -10"/><path d="M1040 560 l 14 12"/><path d="M1350 300 l 12 -14"/>
+      <path d="M820 180 l 15 8"/><path d="M1240 980 l 14 -10"/>
+    </g>
+  </g>
+
+  <!-- ============ SZIGETELŐSZALAG TEKERCS ============ -->
+  <g transform="translate(360 250)">
+    <circle r="46" fill="#2a2c2f" stroke="#0d0e10" stroke-width="3"/>
+    <circle r="24" fill="#161008"/>
+    <circle r="46" fill="none" stroke="#4c5054" stroke-width="3" opacity="0.6"/>
+  </g>
+
+  <!-- ============ TÉRKÉP / PAPÍR ============ -->
+  <g transform="translate(880 250) rotate(6)" opacity="0.5">
+    <rect width="240" height="170" rx="4" fill="#cdbfa6"/>
+    <g stroke="#8a7a5e" stroke-width="2" opacity="0.7">
+      <path d="M20 30 h 200"/><path d="M20 60 h 150"/><path d="M20 90 h 180"/>
+      <path d="M20 120 h 120"/>
+    </g>
+    <path d="M20 150 l 40 -30 l 30 22 l 50 -40 l 60 44" fill="none" stroke="#a02a1c" stroke-width="3" opacity="0.8"/>
+  </g>
+
+  <!-- ============ VILÁGÍTÁS ============ -->
+  <rect width="1920" height="1080" fill="url(#lamp)"/>
+  <rect width="1920" height="1080" fill="url(#vignette)"/>
+</svg>

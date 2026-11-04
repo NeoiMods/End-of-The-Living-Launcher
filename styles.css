@@ -1,15 +1,17 @@
 :root {
-  --bg: #060505;
-  --panel: rgba(12, 10, 9, 0.94);
-  --panel-2: rgba(18, 13, 12, 0.96);
-  --line: #a8281a;
-  --line-soft: #3a1310;
-  --text: #f4ece6;
-  --muted: #9c8b83;
-  --accent: #8fd14f;
+  --wood-1: #3a2416;
+  --wood-2: #2a1a0f;
+  --ink: #0b0603;
+  --panel: rgba(26, 16, 10, 0.9);
+  --panel-2: rgba(14, 9, 6, 0.94);
+  --rust: #8d2318;
+  --rust-hot: #d4391f;
+  --brass: #c9a227;
+  --cream: #efe3cd;
+  --text: #f1e6d6;
+  --muted: #a89583;
+  --accent: #93cf4a;
   --accent-strong: #a3e635;
-  --crimson: #c0271c;
-  --crimson-light: #e8452f;
   --danger: #e05252;
   --warn: #e2b93b;
   --mono: 'Cascadia Mono', 'Consolas', 'Courier New', monospace;
@@ -21,7 +23,7 @@
 html, body { margin: 0; padding: 0; height: 100%; }
 
 body {
-  background: #050404;
+  background: #140c06;
   color: var(--text);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   font-size: 14px;
@@ -31,33 +33,49 @@ body {
   user-select: none;
 }
 
-/* ---------- háttér: a launcher artworkje ---------- */
-/* A kép: assets/bg.png (vagy bg.jpg). Ha nincs ott, a bg.svg rajzolt
-   változata jelenik meg ugyanúgy – a három réteg egymás alá esik. */
+/* ---------- háttér: rusztikus műhelyasztal ---------- */
+/* A saját kép (assets/bg.png) felül van, ha valaki betesz egyet;
+   egyébként a workshop rajz tölti ki az ablakot. */
 .bg-layer {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background-image: url('assets/bg.png'), url('assets/bg.jpg'), url('assets/bg.svg');
-  background-size: cover, cover, cover;
-  background-position: center top, center top, center 42%;
+  background-image: url('assets/bg.png'), url('assets/workshop.svg');
+  background-size: cover, cover;
+  background-position: center center, center center;
   background-repeat: no-repeat;
-  filter: saturate(1.06) contrast(1.04);
-  /* A festmény fent él, lefelé fellazul, hogy a panelek tiszta sötétre üljenek. */
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 30%, rgba(0, 0, 0, 0.9) 42%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0.12) 70%, transparent 82%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 30%, rgba(0, 0, 0, 0.9) 42%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0.12) 70%, transparent 82%);
+  filter: saturate(1.04) contrast(1.02);
 }
 
+/* por, foltok, olajos pára */
 .bg-grain {
   position: fixed;
   inset: 0;
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(120% 80% at 62% 4%, rgba(255, 120, 40, 0.18) 0%, rgba(255, 80, 20, 0) 55%),
-    radial-gradient(140% 110% at 50% 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.55) 88%, rgba(0, 0, 0, 0.78) 100%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.1) 38%, rgba(0, 0, 0, 0.55) 66%, #050404 96%),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.012) 0 1px, transparent 1px 3px);
+    radial-gradient(90% 60% at 18% 6%, rgba(255, 168, 92, 0.24) 0%, rgba(200, 90, 30, 0.07) 42%, rgba(0, 0, 0, 0) 70%),
+    radial-gradient(130% 100% at 50% 42%, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.22) 85%, rgba(0, 0, 0, 0.45) 100%),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.045) 0 1px, transparent 1px 3px);
+}
+
+/* fényforrás a bal felső sarokban: haldokló izzó */
+.bg-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(52% 40% at 16% 4%, rgba(255, 150, 70, 0.22) 0%, rgba(255, 110, 40, 0.07) 45%, transparent 72%);
+  animation: lamp-flicker 7.5s ease-in-out infinite;
+}
+@keyframes lamp-flicker {
+  0%, 100% { opacity: 0.75; }
+  38% { opacity: 1; }
+  41% { opacity: 0.62; }
+  43% { opacity: 0.95; }
+  68% { opacity: 0.8; }
+  70% { opacity: 0.55; }
+  73% { opacity: 0.9; }
 }
 
 /* vékony vérvörös él az ablak tetején */
@@ -81,14 +99,14 @@ body::before {
   gap: 8px;
   padding: 6px 14px;
   background: #1d120f;
-  border-bottom: 1px solid var(--line-soft);
+  border-bottom: 1px solid rgba(140, 45, 30, 0.5);
   color: var(--muted);
   font-size: 12px;
   letter-spacing: 0.2px;
 }
 body.browser-mode .browser-banner { display: flex; }
 
-/* ---------- topbar ---------- */
+/* ---------- topbar: szögletes fémtábla ---------- */
 .topbar {
   position: relative;
   z-index: 5;
@@ -98,9 +116,8 @@ body.browser-mode .browser-banner { display: flex; }
   gap: 16px;
   padding: 12px 22px 10px;
   flex: 0 0 auto;
-  background: linear-gradient(180deg, rgba(8, 6, 5, 0.92), rgba(8, 6, 5, 0.18));
-  border-bottom: 1px solid rgba(160, 45, 30, 0.35);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(180deg, rgba(12, 8, 5, 0.9), rgba(12, 8, 5, 0.08));
+  border-bottom: 1px solid rgba(140, 45, 30, 0.4);
 }
 
 .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
@@ -108,17 +125,17 @@ body.browser-mode .browser-banner { display: flex; }
 .brand-mark {
   width: 48px;
   height: 48px;
-  border-radius: 6px;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 50% 40%, #2b110d, #0a0504 78%);
-  border: 1px solid #8d2118;
-  box-shadow:
-    0 0 18px rgba(200, 45, 30, 0.35),
-    inset 0 0 14px rgba(200, 45, 30, 0.22);
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 5px),
+    radial-gradient(circle at 50% 40%, #34170f, #0c0603 78%);
+  border: 1px solid #8d2318;
+  box-shadow: 0 0 18px rgba(200, 45, 30, 0.32), inset 0 0 14px rgba(0, 0, 0, 0.7);
 }
-.brand-mark svg { width: 32px; height: 32px; filter: drop-shadow(0 0 6px rgba(255, 70, 45, 0.5)); }
+.brand-mark svg { width: 32px; height: 32px; filter: drop-shadow(0 0 6px rgba(255, 70, 45, 0.45)) drop-shadow(0 1px 0 rgba(0, 0, 0, 0.9)); }
 
 .brand-text { min-width: 0; }
 
@@ -129,8 +146,8 @@ body.browser-mode .browser-banner { display: flex; }
   letter-spacing: 2.4px;
   font-weight: 400;
   line-height: 1;
-  color: #fbf4ee;
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.85), 0 0 26px rgba(255, 110, 50, 0.22);
+  color: #fbf1e2;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.9), 0 0 26px rgba(255, 110, 50, 0.2);
 }
 
 .brand-text p {
@@ -138,24 +155,28 @@ body.browser-mode .browser-banner { display: flex; }
   font-size: 10.5px;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: #c78d72;
+  color: #cf9a78;
   font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
 .topbar-right { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
 
+/* bádogos címke */
 .badge {
   font-size: 12px;
   letter-spacing: 0.4px;
   padding: 7px 14px;
-  border-radius: 7px;
-  border: 1px solid rgba(120, 40, 30, 0.55);
-  background: linear-gradient(180deg, rgba(20, 16, 14, 0.95), rgba(9, 7, 6, 0.95));
+  border-radius: 2px;
+  border: 1px solid rgba(150, 60, 35, 0.6);
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 5px),
+    linear-gradient(180deg, #2a1d12, #120b06);
   color: var(--muted);
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 220, 180, 0.08), 0 4px 14px rgba(0, 0, 0, 0.55);
 }
 .badge::before {
   content: '';
@@ -165,33 +186,45 @@ body.browser-mode .browser-banner { display: flex; }
   box-shadow: 0 0 0 3px rgba(107, 90, 84, 0.12);
 }
 .badge.ok {
-  color: #c6f09a;
-  border-color: #3f7a22;
-  background: linear-gradient(180deg, rgba(28, 52, 16, 0.95), rgba(14, 26, 8, 0.95));
+  color: #cdf0a2;
+  border-color: #4d7a22;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 5px),
+    linear-gradient(180deg, #2c4418, #121d08);
 }
 .badge.ok::before { background: var(--accent); box-shadow: 0 0 10px rgba(143, 209, 79, 0.9); }
-.badge.bad { color: #f0b46a; border-color: #4a3320; }
+.badge.bad { color: #f0b46a; border-color: #6a4620; }
 .badge.bad::before { background: var(--warn); box-shadow: 0 0 8px rgba(226, 185, 59, 0.5); }
 
+/* fémkapcsoló */
 .ghost-btn {
   padding: 9px 16px;
-  border-radius: 7px;
-  border: 1px solid rgba(140, 45, 32, 0.6);
-  background: linear-gradient(180deg, #262019, #100c0a);
+  border-radius: 3px;
+  border: 1px solid rgba(160, 60, 36, 0.7);
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, #33251a, #140d08);
   color: var(--text);
   font-size: 13px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 6px 16px rgba(0, 0, 0, 0.45);
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 220, 180, 0.1), 0 6px 16px rgba(0, 0, 0, 0.55);
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
 }
-.ghost-btn:hover { background: linear-gradient(180deg, #32271e, #171110); border-color: #a8371f; }
+.ghost-btn:hover {
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, #412d1c, #1a110a);
+  border-color: var(--rust-hot);
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 220, 180, 0.14), 0 10px 22px rgba(0, 0, 0, 0.6);
+}
 .ghost-btn:active { transform: translateY(1px); }
 .gear { font-size: 15px; opacity: 0.95; }
 
-/* ---------- hero / logó ---------- */
+/* ---------- hero: sablonfestés a falon/asztalon ---------- */
 .hero {
   position: relative;
   z-index: 4;
@@ -210,24 +243,24 @@ body.browser-mode .browser-banner { display: flex; }
   line-height: 0.9;
   letter-spacing: 1.5px;
   font-weight: 400;
-  color: #f8f1ea;
+  color: #f6ebd9;
   text-shadow:
-    0 3px 0 #2a211d,
-    0 6px 4px rgba(0, 0, 0, 0.75),
-    0 10px 30px rgba(0, 0, 0, 0.95),
-    0 0 50px rgba(255, 100, 40, 0.22);
+    0 3px 0 #241a12,
+    0 5px 2px rgba(0, 0, 0, 0.85),
+    0 12px 34px rgba(0, 0, 0, 0.95),
+    0 0 54px rgba(255, 120, 45, 0.18);
 }
 .hero-title .of {
   font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 3.4px;
-  color: #f2e8e0;
+  color: #f4ead9;
   padding: 4px 7px;
-  border: 1.5px solid rgba(246, 238, 230, 0.75);
+  border: 1.5px solid rgba(246, 235, 217, 0.7);
   line-height: 1;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.55);
 }
 .hero-title .word:last-child { letter-spacing: 3px; }
 
@@ -241,7 +274,7 @@ body.browser-mode .browser-banner { display: flex; }
   letter-spacing: 2px;
   text-shadow:
     0 0 26px rgba(220, 30, 20, 0.6),
-    0 3px 0 rgba(60, 0, 0, 0.8),
+    0 3px 0 rgba(60, 0, 0, 0.85),
     0 6px 18px rgba(0, 0, 0, 0.95);
   transform: rotate(-2deg) skewX(-6deg);
   transform-origin: left center;
@@ -255,7 +288,7 @@ body.browser-mode .browser-banner { display: flex; }
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 10px;
-  color: #f5eee8;
+  color: #f4ead9;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
   white-space: nowrap;
 }
@@ -263,11 +296,11 @@ body.browser-mode .browser-banner { display: flex; }
   flex: 0 0 auto;
   width: 120px;
   height: 1px;
-  background: linear-gradient(90deg, rgba(245, 238, 232, 0), #f5eee8);
-  box-shadow: 0 0 8px rgba(255, 220, 200, 0.4);
+  background: linear-gradient(90deg, rgba(244, 234, 217, 0), #f4ead9);
+  box-shadow: 0 0 8px rgba(255, 220, 200, 0.35);
 }
 .hero-phase i:last-child {
-  background: linear-gradient(90deg, #f5eee8, rgba(245, 238, 232, 0));
+  background: linear-gradient(90deg, #f4ead9, rgba(244, 234, 217, 0));
 }
 
 /* ---------- layout ---------- */
@@ -283,86 +316,95 @@ body.browser-mode .browser-banner { display: flex; }
   padding: 12px 22px 16px;
 }
 
+/* ---------- panelek: olajos fadoboz / fémtálca ---------- */
 .panel {
   position: relative;
   background:
-    linear-gradient(180deg, rgba(16, 13, 12, 0.95), rgba(7, 6, 6, 0.97)),
-    radial-gradient(120% 90% at 50% 0%, rgba(120, 30, 18, 0.16), transparent 60%);
-  border: 1px solid var(--line);
-  border-radius: 9px;
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 5px),
+    linear-gradient(180deg, rgba(26, 17, 11, 0.9), rgba(10, 7, 4, 0.94));
+  border: 1px solid #7d2318;
+  border-radius: 4px;
   padding: 14px 16px 16px;
   display: flex;
   flex-direction: column;
   min-height: 0;
   box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.9),
-    0 20px 48px rgba(0, 0, 0, 0.7),
-    0 0 24px rgba(180, 40, 25, 0.16),
-    inset 0 0 44px rgba(120, 25, 15, 0.12);
+    0 0 0 1px rgba(0, 0, 0, 0.85),
+    0 18px 44px rgba(0, 0, 0, 0.7),
+    0 0 26px rgba(150, 40, 20, 0.16),
+    inset 0 0 60px rgba(90, 25, 10, 0.35);
 }
 .panel::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 9px;
+  border-radius: 4px;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(255, 120, 70, 0.1), transparent 16%),
-    radial-gradient(140% 60% at 50% 100%, rgba(140, 30, 20, 0.12), transparent 70%);
+    linear-gradient(180deg, rgba(255, 150, 90, 0.09), transparent 10%),
+    radial-gradient(120% 70% at 50% 100%, rgba(120, 30, 12, 0.2), transparent 72%);
+  box-shadow: inset 0 0 0 1px rgba(255, 180, 140, 0.05);
 }
+
 .server-panel { grid-column: 1; grid-row: 1; }
 .status-panel { grid-column: 2; grid-row: 1; }
-/* A panelek a saját keretükön belül görgethetnek, hogy kis ablaknál se csússzon szét a rács. */
-.server-panel, .status-panel { overflow: hidden; }
 .log-panel { grid-column: 1 / -1; grid-row: 2; }
+.server-panel, .status-panel { overflow: hidden; }
 
+/* fejléc: festett fémcsík */
 .panel-head {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 11.5px;
   letter-spacing: 3px;
-  color: #e6d9d2;
+  color: #f3e6d2;
   font-weight: 700;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(160, 45, 30, 0.32);
+  margin: -14px -16px 12px;
+  padding: 9px 16px;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, rgba(122, 33, 22, 0.92), rgba(58, 12, 7, 0.92));
+  border-bottom: 1px solid rgba(0, 0, 0, 0.65);
+  box-shadow: inset 0 1px 0 rgba(255, 200, 170, 0.14), 0 3px 10px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
+  border-radius: 3px 3px 0 0;
 }
 .panel-head > span:nth-child(2) { flex: 1 1 auto; }
 
 .head-icon {
   width: 24px;
   height: 24px;
-  border-radius: 5px;
+  border-radius: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  color: #e8d7cf;
-  background: linear-gradient(180deg, #241a17, #0d0908);
-  border: 1px solid rgba(150, 45, 30, 0.6);
+  color: #f0dfc8;
+  background: linear-gradient(180deg, #2b1d13, #0e0906);
+  border: 1px solid rgba(210, 150, 110, 0.35);
 }
 .head-icon svg { width: 14px; height: 14px; display: block; }
 .head-icon.crimson {
-  background: linear-gradient(180deg, #8f2118, #3c0c07);
-  border-color: #c23222;
-  box-shadow: 0 0 14px rgba(200, 45, 30, 0.5), inset 0 1px 0 rgba(255, 170, 150, 0.35);
+  background: linear-gradient(180deg, #a12a1b, #43100a);
+  border-color: #d2442a;
+  box-shadow: 0 0 14px rgba(210, 60, 35, 0.45), inset 0 1px 0 rgba(255, 190, 170, 0.3);
 }
-.head-icon.crimson svg { fill: #ffd9cf; }
-.head-icon.green { color: #9fd15a; }
-.head-icon.green svg { stroke: #9fd15a; fill: none; }
-.head-icon.gray svg { stroke: #b9a49c; fill: none; }
-.head-icon.gray::before { content: none; }
+.head-icon.crimson svg { fill: #ffe2d6; }
+.head-icon.green { color: #b6e88a; }
+.head-icon.green svg { stroke: #b6e88a; fill: none; }
+.head-icon.gray svg { stroke: #e2d2bd; fill: none; }
 
-/* ---------- server panel ---------- */
+/* ---------- szerver panel ---------- */
 .server-name {
   font-family: var(--display);
   font-size: 27px;
   font-weight: 400;
   letter-spacing: 0.8px;
   margin-bottom: 6px;
-  color: #fbf5f0;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9), 0 0 22px rgba(255, 110, 50, 0.18);
+  color: #fbf2e4;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9), 0 0 24px rgba(255, 120, 50, 0.15);
 }
 
 .server-addr {
@@ -386,13 +428,13 @@ body.browser-mode .browser-banner { display: flex; }
   gap: 8px;
   padding: 8px 11px;
   margin-bottom: 12px;
-  border-radius: 6px;
-  background: rgba(5, 5, 5, 0.8);
-  border: 1px solid rgba(120, 40, 30, 0.4);
+  border-radius: 2px;
+  background: rgba(8, 5, 3, 0.82);
+  border: 1px solid rgba(130, 45, 30, 0.5);
   font-size: 12.5px;
-  color: #cbbdb5;
+  color: #d3c3ae;
   min-height: 34px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.65);
 }
 .status-dot {
   width: 9px; height: 9px;
@@ -400,14 +442,14 @@ body.browser-mode .browser-banner { display: flex; }
   background: #6b5a54;
   flex: 0 0 auto;
 }
-.server-status.online { border-color: #3f7a22; color: #d9efc2; }
+.server-status.online { border-color: #4d7a22; color: #dcf0c4; }
 .server-status.online .status-dot {
   background: var(--accent);
   box-shadow: 0 0 10px rgba(143, 209, 79, 0.85);
 }
-.server-status.offline { border-color: #8a2a1c; color: #efc0b4; }
+.server-status.offline { border-color: #94301f; color: #f0c4b6; }
 .server-status.offline .status-dot {
-  background: var(--crimson-light);
+  background: var(--rust-hot);
   box-shadow: 0 0 10px rgba(232, 69, 47, 0.75);
 }
 .status-text { flex: 1 1 auto; }
@@ -418,13 +460,15 @@ body.browser-mode .browser-banner { display: flex; }
   white-space: nowrap;
 }
 
-/* ---------- JÁTÉK INDÍTÁSA ---------- */
+/* ---------- JÁTÉK INDÍTÁSA: festett fémtábla ---------- */
 .play-btn {
+  position: relative;
   width: 100%;
   padding: 13px 18px;
   border: 1.5px solid #e0412a;
-  border-radius: 8px;
+  border-radius: 3px;
   background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 4px),
     linear-gradient(180deg, #c62d1b 0%, #a81f11 38%, #7d1108 72%, #5c0a05 100%);
   color: #fff4ef;
   font-family: var(--display);
@@ -432,33 +476,43 @@ body.browser-mode .browser-banner { display: flex; }
   font-weight: 400;
   letter-spacing: 2.6px;
   cursor: pointer;
-  transition: filter 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease;
+  transition: filter 0.15s ease, transform 0.12s ease, box-shadow 0.18s ease;
   box-shadow:
-    0 0 26px rgba(215, 55, 30, 0.45),
-    0 10px 26px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(255, 170, 150, 0.45),
+    0 0 26px rgba(215, 55, 30, 0.42),
+    0 10px 26px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 170, 150, 0.4),
     inset 0 -14px 24px rgba(60, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.65);
+  /* néha megrezzen, mint egy kopott kapcsoló */
+  animation: switch-jitter 9s ease-in-out infinite;
+}
+@keyframes switch-jitter {
+  0%, 92%, 100% { transform: translateY(0) rotate(0deg); }
+  93% { transform: translateY(-1px) rotate(-0.35deg); }
+  95% { transform: translateY(1px) rotate(0.3deg); }
+  97% { transform: translateY(0) rotate(-0.2deg); }
 }
 .play-btn:hover:not(:disabled) {
   filter: brightness(1.12);
+  transform: translateY(-2px);
   box-shadow:
-    0 0 38px rgba(240, 70, 40, 0.6),
-    0 10px 30px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 rgba(255, 190, 170, 0.55),
+    0 0 40px rgba(240, 70, 40, 0.6),
+    0 14px 30px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 190, 170, 0.5),
     inset 0 -14px 24px rgba(60, 0, 0, 0.5);
 }
-.play-btn:active:not(:disabled) { transform: translateY(1px); }
+.play-btn:active:not(:disabled) { transform: translateY(2px); }
 .play-btn:disabled {
   background: linear-gradient(180deg, #2a2222, #161111);
   border-color: #3a2c2a;
   color: #8b7b76;
   cursor: not-allowed;
   box-shadow: none;
+  animation: none;
 }
 
 .play-icon {
@@ -495,10 +549,11 @@ body.browser-mode .browser-banner { display: flex; }
   gap: 9px;
   margin-top: 10px;
   padding: 7px 11px;
-  border-radius: 6px;
-  background: rgba(5, 5, 5, 0.78);
-  border: 1px solid rgba(120, 40, 30, 0.35);
+  border-radius: 2px;
+  background: rgba(8, 5, 3, 0.8);
+  border: 1px solid rgba(130, 45, 30, 0.45);
   font-size: 12px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.55);
 }
 .mem-label {
   font-size: 10px;
@@ -506,22 +561,22 @@ body.browser-mode .browser-banner { display: flex; }
   color: var(--muted);
   font-weight: 700;
 }
-.mem-value { font-family: var(--mono); color: #cdbfb6; }
-.memory.ok { border-color: #3f7a22; }
+.mem-value { font-family: var(--mono); color: #d6c6b0; }
+.memory.ok { border-color: #4d7a22; }
 .memory.ok .mem-value { color: #b6e88a; }
-.memory.low { border-color: #6a3418; background: rgba(50, 24, 8, 0.6); }
+.memory.low { border-color: #7a3d18; background: rgba(52, 24, 8, 0.7); }
 .memory.low .mem-value { color: #f0b46a; }
 
 .server-note {
   margin-top: auto;
   padding-top: 10px;
-  border-top: 1px dashed rgba(150, 45, 30, 0.4);
+  border-top: 1px dashed rgba(150, 60, 35, 0.45);
   font-size: 11.5px;
   line-height: 1.5;
   color: var(--muted);
 }
 
-/* ---------- checklist ---------- */
+/* ---------- checklist: szögelt papírcetlik ---------- */
 .checklist {
   list-style: none;
   margin: 0 0 10px;
@@ -538,12 +593,16 @@ body.browser-mode .browser-banner { display: flex; }
   display: flex;
   gap: 11px;
   align-items: flex-start;
-  background: linear-gradient(180deg, rgba(20, 17, 16, 0.95), rgba(9, 8, 8, 0.95));
-  border: 1px solid rgba(120, 45, 34, 0.55);
-  border-radius: 6px;
+  background:
+    linear-gradient(180deg, rgba(36, 25, 16, 0.92), rgba(14, 9, 6, 0.94));
+  border: 1px solid rgba(140, 55, 35, 0.55);
+  border-left: 3px solid rgba(160, 45, 25, 0.75);
+  border-radius: 2px;
   padding: 9px 12px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 220, 190, 0.05), 0 3px 10px rgba(0, 0, 0, 0.35);
+  transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease;
 }
+.check:hover { transform: translateX(2px); border-color: rgba(200, 70, 40, 0.8); }
 
 .check-icon {
   flex: 0 0 auto;
@@ -555,15 +614,15 @@ body.browser-mode .browser-banner { display: flex; }
   justify-content: center;
   font-size: 13px;
   font-weight: 800;
-  background: #221c1a;
+  background: #241a12;
   color: var(--muted);
-  border: 1px solid #4a3b36;
+  border: 1px solid #4a3b30;
 }
 .check.ok .check-icon {
   background: radial-gradient(circle at 40% 32%, #86d13a, #3f7a1a);
   color: #08120a;
   border-color: #b6f07a;
-  box-shadow: 0 0 16px rgba(143, 209, 79, 0.55);
+  box-shadow: 0 0 16px rgba(143, 209, 79, 0.5);
 }
 .check.ok .check-icon::before { content: '✓'; }
 .check.bad .check-icon {
@@ -579,59 +638,62 @@ body.browser-mode .browser-banner { display: flex; }
   border-color: var(--warn);
 }
 .check.warn .check-icon::before { content: '!'; }
-.check.pending .check-icon { background: #201a18; color: #8f7d76; }
+.check.pending .check-icon { background: #201a16; color: #8f7d70; }
 .check.pending .check-icon::before { content: '—'; font-size: 11px; }
 
 .check-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1 1 auto; }
-.check-body strong { font-size: 13.5px; font-weight: 700; color: #f6efe9; }
+.check-body strong { font-size: 13.5px; font-weight: 700; color: #f6ecdc; }
 .check-body small {
   font-size: 11px;
-  color: #a1918a;
+  color: #a89583;
   line-height: 1.34;
   word-break: break-word;
   font-family: var(--mono);
 }
-.check.pending .check-body strong { color: #a1918a; }
+.check.pending .check-body strong { color: #a89583; }
 
 /* ---------- progress ---------- */
 .progress-wrap { margin-bottom: 10px; }
 .progress-wrap.hidden { display: none; }
 .progress-label {
   font-size: 11.5px;
-  color: #d6c4ba;
+  color: #d9c8b2;
   margin-bottom: 6px;
   letter-spacing: 0.4px;
 }
 .progress-track {
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(120, 40, 30, 0.45);
+  height: 8px;
+  border-radius: 1px;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(130, 45, 30, 0.5);
   overflow: hidden;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.7);
 }
 .progress-bar {
   height: 100%;
   width: 0%;
-  border-radius: 999px;
+  border-radius: 1px;
   background: linear-gradient(90deg, #6fbf32, #a3e635);
-  box-shadow: 0 0 14px rgba(143, 209, 79, 0.65);
+  box-shadow: 0 0 14px rgba(143, 209, 79, 0.6);
   transition: width 0.4s ease;
-  animation: pulse-bar 1.6s ease-in-out infinite;
+  animation: pulse-bar 1.8s ease-in-out infinite;
 }
 @keyframes pulse-bar {
   0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.35); }
+  50% { filter: brightness(1.3); }
 }
 
-/* ---------- MODOK TELEPÍTÉSE ---------- */
+/* ---------- MODOK TELEPÍTÉSE: zöld zománctábla ---------- */
 .install-btn {
   margin-top: auto;
   width: 100%;
   padding: 13px 16px;
-  border-radius: 8px;
-  border: 1.5px solid #8fd13f;
-  background: linear-gradient(180deg, #7cc42f 0%, #5aa21f 40%, #3f7d12 74%, #2d5c0b 100%);
-  color: #f4ffe8;
+  border-radius: 3px;
+  border: 1.5px solid #9ade4a;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 4px),
+    linear-gradient(180deg, #7cc42f 0%, #5aa21f 40%, #3f7d12 74%, #2d5c0b 100%);
+  color: #f6ffe9;
   font-family: var(--display);
   font-size: 19px;
   font-weight: 400;
@@ -643,14 +705,22 @@ body.browser-mode .browser-banner { display: flex; }
   gap: 12px;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   box-shadow:
-    0 0 26px rgba(120, 200, 50, 0.35),
-    0 10px 24px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(225, 255, 195, 0.45),
+    0 0 26px rgba(120, 200, 50, 0.32),
+    0 10px 24px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(225, 255, 195, 0.4),
     inset 0 -14px 22px rgba(20, 50, 0, 0.45);
-  transition: filter 0.15s ease, transform 0.08s ease;
+  transition: filter 0.15s ease, transform 0.12s ease, box-shadow 0.18s ease;
 }
-.install-btn:hover:not(:disabled) { filter: brightness(1.12); }
-.install-btn:active:not(:disabled) { transform: translateY(1px); }
+.install-btn:hover:not(:disabled) {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 36px rgba(140, 220, 60, 0.5),
+    0 14px 28px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(230, 255, 200, 0.5),
+    inset 0 -14px 22px rgba(20, 50, 0, 0.4);
+}
+.install-btn:active:not(:disabled) { transform: translateY(2px); }
 .install-btn:disabled {
   background: linear-gradient(180deg, #262a22, #14160f);
   border-color: #4a5540;
@@ -669,7 +739,7 @@ body.browser-mode .browser-banner { display: flex; }
   background: rgba(6, 20, 0, 0.5);
   border: 1px solid rgba(230, 255, 200, 0.65);
   text-shadow: none;
-  box-shadow: 0 0 12px rgba(180, 255, 120, 0.35);
+  box-shadow: 0 0 12px rgba(180, 255, 120, 0.32);
 }
 .install-btn:disabled .check-glyph { border-color: #55604a; background: transparent; box-shadow: none; }
 
@@ -679,41 +749,54 @@ body.browser-mode .browser-banner { display: flex; }
   gap: 7px;
   margin-top: 9px;
 }
+/* kis vászoncímkék */
 .mini-btn {
   padding: 7px 12px;
-  border-radius: 5px;
-  border: 1px solid rgba(130, 45, 34, 0.6);
-  background: linear-gradient(180deg, rgba(28, 21, 19, 0.95), rgba(14, 11, 10, 0.95));
-  color: #cbbdb5;
+  border-radius: 2px;
+  border: 1px solid rgba(150, 60, 38, 0.65);
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 5px),
+    linear-gradient(180deg, rgba(38, 26, 17, 0.95), rgba(16, 11, 7, 0.95));
+  color: #d3c3ae;
   font-size: 11.5px;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
 }
-.mini-btn:hover { background: #2b201d; color: #f6ece6; border-color: #a8371f; }
+.mini-btn:hover {
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 5px),
+    linear-gradient(180deg, #3b2918, #1c130b);
+  color: #f8efe0;
+  border-color: var(--rust-hot);
+  transform: translateY(-1px);
+}
 
-/* ---------- log ---------- */
+/* ---------- napló: olajos jegyzetfüzet ---------- */
 .log-panel { padding-bottom: 12px; }
 
 .link-btn {
   background: none;
   border: none;
-  color: #b9a49c;
+  color: #d8c7b0;
   font-size: 11px;
   letter-spacing: 1px;
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 2px;
   text-transform: lowercase;
+  transition: color 0.15s ease;
 }
-.link-btn:hover { color: #f6ece6; }
+.link-btn:hover { color: #fff2e0; }
 
 .log {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  background: rgba(3, 5, 4, 0.92);
-  border: 1px solid rgba(130, 45, 34, 0.55);
-  border-radius: 6px;
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 3px),
+    rgba(4, 6, 4, 0.94);
+  border: 1px solid rgba(130, 50, 32, 0.6);
+  border-radius: 2px;
   padding: 11px 14px;
   font-family: var(--mono);
   font-size: 12px;
@@ -722,7 +805,7 @@ body.browser-mode .browser-banner { display: flex; }
   user-select: text;
   white-space: pre-wrap;
   word-break: break-word;
-  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 0 34px rgba(0, 0, 0, 0.85), inset 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
 .log-line { padding: 0.5px 0; text-shadow: 0 0 12px rgba(140, 220, 90, 0.25); }
@@ -732,14 +815,14 @@ body.browser-mode .browser-banner { display: flex; }
 
 .log::-webkit-scrollbar, .checklist::-webkit-scrollbar, .modal::-webkit-scrollbar { width: 10px; }
 .log::-webkit-scrollbar-track, .modal::-webkit-scrollbar-track { background: transparent; }
-.log::-webkit-scrollbar-thumb, .modal::-webkit-scrollbar-thumb { background: #3f221c; border-radius: 6px; }
-.log::-webkit-scrollbar-thumb:hover, .modal::-webkit-scrollbar-thumb:hover { background: #5c2e25; }
+.log::-webkit-scrollbar-thumb, .modal::-webkit-scrollbar-thumb { background: #4a2a1c; border-radius: 2px; }
+.log::-webkit-scrollbar-thumb:hover, .modal::-webkit-scrollbar-thumb:hover { background: #6b3a26; }
 
 /* ---------- modal ---------- */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(3, 2, 2, 0.8);
+  background: rgba(4, 2, 1, 0.82);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -753,14 +836,16 @@ body.browser-mode .browser-banner { display: flex; }
   max-width: 580px;
   max-height: 90vh;
   overflow-y: auto;
-  background: linear-gradient(180deg, rgba(16, 13, 12, 0.99), rgba(8, 7, 7, 0.99));
-  border: 1px solid var(--line);
-  border-radius: 10px;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, rgba(30, 20, 13, 0.99), rgba(12, 8, 5, 0.99));
+  border: 1px solid #8d2318;
+  border-radius: 4px;
   padding: 22px 24px 20px;
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.9),
-    0 28px 90px rgba(0, 0, 0, 0.8),
-    0 0 30px rgba(180, 40, 25, 0.2);
+    0 28px 90px rgba(0, 0, 0, 0.85),
+    0 0 30px rgba(170, 45, 25, 0.2);
 }
 
 .modal h2 {
@@ -770,7 +855,7 @@ body.browser-mode .browser-banner { display: flex; }
   font-weight: 400;
   letter-spacing: 2.6px;
   text-transform: uppercase;
-  color: #fbf4ee;
+  color: #fbf2e4;
 }
 
 .field {
@@ -791,9 +876,9 @@ body.browser-mode .browser-banner { display: flex; }
 .field textarea {
   width: 100%;
   padding: 9px 11px;
-  border-radius: 6px;
-  border: 1px solid rgba(120, 40, 30, 0.5);
-  background: rgba(5, 5, 5, 0.92);
+  border-radius: 2px;
+  border: 1px solid rgba(130, 50, 32, 0.5);
+  background: rgba(6, 4, 2, 0.92);
   color: var(--text);
   font-size: 13.5px;
   font-family: inherit;
@@ -801,7 +886,7 @@ body.browser-mode .browser-banner { display: flex; }
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .field input:focus, .field textarea:focus {
-  border-color: #a8371f;
+  border-color: #b83b22;
   box-shadow: 0 0 0 2px rgba(180, 50, 30, 0.18);
 }
 .field input[type='number'] { font-family: var(--mono); }
@@ -815,18 +900,18 @@ body.browser-mode .browser-banner { display: flex; }
 
 .ram-box {
   padding: 11px 13px;
-  border-radius: 6px;
-  border: 1px solid rgba(120, 40, 30, 0.5);
-  background: rgba(9, 8, 8, 0.92);
+  border-radius: 2px;
+  border: 1px solid rgba(130, 50, 32, 0.5);
+  background: rgba(10, 7, 4, 0.92);
   margin-bottom: 13px;
 }
-.ram-box strong { font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; color: #d7c7bd; }
+.ram-box strong { font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; color: #ddcbb4; }
 .ram-box p { margin: 6px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--muted); }
-.ram-box.good { border-color: #3f7a22; }
+.ram-box.good { border-color: #4d7a22; }
 .ram-box.good strong { color: #b6e88a; }
-.ram-box.ok { border-color: #4a4a2a; }
+.ram-box.ok { border-color: #5a5a2a; }
 .ram-box.ok strong { color: #e8d98a; }
-.ram-box.low { border-color: #7c3b1a; background: rgba(40, 18, 6, 0.72); }
+.ram-box.low { border-color: #8a4520; background: rgba(44, 20, 6, 0.75); }
 .ram-box.low strong { color: #f0a86a; }
 .ram-box.low p { color: #f0c9b4; }
 
@@ -835,9 +920,9 @@ body.browser-mode .browser-banner { display: flex; }
 
 .update-box {
   padding: 11px 13px;
-  border-radius: 6px;
-  border: 1px solid rgba(60, 90, 40, 0.5);
-  background: rgba(9, 8, 8, 0.92);
+  border-radius: 2px;
+  border: 1px solid rgba(90, 110, 50, 0.5);
+  background: rgba(10, 7, 4, 0.92);
   margin-bottom: 13px;
 }
 .update-head {
@@ -850,7 +935,7 @@ body.browser-mode .browser-banner { display: flex; }
   font-size: 12px;
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: #d7c7bd;
+  color: #ddcbb4;
 }
 .update-sha {
   font-family: ui-monospace, Consolas, monospace;
@@ -864,9 +949,9 @@ body.browser-mode .browser-banner { display: flex; }
   color: var(--muted);
 }
 .update-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.update-box.available { border-color: #8fd13f; background: rgba(20, 34, 12, 0.88); }
+.update-box.available { border-color: #8fd13f; background: rgba(24, 36, 12, 0.9); }
 .update-box.available .update-text { color: #d6ecc2; }
-.update-box.error { border-color: #a8371f; }
+.update-box.error { border-color: #b83b22; }
 .update-box.error .update-text { color: #f0b3a6; }
 
 .checkbox-row {
@@ -879,7 +964,7 @@ body.browser-mode .browser-banner { display: flex; }
   text-transform: none;
   letter-spacing: 0;
   font-size: 12.5px;
-  color: #d7c7bd;
+  color: #ddcbb4;
   font-weight: 400;
 }
 
@@ -889,21 +974,24 @@ body.browser-mode .browser-banner { display: flex; }
   gap: 10px;
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid rgba(150, 45, 30, 0.4);
+  border-top: 1px solid rgba(150, 50, 32, 0.45);
 }
 
 .primary-btn {
   padding: 9px 20px;
-  border-radius: 6px;
-  border: 1px solid #8fd13f;
-  background: linear-gradient(180deg, #7cc42f, #3f7d12);
-  color: #f4ffe8;
+  border-radius: 2px;
+  border: 1px solid #9ade4a;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 4px),
+    linear-gradient(180deg, #7cc42f, #3f7d12);
+  color: #f6ffe9;
   font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 0 18px rgba(120, 200, 50, 0.3), inset 0 1px 0 rgba(225, 255, 195, 0.4);
+  transition: filter 0.15s ease, transform 0.12s ease;
 }
-.primary-btn:hover { filter: brightness(1.1); }
+.primary-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
 /* ---------- busy ---------- */
 body.busy .play-btn,
@@ -928,6 +1016,7 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
   .hero-phase i { width: 70px; }
   .layout { gap: 10px; padding: 8px 18px 12px; grid-template-rows: minmax(0, 1fr) minmax(96px, 0.38fr); }
   .panel { padding: 11px 13px 12px; }
+  .panel-head { margin: -11px -13px 10px; padding: 7px 13px; }
   .server-name { font-size: 21px; margin-bottom: 3px; }
   .server-note { display: none; }
   .play-btn { font-size: 19px; padding: 10px 14px; }
@@ -941,4 +1030,9 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
 @media (max-width: 1180px) {
   .layout { grid-template-columns: 348px minmax(0, 1fr); }
   .hero-title { font-size: 52px; }
+}
+
+/* csökkentett mozgás: aki kéri, annak ne villogjon semmi */
+@media (prefers-reduced-motion: reduce) {
+  .bg-glow, .play-btn, .progress-bar { animation: none !important; }
 }
