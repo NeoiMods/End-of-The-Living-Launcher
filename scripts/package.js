@@ -5,7 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const DIST = path.join(ROOT, 'dist');
+// Egyetlen kimeneti mappa: ide kerül a kész app, a ZIP és a Discord-os darabolás.
+const DIST = path.join(ROOT, 'release');
 const APP_DIR_NAME = 'EndOfTheLivingLauncher';
 const APP_DIR = path.join(DIST, APP_DIR_NAME);
 const APP_EXE = `${APP_DIR_NAME}.exe`;
