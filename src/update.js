@@ -27,7 +27,7 @@ const HTTP_HEADERS = {
 
 // A launchert alkotó fájlok/mappák – ezeket cseréli a frissítés.
 const APP_FILES = ['main.js', 'preload.js', 'renderer.js', 'index.html', 'styles.css'];
-const APP_DIRS = ['src', 'assets'];
+const APP_DIRS = ['src', 'assets', 'themes'];
 
 // ------------------------------------------------------------------ repo
 

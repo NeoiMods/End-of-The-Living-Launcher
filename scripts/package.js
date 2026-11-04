@@ -12,7 +12,7 @@ const APP_DIR = path.join(DIST, APP_DIR_NAME);
 const APP_EXE = `${APP_DIR_NAME}.exe`;
 
 const APP_FILES = ['main.js', 'preload.js', 'renderer.js', 'index.html', 'styles.css'];
-const APP_DIRS = ['src', 'assets'];
+const APP_DIRS = ['src', 'assets', 'themes'];
 // Csak ezeket a nyelveket tartjuk meg (a többi .pak ~47 MB).
 const KEEP_LOCALES = ['en-US.pak', 'hu.pak'];
 
