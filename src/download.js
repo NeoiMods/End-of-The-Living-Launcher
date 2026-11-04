@@ -28,14 +28,22 @@ function fetchText(url, { headers = {}, redirects = 0, timeoutMs = 30000 } = {})
   });
 }
 
-function downloadFile(url, dest, redirects = 0) {
+function downloadFile(url, dest, options = {}) {
+  const opts = typeof options === 'number' ? { redirects: options } : options || {};
+  const redirects = opts.redirects || 0;
+  const headers = opts.headers || {};
+  const timeoutMs = opts.timeoutMs || 120000;
   return new Promise((resolve, reject) => {
     const lib = url.startsWith('https:') ? https : http;
-    const req = lib.get(url, (res) => {
+    const req = lib.get(url, { headers }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         res.resume();
         if (redirects >= 5) return reject(new Error('Túl sok átirányítás: ' + url));
-        return downloadFile(res.headers.location, dest, redirects + 1).then(resolve, reject);
+        return downloadFile(res.headers.location, dest, {
+          redirects: redirects + 1,
+          headers,
+          timeoutMs,
+        }).then(resolve, reject);
       }
       if (res.statusCode !== 200) {
         res.resume();
@@ -48,7 +56,7 @@ function downloadFile(url, dest, redirects = 0) {
       ws.on('finish', () => ws.close(() => resolve()));
     });
     req.on('error', reject);
-    req.setTimeout(120000, () => req.destroy(new Error('Letöltési időtúllépés: ' + url)));
+    req.setTimeout(timeoutMs, () => req.destroy(new Error('Letöltési időtúllépés: ' + url)));
   });
 }
 

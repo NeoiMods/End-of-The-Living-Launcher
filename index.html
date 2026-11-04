@@ -179,11 +179,21 @@
         <span>Parancsikon létrehozása az asztalra (ikonnal)</span>
       </label>
 
-      <div class="grid2">
-        <label class="field">
-          <span>Frissítés forrás (GitHub repo)</span>
-          <input id="setUpdateCheckUrl" type="text" placeholder="https://github.com/NeoiMods/End-of-The-Living-Launcher.git" spellcheck="false" />
-        </label>
+      <label class="field">
+        <span>Frissítés forrás (GitHub repo)</span>
+        <input id="setUpdateCheckUrl" type="text" placeholder="NeoiMods/End-of-The-Living-Launcher" spellcheck="false" />
+      </label>
+
+      <div class="update-box" id="updateBox">
+        <div class="update-head">
+          <strong>Frissítés</strong>
+          <span class="update-sha" id="updateSha">…</span>
+        </div>
+        <p class="update-text" id="updateText">Állapot betöltése…</p>
+        <div class="update-actions">
+          <button id="btnUpdateCheck" class="mini-btn" type="button">Ellenőrzés most</button>
+          <button id="btnUpdateApply" class="mini-btn hidden" type="button">Frissítés telepítése</button>
+        </div>
       </div>
 
       <div class="modal-actions">

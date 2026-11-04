@@ -716,6 +716,45 @@ body.browser-mode .browser-banner { display: flex; }
 .ram-box.low strong { color: #f0a86a; }
 .ram-box.low p { color: #f0c9b4; }
 
+/* ---------- update box ---------- */
+.hidden { display: none !important; }
+
+.update-box {
+  padding: 11px 13px;
+  border-radius: 9px;
+  border: 1px solid rgba(60, 90, 40, 0.45);
+  background: rgba(10, 9, 8, 0.9);
+  margin-bottom: 13px;
+}
+.update-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.update-head strong {
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #d7c7bd;
+}
+.update-sha {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.update-text {
+  margin: 6px 0 9px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.update-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.update-box.available { border-color: #6ea02c; background: rgba(20, 34, 12, 0.85); }
+.update-box.available .update-text { color: #d6ecc2; }
+.update-box.error { border-color: #7c2f26; }
+.update-box.error .update-text { color: #f0b3a6; }
+
 .checkbox-row {
   flex-direction: row;
   align-items: center;

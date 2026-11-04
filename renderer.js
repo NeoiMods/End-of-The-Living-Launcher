@@ -4,6 +4,7 @@ const browserMode = !bridge;
 const $ = (sel) => document.querySelector(sel);
 
 let busy = false;
+let savedUpdateUrl = '';
 let lastStatus = null;
 let serverStatus = null;
 let statusTimer = null;
@@ -247,12 +248,80 @@ async function openSettings() {
   $('#setCollection').value = cfg.collectionId || '';
   $('#setHeap').value = cfg.jvmMaxMb || 8192;
   $('#setUpdateCheckUrl').value = cfg.updateCheckUrl || '';
+  savedUpdateUrl = cfg.updateCheckUrl || '';
   $('#setShortcut').checked = false;
 
   await updateRamBox(Number(cfg.jvmMaxMb) || 8192);
 
   $('#settingsOverlay').classList.remove('hidden');
   $('#setIp').focus();
+  refreshUpdatePanel();
+}
+
+// ---------------------------------------------------------------- frissítés
+
+function describeChecked(ts) {
+  if (!ts) return 'még nem ellenőrizte';
+  const mins = Math.round((Date.now() - ts) / 60000);
+  if (mins < 1) return 'most';
+  if (mins < 60) return mins + ' perce';
+  return new Date(ts).toLocaleString('hu-HU');
+}
+
+function renderUpdateInfo(info, res) {
+  const box = $('#updateBox');
+  const text = $('#updateText');
+  const sha = $('#updateSha');
+  const applyBtn = $('#btnUpdateApply');
+  if (!box || !text) return;
+
+  box.classList.remove('available', 'error');
+  if (applyBtn) applyBtn.classList.add('hidden');
+
+  if (info && sha) {
+    sha.textContent = info.installedShort ? '#' + info.installedShort : 'nincs verzió';
+  }
+
+  if (res && res.ok === false) {
+    box.classList.add('error');
+    text.textContent = 'Hiba: ' + (res.reason || 'ismeretlen hiba');
+    return;
+  }
+
+  if (res && res.update) {
+    box.classList.add('available');
+    const msg = res.remote && res.remote.message ? ' – ' + res.remote.message : '';
+    text.textContent =
+      'Új verzió érhető el: #' + String(res.remoteSha).slice(0, 7) + msg + ' • forrás: ' + res.repo;
+    if (applyBtn) applyBtn.classList.remove('hidden');
+    return;
+  }
+
+  if (res && res.ok) {
+    const when =
+      res.remote && res.remote.date ? new Date(res.remote.date).toLocaleString('hu-HU') : '';
+    text.textContent =
+      'Naprakész • forrás: ' + res.repo + (when ? ' • legutóbbi commit: ' + when : '');
+    return;
+  }
+
+  if (info) {
+    text.textContent =
+      'Forrás: ' + info.repo + ' • utolsó ellenőrzés: ' + describeChecked(info.lastCheckedAt);
+  }
+}
+
+async function refreshUpdatePanel(autoCheck = true) {
+  if (browserMode) return;
+  try {
+    const info = await bridge.getUpdateInfo();
+    renderUpdateInfo(info, null);
+    if (!autoCheck) return;
+    const res = await bridge.checkUpdate();
+    renderUpdateInfo(info, res);
+  } catch (err) {
+    renderUpdateInfo(null, { ok: false, reason: err && err.message ? err.message : String(err) });
+  }
 }
 
 async function updateRamBox(heapMb) {
@@ -292,6 +361,11 @@ async function saveSettings() {
   try {
     await bridge.setConfig(next);
     appendLog('✓ Beállítások elmentve.');
+    if (next.updateCheckUrl !== savedUpdateUrl) {
+      savedUpdateUrl = next.updateCheckUrl;
+      appendLog('• Frissítési forrás módosítva – ellenőrzés…');
+      bridge.checkUpdate().catch(() => {});
+    }
     if ($('#setShortcut').checked) await bridge.createShortcut();
     closeSettings();
     serverStatus = null;
@@ -351,6 +425,42 @@ function wireEvents() {
     updateRamBox(Number($('#setHeap').value) || 8192);
   });
 
+  $('#btnUpdateCheck').addEventListener('click', async () => {
+    const btn = $('#btnUpdateCheck');
+    btn.disabled = true;
+    $('#updateText').textContent = 'Ellenőrzés a GitHubon…';
+    try {
+      const info = await bridge.getUpdateInfo();
+      const res = await bridge.checkUpdate();
+      renderUpdateInfo(info, res);
+    } catch (err) {
+      renderUpdateInfo(null, { ok: false, reason: err && err.message ? err.message : String(err) });
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  $('#btnUpdateApply').addEventListener('click', async () => {
+    const btn = $('#btnUpdateApply');
+    btn.disabled = true;
+    btn.classList.add('hidden');
+    $('#updateText').textContent = 'Frissítés letöltése és telepítése…';
+    try {
+      const res = await bridge.applyUpdate();
+      if (res && res.ok) {
+        $('#updateText').textContent = 'Kész – a launcher újraindul…';
+      } else {
+        $('#updateText').textContent = 'Sikertelen: ' + ((res && res.error) || 'ismeretlen hiba');
+        btn.disabled = false;
+        btn.classList.remove('hidden');
+      }
+    } catch (err) {
+      $('#updateText').textContent = 'Sikertelen: ' + (err && err.message ? err.message : err);
+      btn.disabled = false;
+      btn.classList.remove('hidden');
+    }
+  });
+
   const mini = (id, fn, reload = true) => {
     const el = $(id);
     if (el) el.addEventListener('click', () => runBusy(fn, { reload }));
@@ -405,6 +515,10 @@ function renderBrowserPreview() {
   serverStatus = { online: true, players: 7, maxPlayers: 32, ping: 42 };
   render(sampleStatus());
   renderServerStatus();
+  const updateText = $('#updateText');
+  if (updateText) updateText.textContent = 'Böngészős előnézet – a frissítéskezelés az asztali változatban él.';
+  const updateSha = $('#updateSha');
+  if (updateSha) updateSha.textContent = '—';
   appendLog('Böngészős előnézet – a launcher funkciói az asztali változatban élnek.');
   appendLog('Kollekció: The Forgotten – 113 mod.');
   appendLog('✓ 113/113 mod letöltve a Steam Workshophoz');

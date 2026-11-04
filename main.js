@@ -24,12 +24,6 @@ let win = null;
 let cfg = null;
 let busy = false;
 let setupRunning = false;
-let updateChecking = false;
-let updateApplied = false;
-let updateChecking = false;
-let updateApplied = false;
-let updateChecking = false;
-let updateApplied = false;
 
 function log(line) {
   if (win && !win.isDestroyed()) win.webContents.send('log', String(line));
@@ -71,7 +65,9 @@ function createWindow() {
     },
   });
   win.loadFile('index.html');
-}  app.whenReady().then(() => {
+}
+
+app.whenReady().then(() => {
   cfg = loadConfig(app.getPath('userData'));
   // A gyári (szerver beállítás) értékek mentése első indításkor.
   if (!cfg.installedModIds) cfg.installedModIds = [];
@@ -97,53 +93,36 @@ function createWindow() {
     }, 1500);
   }
 
-  // Frissítések ellenőrzése: háttérben, aszinkron, ha van updateCheckUrl
-  // A config fájlban a cfg.updateCheckUrl kell legyen beállítva.
-  // Követi a GitHub repository-t, és minden indításnál megnézi,
-  // hogy van-e új verzió a GitHub-on.
-  if (cfg.updateCheckUrl) {
-    setTimeout(async () => {
-      try {
-        log('✓ Frissítés-ellenőrzés indítva…');
-        const res = await update.checkForUpdate(cfg);
-        if (res.update && res.remoteVersion && res.remoteUrl) {
-          log(`✓ Frissítés elérhető: ${res.remoteVersion} – letöltés és alkalmazás…`);
-          if (win && !win.isDestroyed()) win.webContents.send('log', `✓ Frissítés elérhető: ${res.remoteVersion} – letöltés és alkalmazás…`);
-          const applied = await update.applyUpdate(cfg, res, log, progress);
-          if (applied.ok) {
-            log(`✓ Frissítés alkalmazva: ${applied.newVersion}`);
-            if (applied.restartRequired && applied.exePath) {
-              // A launcher átnevezi a régi exe-t .old-ra, és a letöltött exe lesz
-              // a frissített. A program most újraindulhat, de a Windows kill/exit után
-              // a parancsikon helyes exe-t futtatja (ha a .lnk TargetPath a new exe).
-              // Alternatív: közvetlen újraindítás (nem árt, de a telepítési fájl
-              // cseréje után a launcher újraindul, ha van restart)
-              const restart = () => {
-                // Átalakítja a TargetPath-u, ha van .lnk?
-                try {
-                  const lnk = shortcuts.findDesktopShortcut();
-                  if (lnk && lnk.TargetPath === process.execPath) {
-                    lnk.TargetPath = applied.exePath;
-                    shortcuts.writeShortcut(lnk);
-                  }
-                } catch {}
-                app.relaunch({ args: [applied.exePath] });
-                app.exit(0);
-              };
-              restart();
-            }
-            save();
-          } else {
-            log(`✗ Frissítés alkalmazása sikertelen: ${applied.error || 'ismeretlen hiba'}`);
-          }
-        } else {
-          log(`✓ Nincs frissítés: ${res.reason || 'nincs frissítés'}`);
-        }
-      } catch (err) {
-        log('! Frissítés ellenőrzése sikertelen: ' + (err && err.message ? err.message : err));
+  // ---- Auto-updater ---------------------------------------------------
+  // A GitHub repó main ágát követi: ha új commit van, letölti és lecseréli
+  // a launcher fájljait, majd újraindul. Fejlesztői módban (electron .)
+  // nem írja felül a saját munkakönyvtárat.
+  setTimeout(async () => {
+    try {
+      if (!app.isPackaged) {
+        log('• Fejlesztői mód: automatikus frissítés kihagyva.');
+        return;
       }
-    }, 3000);
-  }
+      log('• Frissítés ellenőrzése a GitHubon…');
+      const res = await update.autoUpdateOnLaunch({
+        cfg,
+        userDataDir: app.getPath('userData'),
+        appRoot: __dirname,
+        log,
+        progress,
+      });
+      if (res && res.ok && res.updated) {
+        setTimeout(() => {
+          app.relaunch();
+          app.exit(0);
+        }, 1500);
+      } else if (res && !res.ok) {
+        log('! ' + (res.reason || 'a frissítés nem sikerült'));
+      }
+    } catch (err) {
+      log('! Frissítés hiba: ' + (err && err.message ? err.message : err));
+    }
+  }, 2500);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -177,6 +156,67 @@ ipcMain.handle('config:set', (e, next) => {
   };
   save();
   return cfg;
+});
+
+// ---- frissítés ---------------------------------------------------------
+
+ipcMain.handle('update:info', () =>
+  update.getUpdateInfo({
+    cfg,
+    userDataDir: app.getPath('userData'),
+    appRoot: __dirname,
+  })
+);
+
+ipcMain.handle('update:check', async () => {
+  try {
+    const res = await update.checkForUpdate({
+      cfg,
+      userDataDir: app.getPath('userData'),
+      appRoot: __dirname,
+    });
+    if (!res.ok) log('! Frissítés ellenőrzés: ' + res.reason);
+    else if (res.update) log(`✓ Új verzió érhető el: ${res.remoteSha.slice(0, 7)}`);
+    else log('✓ ' + res.reason);
+    return res;
+  } catch (err) {
+    return reportError(err);
+  }
+});
+
+ipcMain.handle('update:apply', async () => {
+  if (!app.isPackaged) {
+    return { ok: false, error: 'Fejlesztői módban a frissítés nem telepíthető.' };
+  }
+  try {
+    const userDataDir = app.getPath('userData');
+    const res = await update.checkForUpdate({ cfg, userDataDir, appRoot: __dirname });
+    if (!res.ok) return { ok: false, error: res.reason };
+    if (!res.update) return { ok: false, error: 'Már naprakész – nincs új verzió.' };
+
+    log(`Frissítés telepítése: ${res.remoteSha.slice(0, 7)}…`);
+    const applied = await update.applyUpdate({
+      cfg,
+      userDataDir,
+      appRoot: __dirname,
+      res,
+      log,
+      progress,
+    });
+
+    if (applied.ok) {
+      log(`✓ Frissítve: ${applied.newVersion}. A launcher újraindul…`);
+      setTimeout(() => {
+        app.relaunch();
+        app.exit(0);
+      }, 1500);
+    } else {
+      log('✗ Frissítés sikertelen: ' + applied.error);
+    }
+    return applied;
+  } catch (err) {
+    return reportError(err);
+  }
 });
 
 ipcMain.handle('dialog:pickDirectory', async () => {

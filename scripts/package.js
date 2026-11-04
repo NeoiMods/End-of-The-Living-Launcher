@@ -30,6 +30,34 @@ function copyDir(src, dest, filter = null) {
   }
 }
 
+// A build készítésekor érvényes commit – ezt használja az auto-updater
+// alapvonalnak, hogy a következő push után tudja, mi az új.
+function gitHeadSha() {
+  try {
+    return execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: ROOT,
+      encoding: 'utf8',
+      windowsHide: true,
+    }).trim();
+  } catch {
+    return null;
+  }
+}
+
+function writeUpdateBaseline() {
+  const sha = gitHeadSha();
+  if (!sha) {
+    console.log('  ! git commit nem olvasható – az auto-updater első indításkor rögzít alapvonalat');
+    return;
+  }
+  fs.writeFileSync(
+    path.join(APP_DIR, 'resources', 'app', 'update-baseline.json'),
+    JSON.stringify({ sha, builtAt: new Date().toISOString() }, null, 2),
+    'utf8'
+  );
+  console.log('  auto-updater alapvonal: ' + sha.slice(0, 7));
+}
+
 function writeAppPackageJson() {
   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
   const out = {
@@ -112,6 +140,7 @@ function buildApp() {
   for (const f of APP_FILES) fs.copyFileSync(path.join(ROOT, f), path.join(appRoot, f));
   for (const d of APP_DIRS) copyDir(path.join(ROOT, d), path.join(appRoot, d));
   writeAppPackageJson();
+  writeUpdateBaseline();
 
   // Exe átnevezése
   const srcExe = path.join(APP_DIR, 'electron.exe');

@@ -14,6 +14,11 @@ contextBridge.exposeInMainWorld('api', {
   getServerStatus: () => ipcRenderer.invoke('server:status'),
   getMemory: () => ipcRenderer.invoke('system:memory'),
 
+  // ---- frissítés ----
+  getUpdateInfo: () => ipcRenderer.invoke('update:info'),
+  checkUpdate: () => ipcRenderer.invoke('update:check'),
+  applyUpdate: () => ipcRenderer.invoke('update:apply'),
+
   installMods: () => ipcRenderer.invoke('mods:install'),
   installZombieBuddy: () => ipcRenderer.invoke('zb:install'),
   openModsFolder: () => ipcRenderer.invoke('mods:openFolder'),
@@ -21,7 +26,8 @@ contextBridge.exposeInMainWorld('api', {
 
   launch: () => ipcRenderer.invoke('game:launch'),
 
-  onLog: (cb) => ipcRenderer.on('log', (_event, line) => cb(line)),    onProgress: (cb) => ipcRenderer.on('progress', (_event, payload) => cb(payload)),
-    onUpdate: (cb) => ipcRenderer.on('update', (_event, payload) => cb(payload)),
+  onLog: (cb) => ipcRenderer.on('log', (_event, line) => cb(line)),
+  onProgress: (cb) => ipcRenderer.on('progress', (_event, payload) => cb(payload)),
+  onUpdate: (cb) => ipcRenderer.on('update', (_event, payload) => cb(payload)),
   onRefresh: (cb) => ipcRenderer.on('refresh', () => cb()),
 });
