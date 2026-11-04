@@ -78,6 +78,19 @@ body {
   73% { opacity: 0.9; }
 }
 
+/* fotóháttér esetén (assets/bg.png): erősebb fátyol, sötétebb panelek */
+body.bg-photo .bg-grain {
+  background:
+    radial-gradient(90% 60% at 18% 6%, rgba(255, 168, 92, 0.16) 0%, rgba(200, 90, 30, 0.05) 42%, rgba(0, 0, 0, 0) 70%),
+    linear-gradient(180deg, rgba(6, 3, 2, 0.42), rgba(6, 3, 2, 0.55) 42%, rgba(6, 3, 2, 0.78) 100%),
+    radial-gradient(130% 100% at 50% 42%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.42) 86%, rgba(0, 0, 0, 0.62) 100%);
+}
+body.bg-photo .panel {
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.016) 0 1px, transparent 1px 5px),
+    linear-gradient(180deg, rgba(18, 12, 8, 0.95), rgba(6, 4, 2, 0.97));
+}
+
 /* vékony vérvörös él az ablak tetején */
 body::before {
   content: '';

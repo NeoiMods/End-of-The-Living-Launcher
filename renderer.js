@@ -554,4 +554,13 @@ async function init() {
   }, 45000);
 }
 
+// Ha van saját fotóháttér (assets/bg.png), a paneleket sötétebbre vesszük,
+// hogy fotó fölött is olvasható maradjon a szöveg.
+(function detectPhotoBackground() {
+  const probe = new Image();
+  probe.onload = () => document.body.classList.add('bg-photo');
+  probe.onerror = () => document.body.classList.remove('bg-photo');
+  probe.src = 'assets/bg.png';
+})();
+
 init();
