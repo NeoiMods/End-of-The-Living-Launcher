@@ -40,6 +40,9 @@
       </div>
     </div>
     <div class="topbar-right">
+      <button id="btnOptimize" class="opt-btn" type="button">
+        <span class="opt-spark">✦</span> OPTIMALIZÁLÁS
+      </button>
       <span id="steamBadge" class="badge">…</span>
       <button id="btnSettings" class="ghost-btn" type="button">
         <span class="gear">⚙</span> Beállítások
@@ -136,10 +139,48 @@
             <line x1="5.6" y1="10.4" x2="8.6" y2="10.4"/>
           </svg>
         </span>
-        <span>NAPLÓ</span>
+        <div class="tabs" role="tablist">
+          <button class="tab is-active" data-tab="log" type="button" role="tab">NAPLÓ</button>
+          <button class="tab" data-tab="event" type="button" role="tab">
+            <span class="tab-dot" id="eventDot"></span>ESEMÉNY
+          </button>
+        </div>
         <button id="btnClear" class="link-btn" type="button">törlés</button>
       </div>
+
       <div class="log" id="log"></div>
+
+      <div class="event-view hidden" id="eventView">
+        <div class="event-card" id="eventCard">
+          <div class="event-top">
+            <span class="event-tag" id="eventTag">ESEMÉNY</span>
+            <span class="event-when" id="eventWhen">—</span>
+          </div>
+          <div class="event-body">
+            <div class="event-main">
+              <h3 class="event-title" id="eventTitle">Esemény betöltése…</h3>
+              <p class="event-text" id="eventText"></p>
+              <div class="event-actions">
+                <button id="btnEventReload" class="mini-btn" type="button">Esemény frissítése</button>
+                <button id="btnEventOpen" class="mini-btn hidden" type="button">Részletek</button>
+              </div>
+            </div>
+
+            <div class="event-side">
+              <div class="countdown" id="countdown">
+                <div class="cd-cell"><b id="cdDays">--</b><i>NAP</i></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-cell"><b id="cdHours">--</b><i>ÓRA</i></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-cell"><b id="cdMins">--</b><i>PERC</i></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-cell"><b id="cdSecs">--</b><i>MP</i></div>
+              </div>
+              <div class="cd-caption" id="cdCaption"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -202,6 +243,11 @@
         <input id="setUpdateCheckUrl" type="text" placeholder="NeoiMods/End-of-The-Living-Launcher" spellcheck="false" />
       </label>
 
+      <label class="field">
+        <span>Események forrása (events.json URL vagy repo)</span>
+        <input id="setEventsUrl" type="text" placeholder="Üres = a fenti repo /events.json" spellcheck="false" />
+      </label>
+
       <div class="update-box" id="updateBox">
         <div class="update-head">
           <strong>Frissítés</strong>
@@ -217,6 +263,67 @@
       <div class="modal-actions">
         <button id="btnCancel" class="ghost-btn" type="button">Mégse</button>
         <button id="btnSave" class="primary-btn" type="button">Mentés</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="optOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="optTitle">
+    <div class="modal opt-modal">
+      <h2 id="optTitle">Optimalizálás</h2>
+      <p class="modal-lead">
+        Állítsd be a launchert a gépedhez. A halvány kártyák még fejlesztés alatt állnak.
+      </p>
+
+      <div class="opt-section">
+        <div class="opt-section-head"><span class="opt-num">01</span> OPTIMALIZÁLÁS</div>
+        <div class="opt-grid">
+          <button class="opt-card ready" data-opt="heap" type="button">
+            <span class="opt-icon">⚙</span>
+            <b>RAM / JVM heap</b>
+            <small>Memória beállítása a Beállításokban</small>
+            <span class="opt-state">MEGVAN</span>
+          </button>
+          <button class="opt-card soon" type="button" disabled>
+            <span class="opt-icon">❄</span>
+            <b>Gyorsítótár tisztítása</b>
+            <small>Elavult játék- és mod cache törlése</small>
+            <span class="opt-state">HAMAROSAN</span>
+          </button>
+          <button class="opt-card soon" type="button" disabled>
+            <span class="opt-icon">▤</span>
+            <b>Konzol engedélyezése</b>
+            <small>Hibakereső konzol a játékban</small>
+            <span class="opt-state">HAMAROSAN</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="opt-section">
+        <div class="opt-section-head"><span class="opt-num">02</span> MODELLEK</div>
+        <div class="opt-grid">
+          <button class="opt-card ready" data-opt="zombiebuddy" type="button">
+            <span class="opt-icon">✚</span>
+            <b>ZombieBuddy</b>
+            <small>A segédmod telepítése / frissítése</small>
+            <span class="opt-state">MEGVAN</span>
+          </button>
+          <button class="opt-card ready" data-opt="modsFolder" type="button">
+            <span class="opt-icon">🗀</span>
+            <b>Mod mappa</b>
+            <small>A letöltött modellek megnyitása</small>
+            <span class="opt-state">MEGVAN</span>
+          </button>
+          <button class="opt-card soon" type="button" disabled>
+            <span class="opt-icon">◈</span>
+            <b>Modellek telepítése</b>
+            <small>Külső modellcsomag letöltése GitHubról</small>
+            <span class="opt-state">HAMAROSAN</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="btnOptClose" class="ghost-btn" type="button">Bezárás</button>
       </div>
     </div>
   </div>

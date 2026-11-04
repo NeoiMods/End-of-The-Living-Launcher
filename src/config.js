@@ -24,6 +24,8 @@ const DEFAULT_CONFIG = {
   installedModIds: [],
   // GitHub repokereshetőség: a launcher probe-olja először, ha nincs beállítva.
   updateCheckUrl: '',
+  // Események forrása: üresen a fenti repo /events.json fájlja.
+  eventsUrl: '',
 };
 
 function loadConfig(dir) {

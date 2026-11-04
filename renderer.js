@@ -248,6 +248,7 @@ async function openSettings() {
   $('#setCollection').value = cfg.collectionId || '';
   $('#setHeap').value = cfg.jvmMaxMb || 8192;
   $('#setUpdateCheckUrl').value = cfg.updateCheckUrl || '';
+  $('#setEventsUrl').value = cfg.eventsUrl || '';
   savedUpdateUrl = cfg.updateCheckUrl || '';
   $('#setShortcut').checked = false;
 
@@ -357,6 +358,7 @@ async function saveSettings() {
     collectionId: $('#setCollection').value.trim(),
     jvmMaxMb: Number($('#setHeap').value) || 8192,
     updateCheckUrl: $('#setUpdateCheckUrl').value.trim(),
+    eventsUrl: $('#setEventsUrl').value.trim(),
   };
   try {
     await bridge.setConfig(next);
@@ -410,6 +412,27 @@ function wireEvents() {
   $('#btnSave').addEventListener('click', saveSettings);
   $('#btnClear').addEventListener('click', () => {
     $('#log').textContent = '';
+  });
+
+  // ---- napló / esemény fülek ----
+  document.querySelectorAll('.tab').forEach((tab) => {
+    tab.addEventListener('click', () => setTab(tab.dataset.tab));
+  });
+
+  $('#btnEventReload').addEventListener('click', () => loadEvent(true));
+
+  $('#btnEventOpen').addEventListener('click', () => {
+    if (currentEvent && currentEvent.url) bridge.openExternal(currentEvent.url);
+  });
+
+  // ---- optimalizálás ----
+  $('#btnOptimize').addEventListener('click', openOptimize);
+  $('#btnOptClose').addEventListener('click', closeOptimize);
+  $('#optOverlay').addEventListener('click', (e) => {
+    if (e.target === $('#optOverlay')) closeOptimize();
+  });
+  document.querySelectorAll('.opt-card.ready').forEach((card) => {
+    card.addEventListener('click', () => runOptAction(card.dataset.opt));
   });
 
   $('#btnBrowse').addEventListener('click', async () => {
@@ -475,8 +498,171 @@ function wireEvents() {
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeSettings();
+    if (e.key === 'Escape') {
+      closeSettings();
+      closeOptimize();
+    }
   });
+}
+
+// ---------------------------------------------------------------- fülek
+
+function setTab(name) {
+  document.querySelectorAll('.tab').forEach((tab) => {
+    tab.classList.toggle('is-active', tab.dataset.tab === name);
+  });
+  $('#log').classList.toggle('hidden', name !== 'log');
+  $('#eventView').classList.toggle('hidden', name !== 'event');
+  $('#btnClear').classList.toggle('hidden', name !== 'log');
+  if (name === 'event') markEventSeen();
+}
+
+// ---------------------------------------------------------------- események
+
+const SEEN_EVENT_KEY = 'eotl.seenEvent';
+
+let currentEvent = null;
+let eventPollTimer = null;
+let countdownTimer = null;
+
+function pad2(value) {
+  return String(Math.max(0, Math.floor(value))).padStart(2, '0');
+}
+
+function eventDateText(time) {
+  try {
+    return new Date(time).toLocaleString('hu-HU', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return '';
+  }
+}
+
+function markEventSeen() {
+  if (currentEvent) {
+    try {
+      localStorage.setItem(SEEN_EVENT_KEY, currentEvent.id);
+    } catch {
+      /* privát mód: nem baj */
+    }
+  }
+  $('#eventDot').classList.remove('is-on');
+  $('#eventCard').classList.remove('is-new');
+}
+
+function tickCountdown() {
+  const cd = $('#countdown');
+  if (!currentEvent) return;
+  const diff = currentEvent.time - Date.now();
+  const live = diff <= 0;
+  const total = Math.floor(Math.abs(diff) / 1000);
+
+  $('#cdDays').textContent = pad2(total / 86400);
+  $('#cdHours').textContent = pad2((total % 86400) / 3600);
+  $('#cdMins').textContent = pad2((total % 3600) / 60);
+  $('#cdSecs').textContent = pad2(total % 60);
+
+  cd.classList.toggle('is-live', live);
+  $('#cdCaption').textContent = live
+    ? 'AZ ESEMÉNY ELINDULT — ennyi ideje tart'
+    : 'VISSZASZÁMLÁLÁS AZ ESEMÉNYIG';
+}
+
+function renderEvent(res) {
+  const card = $('#eventCard');
+  const title = $('#eventTitle');
+  const text = $('#eventText');
+  const when = $('#eventWhen');
+  const tag = $('#eventTag');
+
+  if (!res || !res.ok || !res.event) {
+    currentEvent = null;
+    title.textContent = 'Nincs aktív esemény';
+    text.textContent =
+      (res && res.error) || (res && res.reason) || 'Amint feltöltünk egyet a GitHubra, itt megjelenik.';
+    when.textContent = '—';
+    tag.textContent = 'ESEMÉNY';
+    $('#countdown').classList.add('hidden');
+    $('#cdCaption').textContent = '';
+    $('#btnEventOpen').classList.add('hidden');
+    card.classList.remove('is-new');
+    $('#eventDot').classList.remove('is-on');
+    return;
+  }
+
+  const ev = res.event;
+  ev.dateText = eventDateText(ev.time);
+  currentEvent = ev;
+
+  title.textContent = ev.title;
+  text.textContent = ev.text || '';
+  when.textContent = ev.dateText;
+  tag.textContent = ev.tag || 'ESEMÉNY';
+  $('#countdown').classList.remove('hidden');
+  $('#btnEventOpen').classList.toggle('hidden', !ev.url);
+
+  tickCountdown();
+
+  let seen = null;
+  try {
+    seen = localStorage.getItem(SEEN_EVENT_KEY);
+  } catch {
+    seen = null;
+  }
+  const isNew = !!ev.id && ev.id !== seen;
+  card.classList.toggle('is-new', isNew);
+  $('#eventDot').classList.toggle('is-on', isNew);
+}
+
+async function loadEvent(force) {
+  if (browserMode) {
+    renderEvent(sampleEvent());
+    return;
+  }
+  try {
+    const res = await bridge.getEvent(!!force);
+    renderEvent(res);
+  } catch (err) {
+    renderEvent({ ok: false, error: 'Esemény betöltése sikertelen.' });
+  }
+}
+
+function startEventLoop() {
+  if (countdownTimer) clearInterval(countdownTimer);
+  countdownTimer = setInterval(tickCountdown, 1000);
+
+  if (eventPollTimer) clearInterval(eventPollTimer);
+  eventPollTimer = setInterval(() => loadEvent(false), 5 * 60 * 1000);
+}
+
+// ---------------------------------------------------------------- optimalizálás
+
+function openOptimize() {
+  $('#optOverlay').classList.remove('hidden');
+}
+
+function closeOptimize() {
+  $('#optOverlay').classList.add('hidden');
+}
+
+function runOptAction(action) {
+  closeOptimize();
+  if (action === 'heap') {
+    openSettings();
+    return;
+  }
+  if (action === 'zombiebuddy') {
+    runBusy(() => bridge.installZombieBuddy());
+    return;
+  }
+  if (action === 'modsFolder') {
+    runBusy(() => bridge.openModsFolder(), { reload: false });
+  }
 }
 
 // ---------------------------------------------------------------- browser demo
@@ -510,6 +696,21 @@ function sampleStatus() {
   };
 }
 
+function sampleEvent() {
+  return {
+    ok: true,
+    event: {
+      id: 'demo-event',
+      tag: 'KÖVETKEZŐ ESEMÉNY',
+      title: 'Műhely-éjszaka a The Forgotten szerveren',
+      text:
+        'Közös túlélés: a csapat 20:00-tól gyülekezik a szerveren. Aki hozott magával üzemanyagot és szerszámot, kap egy extra ellátmánydobozt a raktárból.',
+      url: '',
+      time: Date.now() + 1000 * 60 * 60 * 49,
+    },
+  };
+}
+
 function renderBrowserPreview() {
   document.body.classList.add('browser-mode');
   serverStatus = { online: true, players: 7, maxPlayers: 32, ping: 42 };
@@ -519,6 +720,8 @@ function renderBrowserPreview() {
   if (updateText) updateText.textContent = 'Böngészős előnézet – a frissítéskezelés az asztali változatban él.';
   const updateSha = $('#updateSha');
   if (updateSha) updateSha.textContent = '—';
+  renderEvent(sampleEvent());
+  startEventLoop();
   appendLog('Böngészős előnézet – a launcher funkciói az asztali változatban élnek.');
   appendLog('Kollekció: The Forgotten – 113 mod.');
   appendLog('✓ 113/113 mod letöltve a Steam Workshophoz');
@@ -545,6 +748,8 @@ async function init() {
   appendLog('End of The Living Launcher elindítva.');
   await refresh();
   refreshServerStatus();
+  startEventLoop();
+  loadEvent(false);
 
   if (statusTimer) clearInterval(statusTimer);
   statusTimer = setInterval(() => {

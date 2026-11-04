@@ -13,6 +13,7 @@ const system = require('./src/system');
 const zbInstaller = require('./src/zb-installer');
 const shortcuts = require('./src/shortcut');
 const update = require('./src/update');
+const events = require('./src/events');
 
 // A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
 // A GitHub projektben át lett állítva erre a repo-ra:
@@ -216,6 +217,16 @@ ipcMain.handle('update:apply', async () => {
       log('✗ Frissítés sikertelen: ' + applied.error);
     }
     return applied;
+  } catch (err) {
+    return reportError(err);
+  }
+});
+
+// ---- események (events.json a GitHubról) --------------------------------
+
+ipcMain.handle('events:get', async (e, force) => {
+  try {
+    return await events.fetchEvent({ cfg, force: !!force });
   } catch (err) {
     return reportError(err);
   }

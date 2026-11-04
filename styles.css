@@ -88,21 +88,21 @@ body.bg-photo .hero { display: none; }
 body.bg-photo .topbar {
   padding: 11px 22px;
   justify-content: flex-end;
-  background: linear-gradient(180deg, rgba(6, 3, 2, 0.5), rgba(6, 3, 2, 0));
+  background: linear-gradient(180deg, rgba(6, 3, 2, 0.24), rgba(6, 3, 2, 0));
   border-bottom: none;
 }
 
 body.bg-photo .layout { padding-top: 170px; }
 
-/* a lényeg: ~50% átlátszóság + elmosás, hogy a kép átsejtsen */
+/* szinte teljesen áttetszõ üveg: a kép gyakorlatilag szabadon átsejlik */
 body.bg-photo .panel {
   background:
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 5px),
-    linear-gradient(180deg, rgba(26, 15, 9, 0.24), rgba(8, 5, 3, 0.34));
-  -webkit-backdrop-filter: blur(3px) saturate(1.35) brightness(1.06);
-  backdrop-filter: blur(3px) saturate(1.35) brightness(1.06);
-  border-color: rgba(196, 62, 36, 0.55);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 12px rgba(0, 0, 0, 0.65);
+    linear-gradient(180deg, rgba(26, 15, 9, 0.08), rgba(8, 5, 3, 0.15));
+  -webkit-backdrop-filter: blur(2px) saturate(1.35) brightness(1.1);
+  backdrop-filter: blur(2px) saturate(1.35) brightness(1.1);
+  border-color: rgba(196, 62, 36, 0.42);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 1), 0 0 14px rgba(0, 0, 0, 0.85);
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.55),
     0 20px 50px rgba(0, 0, 0, 0.55),
@@ -115,21 +115,21 @@ body.bg-photo .panel::before { background: linear-gradient(180deg, rgba(255, 150
 body.bg-photo .panel-head {
   background:
     repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 6px),
-    linear-gradient(180deg, rgba(168, 46, 28, 0.5), rgba(78, 18, 10, 0.56));
+    linear-gradient(180deg, rgba(168, 46, 28, 0.24), rgba(78, 18, 10, 0.3));
   -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
   border-bottom-color: rgba(0, 0, 0, 0.55);
 }
 
 body.bg-photo .check {
-  background: linear-gradient(180deg, rgba(34, 21, 13, 0.22), rgba(10, 7, 4, 0.3));
-  -webkit-backdrop-filter: blur(2px) brightness(1.05);
-  backdrop-filter: blur(2px) brightness(1.05);
+  background: linear-gradient(180deg, rgba(34, 21, 13, 0.06), rgba(10, 7, 4, 0.12));
+  -webkit-backdrop-filter: blur(1.5px) brightness(1.06);
+  backdrop-filter: blur(1.5px) brightness(1.06);
 }
 
 body.bg-photo .server-status,
 body.bg-photo .memory {
-  background: rgba(6, 4, 2, 0.3);
+  background: rgba(6, 4, 2, 0.12);
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
 }
@@ -137,7 +137,7 @@ body.bg-photo .memory {
 body.bg-photo .log {
   background:
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 3px),
-    rgba(4, 6, 4, 0.55);
+    rgba(4, 6, 4, 0.26);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
@@ -145,7 +145,7 @@ body.bg-photo .log {
 body.bg-photo .mini-btn {
   background:
     repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 2px, transparent 2px 5px),
-    linear-gradient(180deg, rgba(38, 24, 15, 0.44), rgba(14, 9, 6, 0.52));
+    linear-gradient(180deg, rgba(38, 24, 15, 0.24), rgba(14, 9, 6, 0.3));
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
@@ -153,7 +153,7 @@ body.bg-photo .mini-btn {
 body.bg-photo .ghost-btn {
   background:
     repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 6px),
-    linear-gradient(180deg, rgba(48, 34, 23, 0.5), rgba(18, 11, 7, 0.56));
+    linear-gradient(180deg, rgba(48, 34, 23, 0.26), rgba(18, 11, 7, 0.32));
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
@@ -161,30 +161,52 @@ body.bg-photo .ghost-btn {
 body.bg-photo .badge {
   background:
     repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 5px),
-    linear-gradient(180deg, rgba(30, 20, 14, 0.48), rgba(12, 8, 5, 0.54));
+    linear-gradient(180deg, rgba(30, 20, 14, 0.26), rgba(12, 8, 5, 0.32));
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
 body.bg-photo .badge.ok {
   background:
     repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 5px),
-    linear-gradient(180deg, rgba(44, 68, 24, 0.5), rgba(18, 29, 8, 0.56));
+    linear-gradient(180deg, rgba(44, 68, 24, 0.3), rgba(18, 29, 8, 0.36));
 }
 
 /* a két nagy gomb is félig áttetszõ, hogy a háttér átsejtsen */
 body.bg-photo .play-btn {
   background:
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 4px),
-    linear-gradient(180deg, rgba(198, 45, 27, 0.78) 0%, rgba(168, 31, 17, 0.76) 38%, rgba(125, 17, 8, 0.8) 72%, rgba(92, 10, 5, 0.84) 100%);
+    linear-gradient(180deg, rgba(198, 45, 27, 0.5) 0%, rgba(168, 31, 17, 0.46) 38%, rgba(125, 17, 8, 0.52) 72%, rgba(92, 10, 5, 0.58) 100%);
 }
 
 body.bg-photo .install-btn {
   background:
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 4px),
-    linear-gradient(180deg, rgba(124, 196, 47, 0.78) 0%, rgba(90, 162, 31, 0.76) 40%, rgba(63, 125, 18, 0.8) 74%, rgba(45, 92, 11, 0.84) 100%);
+    linear-gradient(180deg, rgba(124, 196, 47, 0.52) 0%, rgba(90, 162, 31, 0.48) 40%, rgba(63, 125, 18, 0.54) 74%, rgba(45, 92, 11, 0.6) 100%);
 }
 
-body.bg-photo .progress-track { background: rgba(0, 0, 0, 0.45); }
+body.bg-photo .progress-track { background: rgba(0, 0, 0, 0.28); }
+
+/* a kép zsúfolt, ezért a szövegek erõs árnyékot kapnak az olvashatóságért */
+body.bg-photo .server-name,
+body.bg-photo .server-addr,
+body.bg-photo .server-meta,
+body.bg-photo .server-note,
+body.bg-photo .check-body strong,
+body.bg-photo .check-body small,
+body.bg-photo .status-text,
+body.bg-photo .status-sub,
+body.bg-photo .mem-label,
+body.bg-photo .mem-value,
+body.bg-photo .log-line,
+body.bg-photo .tab,
+body.bg-photo .event-title,
+body.bg-photo .event-text,
+body.bg-photo .event-when,
+body.bg-photo .cd-cell b,
+body.bg-photo .cd-cell i,
+body.bg-photo .cd-caption {
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 1), 0 0 16px rgba(0, 0, 0, 0.9);
+}
 
 /* vékony vérvörös él az ablak tetején */
 body::before {
@@ -1140,7 +1162,351 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
   .hero-title { font-size: 52px; }
 }
 
+/* =====================================================================
+   NAPLÓ / ESEMÉNY fülek
+   ===================================================================== */
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.tab:hover { color: #fff2e0; border-color: rgba(200, 70, 45, 0.35); }
+.tab.is-active {
+  color: #fff4e8;
+  background: rgba(150, 40, 24, 0.38);
+  border-color: rgba(225, 90, 55, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 200, 170, 0.16), 0 0 14px rgba(190, 55, 30, 0.25);
+}
+
+.tab-dot {
+  display: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffb15a;
+  box-shadow: 0 0 9px #ff6a2c;
+}
+.tab-dot.is-on { display: block; animation: dot-pulse 1.15s ease-in-out infinite; }
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(0.7); }
+}
+
+/* ---------- esemény nézet ---------- */
+.event-view {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px 11px;
+  border: 1px solid rgba(190, 65, 40, 0.45);
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.012) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, rgba(96, 24, 14, 0.18), rgba(6, 4, 3, 0.24));
+  box-shadow: inset 0 1px 0 rgba(255, 190, 150, 0.08);
+}
+
+.event-card.is-new {
+  animation: event-new 1.7s ease-in-out infinite;
+}
+
+@keyframes event-new {
+  0%, 100% {
+    border-color: rgba(255, 150, 90, 0.9);
+    box-shadow: 0 0 26px rgba(240, 90, 40, 0.45), inset 0 1px 0 rgba(255, 200, 160, 0.2);
+  }
+  50% {
+    border-color: rgba(140, 40, 20, 0.35);
+    box-shadow: 0 0 6px rgba(240, 90, 40, 0.12), inset 0 1px 0 rgba(255, 200, 160, 0.05);
+  }
+}
+
+.event-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.event-tag {
+  padding: 2px 8px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ffe3d2;
+  background: linear-gradient(180deg, rgba(190, 55, 32, 0.85), rgba(120, 24, 12, 0.9));
+  border: 1px solid rgba(255, 140, 90, 0.45);
+  border-radius: 2px;
+}
+
+.event-when {
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+}
+
+.event-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-width: 0;
+}
+
+.event-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.event-side {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.event-title {
+  margin: 5px 0 0;
+  font-family: var(--display);
+  font-size: 18px;
+  letter-spacing: 0.6px;
+  color: #fff1e4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-text {
+  margin: 2px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #e8d6c6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.countdown {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.cd-cell {
+  min-width: 56px;
+  padding: 5px 4px 3px;
+  text-align: center;
+  border: 1px solid rgba(230, 90, 50, 0.35);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.26);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.65);
+}
+
+.cd-cell b {
+  display: block;
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 1px;
+  color: #ffd7c2;
+  font-variant-numeric: tabular-nums;
+}
+
+.cd-cell i {
+  display: block;
+  margin-top: 2px;
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+
+.cd-sep {
+  padding-bottom: 12px;
+  font-size: 18px;
+  color: rgba(255, 140, 100, 0.55);
+}
+
+.cd-caption {
+  margin-top: 5px;
+  font-size: 9.5px;
+  letter-spacing: 1.2px;
+  text-align: right;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.countdown.is-live .cd-cell b { color: #b7f07a; }
+.countdown.is-live ~ .cd-caption { color: #b7f07a; }
+
+.event-actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+/* =====================================================================
+   OPTIMALIZÁLÁS gomb + ablak
+   ===================================================================== */
+.opt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 4px;
+  padding: 7px 15px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #ffeade;
+  background: linear-gradient(180deg, rgba(219, 86, 28, 0.95), rgba(150, 30, 14, 0.96));
+  border: 1px solid rgba(255, 145, 85, 0.6);
+  border-radius: 4px;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 6px 18px rgba(180, 50, 20, 0.45),
+    inset 0 1px 0 rgba(255, 210, 180, 0.4);
+  transition: transform 0.15s ease, filter 0.15s ease;
+  animation: opt-glow 3.2s ease-in-out infinite;
+}
+.opt-btn:hover { transform: translateY(-1px); filter: brightness(1.12); }
+.opt-btn:active { transform: translateY(0); }
+.opt-spark { font-size: 13px; color: #ffd08a; }
+
+@keyframes opt-glow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 6px 16px rgba(180, 50, 20, 0.4), inset 0 1px 0 rgba(255, 210, 180, 0.35); }
+  50% { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 6px 26px rgba(255, 110, 50, 0.72), inset 0 1px 0 rgba(255, 235, 210, 0.55); }
+}
+
+.opt-modal { width: min(760px, 94vw); }
+
+.modal-lead {
+  margin: -6px 0 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.opt-section { margin-bottom: 16px; }
+
+.opt-section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2.2px;
+  color: #e5c6b4;
+}
+.opt-section-head::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(190, 70, 45, 0.55), transparent);
+}
+.opt-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #ff9a6a;
+  padding: 1px 5px;
+  border: 1px solid rgba(220, 90, 55, 0.45);
+  border-radius: 2px;
+}
+
+.opt-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.opt-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 96px;
+  padding: 11px 12px 13px;
+  text-align: left;
+  font: inherit;
+  color: #f4e2d4;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, rgba(48, 30, 20, 0.85), rgba(16, 10, 7, 0.9));
+  border: 1px solid rgba(150, 55, 35, 0.55);
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 190, 150, 0.1);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.opt-card.ready:hover {
+  transform: translateY(-2px);
+  border-color: rgba(235, 100, 60, 0.85);
+  box-shadow: 0 8px 22px rgba(170, 45, 20, 0.4), inset 0 1px 0 rgba(255, 210, 180, 0.18);
+}
+.opt-card.ready:focus-visible { outline: 1px solid #ffb07a; outline-offset: 2px; }
+.opt-card.soon { cursor: not-allowed; opacity: 0.42; filter: grayscale(0.35); }
+
+.opt-icon {
+  font-size: 15px;
+  color: #ffb07a;
+  line-height: 1;
+}
+.opt-card b { font-size: 13px; letter-spacing: 0.3px; padding-right: 56px; }
+.opt-card small { font-size: 11px; line-height: 1.35; color: var(--muted); }
+
+.opt-state {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  color: #c9f5a0;
+  background: rgba(70, 120, 35, 0.55);
+  border: 1px solid rgba(150, 220, 90, 0.35);
+}
+.opt-card.soon .opt-state {
+  color: #e6cfc0;
+  background: rgba(80, 55, 40, 0.6);
+  border-color: rgba(190, 145, 110, 0.3);
+}
+
+@media (max-width: 720px) {
+  .opt-grid { grid-template-columns: 1fr; }
+}
+
 /* csökkentett mozgás: aki kéri, annak ne villogjon semmi */
 @media (prefers-reduced-motion: reduce) {
-  .bg-glow, .play-btn, .progress-bar { animation: none !important; }
+  .bg-glow, .play-btn, .progress-bar, .tab-dot, .event-card, .opt-btn { animation: none !important; }
 }

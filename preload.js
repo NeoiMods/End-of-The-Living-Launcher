@@ -19,6 +19,9 @@ contextBridge.exposeInMainWorld('api', {
   checkUpdate: () => ipcRenderer.invoke('update:check'),
   applyUpdate: () => ipcRenderer.invoke('update:apply'),
 
+  // ---- események ----
+  getEvent: (force) => ipcRenderer.invoke('events:get', force),
+
   installMods: () => ipcRenderer.invoke('mods:install'),
   installZombieBuddy: () => ipcRenderer.invoke('zb:install'),
   openModsFolder: () => ipcRenderer.invoke('mods:openFolder'),
