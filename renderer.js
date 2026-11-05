@@ -514,6 +514,7 @@ function wireEvents() {
     if (e.key === 'Escape') {
       closeSettings();
       closeOptimize();
+      closeZbWarn();
     }
   });
 }

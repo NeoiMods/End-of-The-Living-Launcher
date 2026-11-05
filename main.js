@@ -115,6 +115,8 @@ app.whenReady().then(() => {
   setTimeout(async () => {
     const userDataDir = app.getPath('userData');
     try {
+      // Teszt/támogatói kapcsoló: EOTL_SKIP_PZO_AUTO=1 esetén nem telepít magától.
+      if (process.env.EOTL_SKIP_PZO_AUTO === '1') return;
       const mem = system.getMemoryInfo(Number(cfg.jvmMaxMb) || 8192);
       const st = pzo.status({ cfg, userDataDir, gameDir: resolveGamePath(cfg) });
       if (st.autoTried || st.launchedAt) return;

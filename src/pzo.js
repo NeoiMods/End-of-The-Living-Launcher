@@ -11,7 +11,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { spawn } = require('child_process');
+const { execFile } = require('child_process');
 
 const { fetchText, downloadFile } = require('./download');
 const { parseRepo } = require('./update');
@@ -174,22 +174,23 @@ function findInstallerDir(root) {
 
 // Látható konzolablakban indítja az install.bat-ot, hogy a felhasználó lássa
 // a telepítés lépéseit (a PZO telepítő interaktív: megerősítést kérhet).
+// PowerShell Start-Process: saját ablakban futó .bat, helyes munkakönyvtárral.
 function launchInstaller(dir) {
   return new Promise((resolve) => {
+    const bat = path.join(dir, 'install.bat');
+    if (!fs.existsSync(bat)) {
+      resolve(false);
+      return;
+    }
+    const quote = (p) => String(p).replace(/'/g, "''");
+    const inner = `Start-Process -FilePath '${quote(bat)}' -WorkingDirectory '${quote(dir)}'`;
     try {
-      const child = spawn(
-        'cmd.exe',
-        ['/c', 'start', '"PZO Launcher telepito"', '/D', `"${dir}"`, 'cmd', '/k', 'install.bat'],
-        {
-          detached: true,
-          stdio: 'ignore',
-          windowsHide: true,
-          windowsVerbatimArguments: true,
-        }
+      execFile(
+        'powershell',
+        ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', inner],
+        { windowsHide: true, timeout: 30000 },
+        (err) => resolve(!err)
       );
-      child.on('error', () => resolve(false));
-      child.unref();
-      setTimeout(() => resolve(true), 800);
     } catch {
       resolve(false);
     }
@@ -247,6 +248,7 @@ module.exports = {
   markAutoTried,
   findAsset,
   findInstallerDir,
+  launchInstaller,
   isPzoAsset,
   repoOf,
   folderOf,
