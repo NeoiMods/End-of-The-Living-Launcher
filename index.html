@@ -278,6 +278,12 @@
       <div class="opt-section">
         <div class="opt-section-head"><span class="opt-num">01</span> OPTIMALIZÁLÁS</div>
         <div class="opt-grid">
+          <button class="opt-card ready feature" data-opt="pzo" type="button">
+            <span class="opt-icon">⚡</span>
+            <b>PZO Launcher</b>
+            <small>A PZO motor telepítése a játékhoz (Master mappa)</small>
+            <span class="opt-state go" id="pzoState">TELEPÍTÉS</span>
+          </button>
           <button class="opt-card ready" data-opt="heap" type="button">
             <span class="opt-icon">⚙</span>
             <b>RAM / JVM heap</b>
@@ -302,11 +308,11 @@
       <div class="opt-section">
         <div class="opt-section-head"><span class="opt-num">02</span> MODELLEK</div>
         <div class="opt-grid">
-          <button class="opt-card ready" data-opt="zombiebuddy" type="button">
+          <button class="opt-card ready" data-opt="zombiebuddy" id="zbCard" type="button">
             <span class="opt-icon">✚</span>
             <b>ZombieBuddy</b>
-            <small>A segédmod telepítése / frissítése</small>
-            <span class="opt-state">MEGVAN</span>
+            <small id="zbHint">Opcionális segédmod – FPS/TPS nézetekhez</small>
+            <span class="opt-state go" id="zbState">LETÖLTÉS</span>
           </button>
           <button class="opt-card ready" data-opt="modsFolder" type="button">
             <span class="opt-icon">🗀</span>
@@ -325,6 +331,37 @@
 
       <div class="modal-actions">
         <button id="btnOptClose" class="ghost-btn" type="button">Bezárás</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="zbWarn" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="zbWarnTitle">
+    <div class="modal zb-modal">
+      <h2 id="zbWarnTitle">ZombieBuddy letöltése</h2>
+      <p class="modal-lead">
+        Ez egy <b>opcionális</b> kliensoldali segédmod. Telepítés előtt olvasd el, mit ad:
+      </p>
+      <ul class="warn-list">
+        <li>
+          <b>FPS / TPS nézetek</b> – belső és külső kameraállás, szabad nézet és
+          teljesítmény-kijelző a játékban.
+        </li>
+        <li>
+          <b>Motor szintű hozzáférés</b> – a mod a játék DLL-jébe épül be, ezért a
+          launcher a <code>ProjectZomboid64.json</code>-t is átírja.
+        </li>
+        <li>
+          <b>Minimum 8 GB RAM</b> – ennél kevesebbel a mod nem javasolt (nálad:
+          <span id="zbWarnRam">?</span>).
+        </li>
+      </ul>
+      <p class="warn-note">
+        Ha később meggondolnád, az <code>install.bat</code> újrafuttatásával
+        eltávolítható (2 – Uninstall).
+      </p>
+      <div class="modal-actions">
+        <button id="btnZbCancel" class="ghost-btn" type="button">Mégse</button>
+        <button id="btnZbGo" class="primary-btn" type="button">Letöltés és telepítés</button>
       </div>
     </div>
   </div>

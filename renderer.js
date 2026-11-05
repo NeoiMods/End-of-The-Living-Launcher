@@ -179,6 +179,7 @@ function render(st) {
     hints.push(`⚠ Csak ${mem.totalGb} GB RAM van, a ${heapMb} MB heap nem biztos, hogy elfut.`);
   }
   $('#playHint').textContent = hints.join(' ');
+  syncOptCards();
 }
 
 async function refresh() {
@@ -435,8 +436,16 @@ function wireEvents() {
   $('#optOverlay').addEventListener('click', (e) => {
     if (e.target === $('#optOverlay')) closeOptimize();
   });
-  document.querySelectorAll('.opt-card.ready').forEach((card) => {
+  document.querySelectorAll('.opt-card[data-opt]').forEach((card) => {
     card.addEventListener('click', () => runOptAction(card.dataset.opt));
+  });
+  $('#btnZbCancel').addEventListener('click', closeZbWarn);
+  $('#btnZbGo').addEventListener('click', () => {
+    closeZbWarn();
+    runBusy(() => bridge.installZombieBuddy());
+  });
+  $('#zbWarn').addEventListener('click', (e) => {
+    if (e.target === $('#zbWarn')) closeZbWarn();
   });
 
   $('#btnBrowse').addEventListener('click', async () => {
@@ -643,12 +652,77 @@ function startEventLoop() {
 
 // ---------------------------------------------------------------- optimalizálás
 
+// ZombieBuddy: ennyi RAM alatt nem ajánljuk fel a letöltést.
+const ZB_MIN_RAM_GB = 8;
+// PZO motor: ennyi alatt a launcher magától telepíti (fix telepítés).
+const PZO_MIN_RAM_GB = 16;
+
+let pzoStatus = null;
+
+function totalRamGb() {
+  const mem = lastStatus && lastStatus.memory;
+  return mem && mem.totalGb ? Number(mem.totalGb) : 0;
+}
+
 function openOptimize() {
   $('#optOverlay').classList.remove('hidden');
+  syncOptCards();
+  refreshPzoState();
 }
 
 function closeOptimize() {
   $('#optOverlay').classList.add('hidden');
+}
+
+// A RAM-hoz igazítja a kártyák állapotát: 8 GB alatt a ZombieBuddy nem
+// letölthető, a PZO pedig 16 GB alatt kötelező (a launcher magától telepíti).
+function syncOptCards() {
+  const ram = totalRamGb();
+
+  const zb = $('#zbCard');
+  const zbState = $('#zbState');
+  const zbHint = $('#zbHint');
+  if (zb && zbState) {
+    const tooLow = ram > 0 && ram < ZB_MIN_RAM_GB;
+    zb.disabled = tooLow;
+    zb.classList.toggle('blocked', tooLow);
+    zb.classList.toggle('ready', !tooLow);
+    zbState.classList.toggle('warn', tooLow);
+    zbState.classList.toggle('go', !tooLow);
+    zbState.textContent = tooLow ? `${ZB_MIN_RAM_GB} GB KELL` : 'LETÖLTÉS';
+    if (zbHint) {
+      zbHint.textContent = tooLow
+        ? `Opcionális – ${ram} GB RAM van, a modhoz ${ZB_MIN_RAM_GB} GB kell`
+        : 'Opcionális segédmod – FPS/TPS nézetekhez';
+    }
+  }
+
+  const pzoState = $('#pzoState');
+  if (pzoState) {
+    const done = !!(pzoStatus && (pzoStatus.installed || pzoStatus.launchedAt));
+    pzoState.textContent = done ? 'TELEPÍTVE' : 'TELEPÍTÉS';
+  }
+}
+
+async function refreshPzoState() {
+  if (browserMode) return;
+  try {
+    pzoStatus = await bridge.getPzoStatus();
+  } catch {
+    pzoStatus = null;
+  }
+  syncOptCards();
+}
+
+function openZbWarn() {
+  const ram = totalRamGb();
+  const ramEl = $('#zbWarnRam');
+  if (ramEl) ramEl.textContent = ram ? `${ram} GB` : 'ismeretlen';
+  $('#zbWarn').classList.remove('hidden');
+}
+
+function closeZbWarn() {
+  $('#zbWarn').classList.add('hidden');
 }
 
 function runOptAction(action) {
@@ -657,8 +731,24 @@ function runOptAction(action) {
     openSettings();
     return;
   }
+  if (action === 'pzo') {
+    runBusy(async () => {
+      const res = await bridge.installPzo();
+      if (res && res.ok) {
+        appendLog('✓ PZO Launcher kicsomagolva – a telepítő konzolban fut tovább.');
+        await refreshPzoState();
+      }
+      return res;
+    }, { reload: false });
+    return;
+  }
   if (action === 'zombiebuddy') {
-    runBusy(() => bridge.installZombieBuddy());
+    const ram = totalRamGb();
+    if (ram > 0 && ram < ZB_MIN_RAM_GB) {
+      appendLog(`⚠ ZombieBuddy: legalább ${ZB_MIN_RAM_GB} GB RAM kell (nálad ${ram} GB).`);
+      return;
+    }
+    openZbWarn();
     return;
   }
   if (action === 'modsFolder') {
@@ -757,6 +847,7 @@ async function init() {
   bridge.onRefresh(() => refresh());
   appendLog('End of The Living Launcher elindítva.');
   await refresh();
+  refreshPzoState();
   refreshServerStatus();
   startEventLoop();
   loadEvent(false);

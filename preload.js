@@ -25,6 +25,10 @@ contextBridge.exposeInMainWorld('api', {
   // ---- csomagok (mod / optimalizáló zip-ek) ----
   syncPacks: (force) => ipcRenderer.invoke('packs:sync', force),
 
+  // ---- PZO Launcher (optimalizáló motor) ----
+  getPzoStatus: () => ipcRenderer.invoke('pzo:status'),
+  installPzo: () => ipcRenderer.invoke('pzo:install'),
+
   installMods: () => ipcRenderer.invoke('mods:install'),
   installZombieBuddy: () => ipcRenderer.invoke('zb:install'),
   openModsFolder: () => ipcRenderer.invoke('mods:openFolder'),

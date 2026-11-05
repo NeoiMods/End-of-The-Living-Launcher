@@ -219,7 +219,10 @@ async function sync({ cfg, userDataDir, log = () => {}, force = false }) {
     };
   }
 
-  const usable = assets.filter((asset) => asset.kind !== 'other');
+  // A PZO telepítőnek saját gombja van az Optimalizálás panelen, azt itt kihagyjuk.
+  const usable = assets.filter(
+    (asset) => asset.kind !== 'other' && !/pzo[\s._-]*launcher/i.test(asset.name)
+  );
   if (!usable.length) {
     return { ok: true, installed: [], reason: 'Nincs .zip vagy .exe a repóban.' };
   }

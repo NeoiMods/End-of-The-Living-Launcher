@@ -15,6 +15,7 @@ const shortcuts = require('./src/shortcut');
 const update = require('./src/update');
 const events = require('./src/events');
 const packs = require('./src/packs');
+const pzo = require('./src/pzo');
 
 // A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
 // A GitHub projektben át lett állítva erre a repo-ra:
@@ -106,6 +107,30 @@ app.whenReady().then(() => {
       log('! Csomagok: ' + (err && err.message ? err.message : err));
     }
   }, 6000);
+
+  // ---- PZO motor ------------------------------------------------------
+  // 16 GB RAM alatt a PZO telepítése kötelező, ezért ilyenkor a launcher
+  // magától elindítja (egyszer). 16 GB felett opcionális marad: az
+  // Optimalizálás panel gombjára települ.
+  setTimeout(async () => {
+    const userDataDir = app.getPath('userData');
+    try {
+      const mem = system.getMemoryInfo(Number(cfg.jvmMaxMb) || 8192);
+      const st = pzo.status({ cfg, userDataDir, gameDir: resolveGamePath(cfg) });
+      if (st.autoTried || st.launchedAt) return;
+      if (mem.totalGb >= 16) return;
+      log(`• ${mem.totalGb} GB RAM (16 GB alatt) – a PZO motor telepítése kötelező, indítom…`);
+      try {
+        await pzo.install({ cfg, userDataDir, log, auto: true });
+      } catch (err) {
+        pzo.markAutoTried(userDataDir);
+        log('! PZO: ' + (err && err.message ? err.message : err));
+      }
+      if (win && !win.isDestroyed()) win.webContents.send('refresh');
+    } catch (err) {
+      log('! PZO: ' + (err && err.message ? err.message : err));
+    }
+  }, 8000);
 
   // ---- Auto-updater ---------------------------------------------------
   // A GitHub repó main ágát követi: ha új commit van, letölti és lecseréli
@@ -247,6 +272,28 @@ ipcMain.handle('packs:sync', async (e, force) => {
     });
   } catch (err) {
     return reportError(err);
+  }
+});
+
+// ---- PZO Launcher (optimalizáló motor a Master mappából) -----------------
+
+ipcMain.handle('pzo:status', () =>
+  pzo.status({
+    cfg,
+    userDataDir: app.getPath('userData'),
+    gameDir: resolveGamePath(cfg),
+  })
+);
+
+ipcMain.handle('pzo:install', async () => {
+  if (busy) return { ok: false, error: 'Már fut egy művelet.' };
+  busy = true;
+  try {
+    return await pzo.install({ cfg, userDataDir: app.getPath('userData'), log });
+  } catch (err) {
+    return reportError(err);
+  } finally {
+    busy = false;
   }
 });
 

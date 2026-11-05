@@ -28,8 +28,8 @@ const DEFAULT_CONFIG = {
   eventsUrl: '',
   // Csomagforrás: mod / optimalizáló zip-ek repója (owner/name). Üresen kikapcsolva.
   packsRepo: '',
-  // A repón belüli mappa, ahonnan a csomagokat figyeli.
-  packsFolder: 'packs',
+  // A repón belüli mappa, ahonnan a csomagokat figyeli (innen jön a PZO telepítő is).
+  packsFolder: 'Master',
   // Opcionális, csak olvasható token privát repóhoz (GitHub contents API).
   githubToken: '',
 };
@@ -44,6 +44,11 @@ function loadConfig(dir) {
   }
 
   const rawServer = (raw && raw.server) || {};
+  // A csomagok a Master mappába költöztek: a régi "packs" értéket átváltjuk.
+  const packsFolder =
+    raw && raw.packsFolder && String(raw.packsFolder).trim() !== 'packs'
+      ? String(raw.packsFolder).trim()
+      : DEFAULT_CONFIG.packsFolder;
   const cfg = {
     ...DEFAULT_CONFIG,
     ...raw,
@@ -55,6 +60,7 @@ function loadConfig(dir) {
       port: rawServer.port || DEFAULT_CONFIG.server.port,
     },
     collectionId: String(raw.collectionId || DEFAULT_CONFIG.collectionId).trim(),
+    packsFolder,
     collection: raw.collection && Array.isArray(raw.collection.items) ? raw.collection : null,
     unresolved:
       raw.unresolved && typeof raw.unresolved === 'object' && !Array.isArray(raw.unresolved)
