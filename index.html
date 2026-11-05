@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://cdn.discordapp.com; style-src 'self' 'unsafe-inline'; script-src 'self'" />
   <title>End of The Living Launcher</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -144,6 +144,9 @@
           <button class="tab" data-tab="event" type="button" role="tab">
             <span class="tab-dot" id="eventDot"></span>ESEMÉNY
           </button>
+          <button class="tab" data-tab="discord" type="button" role="tab">
+            <span class="tab-dot" id="discordDot"></span>DISCORD
+          </button>
         </div>
         <div class="head-countdown hidden" id="headCountdown">
           <span class="hc-cap" id="hcCap">ESEMÉNYIG</span>
@@ -156,6 +159,20 @@
       </div>
 
       <div class="log" id="log"></div>
+
+      <div class="discord-view hidden" id="discordView">
+        <div class="dc-head">
+          <span class="dc-dot"></span>
+          <span class="dc-name" id="dcName">Discord</span>
+          <span class="dc-count" id="dcCount">…</span>
+          <span class="dc-hint">élő widget</span>
+        </div>
+        <div class="dc-members" id="dcMembers"></div>
+        <div class="dc-foot">
+          <button id="btnDiscordJoin" class="mini-btn" type="button">Csatlakozás a Discordra</button>
+          <button id="btnDiscordReload" class="mini-btn" type="button">Frissítés</button>
+        </div>
+      </div>
 
       <div class="event-view hidden" id="eventView">
         <div class="event-card" id="eventCard">
@@ -380,6 +397,30 @@
       <div class="modal-actions">
         <button id="btnZbCancel" class="ghost-btn" type="button">Mégse</button>
         <button id="btnZbGo" class="primary-btn" type="button">Letöltés és telepítés</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="crashOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="crashTitle">
+    <div class="modal crash-modal">
+      <h2 id="crashTitle">Összeomlás észlelve</h2>
+      <p class="modal-lead">
+        A játék legutóbb összeomlott. Ha elküldöd nekünk a crash logot,
+        megnézzük, mi okozta – így gyorsabban tudunk segíteni (akár neked, akár a
+        többi játékosnak).
+      </p>
+      <ul class="warn-list" id="crashFiles"></ul>
+      <label class="field">
+        <span>Discord neved (hogy tudjuk, kitől jött a log)</span>
+        <input id="crashName" type="text" maxlength="40" placeholder="pl. shadow_peter" spellcheck="false" />
+      </label>
+      <p class="warn-note">
+        A log a szerver saját Discord csatornájára kerül, a neveddel együtt. Ha most
+        kihagyod, a következő indításnál is felajánljuk.
+      </p>
+      <div class="modal-actions">
+        <button id="btnCrashSkip" class="ghost-btn" type="button">Most nem</button>
+        <button id="btnCrashSend" class="primary-btn" type="button">Elküldés a szervernek</button>
       </div>
     </div>
   </div>

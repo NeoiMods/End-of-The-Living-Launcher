@@ -35,6 +35,9 @@ const DEFAULT_CONFIG = {
   packsFolder: 'Master',
   // Opcionális, csak olvasható token privát repóhoz (GitHub contents API).
   githubToken: '',
+  // Discord webhook a crash logokhoz (a szerver #crash csatornája).
+  // Üresen a launcher nem tud logot küldeni, csak felajánlja a mentést.
+  discordWebhook: '',
 };
 
 // A kollekción kívüli workshop elemek: csak számokból álló azonosító, opcionális címmel.

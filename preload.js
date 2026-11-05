@@ -38,6 +38,14 @@ contextBridge.exposeInMainWorld('api', {
 
   launch: () => ipcRenderer.invoke('game:launch'),
 
+  // ---- Discord: crash log + widget ----
+  getDiscordWidget: () => ipcRenderer.invoke('discord:widget'),
+  openDiscord: () => ipcRenderer.invoke('discord:open'),
+  checkCrash: () => ipcRenderer.invoke('crash:check'),
+  sendCrash: (name) => ipcRenderer.invoke('crash:send', { name }),
+  dismissCrash: () => ipcRenderer.invoke('crash:dismiss'),
+  onCrash: (cb) => ipcRenderer.on('crash', (_event, payload) => cb(payload)),
+
   onLog: (cb) => ipcRenderer.on('log', (_event, line) => cb(line)),
   onProgress: (cb) => ipcRenderer.on('progress', (_event, payload) => cb(payload)),
   onUpdate: (cb) => ipcRenderer.on('update', (_event, payload) => cb(payload)),

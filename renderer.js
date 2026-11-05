@@ -452,6 +452,25 @@ function wireEvents() {
   document.querySelectorAll('.opt-card[data-opt]').forEach((card) => {
     card.addEventListener('click', () => runOptAction(card.dataset.opt));
   });
+  // ---- Discord: crash log + widget ----
+  $('#btnCrashSkip').addEventListener('click', async () => {
+    closeCrash();
+    try {
+      await bridge.dismissCrash();
+    } catch {
+      /* nem baj */
+    }
+    appendLog('• Crash log kihagyva – a következő indításnál újra felajánljuk.');
+  });
+  $('#btnCrashSend').addEventListener('click', sendCrashLog);
+  $('#crashOverlay').addEventListener('click', (e) => {
+    if (e.target === $('#crashOverlay')) closeCrash();
+  });
+  $('#btnDiscordJoin').addEventListener('click', () => {
+    bridge.openExternal(discordInvite || DISCORD_INVITE);
+  });
+  $('#btnDiscordReload').addEventListener('click', () => loadDiscordWidget(true));
+
   $('#btnZbCancel').addEventListener('click', closeZbWarn);
   $('#btnZbGo').addEventListener('click', () => {
     closeZbWarn();
@@ -528,6 +547,7 @@ function wireEvents() {
       closeSettings();
       closeOptimize();
       closeZbWarn();
+      closeCrash();
     }
   });
 }
@@ -540,8 +560,160 @@ function setTab(name) {
   });
   $('#log').classList.toggle('hidden', name !== 'log');
   $('#eventView').classList.toggle('hidden', name !== 'event');
+  $('#discordView').classList.toggle('hidden', name !== 'discord');
   $('#btnClear').classList.toggle('hidden', name !== 'log');
   if (name === 'event') markEventSeen();
+  if (name === 'discord') loadDiscordWidget(false);
+}
+
+// ---------------------------------------------------------------- Discord
+
+const DISCORD_INVITE = 'https://discord.gg/fxzxE7yH';
+let discordInvite = '';
+let discordLoadedAt = 0;
+
+const DISCORD_STATUS_LABEL = { online: 'elérhető', idle: 'tétlen', dnd: 'elfoglalt' };
+
+// A szerver Discord widgetje: élő taglista (a widget.json-ból, ezért nem kell
+// iframe és nem takar ki semmit).
+async function loadDiscordWidget(force) {
+  const box = $('#dcMembers');
+  if (!box) return;
+  // 2 percenként elég frissíteni, kattintásra azonnal.
+  if (!force && discordLoadedAt && Date.now() - discordLoadedAt < 120000) return;
+
+  if (browserMode) {
+    renderDiscord({
+      name: 'End of the Living',
+      online: [{ name: 'Példa Játékos', status: 'online', avatar: '', game: '' }],
+      onlineCount: 1,
+      invite: DISCORD_INVITE,
+    });
+    return;
+  }
+
+  box.innerHTML = '<span class="dc-empty">Widget betöltése…</span>';
+  try {
+    const res = await bridge.getDiscordWidget();
+    if (!res || !res.ok) throw new Error((res && res.error) || 'nem elérhető');
+    discordLoadedAt = Date.now();
+    renderDiscord(res);
+  } catch (err) {
+    discordLoadedAt = Date.now();
+    box.innerHTML = '<span class="dc-empty">A Discord widget most nem érhető el.</span>';
+    appendLog('! Discord widget: ' + (err && err.message ? err.message : err));
+  }
+}
+
+function renderDiscord(data) {
+  const nameEl = $('#dcName');
+  const countEl = $('#dcCount');
+  const box = $('#dcMembers');
+  if (!nameEl || !box) return;
+
+  discordInvite = data.invite || DISCORD_INVITE;
+  nameEl.textContent = data.name || 'Discord';
+  countEl.textContent = `${data.onlineCount || 0} online`;
+  $('#discordDot').classList.toggle('is-on', (data.onlineCount || 0) > 0);
+
+  const members = Array.isArray(data.online) ? data.online : [];
+  if (!members.length) {
+    box.innerHTML = '<span class="dc-empty">Most nincs bent senki – gyere te elsőnek.</span>';
+    return;
+  }
+
+  box.innerHTML = '';
+  for (const member of members.slice(0, 24)) {
+    const row = document.createElement('span');
+    row.className = 'dc-member ' + (member.status || 'online');
+    if (member.avatar) {
+      const img = document.createElement('img');
+      img.src = member.avatar;
+      img.alt = '';
+      img.loading = 'lazy';
+      row.appendChild(img);
+    } else {
+      const dot = document.createElement('i');
+      row.appendChild(dot);
+    }
+    const label = document.createElement('span');
+    label.className = 'dc-member-name';
+    label.textContent = member.name || '? ';
+    row.appendChild(label);
+    row.title = `${member.name || ''} – ${DISCORD_STATUS_LABEL[member.status] || member.status || ''}${
+      member.game ? ' · ' + member.game : ''
+    }`;
+    box.appendChild(row);
+  }
+}
+
+// ---------------------------------------------------------------- crash log
+
+let pendingCrash = null;
+
+function formatMb(bytes) {
+  return (Number(bytes || 0) / 1048576).toFixed(1) + ' MB';
+}
+
+function openCrash(info) {
+  if (!info || !info.detected) return;
+  pendingCrash = info;
+  const list = $('#crashFiles');
+  list.innerHTML = '';
+  for (const file of info.files || []) {
+    const li = document.createElement('li');
+    li.innerHTML = `<b>${file.name}</b> – ${formatMb(file.size)}`;
+    list.appendChild(li);
+  }
+  let saved = '';
+  try {
+    saved = localStorage.getItem('eotl.discordName') || '';
+  } catch {
+    saved = '';
+  }
+  $('#crashName').value = saved;
+  $('#crashOverlay').classList.remove('hidden');
+  $('#crashName').focus();
+}
+
+function closeCrash() {
+  $('#crashOverlay').classList.add('hidden');
+}
+
+async function sendCrashLog() {
+  const name = $('#crashName').value.trim();
+  if (name.length < 2) {
+    $('#crashName').classList.add('invalid');
+    $('#crashName').focus();
+    return;
+  }
+  $('#crashName').classList.remove('invalid');
+  try {
+    localStorage.setItem('eotl.discordName', name);
+  } catch {
+    /* nem baj */
+  }
+
+  const btn = $('#btnCrashSend');
+  btn.disabled = true;
+  btn.textContent = 'Küldés…';
+  try {
+    const res = await bridge.sendCrash(name);
+    if (res && res.ok) {
+      appendLog('✓ Crash log elküldve a szervernek (' + (res.sent || []).join(', ') + '). Köszönjük!');
+      closeCrash();
+      pendingCrash = null;
+    } else {
+      appendLog('✗ ' + ((res && res.error) || 'a küldés nem sikerült'));
+      btn.textContent = 'Újrapróbálom';
+    }
+  } catch (err) {
+    appendLog('✗ ' + (err && err.message ? err.message : err));
+    btn.textContent = 'Újrapróbálom';
+  } finally {
+    btn.disabled = false;
+    if (btn.textContent === 'Küldés…') btn.textContent = 'Elküldés a szervernek';
+  }
 }
 
 // ---------------------------------------------------------------- események
@@ -929,8 +1101,18 @@ async function init() {
   bridge.onLog(appendLog);
   bridge.onProgress(showProgress);
   bridge.onRefresh(() => refresh());
+  bridge.onCrash((info) => openCrash(info));
   appendLog('End of The Living Launcher elindítva.');
   await refresh();
+
+  // Ha a legutóbbi játék összeomlott, felajánljuk a crash log elküldését.
+  try {
+    const crashInfo = await bridge.checkCrash();
+    if (crashInfo && crashInfo.detected) openCrash(crashInfo);
+  } catch {
+    /* nem kritikus */
+  }
+
   refreshPzoState();
   refreshServerStatus();
   startEventLoop();

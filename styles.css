@@ -1574,3 +1574,116 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
 @media (prefers-reduced-motion: reduce) {
   .bg-glow, .play-btn, .progress-bar, .tab-dot, .event-card, .opt-btn { animation: none !important; }
 }
+
+/* ---------- Discord widget (NAPLÓ / ESEMÉNY / DISCORD fül) ---------- */
+.discord-view {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 2px;
+}
+
+.dc-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #c9a184;
+}
+
+.dc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6d5344;
+  box-shadow: 0 0 8px rgba(232, 69, 47, 0.4);
+}
+
+.dc-name {
+  font-weight: 700;
+  color: #ffd9bd;
+}
+
+.dc-count {
+  color: #9fd08a;
+  letter-spacing: 0.04em;
+}
+
+.dc-hint {
+  margin-left: auto;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: #7d6a5c;
+}
+
+.dc-members {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 6px;
+  padding-right: 2px;
+}
+
+.dc-member {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 220px;
+  padding: 2px 9px 2px 3px;
+  border: 1px solid rgba(190, 65, 40, 0.32);
+  border-radius: 14px;
+  background: rgba(18, 11, 8, 0.55);
+  font-size: 11.5px;
+  color: #e6cdb8;
+}
+
+.dc-member img,
+.dc-member i {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 auto;
+  background: #3a2a20;
+}
+
+.dc-member.idle {
+  opacity: 0.72;
+}
+
+.dc-member.dnd {
+  border-color: rgba(232, 69, 47, 0.6);
+}
+
+.dc-member-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dc-empty {
+  color: #a08a78;
+  font-size: 12px;
+}
+
+.dc-foot {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------- crash log ablak ---------- */
+.crash-modal {
+  max-width: 560px;
+}
+
+#crashName.invalid {
+  border-color: #e8452f;
+  box-shadow: 0 0 0 1px rgba(232, 69, 47, 0.5);
+}

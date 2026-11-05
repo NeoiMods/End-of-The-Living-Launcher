@@ -4,7 +4,7 @@ const fs = require('fs');
 
 const { loadConfig, saveConfig, DEFAULT_CONFIG } = require('./src/config');
 const { getEnvironment, resolveGamePath, zomboidDir } = require('./src/paths');
-const { launchGame } = require('./src/launch');
+const { launchGame, isGameRunning } = require('./src/launch');
 const { runSetup } = require('./src/setup');
 const { fetchCollection } = require('./src/collection');
 const subscribe = require('./src/subscribe');
@@ -17,6 +17,8 @@ const events = require('./src/events');
 const packs = require('./src/packs');
 const pzo = require('./src/pzo');
 const mods = require('./src/mods');
+const discord = require('./src/discord');
+const crash = require('./src/crash');
 
 // A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
 // A GitHub projektben át lett állítva erre a repo-ra:
@@ -28,6 +30,8 @@ let win = null;
 let cfg = null;
 let busy = false;
 let setupRunning = false;
+// Játék bezárásának figyelése a crash loghoz.
+let gameSeenRunning = false;
 
 function log(line) {
   if (win && !win.isDestroyed()) win.webContents.send('log', String(line));
@@ -135,6 +139,27 @@ app.whenReady().then(() => {
       log('! PZO: ' + (err && err.message ? err.message : err));
     }
   }, 8000);
+
+  // ---- Összeomlás-figyelő ---------------------------------------------
+  // Induláskor (korábbi összeomlás) és a játék bezárása után megnézzük,
+  // keletkezett-e új crash log, és felajánljuk elküldésre.
+  setTimeout(() => {
+    notifyCrash(checkCrash());
+  }, 12000);
+
+  setInterval(() => {
+    let running = false;
+    try {
+      running = isGameRunning();
+    } catch {
+      running = false;
+    }
+    if (gameSeenRunning && !running) {
+      // A JVM a kilépés után pár másodperccel írja ki a hs_err fájlt.
+      setTimeout(() => notifyCrash(checkCrash()), 5000);
+    }
+    gameSeenRunning = running;
+  }, 10000);
 
   // ---- Auto-updater ---------------------------------------------------
   // A GitHub repó main ágát követi: ha új commit van, letölti és lecseréli
@@ -510,8 +535,92 @@ ipcMain.handle('game:launch', async () => {
       log('⚠ ' + mem.message);
     }
     await launchGame({ gameDir, cfg, onLog: log });
+    gameSeenRunning = true;
     return { ok: true };
   } catch (err) {
     return reportError(err);
   }
 });
+
+// ---- Discord: crash logok + widget --------------------------------------
+
+function crashDirs() {
+  return {
+    gameDir: resolveGamePath(cfg),
+    zomboidDir: zomboidDir(),
+    userDataDir: app.getPath('userData'),
+  };
+}
+
+function checkCrash() {
+  try {
+    return crash.check(crashDirs());
+  } catch (err) {
+    return { detected: false, error: err && err.message ? err.message : String(err) };
+  }
+}
+
+// A renderernek szólunk: felugrik a "szeretnéd elküldeni?" ablak.
+function notifyCrash(info) {
+  if (!info || !info.detected) return;
+  log(`• Összeomlás észlelve (${info.primary.name}) – elküldhető a szervernek.`);
+  if (win && !win.isDestroyed()) win.webContents.send('crash', info);
+}
+
+ipcMain.handle('discord:widget', async () => {
+  try {
+    return { ok: true, ...(await discord.widget()) };
+  } catch (err) {
+    return { ok: false, error: err && err.message ? err.message : String(err) };
+  }
+});
+
+ipcMain.handle('crash:check', () => checkCrash());
+
+ipcMain.handle('crash:send', async (e, payload) => {
+  try {
+    const info = checkCrash();
+    if (!info.detected) throw new Error('Már nincs elküldhető crash log.');
+    const files = crash.readFiles(info.files);
+    if (!files.length) throw new Error('A crash log nem olvasható.');
+    const mem = system.getMemoryInfo(Number(cfg.jvmMaxMb) || 8192);
+    const res = await discord.sendCrash({
+      webhookUrl: cfg.discordWebhook,
+      discordName: payload && payload.name,
+      files,
+      meta: {
+        server: cfg.server && cfg.server.name,
+        version: app.getVersion(),
+        sha: baselineSha(),
+        ramGb: mem.totalGb,
+        heapMb: Number(cfg.jvmMaxMb) || 0,
+        summary: crash.summarize(info.files[0].path),
+      },
+    });
+    crash.markReported(app.getPath('userData'), info.files);
+    log('✓ Crash log elküldve a szerver Discordjára: ' + res.sent.join(', '));
+    return res;
+  } catch (err) {
+    return reportError(err);
+  }
+});
+
+ipcMain.handle('crash:dismiss', () => {
+  const info = checkCrash();
+  if (info.detected) crash.markReported(app.getPath('userData'), info.files);
+  return { ok: true };
+});
+
+ipcMain.handle('discord:open', () => {
+  return shell.openExternal(discord.DISCORD_CHANNEL_URL);
+});
+
+// A build commitja (ha van), hogy a Discord-üzenetből látszódjon a verzió.
+function baselineSha() {
+  try {
+    const json = JSON.parse(fs.readFileSync(path.join(__dirname, 'update-baseline.json'), 'utf8'));
+    return String(json.sha || '');
+  } catch {
+    return '';
+  }
+}

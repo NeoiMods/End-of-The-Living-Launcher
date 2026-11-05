@@ -1,0 +1,203 @@
+// Discord integráció: crash log küldése webhookra és a szerver widget adatai.
+//
+// A crash logot a launcher a szerver saját csatornájára (crash szoba) küldi egy
+// webhookon keresztül. A webhook URL a beállításfájlban van (discordWebhook):
+// ez nem titok a szó szoros értelmében, de csak a crash csatornára szól, ezért
+// érdemes a szerveren külön csatornára korlátozni.
+
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
+const crypto = require('crypto');
+
+const UA = 'EndOfTheLivingLauncher';
+const MAX_TOTAL_BYTES = 7.5 * 1024 * 1024; // Discord: ~8 MB fájlonként
+
+// ------------------------------------------------------------------ widget
+
+const WIDGET_GUILD_ID = '993506036545753158';
+const WIDGET_INVITE = 'https://discord.gg/fxzxE7yH';
+const DISCORD_CHANNEL_URL = 'https://discord.com/channels/993506036545753158/1567990881032732913';
+
+function getJson(url, timeoutMs = 8000) {
+  return new Promise((resolve, reject) => {
+    const mod = url.startsWith('https:') ? https : http;
+    const req = mod.get(url, { headers: { 'User-Agent': UA, Accept: 'application/json' } }, (res) => {
+      let body = '';
+      res.setEncoding('utf8');
+      res.on('data', (c) => {
+        body += c;
+      });
+      res.on('end', () => {
+        if (res.statusCode !== 200) {
+          reject(new Error(`HTTP ${res.statusCode}`));
+          return;
+        }
+        try {
+          resolve(JSON.parse(body));
+        } catch {
+          reject(new Error('A válasz nem JSON.'));
+        }
+      });
+    });
+    req.setTimeout(timeoutMs, () => req.destroy(new Error('időtúllépés')));
+    req.on('error', reject);
+  });
+}
+
+// A szerver widget adatai: név, online tagok, meghívó.
+async function widget() {
+  const raw = await getJson(`https://discord.com/api/guilds/${WIDGET_GUILD_ID}/widget.json`);
+  const members = Array.isArray(raw.members) ? raw.members : [];
+  const online = members
+    .filter((m) => m && m.status && m.status !== 'offline')
+    .map((m) => ({
+      name: String(m.username || ''),
+      status: String(m.status || 'online'),
+      avatar: m.avatar_url ? String(m.avatar_url) : '',
+      game: m.game && m.game.name ? String(m.game.name) : '',
+    }))
+    .slice(0, 24);
+  return {
+    name: String(raw.name || 'Discord'),
+    online,
+    onlineCount: online.length,
+    invite: String(raw.instant_invite || WIDGET_INVITE),
+    channelUrl: DISCORD_CHANNEL_URL,
+  };
+}
+
+// ------------------------------------------------------------------ webhook
+
+// Csak igazi Discord webhookra (vagy helyi teszt-címre) küldünk.
+function isAllowedWebhook(url) {
+  const u = String(url || '').trim();
+  if (!u) return false;
+  if (/^https:\/\/(canary\.|ptb\.)?discord(app)?\.com\/api\/webhooks\/\d+\/[\w-]+$/i.test(u)) return true;
+  // Helyi teszt (fejlesztés): 127.0.0.1 / localhost.
+  return /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?\//i.test(u);
+}
+
+function multipart(payload, files) {
+  const boundary = '----EOTL' + crypto.randomBytes(16).toString('hex');
+  const parts = [];
+  parts.push(
+    Buffer.from(
+      `--${boundary}\r\nContent-Disposition: form-data; name="payload_json"\r\n` +
+        `Content-Type: application/json\r\n\r\n${JSON.stringify(payload)}\r\n`,
+      'utf8'
+    )
+  );
+  files.forEach((file, i) => {
+    const safeName = String(file.name || `file${i}`).replace(/["\r\n]/g, '_');
+    parts.push(
+      Buffer.from(
+        `--${boundary}\r\nContent-Disposition: form-data; name="files[${i}]"; filename="${safeName}"\r\n` +
+          `Content-Type: text/plain\r\n\r\n`,
+        'utf8'
+      )
+    );
+    parts.push(file.data);
+    parts.push(Buffer.from('\r\n', 'utf8'));
+  });
+  parts.push(Buffer.from(`--${boundary}--\r\n`, 'utf8'));
+  return { boundary, body: Buffer.concat(parts) };
+}
+
+function postWebhook(url, payload, files, timeoutMs = 60000) {
+  return new Promise((resolve, reject) => {
+    const { boundary, body } = multipart(payload, files);
+    const u = new URL(url);
+    const mod = u.protocol === 'https:' ? https : http;
+    const req = mod.request(
+      u,
+      {
+        method: 'POST',
+        headers: {
+          'User-Agent': UA,
+          'Content-Type': `multipart/form-data; boundary=${boundary}`,
+          'Content-Length': body.length,
+        },
+      },
+      (res) => {
+        let text = '';
+        res.setEncoding('utf8');
+        res.on('data', (c) => {
+          text += c;
+        });
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve({ ok: true, status: res.statusCode });
+            return;
+          }
+          let detail = text.slice(0, 300);
+          try {
+            const json = JSON.parse(text);
+            if (json && json.message) detail = json.message + (json.code ? ` (${json.code})` : '');
+          } catch {
+            /* sima szöveg */
+          }
+          reject(new Error(`Discord HTTP ${res.statusCode}${detail ? ': ' + detail : ''}`));
+        });
+      }
+    );
+    req.setTimeout(60000, () => req.destroy(new Error('időtúllépés küldés közben')));
+    req.on('error', reject);
+    req.end(body);
+  });
+}
+
+function formatMb(bytes) {
+  return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+function cleanName(raw) {
+  return String(raw || '')
+    .replace(/[`@\r\n\t]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 40);
+}
+
+// A crash log(ok) elküldése. A fájlokat egy az egyben továbbítjuk.
+async function sendCrash({ webhookUrl, discordName, files, meta = {} }) {
+  const url = String(webhookUrl || '').trim();
+  if (!isAllowedWebhook(url)) {
+    throw new Error('Nincs beállítva érvényes Discord webhook a crash logokhoz.');
+  }
+
+  const name = cleanName(discordName);
+  if (name.length < 2) throw new Error('Írd be a Discord neved (legalább 2 karakter).');
+
+  const total = files.reduce((sum, f) => sum + f.size, 0);
+  if (total > MAX_TOTAL_BYTES) throw new Error('A csatolmányok túl nagyok (' + formatMb(total) + ').');
+
+  const lines = [
+    '**🩸 ÖSSZEOMLÁS – ' + (meta.server || 'End of The Living') + '**',
+    '**Játékos Discord neve:** ' + name,
+    '**Launcher:** ' + (meta.version || '?') + (meta.sha ? ` (${String(meta.sha).slice(0, 7)})` : ''),
+    '**Gép:** ' + (meta.ramGb ? meta.ramGb + ' GB RAM' : '?') + (meta.heapMb ? ` · heap ${meta.heapMb} MB` : ''),
+    '**Időpont:** ' + new Date().toLocaleString('hu-HU'),
+    '**Fájlok:** ' + files.map((f) => `${f.name} (${formatMb(f.size)})`).join(', '),
+  ];
+  if (meta.summary) lines.push('**Hiba:** ' + meta.summary);
+
+  const payload = {
+    content: lines.join('\n'),
+    // Senkit ne értesítsen a név miatt, és a nevet se alakítsa mentionné.
+    allowed_mentions: { parse: [] },
+  };
+
+  await postWebhook(url, payload, files);
+  return { ok: true, sent: files.map((f) => f.name), total };
+}
+
+module.exports = {
+  widget,
+  sendCrash,
+  isAllowedWebhook,
+  cleanName,
+  WIDGET_GUILD_ID,
+  DISCORD_CHANNEL_URL,
+  MAX_TOTAL_BYTES,
+};
