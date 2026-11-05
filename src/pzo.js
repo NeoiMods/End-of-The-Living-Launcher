@@ -103,8 +103,8 @@ async function findAsset(cfg) {
   throw lastError || new Error(`Nincs PZO telepítő a(z) ${repo} repóban.`);
 }
 
-// A repó egy mappájában lévő .zip fájlok listája (más modulok is használják).
-async function listZips(cfg, repo, folder) {
+// A repó egy mappájában lévő fájlok listája.
+async function listFiles(cfg, repo, folder) {
   const url = `https://api.github.com/repos/${repo}/contents/${folder}`;
   const { status: code, body } = await fetchText(url, { headers: headers(cfg) });
 
@@ -119,14 +119,51 @@ async function listZips(cfg, repo, folder) {
     throw new Error('A GitHub válasz nem értelmezhető.');
   }
 
-  return items
-    .filter((it) => /\.zip$/i.test(it.name))
-    .map((it) => ({
-      name: it.name,
-      size: Number(it.size) || 0,
-      url: it.download_url || '',
-      apiUrl: it.url || '',
-    }));
+  return items.map((it) => ({
+    name: it.name,
+    size: Number(it.size) || 0,
+    url: it.download_url || '',
+    apiUrl: it.url || '',
+  }));
+}
+
+// A repó egy mappájában lévő .zip fájlok listája (más modulok is használják).
+async function listZips(cfg, repo, folder) {
+  const files = await listFiles(cfg, repo, folder);
+  return files.filter((it) => /\.zip$/i.test(it.name));
+}
+
+// A GitHub 100 MB-nál nagyobb fájlt nem fogad el, ezért a nagy csomagok
+// darabolva (ETO.zip → ETO.zip.part001, .part002, …) vannak a repóban.
+const PART_PATTERN = /^(.*\.zip)\.part(\d+)$/i;
+
+function groupParts(files) {
+  const groups = new Map();
+  for (const file of files) {
+    const m = PART_PATTERN.exec(file.name);
+    if (!m) continue;
+    const base = m[1];
+    if (!groups.has(base)) groups.set(base, []);
+    groups.get(base).push({ ...file, index: Number(m[2]) });
+  }
+  const out = [];
+  for (const [name, parts] of groups) {
+    parts.sort((a, b) => a.index - b.index);
+    // Csak akkor használható, ha 1-től folyamatos a számozás.
+    const continuous = parts.every((p, i) => p.index === i + 1);
+    if (!continuous) continue;
+    out.push({
+      name,
+      size: parts.reduce((sum, p) => sum + p.size, 0),
+      parts,
+    });
+  }
+  return out;
+}
+
+// A repó mappájában lévő, darabokra vágott csomagok (a findAsset használja).
+async function listSplitZips(cfg, repo, folder) {
+  return groupParts(await listFiles(cfg, repo, folder));
 }
 
 async function findAssetIn(cfg, repo, folder) {
@@ -134,6 +171,39 @@ async function findAssetIn(cfg, repo, folder) {
   const pick = zips.find((z) => isPzoAsset(z.name)) || zips[0];
   if (!pick) throw new Error(`Nincs .zip a ${folder}/ mappában (${repo}).`);
   return pick;
+}
+
+// Egy darabokból álló csomag összefűzése a megadott fájlba.
+function concatFiles(parts, dest) {
+  fs.writeFileSync(dest, Buffer.alloc(0));
+  for (const part of parts) {
+    fs.appendFileSync(dest, fs.readFileSync(part));
+  }
+}
+
+// Egész csomag letöltése: sima fájl vagy part001…partNNN darabok.
+async function downloadAsset(asset, dest, cfg, log = () => {}) {
+  if (!asset || !Array.isArray(asset.parts) || asset.parts.length === 0) {
+    await download(asset, dest, cfg);
+    return dest;
+  }
+
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  const localParts = [];
+  let n = 0;
+  for (const part of asset.parts) {
+    n++;
+    const local = `${dest}.part${String(part.index).padStart(3, '0')}`;
+    const mb = part.size ? (part.size / 1048576).toFixed(1) + ' MB' : '?';
+    log(`  ${n}/${asset.parts.length}. rész: ${part.name} (${mb})…`);
+    await download(part, local, cfg);
+    localParts.push(local);
+  }
+
+  log('  részek összefűzése…');
+  concatFiles(localParts, dest);
+  for (const local of localParts) fs.rmSync(local, { force: true });
+  return dest;
 }
 
 async function download(asset, dest, cfg) {
@@ -211,7 +281,7 @@ async function install({ cfg, userDataDir, log = () => {}, auto = false }) {
   const sizeMb = asset.size ? (asset.size / 1048576).toFixed(1) + ' MB' : '?';
   const zipFile = path.join(userDataDir, 'packs', '_downloads', asset.name);
   log(`→ ${asset.name} letöltése (${sizeMb})…`);
-  await download(asset, zipFile, cfg);
+  await downloadAsset(asset, zipFile, cfg, log);
 
   const target = path.join(userDataDir, 'packs', 'pzo-launcher');
   fs.rmSync(target, { recursive: true, force: true });
@@ -251,7 +321,11 @@ module.exports = {
   status,
   markAutoTried,
   findAsset,
+  listFiles,
   listZips,
+  listSplitZips,
+  downloadAsset,
+  concatFiles,
   findInstallerDir,
   launchInstaller,
   isPzoAsset,

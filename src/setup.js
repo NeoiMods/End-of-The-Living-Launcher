@@ -40,7 +40,24 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
   // ---- 1) kollekció -------------------------------------------------------
   onProgress({ label: 'Steam Workshop kollekció lekérése…' });
   const col = await collection.fetchCollection(collectionId);
+
+  // A kollekción kívül megadott workshop elemek (pl. a szerver saját főmenüje)
+  // ugyanúgy részt vesznek a letöltésben és az engedélyezésben.
+  const extras = Array.isArray(cfg && cfg.extraWorkshopIds) ? cfg.extraWorkshopIds : [];
+  const added = [];
+  for (const extra of extras) {
+    const id = String((extra && extra.id) || '').trim();
+    if (!/^\d+$/.test(id)) continue;
+    if (col.items.some((it) => String(it.id) === id)) continue;
+    const item = { id, title: String((extra && extra.title) || `Workshop ${id}`) };
+    col.items.push(item);
+    added.push(item);
+  }
+
   onLog(`Kollekció: ${col.title} – ${col.items.length} mod.`);
+  if (added.length) {
+    onLog(`+ kollekción kívüli elem: ${added.map((it) => it.title).join(', ')}.`);
+  }
   if (col.childCount && col.childCount !== col.items.length) {
     onLog(`! A Steam ${col.childCount} elemet ígér, ${col.items.length} olvasható ki – a kiolvasottakkal folytatom.`);
   }

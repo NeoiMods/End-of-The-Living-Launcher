@@ -12,6 +12,9 @@ const DEFAULT_CONFIG = {
   },
   // Steam Workshop collection the whole mod pack comes from.
   collectionId: '3832006850',
+  // A kollekción kívüli, kézzel megadott workshop elemek (pl. saját főmenü).
+  // Ezek ugyanúgy települnek és engedélyeződnek, mint a kollekció tagjai.
+  extraWorkshopIds: [{ id: '3833539717', title: 'Custom Main Menu' }],
   // Cached collection listing: { id, title, appId, items: [{id,title}], fetchedAt }.
   collection: null,
   // Workshop IDs that failed to download recently: { id: failedAtMillis }.
@@ -33,6 +36,21 @@ const DEFAULT_CONFIG = {
   // Opcionális, csak olvasható token privát repóhoz (GitHub contents API).
   githubToken: '',
 };
+
+// A kollekción kívüli workshop elemek: csak számokból álló azonosító, opcionális címmel.
+function normalizeExtras(raw) {
+  const list = Array.isArray(raw) ? raw : DEFAULT_CONFIG.extraWorkshopIds;
+  const out = [];
+  for (const item of list) {
+    const id = String((item && item.id) || item || '').trim();
+    if (!/^\d+$/.test(id)) continue;
+    if (out.some((x) => x.id === id)) continue;
+    const known = DEFAULT_CONFIG.extraWorkshopIds.find((x) => x.id === id);
+    const title = String((item && item.title) || '').trim() || (known && known.title) || `Workshop ${id}`;
+    out.push({ id, title });
+  }
+  return out;
+}
 
 function loadConfig(dir) {
   const file = path.join(dir, 'config.json');
@@ -70,6 +88,7 @@ function loadConfig(dir) {
     installedModIds: Array.isArray(raw.installedModIds)
       ? raw.installedModIds.map(String).filter(Boolean)
       : [],
+    extraWorkshopIds: normalizeExtras(raw.extraWorkshopIds),
   };
   return cfg;
 }

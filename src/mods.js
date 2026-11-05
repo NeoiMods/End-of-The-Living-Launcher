@@ -115,11 +115,13 @@ async function findAsset(cfg, id) {
   const folder = pzo.folderOf(cfg);
   const folders = folder === pzo.DEFAULT_FOLDER ? [folder] : [folder, pzo.DEFAULT_FOLDER];
 
+  // A repóban sima .zip és darabokra vágott csomag (ETO.zip.part001…) is lehet:
+  // a GitHub 100 MB-nál nagyobb fájlt nem fogad el.
   let zips = [];
   let lastError = null;
   for (const candidate of folders) {
     try {
-      const list = await pzo.listZips(cfg, repo, candidate);
+      const list = [...(await pzo.listZips(cfg, repo, candidate)), ...(await pzo.listSplitZips(cfg, repo, candidate))];
       if (list.length) {
         zips = list;
         break;
@@ -220,7 +222,7 @@ async function install({ cfg, userDataDir, id, log = () => {} }) {
 
   const zipFile = path.join(userDataDir, 'packs', '_downloads', asset.name);
   log(`→ ${asset.name} letöltése (${sizeMb})…`);
-  await pzo.download(asset, zipFile, cfg);
+  await pzo.downloadAsset(asset, zipFile, cfg, log);
 
   const base = modsDir();
   const target = path.join(base, spec.folder);

@@ -3,3 +3,8 @@ node_modules/
 package-lock.json
 release/
 screenshots/
+
+# A nagy mod-csomagok darabolva vannak a repóban (GitHub 100 MB-os limit):
+# ETO.zip -> ETO.zip.part001..003, 6282_3D.zip -> 6282_3D.zip.part001..002
+Master/ETO.zip
+Master/6282_3D.zip
