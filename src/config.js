@@ -35,9 +35,11 @@ const DEFAULT_CONFIG = {
   packsFolder: 'Master',
   // Opcionális, csak olvasható token privát repóhoz (GitHub contents API).
   githubToken: '',
-  // Discord webhook a crash logokhoz (a szerver #crash csatornája).
-  // Üresen a launcher nem tud logot küldeni, csak felajánlja a mentést.
-  discordWebhook: '',
+  // Discord webhook a crash logokhoz (a szerver crash csatornája).
+  // Be van építve, hogy minden játékosnál működjön; ha a csatornán új webhook
+  // készül, csak ezt az egy sort kell lecserélni.
+  discordWebhook:
+    'https://discord.com/api/webhooks/1568001484719792218/Xbl4WiUCB-kIi8lLOHdA4SDEq3eVLS9fBh69OypT66EMB9bXPd08M3npjCJ7VcuP9Q6A',
 };
 
 // A kollekción kívüli workshop elemek: csak számokból álló azonosító, opcionális címmel.
@@ -92,6 +94,9 @@ function loadConfig(dir) {
       ? raw.installedModIds.map(String).filter(Boolean)
       : [],
     extraWorkshopIds: normalizeExtras(raw.extraWorkshopIds),
+    // A beépített webhookot csak akkor írja felül, ha valaki sajátot adott meg
+    // (a korábbi mentett config.json üres értéke ne kapcsolja ki).
+    discordWebhook: String(raw.discordWebhook || DEFAULT_CONFIG.discordWebhook || '').trim(),
   };
   return cfg;
 }
