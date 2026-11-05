@@ -115,6 +115,19 @@ function render(st) {
             : `Telepítve: JAR + DLL + mod mappa${st.installer ? ' • telepítő kész' : ''}`,
     },
     {
+      // PZO motor: opcionális, 16 GB alatt viszont kötelező (a launcher telepíti).
+      ok: pzoStatus ? (pzoStatus.installed ? true : null) : null,
+      warn: !!(pzoStatus && !pzoStatus.installed && mem.totalGb && mem.totalGb < PZO_MIN_RAM_GB),
+      label: 'PZO Launcher',
+      detail: !pzoStatus
+        ? 'Állapot ellenőrzése…'
+        : pzoStatus.installed
+          ? 'Telepítve – PZOptimEngine.jar a játék mappában'
+          : mem.totalGb && mem.totalGb < PZO_MIN_RAM_GB
+            ? `${mem.totalGb} GB RAM – 16 GB alatt kötelező, az Optimalizálás fülön telepíthető`
+            : 'Opcionális – az Optimalizálás fülön telepíthető',
+    },
+    {
       ok: colCount ? downloaded >= colCount : null,
       warn: colCount > 0 && downloaded < colCount,
       label: 'Mod kollekció',
@@ -156,7 +169,7 @@ function render(st) {
   ul.textContent = '';
   for (const it of items) {
     const li = document.createElement('li');
-    const state = it.ok === null ? 'pending' : it.warn ? 'warn' : it.ok ? 'ok' : 'bad';
+    const state = it.warn ? 'warn' : it.ok === null ? 'pending' : it.ok ? 'ok' : 'bad';
     li.className = `check ${state}`;
     li.innerHTML =
       '<span class="check-icon"></span>' +
@@ -713,6 +726,8 @@ async function refreshPzoState() {
     pzoStatus = null;
   }
   syncOptCards();
+  // Az ELLENŐRZÉS lista is mutatja a PZO állapotát.
+  if (lastStatus) render(lastStatus);
 }
 
 function openZbWarn() {
@@ -815,6 +830,7 @@ function sampleEvent() {
 function renderBrowserPreview() {
   document.body.classList.add('browser-mode');
   serverStatus = { online: true, players: 7, maxPlayers: 32, ping: 42 };
+  pzoStatus = { installed: false, extracted: false };
   render(sampleStatus());
   renderServerStatus();
   const updateText = $('#updateText');

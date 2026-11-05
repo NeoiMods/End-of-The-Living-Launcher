@@ -944,9 +944,9 @@ body.browser-mode .browser-banner { display: flex; }
 .log-line.ok { color: #c4f091; }
 
 .log::-webkit-scrollbar, .checklist::-webkit-scrollbar, .modal::-webkit-scrollbar { width: 10px; }
-.log::-webkit-scrollbar-track, .modal::-webkit-scrollbar-track { background: transparent; }
-.log::-webkit-scrollbar-thumb, .modal::-webkit-scrollbar-thumb { background: #4a2a1c; border-radius: 2px; }
-.log::-webkit-scrollbar-thumb:hover, .modal::-webkit-scrollbar-thumb:hover { background: #6b3a26; }
+.log::-webkit-scrollbar-track, .modal::-webkit-scrollbar-track, .checklist::-webkit-scrollbar-track { background: transparent; }
+.log::-webkit-scrollbar-thumb, .modal::-webkit-scrollbar-thumb, .checklist::-webkit-scrollbar-thumb { background: #4a2a1c; border-radius: 2px; }
+.log::-webkit-scrollbar-thumb:hover, .modal::-webkit-scrollbar-thumb:hover, .checklist::-webkit-scrollbar-thumb:hover { background: #6b3a26; }
 
 /* ---------- modal ---------- */
 .overlay {
