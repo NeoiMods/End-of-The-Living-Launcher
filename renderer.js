@@ -671,7 +671,11 @@ const ZB_MIN_RAM_GB = 8;
 // PZO motor: ennyi alatt a launcher magától telepíti (fix telepítés).
 const PZO_MIN_RAM_GB = 16;
 
+// 6282 3D modellek: ennyi RAM alatt nem ajánljuk fel (mint a ZombieBuddy).
+const MODEL_MIN_RAM_GB = 8;
+
 let pzoStatus = null;
+let modsStatus = null;
 
 function totalRamGb() {
   const mem = lastStatus && lastStatus.memory;
@@ -682,6 +686,7 @@ function openOptimize() {
   $('#optOverlay').classList.remove('hidden');
   syncOptCards();
   refreshPzoState();
+  refreshModsState();
 }
 
 function closeOptimize() {
@@ -716,6 +721,54 @@ function syncOptCards() {
     const done = !!(pzoStatus && (pzoStatus.installed || pzoStatus.launchedAt));
     pzoState.textContent = done ? 'TELEPÍTVE' : 'TELEPÍTÉS';
   }
+
+  // ETO: a két változat közül csak az egyik lehet bent, ezért a másik kártya
+  // ilyenkor "MÁSIK AKTÍV" jelzést kap (de attól még átváltható).
+  const etoOn = !!(modsStatus && modsStatus.eto);
+  const etoMaxOn = !!(modsStatus && modsStatus['eto-max']);
+  [
+    ['#etoState', '#etoHint', etoOn, etoMaxOn, 'Szebb textúrák, jobb FPS – az ETO másik változatát lecseréli'],
+    ['#etoMaxState', '#etoMaxHint', etoMaxOn, etoOn, 'Maximum FPS egyszerűbb textúrákkal – a másik ETO-t lecseréli'],
+  ].forEach(([stateSel, hintSel, own, other, hint]) => {
+    const el = $(stateSel);
+    if (!el) return;
+    el.textContent = own ? 'TELEPÍTVE' : other ? 'ÁTVÁLTÁS' : 'LETÖLTÉS';
+    el.classList.toggle('go', true);
+    const hintEl = $(hintSel);
+    if (hintEl) hintEl.textContent = own ? 'Telepítve – a textúrák már cserélve vannak' : hint;
+  });
+
+  // 6282 3D modell: 8 GB alatt letiltva, és soha nem települ magától.
+  const voxel = $('#voxelCard');
+  const voxelState = $('#voxelState');
+  if (voxel && voxelState) {
+    const tooLow = ram > 0 && ram < MODEL_MIN_RAM_GB;
+    const done = !!(modsStatus && modsStatus.voxel);
+    voxel.disabled = tooLow;
+    voxel.classList.toggle('blocked', tooLow);
+    voxel.classList.toggle('ready', !tooLow);
+    voxelState.classList.toggle('warn', tooLow);
+    voxelState.classList.toggle('go', !tooLow);
+    voxelState.textContent = tooLow ? `${MODEL_MIN_RAM_GB} GB KELL` : done ? 'TELEPÍTVE' : 'LETÖLTÉS';
+    const hintEl = $('#voxelHint');
+    if (hintEl) {
+      hintEl.textContent = tooLow
+        ? `Opcionális – ${ram} GB RAM van, a modellekhez ${MODEL_MIN_RAM_GB} GB kell`
+        : done
+          ? 'Telepítve – a Viewpoint modellek már a mod mappában vannak'
+          : 'Viewpoint 3D modellek a ZombieBuddyhoz – opcionális';
+    }
+  }
+}
+
+async function refreshModsState() {
+  if (browserMode) return;
+  try {
+    modsStatus = await bridge.getModsStatus();
+  } catch {
+    modsStatus = null;
+  }
+  syncOptCards();
 }
 
 async function refreshPzoState() {
@@ -765,6 +818,19 @@ function runOptAction(action) {
       return;
     }
     openZbWarn();
+    return;
+  }
+  if (action === 'eto' || action === 'eto-max' || action === 'voxel') {
+    const ram = totalRamGb();
+    if (action === 'voxel' && ram > 0 && ram < MODEL_MIN_RAM_GB) {
+      appendLog(`⚠ 6282 3D modell: legalább ${MODEL_MIN_RAM_GB} GB RAM kell (nálad ${ram} GB).`);
+      return;
+    }
+    runBusy(async () => {
+      const res = await bridge.installMod(action);
+      await refreshModsState();
+      return res;
+    }, { reload: false });
     return;
   }
   if (action === 'modsFolder') {
@@ -831,6 +897,7 @@ function renderBrowserPreview() {
   document.body.classList.add('browser-mode');
   serverStatus = { online: true, players: 7, maxPlayers: 32, ping: 42 };
   pzoStatus = { installed: false, extracted: false };
+  modsStatus = { eto: false, 'eto-max': false, voxel: false };
   render(sampleStatus());
   renderServerStatus();
   const updateText = $('#updateText');

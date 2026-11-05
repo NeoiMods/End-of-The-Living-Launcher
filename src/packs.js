@@ -219,9 +219,14 @@ async function sync({ cfg, userDataDir, log = () => {}, force = false }) {
     };
   }
 
-  // A PZO telepítőnek saját gombja van az Optimalizálás panelen, azt itt kihagyjuk.
+  // A PZO telepítőnek és az ETO / 6282 3D modelleknek saját gombjuk van az
+  // Optimalizálás panelen, azokat itt kihagyjuk.
+  const { isDedicated } = require('./mods');
   const usable = assets.filter(
-    (asset) => asset.kind !== 'other' && !/pzo[\s._-]*launcher/i.test(asset.name)
+    (asset) =>
+      asset.kind !== 'other' &&
+      !/pzo[\s._-]*launcher/i.test(asset.name) &&
+      !isDedicated(asset.name)
   );
   if (!usable.length) {
     return { ok: true, installed: [], reason: 'Nincs .zip vagy .exe a repóban.' };

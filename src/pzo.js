@@ -103,7 +103,8 @@ async function findAsset(cfg) {
   throw lastError || new Error(`Nincs PZO telepítő a(z) ${repo} repóban.`);
 }
 
-async function findAssetIn(cfg, repo, folder) {
+// A repó egy mappájában lévő .zip fájlok listája (más modulok is használják).
+async function listZips(cfg, repo, folder) {
   const url = `https://api.github.com/repos/${repo}/contents/${folder}`;
   const { status: code, body } = await fetchText(url, { headers: headers(cfg) });
 
@@ -118,7 +119,7 @@ async function findAssetIn(cfg, repo, folder) {
     throw new Error('A GitHub válasz nem értelmezhető.');
   }
 
-  const zips = items
+  return items
     .filter((it) => /\.zip$/i.test(it.name))
     .map((it) => ({
       name: it.name,
@@ -126,7 +127,10 @@ async function findAssetIn(cfg, repo, folder) {
       url: it.download_url || '',
       apiUrl: it.url || '',
     }));
+}
 
+async function findAssetIn(cfg, repo, folder) {
+  const zips = await listZips(cfg, repo, folder);
   const pick = zips.find((z) => isPzoAsset(z.name)) || zips[0];
   if (!pick) throw new Error(`Nincs .zip a ${folder}/ mappában (${repo}).`);
   return pick;
@@ -247,6 +251,7 @@ module.exports = {
   status,
   markAutoTried,
   findAsset,
+  listZips,
   findInstallerDir,
   launchInstaller,
   isPzoAsset,

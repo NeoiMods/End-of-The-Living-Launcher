@@ -28,6 +28,8 @@ contextBridge.exposeInMainWorld('api', {
   // ---- PZO Launcher (optimalizáló motor) ----
   getPzoStatus: () => ipcRenderer.invoke('pzo:status'),
   installPzo: () => ipcRenderer.invoke('pzo:install'),
+  getModsStatus: () => ipcRenderer.invoke('optmods:status'),
+  installMod: (id) => ipcRenderer.invoke('optmods:install', id),
 
   installMods: () => ipcRenderer.invoke('mods:install'),
   installZombieBuddy: () => ipcRenderer.invoke('zb:install'),

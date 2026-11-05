@@ -16,6 +16,7 @@ const update = require('./src/update');
 const events = require('./src/events');
 const packs = require('./src/packs');
 const pzo = require('./src/pzo');
+const mods = require('./src/mods');
 
 // A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
 // A GitHub projektben át lett állítva erre a repo-ra:
@@ -293,6 +294,23 @@ ipcMain.handle('pzo:install', async () => {
   busy = true;
   try {
     return await pzo.install({ cfg, userDataDir: app.getPath('userData'), log });
+  } catch (err) {
+    return reportError(err);
+  } finally {
+    busy = false;
+  }
+});
+
+// ---- opcionális modok (ETO textúrák, 6282 3D modell) ----------------------
+// Ezek soha nem települnek maguktól: a játékos dönt.
+
+ipcMain.handle('optmods:status', () => mods.status());
+
+ipcMain.handle('optmods:install', async (e, id) => {
+  if (busy) return { ok: false, error: 'Már fut egy művelet.' };
+  busy = true;
+  try {
+    return await mods.install({ cfg, userDataDir: app.getPath('userData'), id, log });
   } catch (err) {
     return reportError(err);
   } finally {

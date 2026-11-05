@@ -1,208 +1,259 @@
-const { spawn, execFileSync } = require('child_process');
+// Opcionális modok a Master mappából: ETO (Every Texture Optimized, két
+// változatban) és a 6282 3D modellcsomag a Viewpoint/ZombieBuddyhoz.
+//
+// A zip B42-es szerkezetű:  mods/<Mod neve>/<verzió>/mod.info
+// Ezért csak a kiválasztott mod mappáját csomagoljuk ki ide:
+//   %USERPROFILE%\Zomboid\mods\<Mod neve>\
+//
+// Semmit nem telepít magától: minden ezek közül a játékos döntése.
+
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
+const { execFile } = require('child_process');
 
-const { downloadFile } = require('./download');
-const paths = require('./paths');
-const modinfo = require('./modinfo');
+const { fetchText } = require('./download');
+const pzo = require('./pzo');
+const { zomboidDir } = require('./paths');
 
-const STEAMCMD_URL = 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip';
-const STEAMCMD_TIMEOUT = 10 * 60 * 1000;
+const UA = 'EndOfTheLivingLauncher';
 
-function runCapture(cmd, args, opts, onLine, timeoutMs = STEAMCMD_TIMEOUT) {
-  return new Promise((resolve, reject) => {
-    const p = spawn(cmd, args, { windowsHide: true, ...opts });
-    let out = '';
-    let pending = '';
-    let settled = false;
+// A kártyák azonosítói (data-opt / IPC) és a hozzájuk tartozó mod mappák.
+const SPECS = {
+  eto: {
+    label: 'ETO',
+    folder: 'Every Texture Optimized',
+    asset: /(^|[^a-z])eto([^a-z]|$)|every[\s._-]*texture/i,
+    // a másik ETO változat nem maradhat bent egyszerre
+    siblings: ['Every Texture Optimized Maximum Performance'],
+  },
+  'eto-max': {
+    label: 'ETO Maximum Performance',
+    folder: 'Every Texture Optimized Maximum Performance',
+    asset: /(^|[^a-z])eto([^a-z]|$)|every[\s._-]*texture/i,
+    siblings: ['Every Texture Optimized'],
+  },
+  voxel: {
+    label: '6282 3D modell',
+    folder: 'PZVoxelStudioViewpoint',
+    asset: /6282|pzvoxel/i,
+    siblings: [],
+  },
+};
 
-    const timer = setTimeout(() => {
-      if (settled) return;
-      settled = true;
-      try {
-        p.kill();
-      } catch {
-        // Already gone.
-      }
-      reject(new Error(`Időtúllépés: ${cmd}`));
-    }, timeoutMs);
+// Ezeknek a csomagoknak saját kártyájuk van, a csomagfigyelő ne nyúljon hozzá.
+const DEDICATED = [/(^|[^a-z])eto([^a-z]|$)|every[\s._-]*texture/i, /6282|pzvoxel/i];
 
-    const handle = (buf) => {
-      out += buf;
-      pending += buf;
-      const parts = pending.split(/[\r\n]+/);
-      pending = parts.pop() || '';
-      for (const line of parts) {
-        const t = line.trim();
-        if (t && onLine) onLine(t);
-      }
-    };
-
-    p.stdout.on('data', handle);
-    p.stderr.on('data', handle);
-    p.on('error', (err) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      reject(err);
-    });
-    p.on('close', (code) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      resolve({ code, out });
-    });
-  });
+function isDedicated(name) {
+  const n = String(name || '');
+  return DEDICATED.some((re) => re.test(n));
 }
 
-async function ensureSteamCMD(dir, onLog) {
-  const exe = path.join(dir, 'steamcmd.exe');
-  if (fs.existsSync(exe)) return exe;
-
-  fs.mkdirSync(dir, { recursive: true });
-  const zip = path.join(dir, 'steamcmd.zip');
-  onLog('SteamCMD letöltése…');
-  await downloadFile(STEAMCMD_URL, zip);
-  onLog('SteamCMD kicsomagolása…');
-  try {
-    execFileSync('tar', ['-xf', zip, '-C', dir], { windowsHide: true });
-  } catch {
-    execFileSync(
-      'powershell.exe',
-      [
-        '-NoProfile',
-        '-Command',
-        `Expand-Archive -Force -LiteralPath '${zip}' -DestinationPath '${dir}'`,
-      ],
-      { windowsHide: true, encoding: 'utf8' }
-    );
-  }
-  try {
-    fs.rmSync(zip, { force: true });
-  } catch {
-    // Leftover zip is harmless.
-  }
-  if (!fs.existsSync(exe)) throw new Error('A SteamCMD nem sikerült telepíteni.');
-  return exe;
+function headers(cfg) {
+  const h = { 'User-Agent': UA, Accept: 'application/vnd.github+json' };
+  const token = String((cfg && cfg.githubToken) || '').trim();
+  if (token) h.Authorization = `Bearer ${token}`;
+  return h;
 }
 
-async function downloadWorkshopItem(exe, wsId, onLog) {
-  onLog(`Workshop mod letöltése: ${wsId} (első alkalommal a SteamCMD is frissül)…`);
-  const { code, out } = await runCapture(
-    exe,
-    ['+login', 'anonymous', '+workshop_download_item', paths.PZ_APP_ID, String(wsId), '+quit'],
-    { cwd: path.dirname(exe) },
-    (line) => {
-      if (/error|success|warn|download|login|already|update/i.test(line)) onLog('  ' + line);
+function modsDir() {
+  return path.join(zomboidDir(), 'mods');
+}
+
+// ------------------------------------------------------------------ állapot
+
+// B42: a mod.info egy verziómappában van (42/, 42.20.4/), B41: közvetlenül.
+function modInstalled(base) {
+  if (!fs.existsSync(base)) return false;
+  if (fs.existsSync(path.join(base, 'mod.info'))) return true;
+  try {
+    return fs
+      .readdirSync(base, { withFileTypes: true })
+      .some((entry) => entry.isDirectory() && fs.existsSync(path.join(base, entry.name, 'mod.info')));
+  } catch {
+    return false;
+  }
+}
+
+function status() {
+  const dir = modsDir();
+  const out = { dir };
+  for (const [id, spec] of Object.entries(SPECS)) {
+    out[id] = modInstalled(path.join(dir, spec.folder));
+  }
+  return out;
+}
+
+// ------------------------------------------------------------------ forrás
+
+async function listReleaseZips(cfg) {
+  const repo = pzo.repoOf(cfg);
+  try {
+    const { status: code, body } = await fetchText(`https://api.github.com/repos/${repo}/releases/latest`, {
+      headers: headers(cfg),
+    });
+    if (code !== 200) return [];
+    const rel = JSON.parse(body);
+    return (rel.assets || [])
+      .filter((a) => a && /\.zip$/i.test(a.name))
+      .map((a) => ({
+        name: a.name,
+        size: Number(a.size) || 0,
+        url: a.browser_download_url || '',
+        apiUrl: a.url || '',
+      }));
+  } catch {
+    return [];
+  }
+}
+
+async function findAsset(cfg, id) {
+  const spec = SPECS[id];
+  if (!spec) throw new Error('Ismeretlen mod: ' + id);
+
+  const repo = pzo.repoOf(cfg);
+  const folder = pzo.folderOf(cfg);
+  const folders = folder === pzo.DEFAULT_FOLDER ? [folder] : [folder, pzo.DEFAULT_FOLDER];
+
+  let zips = [];
+  let lastError = null;
+  for (const candidate of folders) {
+    try {
+      const list = await pzo.listZips(cfg, repo, candidate);
+      if (list.length) {
+        zips = list;
+        break;
+      }
+    } catch (err) {
+      lastError = err;
     }
-  );
+  }
 
-  if (code !== 0 || /ERROR!/i.test(out)) {
+  let pick = zips.find((z) => spec.asset.test(z.name));
+  // Ha a zip túl nagy a repóhoz, GitHub Release alatt is ott lehet.
+  if (!pick) {
+    const rel = await listReleaseZips(cfg);
+    pick = rel.find((z) => spec.asset.test(z.name));
+  }
+  if (!pick) {
     throw new Error(
-      `A(z) ${wsId} mod letöltése nem sikerült. Ellenőrizd, hogy a mod nyilvános a Steam Workshopon.`
+      lastError && !zips.length
+        ? lastError.message
+        : `Nincs ${spec.label} zip a ${repo}/${folder}/ mappában (és a legutóbbi release-ben sem).`
     );
   }
-  const dir = path.join(
-    path.dirname(exe),
-    'steamapps',
-    'workshop',
-    'content',
-    paths.PZ_APP_ID,
-    String(wsId)
-  );
-  if (!fs.existsSync(dir)) {
-    throw new Error(`A(z) ${wsId} mod nem található a SteamCMD gyorsítótárában.`);
-  }
-  return dir;
+  return pick;
 }
 
-function findWorkshopItemDir(libs, wsId) {
-  for (const lib of libs) {
-    const p = path.join(lib, 'steamapps', 'workshop', 'content', paths.PZ_APP_ID, String(wsId));
-    if (fs.existsSync(p)) return p;
-  }
-  return null;
-}
+// ------------------------------------------------------------------ kicsomagolás
 
-// Copies a mod into Zomboid/mods and returns the target directory.
-function placeLocalMod(zomboidDir, mod, onLog) {
-  const root = path.join(zomboidDir, 'mods');
-  fs.mkdirSync(root, { recursive: true });
+// Csak a megadott előtagú bejegyzéseket írja ki (a 272 MB-os ETO zipben két
+// teljes mod van, nem akarjuk mindkettőt a lemezre tenni).
+function extractFolder(zipFile, prefix, outDir) {
+  return new Promise((resolve, reject) => {
+    const dir = path.join(os.tmpdir(), 'eotl-mod-extract');
+    const script = path.join(dir, 'extract.ps1');
+    const ps = [
+      'param([string]$ZipPath,[string]$Prefix,[string]$Out)',
+      "$ErrorActionPreference = 'Stop'",
+      'Add-Type -AssemblyName System.IO.Compression.FileSystem',
+      '$zip = [System.IO.Compression.ZipFile]::OpenRead($ZipPath)',
+      '$count = 0',
+      "$dirs = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)",
+      'try {',
+      '  foreach ($e in $zip.Entries) {',
+      '    if (-not $e.FullName.StartsWith($Prefix, [System.StringComparison]::OrdinalIgnoreCase)) { continue }',
+      '    $rel = $e.FullName.Substring($Prefix.Length)',
+      '    if ([string]::IsNullOrEmpty($rel)) { continue }',
+      "    $dest = [System.IO.Path]::Combine($Out, $rel.Replace('/', [System.IO.Path]::DirectorySeparatorChar))",
+      '    if ([string]::IsNullOrEmpty($e.Name)) {',
+      '      [System.IO.Directory]::CreateDirectory($dest) | Out-Null',
+      '      continue',
+      '    }',
+      '    $parent = [System.IO.Path]::GetDirectoryName($dest)',
+      '    if ($parent -and -not $dirs.Contains($parent)) {',
+      '      [System.IO.Directory]::CreateDirectory($parent) | Out-Null',
+      '      [void]$dirs.Add($parent)',
+      '    }',
+      '    [System.IO.Compression.ZipFileExtensions]::ExtractToFile($e, $dest, $true)',
+      '    $count++',
+      '  }',
+      '} finally { $zip.Dispose() }',
+      'if ($count -eq 0) { Write-Error "Nincs $Prefix a zipben." }',
+      'Write-Output ("OK " + $count)',
+    ].join('\r\n');
 
-  const existing = modinfo.findLocalModDir(zomboidDir, mod.id);
-  const target = existing || path.join(root, mod.id);
-
-  if (existing) {
     try {
-      fs.rmSync(existing, { recursive: true, force: true });
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(script, ps, 'utf8');
+      fs.mkdirSync(outDir, { recursive: true });
     } catch (err) {
-      throw new Error(`Nem sikerült frissíteni a(z) ${mod.id} modot: ${err.message}`);
+      reject(err);
+      return;
     }
-  }
-  try {
-    fs.cpSync(mod.modDir, target, { recursive: true, dereference: true });
-  } catch (err) {
-    throw new Error(`Nem sikerült bemásolni a(z) ${mod.id} modot: ${err.message}`);
-  }
-  onLog(`  ✓ ${mod.name} → ${target}`);
-  return target;
-}
 
-// Copies a mod's libs/ payload (ZombieBuddy.jar, zbNative.dll, ...) into the
-// game folder. Without these the Java agent cannot load.
-function copyAgentLibs(modDir, sourceRoot, gameDir, onLog) {
-  const candidates = [path.join(modDir, 'libs'), path.join(sourceRoot, 'libs')];
-  const libsDir = candidates.find((p) => {
-    try {
-      return fs.statSync(p).isDirectory();
-    } catch {
-      return false;
-    }
+    execFile(
+      'powershell',
+      ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', script, '-ZipPath', zipFile, '-Prefix', prefix, '-Out', outDir],
+      { windowsHide: true, timeout: 600000, maxBuffer: 1024 * 1024 },
+      (err, stdout, stderr) => {
+        if (err) {
+          const msg = String(stderr || err.message || '').trim().split(/\r?\n/)[0];
+          reject(new Error(msg || 'kicsomagolási hiba'));
+          return;
+        }
+        resolve(String(stdout || '').trim());
+      }
+    );
   });
-  if (!libsDir) return;
+}
 
-  let files;
-  try {
-    files = fs.readdirSync(libsDir);
-  } catch {
-    return;
-  }
-  for (const f of files) {
-    if (!/\.(jar|dll)$/i.test(f)) continue;
-    const src = path.join(libsDir, f);
-    try {
-      const srcStat = fs.statSync(src);
-      if (!srcStat.isFile()) continue;
+// ------------------------------------------------------------------ telepítés
 
-      const dst = path.join(gameDir, f);
-      let dstStat = null;
-      try {
-        dstStat = fs.statSync(dst);
-      } catch {
-        // Not present yet.
-      }
-      // Same size = already in place. Skipping avoids pointless writes into
-      // Program Files, which would fail without elevation.
-      if (dstStat && dstStat.size === srcStat.size) {
-        onLog(`  ✓ ${f} már a helyén van`);
-        continue;
-      }
+async function install({ cfg, userDataDir, id, log = () => {} }) {
+  const spec = SPECS[id];
+  if (!spec) throw new Error('Ismeretlen mod: ' + id);
 
-      fs.copyFileSync(src, dst);
-      onLog(`  ✓ ${f} → játék mappa`);
-    } catch (err) {
-      throw new Error(
-        `Nem sikerült bemásolni ide: ${path.join(gameDir, f)} (${err.message}). ` +
-          'Futtasd a launchert rendszergazdaként, vagy telepítsd a Steamet egy felhasználói mappába.'
-      );
+  log(`• ${spec.label} keresése a Master mappában…`);
+  const asset = await findAsset(cfg, id);
+  const sizeMb = asset.size ? (asset.size / 1048576).toFixed(1) + ' MB' : '?';
+
+  const zipFile = path.join(userDataDir, 'packs', '_downloads', asset.name);
+  log(`→ ${asset.name} letöltése (${sizeMb})…`);
+  await pzo.download(asset, zipFile, cfg);
+
+  const base = modsDir();
+  const target = path.join(base, spec.folder);
+  fs.mkdirSync(base, { recursive: true });
+  fs.rmSync(target, { recursive: true, force: true });
+
+  log('  kicsomagolás: Zomboid\\mods\\' + spec.folder);
+  await extractFolder(zipFile, `mods/${spec.folder}/`, target);
+  fs.rmSync(zipFile, { force: true });
+
+  for (const other of spec.siblings) {
+    const siblingDir = path.join(base, other);
+    if (fs.existsSync(siblingDir)) {
+      fs.rmSync(siblingDir, { recursive: true, force: true });
+      log('  eltávolítva a másik változat: Zomboid\\mods\\' + other);
     }
   }
+
+  if (!modInstalled(target)) {
+    throw new Error(`${spec.label}: a kicsomagolt mappában nincs mod.info – a mod nem tölthető be.`);
+  }
+
+  log('✓ ' + spec.label + ' telepítve: Zomboid\\mods\\' + spec.folder);
+  return { ok: true, id, name: asset.name, dir: target };
 }
 
 module.exports = {
-  ensureSteamCMD,
-  downloadWorkshopItem,
-  findWorkshopItemDir,
-  placeLocalMod,
-  copyAgentLibs,
+  install,
+  status,
+  findAsset,
+  extractFolder,
+  isDedicated,
+  modInstalled,
+  modsDir,
+  SPECS,
 };
