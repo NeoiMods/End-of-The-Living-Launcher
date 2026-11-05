@@ -119,7 +119,8 @@ app.whenReady().then(() => {
       if (process.env.EOTL_SKIP_PZO_AUTO === '1') return;
       const mem = system.getMemoryInfo(Number(cfg.jvmMaxMb) || 8192);
       const st = pzo.status({ cfg, userDataDir, gameDir: resolveGamePath(cfg) });
-      if (st.autoTried || st.launchedAt) return;
+      // Ha a motor már fenn van a játékon, nem indítjuk újra a telepítőt.
+      if (st.installed || st.autoTried || st.launchedAt) return;
       if (mem.totalGb >= 16) return;
       log(`• ${mem.totalGb} GB RAM (16 GB alatt) – a PZO motor telepítése kötelező, indítom…`);
       try {
