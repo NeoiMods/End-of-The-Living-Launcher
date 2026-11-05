@@ -8,3 +8,4 @@ screenshots/
 # ETO.zip -> ETO.zip.part001..003, 6282_3D.zip -> 6282_3D.zip.part001..002
 Master/ETO.zip
 Master/6282_3D.zip
+tmp/
