@@ -450,9 +450,32 @@ function wireEvents() {
     if (e.target === $('#optOverlay')) closeOptimize();
   });
   document.querySelectorAll('.opt-card[data-opt]').forEach((card) => {
-    card.addEventListener('click', () => runOptAction(card.dataset.opt));
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.opt-del')) return; // törlés külön gombon
+      if (card.classList.contains('blocked') || card.getAttribute('aria-disabled') === 'true') return;
+      runOptAction(card.dataset.opt);
+    });
+    if (card.tagName !== 'BUTTON') {
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          card.click();
+        }
+      });
+    }
+  });
+  document.querySelectorAll('.opt-del').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeOptMod(btn.dataset.del);
+    });
   });
   // ---- Discord: crash log + widget ----
+  // A banner mindig a legfrissebb elérhető logot kínálja fel (kézi küldés),
+  // így "Most nem" után is működik.
+  $('#btnCrashBannerSend').addEventListener('click', openCrashManual);
+  $('#btnCrashBannerHide').addEventListener('click', hideCrashBanner);
+  $('#btnCrashManual').addEventListener('click', openCrashManual);
   $('#btnCrashSkip').addEventListener('click', async () => {
     closeCrash();
     try {
@@ -462,7 +485,7 @@ function wireEvents() {
     }
     appendLog('• Crash log kihagyva – a következő indításnál újra felajánljuk.');
   });
-  $('#btnCrashSend').addEventListener('click', sendCrashLog);
+  $('#btnCrashSend').addEventListener('click', () => sendCrashLog(false));
   $('#crashOverlay').addEventListener('click', (e) => {
     if (e.target === $('#crashOverlay')) closeCrash();
   });
@@ -655,6 +678,42 @@ function formatMb(bytes) {
   return (Number(bytes || 0) / 1048576).toFixed(1) + ' MB';
 }
 
+// A mindig látható felhívás a fő panelen: akkor is ott marad, ha a játékos
+// az ablakban "Most nem"-et nyomott – bármikor elküldheti.
+function showCrashBanner(info) {
+  const banner = $('#crashBanner');
+  if (!banner) return;
+  if (info && info.detected) pendingCrash = info;
+  const text = $('#crashBannerText');
+  if (text) {
+    const name = info && info.primary && info.primary.name;
+    text.textContent = name
+      ? `${name} – küldd el, és megnézzük, mi okozta. Csak a Discord neved kell hozzá.`
+      : 'Küldd el nekünk a legfrissebb logot – megnézzük, mi okozta.';
+  }
+  banner.classList.remove('hidden');
+}
+
+function hideCrashBanner() {
+  $('#crashBanner').classList.add('hidden');
+}
+
+// DISCORD fül / banner: kézi küldés a legfrissebb elérhető logokkal.
+async function openCrashManual() {
+  let info = null;
+  try {
+    info = await bridge.getLatestCrash();
+  } catch (err) {
+    appendLog('✗ ' + (err && err.message ? err.message : err));
+    return;
+  }
+  if (!info || !info.detected) {
+    appendLog('• Nem találtam elküldhető logot (hs_err / console.txt / Logs).');
+    return;
+  }
+  openCrash({ ...info, manual: true });
+}
+
 function openCrash(info) {
   if (!info || !info.detected) return;
   pendingCrash = info;
@@ -665,6 +724,9 @@ function openCrash(info) {
     li.innerHTML = `<b>${file.name}</b> – ${formatMb(file.size)}`;
     list.appendChild(li);
   }
+  const title = $('#crashTitle');
+  if (title) title.textContent = info.manual ? 'Log küldése a szervernek' : 'Összeomlott a játék';
+  showCrashBanner(info);
   let saved = '';
   try {
     saved = localStorage.getItem('eotl.discordName') || '';
@@ -680,7 +742,7 @@ function closeCrash() {
   $('#crashOverlay').classList.add('hidden');
 }
 
-async function sendCrashLog() {
+async function sendCrashLog(manual) {
   const name = $('#crashName').value.trim();
   if (name.length < 2) {
     $('#crashName').classList.add('invalid');
@@ -698,10 +760,11 @@ async function sendCrashLog() {
   btn.disabled = true;
   btn.textContent = 'Küldés…';
   try {
-    const res = await bridge.sendCrash(name);
+    const res = await bridge.sendCrash(name, manual === true || (pendingCrash && pendingCrash.manual === true));
     if (res && res.ok) {
       appendLog('✓ Crash log elküldve a szervernek (' + (res.sent || []).join(', ') + '). Köszönjük!');
       closeCrash();
+      hideCrashBanner();
       pendingCrash = null;
     } else {
       appendLog('✗ ' + ((res && res.error) || 'a küldés nem sikerült'));
@@ -712,7 +775,7 @@ async function sendCrashLog() {
     btn.textContent = 'Újrapróbálom';
   } finally {
     btn.disabled = false;
-    if (btn.textContent === 'Küldés…') btn.textContent = 'Elküldés a szervernek';
+    if (btn.textContent === 'Küldés…') btn.textContent = 'LOG ELKÜLDÉSE';
   }
 }
 
@@ -909,6 +972,8 @@ function syncOptCards() {
     const hintEl = $(hintSel);
     if (hintEl) hintEl.textContent = own ? 'Telepítve – a textúrák már cserélve vannak' : hint;
   });
+  setDelVisible('eto', etoOn);
+  setDelVisible('eto-max', etoMaxOn);
 
   // 6282 3D modell: 8 GB alatt letiltva, és soha nem települ magától.
   const voxel = $('#voxelCard');
@@ -916,7 +981,7 @@ function syncOptCards() {
   if (voxel && voxelState) {
     const tooLow = ram > 0 && ram < MODEL_MIN_RAM_GB;
     const done = !!(modsStatus && modsStatus.voxel);
-    voxel.disabled = tooLow;
+    voxel.setAttribute('aria-disabled', tooLow ? 'true' : 'false');
     voxel.classList.toggle('blocked', tooLow);
     voxel.classList.toggle('ready', !tooLow);
     voxelState.classList.toggle('warn', tooLow);
@@ -930,7 +995,38 @@ function syncOptCards() {
           ? 'Telepítve – a Viewpoint modellek már a mod mappában vannak'
           : 'Viewpoint 3D modellek a ZombieBuddyhoz – opcionális';
     }
+    setDelVisible('voxel', done);
   }
+}
+
+// A TÖRLÉS gomb csak akkor látszik, ha a mod tényleg bent van.
+function setDelVisible(id, visible) {
+  const btn = document.querySelector(`.opt-del[data-del="${id}"]`);
+  if (btn) btn.classList.toggle('hidden', !visible);
+}
+
+const OPT_LABELS = {
+  eto: 'ETO – alap',
+  'eto-max': 'ETO – Max Performance',
+  voxel: '6282 3D modellcsomag',
+};
+
+// Telepített opcionális mod törlése a Zomboid\mods mappából.
+function removeOptMod(id) {
+  const label = OPT_LABELS[id] || id;
+  const ok = window.confirm(
+    `Törlöd: ${label}?\n\nA mod mappája kikerül a Zomboid\\mods mappából (a többi modhoz nem nyúlunk).`
+  );
+  if (!ok) {
+    syncOptCards();
+    return;
+  }
+  runBusy(async () => {
+    const res = await bridge.removeMod(id);
+    if (res && res.ok && !res.removed) appendLog(`• ${label}: nincs telepítve.`);
+    await refreshModsState();
+    return res;
+  }, { reload: false });
 }
 
 async function refreshModsState() {

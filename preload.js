@@ -30,6 +30,7 @@ contextBridge.exposeInMainWorld('api', {
   installPzo: () => ipcRenderer.invoke('pzo:install'),
   getModsStatus: () => ipcRenderer.invoke('optmods:status'),
   installMod: (id) => ipcRenderer.invoke('optmods:install', id),
+  removeMod: (id) => ipcRenderer.invoke('optmods:remove', id),
 
   installMods: () => ipcRenderer.invoke('mods:install'),
   installZombieBuddy: () => ipcRenderer.invoke('zb:install'),
@@ -42,7 +43,8 @@ contextBridge.exposeInMainWorld('api', {
   getDiscordWidget: () => ipcRenderer.invoke('discord:widget'),
   openDiscord: () => ipcRenderer.invoke('discord:open'),
   checkCrash: () => ipcRenderer.invoke('crash:check'),
-  sendCrash: (name) => ipcRenderer.invoke('crash:send', { name }),
+  getLatestCrash: () => ipcRenderer.invoke('crash:latest'),
+  sendCrash: (name, manual) => ipcRenderer.invoke('crash:send', { name, manual: !!manual }),
   dismissCrash: () => ipcRenderer.invoke('crash:dismiss'),
   onCrash: (cb) => ipcRenderer.on('crash', (_event, payload) => cb(payload)),
 

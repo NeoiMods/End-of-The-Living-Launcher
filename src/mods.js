@@ -249,8 +249,29 @@ async function install({ cfg, userDataDir, id, log = () => {} }) {
   return { ok: true, id, name: asset.name, dir: target };
 }
 
+// ------------------------------------------------------------------ törlés
+
+// A mod saját mappáját törli a Zomboid\mods alól (a többi modhoz nem nyúl).
+function remove({ id, log = () => {} }) {
+  const spec = SPECS[id];
+  if (!spec) throw new Error('Ismeretlen mod: ' + id);
+
+  const target = path.join(modsDir(), spec.folder);
+  if (!fs.existsSync(target)) return { ok: true, id, removed: false, reason: 'Nincs telepítve.' };
+
+  log('• ' + spec.label + ' törlése: Zomboid\\mods\\' + spec.folder);
+  fs.rmSync(target, { recursive: true, force: true });
+  if (fs.existsSync(target)) {
+    throw new Error('A mappa nem törölhető – zárd be a játékot, és próbáld újra.');
+  }
+
+  log('✓ ' + spec.label + ' törölve: Zomboid\\mods\\' + spec.folder);
+  return { ok: true, id, removed: true, dir: target };
+}
+
 module.exports = {
   install,
+  remove,
   status,
   findAsset,
   extractFolder,

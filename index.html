@@ -83,6 +83,15 @@
         <span class="status-sub"></span>
       </div>
 
+      <div class="crash-banner hidden" id="crashBanner">
+        <div class="cb-text">
+          <strong>Összeomlott a játék</strong>
+          <small id="crashBannerText">Küldd el nekünk a logot – megnézzük, mi okozta.</small>
+        </div>
+        <button id="btnCrashBannerSend" class="cb-send" type="button">LOG KÜLDÉSE</button>
+        <button id="btnCrashBannerHide" class="cb-hide" type="button" title="Elrejtés">×</button>
+      </div>
+
       <button id="btnPlay" class="play-btn" type="button" disabled>
         <span class="play-icon">▶</span> JÁTÉK INDÍTÁSA
       </button>
@@ -171,6 +180,7 @@
         <div class="dc-foot">
           <button id="btnDiscordJoin" class="mini-btn" type="button">Csatlakozás a Discordra</button>
           <button id="btnDiscordReload" class="mini-btn" type="button">Frissítés</button>
+          <button id="btnCrashManual" class="mini-btn crash-btn" type="button" title="A legfrissebb játék-log elküldése a szervernek">LOG KÜLDÉSE</button>
         </div>
       </div>
 
@@ -301,18 +311,20 @@
             <small>A PZO motor telepítése a játékhoz (Master mappa)</small>
             <span class="opt-state go" id="pzoState">TELEPÍTÉS</span>
           </button>
-          <button class="opt-card ready" data-opt="eto" id="etoCard" type="button">
+          <div class="opt-card ready" data-opt="eto" id="etoCard" role="button" tabindex="0">
             <span class="opt-icon">▣</span>
             <b>ETO – alap</b>
             <small id="etoHint">Szebb textúrák, jobb FPS – az ETO másik változatát lecseréli</small>
             <span class="opt-state go" id="etoState">LETÖLTÉS</span>
-          </button>
-          <button class="opt-card ready" data-opt="eto-max" id="etoMaxCard" type="button">
+            <button class="opt-del hidden" data-del="eto" type="button" title="Telepített ETO törlése">TÖRLÉS</button>
+          </div>
+          <div class="opt-card ready" data-opt="eto-max" id="etoMaxCard" role="button" tabindex="0">
             <span class="opt-icon">▤</span>
             <b>ETO – Max Performance</b>
             <small id="etoMaxHint">Maximum FPS egyszerűbb textúrákkal – a másik ETO-t lecseréli</small>
             <span class="opt-state go" id="etoMaxState">LETÖLTÉS</span>
-          </button>
+            <button class="opt-del hidden" data-del="eto-max" type="button" title="Telepített ETO törlése">TÖRLÉS</button>
+          </div>
           <button class="opt-card ready" data-opt="heap" type="button">
             <span class="opt-icon">⚙</span>
             <b>RAM / JVM heap</b>
@@ -343,12 +355,13 @@
             <small id="zbHint">Opcionális segédmod – FPS/TPS nézetekhez</small>
             <span class="opt-state go" id="zbState">LETÖLTÉS</span>
           </button>
-          <button class="opt-card ready" data-opt="voxel" id="voxelCard" type="button">
+          <div class="opt-card ready" data-opt="voxel" id="voxelCard" role="button" tabindex="0">
             <span class="opt-icon">◫</span>
             <b>6282 3D modell</b>
             <small id="voxelHint">Viewpoint 3D modellek a ZombieBuddyhoz – opcionális</small>
             <span class="opt-state go" id="voxelState">LETÖLTÉS</span>
-          </button>
+            <button class="opt-del hidden" data-del="voxel" type="button" title="Telepített 3D modellcsomag törlése">TÖRLÉS</button>
+          </div>
           <button class="opt-card ready" data-opt="modsFolder" type="button">
             <span class="opt-icon">🗀</span>
             <b>Mod mappa</b>
@@ -405,9 +418,9 @@
     <div class="modal crash-modal">
       <h2 id="crashTitle">Összeomlás észlelve</h2>
       <p class="modal-lead">
-        A játék legutóbb összeomlott. Ha elküldöd nekünk a crash logot,
-        megnézzük, mi okozta – így gyorsabban tudunk segíteni (akár neked, akár a
-        többi játékosnak).
+        Kattints a <b>LOG ELKÜLDÉSE</b> gombra: a crash log egy az egyben átmegy a
+        szerver Discord csatornájára, és megnézzük, mi okozta. Csak a Discord
+        nevedet kell megadnod hozzá – pár másodperc az egész.
       </p>
       <ul class="warn-list" id="crashFiles"></ul>
       <label class="field">
@@ -416,11 +429,12 @@
       </label>
       <p class="warn-note">
         A log a szerver saját Discord csatornájára kerül, a neveddel együtt. Ha most
-        kihagyod, a következő indításnál is felajánljuk.
+        kihagyod, a fő panel tetején marad a felhívás, és a DISCORD fülön is bármikor
+        elküldheted.
       </p>
       <div class="modal-actions">
         <button id="btnCrashSkip" class="ghost-btn" type="button">Most nem</button>
-        <button id="btnCrashSend" class="primary-btn" type="button">Elküldés a szervernek</button>
+        <button id="btnCrashSend" class="primary-btn" type="button">LOG ELKÜLDÉSE</button>
       </div>
     </div>
   </div>

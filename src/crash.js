@@ -173,6 +173,31 @@ function readFiles(files) {
   return out;
 }
 
+// Kézi küldéshez: a legfrissebb elérhető logok, kortól függetlenül.
+// (A játékos a launcherből, a DISCORD fülről is elküldheti bármikor.)
+function latest({ gameDir, zomboidDir }) {
+  const files = [];
+  let total = 0;
+  const hs = newestCrashLog(gameDir, 0);
+  if (hs) {
+    files.push(hs);
+    total += hs.size;
+  }
+  for (const extra of sessionLogs(zomboidDir, 0)) {
+    if (total + extra.size > MAX_TOTAL) continue;
+    files.push(extra);
+    total += extra.size;
+  }
+  if (!files.length) return { detected: false };
+  return {
+    detected: true,
+    manual: true,
+    primary: { name: files[0].name, size: files[0].size, mtime: files[0].mtime },
+    files: files.map((f) => ({ name: f.name, size: f.size, mtime: f.mtime, path: f.path })),
+    total,
+  };
+}
+
 function markReported(userDataDir, files) {
   const state = loadState(userDataDir);
   const reported = { ...state.reported };
@@ -182,6 +207,7 @@ function markReported(userDataDir, files) {
 
 module.exports = {
   check,
+  latest,
   summarize,
   readFiles,
   markReported,

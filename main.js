@@ -154,9 +154,14 @@ app.whenReady().then(() => {
     } catch {
       running = false;
     }
-    if (gameSeenRunning && !running) {
-      // A JVM a kilépés után pár másodperccel írja ki a hs_err fájlt.
-      setTimeout(() => notifyCrash(checkCrash()), 5000);
+    if (running !== gameSeenRunning) {
+      // Állapotváltás: a felület (JÁTÉK gomb, tippek) azonnal kövesse.
+      log(running ? '• A játék elindult.' : '• A játék bezárult.');
+      if (win && !win.isDestroyed()) win.webContents.send('refresh');
+      if (gameSeenRunning && !running) {
+        // A JVM a kilépés után pár másodperccel írja ki a hs_err fájlt.
+        setTimeout(() => notifyCrash(checkCrash()), 5000);
+      }
     }
     gameSeenRunning = running;
   }, 10000);
@@ -336,6 +341,19 @@ ipcMain.handle('optmods:install', async (e, id) => {
   busy = true;
   try {
     return await mods.install({ cfg, userDataDir: app.getPath('userData'), id, log });
+  } catch (err) {
+    return reportError(err);
+  } finally {
+    busy = false;
+  }
+});
+
+ipcMain.handle('optmods:remove', async (e, id) => {
+  if (busy) return { ok: false, error: 'Már fut egy művelet.' };
+  if (isGameRunning()) return { ok: false, error: 'A játék fut – zárd be, és utána törölhető.' };
+  busy = true;
+  try {
+    return mods.remove({ id, log });
   } catch (err) {
     return reportError(err);
   } finally {
@@ -560,11 +578,27 @@ function checkCrash() {
   }
 }
 
-// A renderernek szólunk: felugrik a "szeretnéd elküldeni?" ablak.
+// A renderernek szólunk: felugrik a "szeretnéd elküldeni?" ablak. A launcher
+// előjön és villog is, hogy a játékos biztosan észrevegye a felhívást.
 function notifyCrash(info) {
   if (!info || !info.detected) return;
   log(`• Összeomlás észlelve (${info.primary.name}) – elküldhető a szervernek.`);
-  if (win && !win.isDestroyed()) win.webContents.send('crash', info);
+  if (!win || win.isDestroyed()) return;
+  try {
+    if (win.isMinimized()) win.restore();
+    if (!win.isVisible()) win.show();
+    win.focus();
+    win.setAlwaysOnTop(true);
+    win.flashFrame(true);
+    setTimeout(() => {
+      if (!win || win.isDestroyed()) return;
+      win.setAlwaysOnTop(false);
+      win.flashFrame(false);
+    }, 6000);
+  } catch {
+    /* ha nem sikerül, a felület akkor is jelzi */
+  }
+  win.webContents.send('crash', info);
 }
 
 ipcMain.handle('discord:widget', async () => {
@@ -577,10 +611,26 @@ ipcMain.handle('discord:widget', async () => {
 
 ipcMain.handle('crash:check', () => checkCrash());
 
+// Kézi küldéshez: mit tudnánk most elküldeni (a legfrissebb logok).
+ipcMain.handle('crash:latest', () => {
+  try {
+    return crash.latest(crashDirs());
+  } catch (err) {
+    return { detected: false, error: err && err.message ? err.message : String(err) };
+  }
+});
+
 ipcMain.handle('crash:send', async (e, payload) => {
   try {
-    const info = checkCrash();
-    if (!info.detected) throw new Error('Már nincs elküldhető crash log.');
+    const manual = !!(payload && payload.manual);
+    const info = manual ? crash.latest(crashDirs()) : checkCrash();
+    if (!info.detected) {
+      throw new Error(
+        manual
+          ? 'Nem találtam elküldhető logot (hs_err / console.txt / Logs).'
+          : 'Már nincs elküldhető crash log.'
+      );
+    }
     const files = crash.readFiles(info.files);
     if (!files.length) throw new Error('A crash log nem olvasható.');
     const mem = system.getMemoryInfo(Number(cfg.jvmMaxMb) || 8192);
