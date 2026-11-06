@@ -1,0 +1,22 @@
+{
+  "version": "0.7",
+  "updatedAt": "2026-11-06",
+  "items": [
+    {
+      "id": "0.7",
+      "version": "0.7",
+      "date": "2026-11-06",
+      "tag": "MEGA FRISSÍTÉS",
+      "title": "0.7 – új launcher, okosabb frissítéssel",
+      "text": "Ez a launcher első 0.7-es kiadása. Mostantól minden frissítés előtt felugrik egy kis ablak, ahol látod, melyik verzióról melyikre váltunk, és hogy mi az új – csak az OK után cserélődik bármi.",
+      "changes": [
+        "Frissítés előtt felugró ablak: látszik a régi és az új verzió, valamint az újdonságok listája, és neked kell OK-zni.",
+        "Új ÚJDONSÁGOK fül a Discord és az események mellett – ezt a GitHubon lévő news.json-ból olvassa a launcher.",
+        "Ha új bejegyzés kerül a hírekbe, induláskor magától felugrik egy ablakban.",
+        "Töltőcsík minden letöltésnél: látszik, hány százaléknál tart a csomag, a PZO vagy épp a launcher frissítése.",
+        "Új Frissítés gomb a fő panelen: bármikor le lehet kérdezni, hogy frissült-e valami a GitHubon.",
+        "A launcher verziója mostantól a bal oldali kis jelvényen is látszik (v0.7)."
+      ]
+    }
+  ]
+}

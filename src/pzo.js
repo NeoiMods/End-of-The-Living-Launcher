@@ -182,21 +182,32 @@ function concatFiles(parts, dest) {
 }
 
 // Egész csomag letöltése: sima fájl vagy part001…partNNN darabok.
-async function downloadAsset(asset, dest, cfg, log = () => {}) {
+async function downloadAsset(asset, dest, cfg, log = () => {}, onProgress = null) {
   if (!asset || !Array.isArray(asset.parts) || asset.parts.length === 0) {
-    await download(asset, dest, cfg);
+    await download(asset, dest, cfg, onProgress);
     return dest;
   }
 
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   const localParts = [];
+  const total = asset.parts.reduce((sum, p) => sum + (Number(p.size) || 0), 0);
+  let base = 0;
   let n = 0;
   for (const part of asset.parts) {
     n++;
     const local = `${dest}.part${String(part.index).padStart(3, '0')}`;
     const mb = part.size ? (part.size / 1048576).toFixed(1) + ' MB' : '?';
     log(`  ${n}/${asset.parts.length}. rész: ${part.name} (${mb})…`);
-    await download(part, local, cfg);
+    const start = base;
+    await download(
+      part,
+      local,
+      cfg,
+      typeof onProgress === 'function' && total
+        ? (received) => onProgress(start + received, total)
+        : null
+    );
+    base += Number(part.size) || 0;
     localParts.push(local);
   }
 
@@ -206,7 +217,7 @@ async function downloadAsset(asset, dest, cfg, log = () => {}) {
   return dest;
 }
 
-async function download(asset, dest, cfg) {
+async function download(asset, dest, cfg, onProgress = null) {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   const token = String((cfg && cfg.githubToken) || '').trim();
   const attempts = [];
@@ -217,7 +228,7 @@ async function download(asset, dest, cfg) {
   let lastError = null;
   for (const attempt of attempts) {
     try {
-      await downloadFile(attempt.url, dest, { headers: attempt.headers });
+      await downloadFile(attempt.url, dest, { headers: attempt.headers, onProgress });
       return true;
     } catch (err) {
       lastError = err;
@@ -271,7 +282,7 @@ function launchInstaller(dir) {
   });
 }
 
-async function install({ cfg, userDataDir, log = () => {}, auto = false }) {
+async function install({ cfg, userDataDir, log = () => {}, auto = false, onProgress = null }) {
   const repo = repoOf(cfg);
   const folder = folderOf(cfg);
 
@@ -281,7 +292,7 @@ async function install({ cfg, userDataDir, log = () => {}, auto = false }) {
   const sizeMb = asset.size ? (asset.size / 1048576).toFixed(1) + ' MB' : '?';
   const zipFile = path.join(userDataDir, 'packs', '_downloads', asset.name);
   log(`→ ${asset.name} letöltése (${sizeMb})…`);
-  await downloadAsset(asset, zipFile, cfg, log);
+  await downloadAsset(asset, zipFile, cfg, log, onProgress);
 
   const target = path.join(userDataDir, 'packs', 'pzo-launcher');
   fs.rmSync(target, { recursive: true, force: true });

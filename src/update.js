@@ -26,7 +26,7 @@ const HTTP_HEADERS = {
 };
 
 // A launchert alkotó fájlok/mappák – ezeket cseréli a frissítés.
-const APP_FILES = ['main.js', 'preload.js', 'renderer.js', 'index.html', 'styles.css'];
+const APP_FILES = ['main.js', 'preload.js', 'renderer.js', 'index.html', 'styles.css', 'news.json', 'events.json'];
 const APP_DIRS = ['src', 'assets', 'themes'];
 
 // ------------------------------------------------------------------ repo
@@ -322,6 +322,12 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
     log(`Frissítés letöltése: ${repo} (${BRANCH})`);
     await downloadFile(`https://api.github.com/repos/${repo}/zipball/${BRANCH}`, zipPath, {
       headers: HTTP_HEADERS,
+      onProgress: (received, totalBytes) =>
+        progress({
+          label: 'Frissítés letöltése',
+          done: received,
+          total: totalBytes || 0,
+        }),
     });
 
     progress({ label: 'Frissítés kicsomagolása…' });

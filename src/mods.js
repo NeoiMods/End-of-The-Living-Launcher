@@ -212,7 +212,7 @@ function extractFolder(zipFile, prefix, outDir) {
 
 // ------------------------------------------------------------------ telepítés
 
-async function install({ cfg, userDataDir, id, log = () => {} }) {
+async function install({ cfg, userDataDir, id, log = () => {}, onProgress = null }) {
   const spec = SPECS[id];
   if (!spec) throw new Error('Ismeretlen mod: ' + id);
 
@@ -222,7 +222,7 @@ async function install({ cfg, userDataDir, id, log = () => {} }) {
 
   const zipFile = path.join(userDataDir, 'packs', '_downloads', asset.name);
   log(`→ ${asset.name} letöltése (${sizeMb})…`);
-  await pzo.downloadAsset(asset, zipFile, cfg, log);
+  await pzo.downloadAsset(asset, zipFile, cfg, log, onProgress);
 
   const base = modsDir();
   const target = path.join(base, spec.folder);

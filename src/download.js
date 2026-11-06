@@ -33,6 +33,9 @@ function downloadFile(url, dest, options = {}) {
   const redirects = opts.redirects || 0;
   const headers = opts.headers || {};
   const timeoutMs = opts.timeoutMs || 120000;
+  // Bájt-szintű visszajelzés a töltőcsíkhoz (legfeljebb 4-szer másodpercenként).
+  const onProgress = typeof opts.onProgress === 'function' ? opts.onProgress : null;
+  let lastReport = 0;
   return new Promise((resolve, reject) => {
     const lib = url.startsWith('https:') ? https : http;
     const req = lib.get(url, { headers }, (res) => {
@@ -43,6 +46,7 @@ function downloadFile(url, dest, options = {}) {
           redirects: redirects + 1,
           headers,
           timeoutMs,
+          onProgress,
         }).then(resolve, reject);
       }
       if (res.statusCode !== 200) {
@@ -50,6 +54,30 @@ function downloadFile(url, dest, options = {}) {
         return reject(new Error(`Letöltési hiba (HTTP ${res.statusCode}): ${url}`));
       }
       const ws = fs.createWriteStream(dest);
+      if (onProgress) {
+        const total = Number(res.headers['content-length']) || 0;
+        let received = 0;
+        let reported = 0;
+        res.on('data', (chunk) => {
+          received += chunk.length;
+          const now = Date.now();
+          if (now - lastReport < 250 && (!total || received < total)) return;
+          lastReport = now;
+          reported = received;
+          try {
+            onProgress(received, total);
+          } catch {
+            /* a visszajelzés hibája nem állítja meg a letöltést */
+          }
+        });
+        res.on('end', () => {
+          try {
+            onProgress(total || reported || received, total || received);
+          } catch {
+            /* nem kritikus */
+          }
+        });
+      }
       res.pipe(ws);
       ws.on('error', reject);
       res.on('error', reject);

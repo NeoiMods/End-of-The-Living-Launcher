@@ -222,6 +222,30 @@ function setBusy(value) {
 }
 
 function showProgress(payload) {
+  // A frissítés-ablak saját töltőcsíkja is kövesse a folyamatot.
+  const updWrap = $('#updProgressWrap');
+  if (updWrap && !updWrap.classList.contains('hidden')) {
+    const pct =
+      payload && Number.isFinite(payload.done) && Number.isFinite(payload.total) && payload.total > 0
+        ? Math.min(100, (payload.done / payload.total) * 100)
+        : null;
+    const updBar = $('#updBar');
+    const updLabel = $('#updLabel');
+    if (updBar && payload && payload.label) {
+      if (pct != null) {
+        updBar.classList.remove('is-indet');
+        updBar.style.width = `${pct.toFixed(0)}%`;
+      } else {
+        // A GitHub nem mindig küld fájlméretet – ilyenkor mozgó csík + MB.
+        updBar.classList.add('is-indet');
+      }
+    }
+    if (updLabel && payload && payload.label) {
+      const mb = payload.done && pct == null ? ` – ${(payload.done / 1048576).toFixed(1).replace('.', ',')} MB` : '';
+      updLabel.textContent = payload.label + (pct != null ? ` – ${pct.toFixed(0)}%` : mb + '…');
+    }
+  }
+
   const wrap = $('#progressWrap');
   const bar = $('#progressBar');
   const label = $('#progressLabel');
@@ -439,6 +463,19 @@ function wireEvents() {
 
   $('#btnEventReload').addEventListener('click', () => loadEvent(true));
 
+  // ---- újdonságok + frissítés ----
+  $('#btnNewsReload').addEventListener('click', () => loadNews(true));
+  $('#btnNewsOk').addEventListener('click', () => {
+    $('#newsOverlay').classList.add('hidden');
+    markNewsSeen();
+  });
+  $('#btnUpdateNow').addEventListener('click', applyUpdateNow);
+  $('#btnUpdateLater').addEventListener('click', () => {
+    $('#updateOverlay').classList.add('hidden');
+    appendLog('• Frissítés későbbre hagyva – a Frissítés gombbal bármikor indítható.');
+  });
+  $('#btnCheckUpdate').addEventListener('click', checkUpdateFromUi);
+
   $('#btnEventOpen').addEventListener('click', () => {
     if (currentEvent && currentEvent.url) bridge.openExternal(currentEvent.url);
   });
@@ -583,9 +620,11 @@ function setTab(name) {
   });
   $('#log').classList.toggle('hidden', name !== 'log');
   $('#eventView').classList.toggle('hidden', name !== 'event');
+  $('#newsView').classList.toggle('hidden', name !== 'news');
   $('#discordView').classList.toggle('hidden', name !== 'discord');
   $('#btnClear').classList.toggle('hidden', name !== 'log');
   if (name === 'event') markEventSeen();
+  if (name === 'news') markNewsSeen();
   if (name === 'discord') loadDiscordWidget(false);
 }
 
@@ -776,6 +815,263 @@ async function sendCrashLog(manual) {
   } finally {
     btn.disabled = false;
     if (btn.textContent === 'Küldés…') btn.textContent = 'LOG ELKÜLDÉSE';
+  }
+}
+
+// ---------------------------------------------------------------- újdonságok
+
+const SEEN_NEWS_KEY = 'eotl.seenNews';
+let newsData = null;
+
+function seenNewsId() {
+  try {
+    return localStorage.getItem(SEEN_NEWS_KEY) || '';
+  } catch {
+    return '';
+  }
+}
+
+function markNewsSeen() {
+  const items = (newsData && newsData.items) || [];
+  if (items.length) {
+    try {
+      localStorage.setItem(SEEN_NEWS_KEY, items[0].id);
+    } catch {
+      /* privát mód: nem baj */
+    }
+  }
+  const dot = $('#newsDot');
+  if (dot) dot.classList.remove('is-on');
+}
+
+function newsCard(item) {
+  const card = document.createElement('div');
+  card.className = 'news-item';
+
+  const top = document.createElement('div');
+  top.className = 'ni-top';
+  const tag = document.createElement('span');
+  tag.className = 'ni-tag';
+  tag.textContent = item.tag || 'ÚJDONSÁG';
+  top.appendChild(tag);
+  if (item.version) {
+    const ver = document.createElement('span');
+    ver.className = 'ni-ver';
+    ver.textContent = 'v' + item.version;
+    top.appendChild(ver);
+  }
+  if (item.date) {
+    const date = document.createElement('span');
+    date.className = 'ni-date';
+    date.textContent = item.date;
+    top.appendChild(date);
+  }
+  card.appendChild(top);
+
+  const title = document.createElement('h3');
+  title.className = 'ni-title';
+  title.textContent = item.title;
+  card.appendChild(title);
+
+  if (item.text) {
+    const text = document.createElement('p');
+    text.className = 'ni-text';
+    text.textContent = item.text;
+    card.appendChild(text);
+  }
+
+  if (item.changes && item.changes.length) {
+    const list = document.createElement('ul');
+    list.className = 'ni-changes';
+    for (const change of item.changes) {
+      const li = document.createElement('li');
+      li.textContent = change;
+      list.appendChild(li);
+    }
+    card.appendChild(list);
+  }
+  return card;
+}
+
+function renderNews(res) {
+  newsData = res && res.items ? res : { items: [] };
+  const list = $('#newsList');
+  if (!list) return;
+  list.innerHTML = '';
+
+  const ver = $('#newsVer');
+  if (ver) ver.textContent = res && res.version ? 'v' + res.version : '';
+
+  const items = newsData.items || [];
+  if (!items.length) {
+    const empty = document.createElement('div');
+    empty.className = 'news-empty';
+    empty.textContent =
+      (res && res.error ? 'Az újdonságok most nem érhetők el (' + res.error + '). ' : '') +
+      'Amint feltöltünk valamit a GitHubra (news.json), itt megjelenik.';
+    list.appendChild(empty);
+  } else {
+    for (const item of items) list.appendChild(newsCard(item));
+  }
+
+  const unseen = items.length && items[0].id !== seenNewsId();
+  const dot = $('#newsDot');
+  if (dot) dot.classList.toggle('is-on', !!unseen);
+}
+
+async function loadNews(force) {
+  if (browserMode) {
+    renderNews({
+      ok: true,
+      version: '0.7',
+      items: [
+        {
+          id: '0.7',
+          version: '0.7',
+          date: '2026-11-06',
+          tag: 'MEGA FRISSÍTÉS',
+          title: '0.7 – ez a legelső kiadás',
+          text: 'Új frissítés-ablak, újdonságok fül és töltőcsík.',
+          changes: ['Új verzió ablak OK gombbal', 'Újdonságok fül', 'Töltőcsík a csomagokhoz'],
+        },
+      ],
+    });
+    return;
+  }
+  try {
+    renderNews(await bridge.getNews(!!force));
+  } catch (err) {
+    renderNews({ ok: false, items: [], error: err && err.message ? err.message : String(err) });
+  }
+}
+
+// Ha új újdonság van (és nem frissül most a launcher), induláskor felugrik.
+function maybeShowNewsPopup() {
+  const items = (newsData && newsData.items) || [];
+  if (!items.length) return;
+  if (items[0].id === seenNewsId()) return;
+  const upd = $('#updateOverlay');
+  if (upd && !upd.classList.contains('hidden')) return; // a frissítés-ablak az első
+
+  const newest = items[0];
+  $('#newsOverlayLead').textContent = newest.version
+    ? `Launcher v${newest.version} – ezek változtak:`
+    : 'Ezek történtek mostanában:';
+  const list = $('#newsOverlayList');
+  list.innerHTML = '';
+  list.appendChild(newsCard(newest));
+  $('#newsOverlay').classList.remove('hidden');
+}
+
+// ---------------------------------------------------------------- frissítés
+
+let pendingUpdate = null;
+
+function renderUpdateModal(payload) {
+  if (!payload) return;
+  pendingUpdate = payload;
+  $('#updFrom').textContent = 'v' + (payload.fromVersion || '?');
+  $('#updTo').textContent = 'v' + (payload.toVersion || '?');
+
+  const box = $('#updChanges');
+  box.innerHTML = '';
+  const changes = payload.changeItems || [];
+  if (changes.length) {
+    for (const item of changes) {
+      const block = document.createElement('div');
+      block.className = 'upd-change';
+      const head = document.createElement('strong');
+      head.textContent = item.title || 'Újdonságok';
+      block.appendChild(head);
+      if (item.changes && item.changes.length) {
+        const ul = document.createElement('ul');
+        for (const change of item.changes) {
+          const li = document.createElement('li');
+          li.textContent = change;
+          ul.appendChild(li);
+        }
+        block.appendChild(ul);
+      } else if (item.text) {
+        const p = document.createElement('p');
+        p.textContent = item.text;
+        block.appendChild(p);
+      }
+      box.appendChild(block);
+    }
+  } else if (payload.remoteMessage) {
+    const p = document.createElement('p');
+    p.className = 'upd-note';
+    p.textContent = payload.remoteMessage;
+    box.appendChild(p);
+  }
+
+  $('#updProgressWrap').classList.add('hidden');
+  $('#updBar').style.width = '0%';
+  const btn = $('#btnUpdateNow');
+  btn.disabled = false;
+  btn.textContent = 'OK – FRISSÍTS';
+  $('#btnUpdateLater').disabled = false;
+  $('#updateOverlay').classList.remove('hidden');
+}
+
+async function applyUpdateNow() {
+  const btn = $('#btnUpdateNow');
+  btn.disabled = true;
+  btn.textContent = 'Frissítés…';
+  $('#btnUpdateLater').disabled = true;
+  $('#updProgressWrap').classList.remove('hidden');
+  $('#updLabel').textContent = 'Előkészítés…';
+  try {
+    const res = await bridge.applyUpdate();
+    if (res && res.ok) {
+      $('#updBar').classList.remove('is-indet');
+      $('#updBar').style.width = '100%';
+      $('#updLabel').textContent =
+        res.restartRequired === false ? 'Kész – nincs cserélendő fájl.' : 'Kész – a launcher újraindul…';
+      pendingUpdate = null;
+    } else {
+      const msg = (res && (res.error || res.reason)) || 'a frissítés nem sikerült';
+      appendLog('✗ Frissítés: ' + msg);
+      $('#updLabel').textContent = '✗ ' + msg;
+      btn.disabled = false;
+      btn.textContent = 'Újrapróbálom';
+      $('#btnUpdateLater').disabled = false;
+    }
+  } catch (err) {
+    const msg = err && err.message ? err.message : String(err);
+    appendLog('✗ Frissítés: ' + msg);
+    $('#updLabel').textContent = '✗ ' + msg;
+    btn.disabled = false;
+    btn.textContent = 'Újrapróbálom';
+    $('#btnUpdateLater').disabled = false;
+  }
+}
+
+async function checkUpdateFromUi() {
+  appendLog('• Frissítés ellenőrzése a GitHubon…');
+  try {
+    const res = await bridge.checkUpdate();
+    if (res && res.update) renderUpdateModal(res);
+    else if (res && res.ok) appendLog('✓ ' + (res.reason || 'naprakész'));
+    else appendLog('! ' + ((res && res.reason) || 'a frissítés ellenőrzése nem sikerült'));
+  } catch (err) {
+    appendLog('✗ ' + (err && err.message ? err.message : err));
+  }
+}
+
+async function renderVersionChip() {
+  const chip = $('#versionChip');
+  if (!chip) return;
+  if (browserMode) {
+    chip.textContent = 'v0.7';
+    return;
+  }
+  try {
+    const info = await bridge.getVersion();
+    chip.textContent = 'v' + ((info && info.version) || '?');
+    chip.title = 'Launcher verzió' + (info && info.sha ? ' – ' + String(info.sha).slice(0, 7) : '');
+  } catch {
+    chip.textContent = 'v?';
   }
 }
 
@@ -1198,7 +1494,9 @@ async function init() {
   bridge.onProgress(showProgress);
   bridge.onRefresh(() => refresh());
   bridge.onCrash((info) => openCrash(info));
+  bridge.onUpdateAvailable((payload) => renderUpdateModal(payload));
   appendLog('End of The Living Launcher elindítva.');
+  renderVersionChip();
   await refresh();
 
   // Ha a legutóbbi játék összeomlott, felajánljuk a crash log elküldését.
@@ -1213,6 +1511,9 @@ async function init() {
   refreshServerStatus();
   startEventLoop();
   loadEvent(false);
+
+  // Újdonságok: a fül tartalma + ha van új bejegyzés, induláskor felugrik.
+  loadNews(false).then(() => setTimeout(maybeShowNewsPopup, 3500));
 
   if (statusTimer) clearInterval(statusTimer);
   statusTimer = setInterval(() => {

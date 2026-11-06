@@ -1,7 +1,7 @@
 {
   "name": "end-of-the-living-launcher",
   "productName": "End of The Living Launcher",
-  "version": "0.1.0",
+  "version": "0.7.0",
   "description": "Project Zomboid launcher: automatic mod install and direct server connect",
   "main": "main.js",
   "scripts": {

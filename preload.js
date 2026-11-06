@@ -15,9 +15,14 @@ contextBridge.exposeInMainWorld('api', {
   getMemory: () => ipcRenderer.invoke('system:memory'),
 
   // ---- frissítés ----
+  getVersion: () => ipcRenderer.invoke('app:version'),
   getUpdateInfo: () => ipcRenderer.invoke('update:info'),
   checkUpdate: () => ipcRenderer.invoke('update:check'),
   applyUpdate: () => ipcRenderer.invoke('update:apply'),
+  onUpdateAvailable: (cb) => ipcRenderer.on('update-available', (_event, payload) => cb(payload)),
+
+  // ---- újdonságok (news.json a GitHubon) ----
+  getNews: (force) => ipcRenderer.invoke('news:get', force),
 
   // ---- események ----
   getEvent: (force) => ipcRenderer.invoke('events:get', force),

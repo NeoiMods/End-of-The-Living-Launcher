@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const { loadConfig, saveConfig, DEFAULT_CONFIG } = require('./src/config');
 const { getEnvironment, resolveGamePath, zomboidDir } = require('./src/paths');
+const news = require('./src/news');
 const { launchGame, isGameRunning } = require('./src/launch');
 const { runSetup } = require('./src/setup');
 const { fetchCollection } = require('./src/collection');
@@ -167,9 +168,9 @@ app.whenReady().then(() => {
   }, 10000);
 
   // ---- Auto-updater ---------------------------------------------------
-  // A GitHub repó main ágát követi: ha új commit van, letölti és lecseréli
-  // a launcher fájljait, majd újraindul. Fejlesztői módban (electron .)
-  // nem írja felül a saját munkakönyvtárat.
+  // A GitHub repó main ágát követi. Induláskor csak ELLENŐRZI a frissítést,
+  // és a felület kérdezi meg – a játékos OK-zza le, mielőtt bármi cserélődik.
+  // Fejlesztői módban (electron .) nem írja felül a saját munkakönyvtárat.
   setTimeout(async () => {
     try {
       if (!app.isPackaged) {
@@ -177,21 +178,10 @@ app.whenReady().then(() => {
         return;
       }
       log('• Frissítés ellenőrzése a GitHubon…');
-      const res = await update.autoUpdateOnLaunch({
-        cfg,
-        userDataDir: app.getPath('userData'),
-        appRoot: __dirname,
-        log,
-        progress,
-      });
-      if (res && res.ok && res.updated) {
-        setTimeout(() => {
-          app.relaunch();
-          app.exit(0);
-        }, 1500);
-      } else if (res && !res.ok) {
-        log('! ' + (res.reason || 'a frissítés nem sikerült'));
-      }
+      const payload = await updateInfoPayload();
+      if (payload.update) log(`• Új launcher verzió érhető el: ${payload.fromVersion} → ${payload.toVersion}`);
+      else log('✓ ' + (payload.reason || 'naprakész'));
+      if (payload.update && win && !win.isDestroyed()) win.webContents.send('update-available', payload);
     } catch (err) {
       log('! Frissítés hiba: ' + (err && err.message ? err.message : err));
     }
@@ -233,6 +223,56 @@ ipcMain.handle('config:set', (e, next) => {
 
 // ---- frissítés ---------------------------------------------------------
 
+// A launcher saját verziója (package.json) és a GitHubon jelzett legfrissebb
+// verzió (news.json) – a felület ezt írja ki: "0.7 → 0.8".
+function localVersion() {
+  try {
+    // A csomag 0.7.0-t ír, a felületen viszont 0.7-et mutatunk.
+    return String(app.getVersion() || '').trim().replace(/\.0$/, '') || '0.0';
+  } catch {
+    return '0.0';
+  }
+}
+
+async function updateInfoPayload() {
+  const userDataDir = app.getPath('userData');
+  const fromVersion = localVersion();
+  const [res, info] = await Promise.all([
+    update.checkForUpdate({ cfg, userDataDir, appRoot: __dirname }),
+    news.fetchNews({ cfg, appRoot: __dirname }).catch(() => ({ items: [], version: '' })),
+  ]);
+  const toVersion = (info && info.version) || (res && res.remoteSha ? res.remoteSha.slice(0, 7) : '');
+  const items = (info && info.items) || [];
+  // Az új verzióhoz tartozó újdonságok (ha a news.json-ban meg van jelölve).
+  const changes = items
+    .filter((it) => (it.version ? it.version === toVersion : true))
+    .slice(0, 3);
+  return {
+    ok: !!(res && res.ok),
+    update: !!(res && res.update),
+    reason: (res && res.reason) || '',
+    fromVersion,
+    toVersion: toVersion || '?' ,
+    remoteSha: (res && res.remoteSha) || '',
+    remoteMessage: (res && res.remote && res.remote.message) || '',
+    changeItems: changes,
+  };
+}
+
+ipcMain.handle('app:version', () => ({
+  version: localVersion(),
+  packaged: app.isPackaged,
+  sha: baselineSha(),
+}));
+
+ipcMain.handle('news:get', async (e, force) => {
+  try {
+    return await news.fetchNews({ cfg, appRoot: __dirname, force: !!force });
+  } catch (err) {
+    return { ok: false, items: [], error: err && err.message ? err.message : String(err) };
+  }
+});
+
 ipcMain.handle('update:info', () =>
   update.getUpdateInfo({
     cfg,
@@ -243,15 +283,11 @@ ipcMain.handle('update:info', () =>
 
 ipcMain.handle('update:check', async () => {
   try {
-    const res = await update.checkForUpdate({
-      cfg,
-      userDataDir: app.getPath('userData'),
-      appRoot: __dirname,
-    });
-    if (!res.ok) log('! Frissítés ellenőrzés: ' + res.reason);
-    else if (res.update) log(`✓ Új verzió érhető el: ${res.remoteSha.slice(0, 7)}`);
-    else log('✓ ' + res.reason);
-    return res;
+    const payload = await updateInfoPayload();
+    if (!payload.ok) log('! Frissítés ellenőrzés: ' + payload.reason);
+    else if (payload.update) log(`✓ Új verzió érhető el: ${payload.fromVersion} → ${payload.toVersion}`);
+    else log('✓ ' + payload.reason);
+    return payload;
   } catch (err) {
     return reportError(err);
   }
@@ -323,11 +359,17 @@ ipcMain.handle('pzo:install', async () => {
   if (busy) return { ok: false, error: 'Már fut egy művelet.' };
   busy = true;
   try {
-    return await pzo.install({ cfg, userDataDir: app.getPath('userData'), log });
+    return await pzo.install({
+      cfg,
+      userDataDir: app.getPath('userData'),
+      log,
+      onProgress: (done, total) => progress({ label: 'PZO letöltése', done, total }),
+    });
   } catch (err) {
     return reportError(err);
   } finally {
     busy = false;
+    progress(null);
   }
 });
 
@@ -340,11 +382,18 @@ ipcMain.handle('optmods:install', async (e, id) => {
   if (busy) return { ok: false, error: 'Már fut egy művelet.' };
   busy = true;
   try {
-    return await mods.install({ cfg, userDataDir: app.getPath('userData'), id, log });
+    return await mods.install({
+      cfg,
+      userDataDir: app.getPath('userData'),
+      id,
+      log,
+      onProgress: (done, total) => progress({ label: 'Csomag letöltése', done, total }),
+    });
   } catch (err) {
     return reportError(err);
   } finally {
     busy = false;
+    progress(null);
   }
 });
 

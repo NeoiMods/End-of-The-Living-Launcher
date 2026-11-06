@@ -131,6 +131,8 @@
       </button>
 
       <div class="action-row">
+        <span class="ver-chip" id="versionChip" title="Launcher verzió">v…</span>
+        <button id="btnCheckUpdate" class="mini-btn" type="button" title="Új launcher verzió keresése a GitHubon">Frissítés</button>
         <button id="btnRefreshCollection" class="mini-btn" type="button">Kollekció frissítése</button>
         <button id="btnSubscribe" class="mini-btn" type="button">Feliratkozás</button>
         <button id="btnZombieBuddy" class="mini-btn" type="button">ZombieBuddy</button>
@@ -152,6 +154,9 @@
           <button class="tab is-active" data-tab="log" type="button" role="tab">NAPLÓ</button>
           <button class="tab" data-tab="event" type="button" role="tab">
             <span class="tab-dot" id="eventDot"></span>ESEMÉNY
+          </button>
+          <button class="tab" data-tab="news" type="button" role="tab">
+            <span class="tab-dot" id="newsDot"></span>ÚJDONSÁGOK
           </button>
           <button class="tab" data-tab="discord" type="button" role="tab">
             <span class="tab-dot" id="discordDot"></span>DISCORD
@@ -182,6 +187,15 @@
           <button id="btnDiscordReload" class="mini-btn" type="button">Frissítés</button>
           <button id="btnCrashManual" class="mini-btn crash-btn" type="button" title="A legfrissebb játék-log elküldése a szervernek">LOG KÜLDÉSE</button>
         </div>
+      </div>
+
+      <div class="news-view hidden" id="newsView">
+        <div class="news-head">
+          <span class="news-title">ÚJDONSÁGOK</span>
+          <span class="news-ver" id="newsVer">…</span>
+          <button id="btnNewsReload" class="mini-btn" type="button">Frissítés</button>
+        </div>
+        <div class="news-list" id="newsList"></div>
       </div>
 
       <div class="event-view hidden" id="eventView">
@@ -410,6 +424,40 @@
       <div class="modal-actions">
         <button id="btnZbCancel" class="ghost-btn" type="button">Mégse</button>
         <button id="btnZbGo" class="primary-btn" type="button">Letöltés és telepítés</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="updateOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="updateTitle">
+    <div class="modal update-modal">
+      <h2 id="updateTitle">Új verzió érhető el</h2>
+      <p class="modal-lead">
+        A launcher most frissül. A csere után a launcher automatikusan újraindul.
+      </p>
+      <div class="ver-switch">
+        <span class="vs-from" id="updFrom">0.7</span>
+        <span class="vs-arrow">→</span>
+        <span class="vs-to" id="updTo">0.8</span>
+      </div>
+      <div class="upd-changes" id="updChanges"></div>
+      <div class="upd-progress hidden" id="updProgressWrap">
+        <div class="upd-bar"><i id="updBar"></i></div>
+        <div class="upd-label" id="updLabel">Előkészítés…</div>
+      </div>
+      <div class="modal-actions">
+        <button id="btnUpdateLater" class="ghost-btn" type="button">Később</button>
+        <button id="btnUpdateNow" class="primary-btn" type="button">OK – FRISSÍTS</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="newsOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="newsOverlayTitle">
+    <div class="modal news-modal">
+      <h2 id="newsOverlayTitle">Újdonságok</h2>
+      <p class="modal-lead" id="newsOverlayLead">Frissült a launcher – ezek változtak:</p>
+      <div class="news-overlay-list" id="newsOverlayList"></div>
+      <div class="modal-actions">
+        <button id="btnNewsOk" class="primary-btn" type="button">OK</button>
       </div>
     </div>
   </div>
