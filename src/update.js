@@ -27,6 +27,8 @@ const HTTP_HEADERS = {
 
 // A launchert alkotó fájlok/mappák – ezeket cseréli a frissítés.
 const APP_FILES = ['main.js', 'preload.js', 'renderer.js', 'index.html', 'styles.css', 'news.json', 'events.json'];
+// Csak ezek szerkesztése nem indít launcher-frissítést (a játékos csak a hírt látja).
+const NOTE_FILES = ['news.json', 'events.json'];
 const APP_DIRS = ['src', 'assets', 'themes'];
 
 // ------------------------------------------------------------------ repo
@@ -203,6 +205,22 @@ async function checkForUpdate({ cfg = {}, userDataDir, appRoot }) {
     };
   }
 
+  // Ha a két commit közt csak a hírek/események változtak, nem kell launchert
+  // frissíteni – a játékos csak az új bejegyzést látja, frissítés-ablak nélkül.
+  const onlyNotes = await changesAreOnlyNotes(repo, localSha, remote.sha);
+  if (onlyNotes) {
+    writeState(userDataDir, { installedSha: remote.sha, installedAt: Date.now() });
+    return {
+      ok: true,
+      update: false,
+      repo,
+      localSha: remote.sha,
+      remoteSha: remote.sha,
+      remote,
+      reason: 'csak az újdonságok/események frissültek',
+    };
+  }
+
   return {
     ok: true,
     update: true,
@@ -213,6 +231,23 @@ async function checkForUpdate({ cfg = {}, userDataDir, appRoot }) {
     remote,
     reason: 'új verzió érhető el',
   };
+}
+
+// Csak a GitHubon szerkeszthető "tartalom" fájlok változtak? (news.json, events.json)
+// Hiba esetén inkább frissítünk – a rossz döntés itt a kimaradt frissítés lenne.
+async function changesAreOnlyNotes(repo, base, head) {
+  if (!base || !head || base === head) return false;
+  const url = `https://api.github.com/repos/${repo}/compare/${base}...${head}`;
+  try {
+    const { status, body } = await fetchText(url, { headers: HTTP_HEADERS, timeoutMs: 15000 });
+    if (status !== 200) return false;
+    const data = JSON.parse(body);
+    const files = Array.isArray(data.files) ? data.files : null;
+    if (!files || !files.length) return false;
+    return files.every((f) => NOTE_FILES.includes(String(f.filename || '')));
+  } catch {
+    return false;
+  }
 }
 
 // --------------------------------------------------------------- telepítés
@@ -462,6 +497,7 @@ module.exports = {
   parseRepo,
   resolveRepo,
   checkForUpdate,
+  changesAreOnlyNotes,
   applyUpdate,
   autoUpdateOnLaunch,
   getUpdateInfo,
