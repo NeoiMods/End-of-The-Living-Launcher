@@ -1368,25 +1368,16 @@ function renderModList() {
   const q = ($('#modListSearch').value || '').trim().toLowerCase();
   const filter = $('#modListFilter').value;
 
-  const entries = [];
-  for (const m of data.mods || []) entries.push({ ...m, missing: false });
-  for (const id of data.missing || []) {
-    entries.push({ id, name: '(nincs telepítve)', source: 'missing', enabled: true, missing: true });
-  }
-
-  const shown = entries.filter((e) => {
+  // Csak a gépen létező modok kerülnek a listára; a hiányzó sorokat a fenti
+  // összegzés mutatja, és a "Hiányzók törlése" gomb intézi el.
+  const shown = (data.mods || []).filter((e) => {
     if (filter === 'enabled' && !e.enabled) return false;
     if (filter === 'disabled' && e.enabled) return false;
-    if (filter === 'missing' && !e.missing) return false;
     if (!q) return true;
     return String(e.name).toLowerCase().includes(q) || String(e.id).toLowerCase().includes(q);
   });
 
-  // A telepített modok elöl, a hiányzó (régi kollekcióból maradt) sorok a végén.
-  shown.sort((a, b) => {
-    if (!!a.missing !== !!b.missing) return a.missing ? 1 : -1;
-    return String(a.name).localeCompare(String(b.name), 'hu');
-  });
+  shown.sort((a, b) => String(a.name).localeCompare(String(b.name), 'hu'));
 
   if (!shown.length) {
     const empty = document.createElement('div');
