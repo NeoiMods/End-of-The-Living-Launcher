@@ -193,6 +193,21 @@ async function checkForUpdate({ cfg = {}, userDataDir, appRoot }) {
     lastError: null,
   });
 
+  // Ha a build saját commitja már a legfrissebb (pl. kézzel felmásolt csomag),
+  // akkor nincs mit letölteni – csak az állapotfájlt igazítjuk hozzá.
+  if (localSha !== remote.sha && baselineSha(appRoot) === remote.sha) {
+    writeState(userDataDir, { installedSha: remote.sha, installedAt: Date.now() });
+    return {
+      ok: true,
+      update: false,
+      repo,
+      localSha: remote.sha,
+      remoteSha: remote.sha,
+      remote,
+      reason: 'naprakész',
+    };
+  }
+
   if (localSha === remote.sha) {
     return {
       ok: true,
