@@ -54,6 +54,11 @@ async function fetchCollection(collectionId, { retries = 2 } = {}) {
         headers: { 'User-Agent': UA, 'Accept-Language': 'en-US,en;q=0.9' },
         timeoutMs: 30000,
       });
+      if (status === 429 || status === 503) {
+        // Steam rate limit: hosszabb várakozás, különben hiába próbáljuk.
+        await sleep(8000 * (attempt + 1));
+        throw new Error(`A Steam átmenetileg korlátoz (HTTP ${status}) – próbáld újra pár perc múlva.`);
+      }
       if (status !== 200) throw new Error(`A kollekció lekérése nem sikerült (HTTP ${status}).`);
       const parsed = parseCollectionHtml(body, collectionId);
       if (parsed.items.length === 0) {
