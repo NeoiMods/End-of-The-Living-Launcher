@@ -1,7 +1,21 @@
 {
-  "version": "0.7.8",
-  "updatedAt": "2026-11-06",
+  "version": "0.7.9",
+  "updatedAt": "2026-11-07",
   "items": [
+    {
+      "id": "0.7.9",
+      "version": "0.7.9",
+      "date": "2026-11-07",
+      "tag": "ÚJ",
+      "title": "0.7.9 – Viewpoint NIGHTLY egy gombnyomásra",
+      "text": "Az Optimalizálás panelen új kártya telepíti a Viewpoint éjszakai buildjét (0.1.7-rc2) a Master mappából, a gyűjtemény régi Viewpointja helyett. Emellett a telepítő hibái is javultak.",
+      "changes": [
+        "Új Viewpoint NIGHTLY kártya: a régi 0.1.6.1 helyett a 0.1.7-rc2 build kerül a játék Workshop mappájába, egy kattintással.",
+        "A Project Viewpoint kikerült a követett kollekcióból – nem töltődik le újra, és nem kér feliratkozást; a Viewpoint-* modok továbbra is működnek.",
+        "Javítva: a telepítő már nem írja ki modonként, hogy „mods.copyAgentLibs is not a function”; a hiányzó modok SteamCMD-s pótlása is újra működik.",
+        "Új PZO launcher (1.9.5) a Master mappában – a PZO kártya ezt telepíti."
+      ]
+    },
     {
       "id": "0.7.3",
       "version": "0.7.3",

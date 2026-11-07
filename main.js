@@ -19,7 +19,8 @@ const modinfo = require('./src/modinfo');
 const modlist = require('./src/modlist');
 const news = require('./src/news');
 const { launchGame, isGameRunning } = require('./src/launch');
-const { runSetup } = require('./src/setup');
+const setup = require('./src/setup');
+const { runSetup } = setup;
 const { fetchCollection } = require('./src/collection');
 const hu = require('./src/hu');
 const subscribe = require('./src/subscribe');
@@ -414,6 +415,16 @@ ipcMain.handle('optmods:install', async (e, id) => {
   if (busy) return { ok: false, error: 'Már fut egy művelet.' };
   busy = true;
   try {
+    // A Viewpoint NIGHTLY a Master mappából jön, és a játék Workshop mappájába
+    // kerül (nem a Zomboid\mods alá), ezért külön útvonalon települ.
+    if (id === 'nightly') {
+      return await mods.installNightly({
+        cfg,
+        userDataDir: app.getPath('userData'),
+        log,
+        onProgress: (done, total) => progress({ label: 'Viewpoint NIGHTLY letöltése', done, total }),
+      });
+    }
     return await mods.install({
       cfg,
       userDataDir: app.getPath('userData'),
@@ -434,6 +445,7 @@ ipcMain.handle('optmods:remove', async (e, id) => {
   if (isGameRunning()) return { ok: false, error: 'A játék fut – zárd be, és utána törölhető.' };
   busy = true;
   try {
+    if (id === 'nightly') return mods.removeNightly({ log });
     return mods.remove({ id, log });
   } catch (err) {
     return reportError(err);
@@ -697,6 +709,9 @@ ipcMain.handle('subscribe:open', async () => {
     }
     const st = status();
     const missing = (cfg.collection.items || []).filter((it) => {
+      // A szándékosan kihagyott elemeket (pl. a nightly-vel helyettesített
+      // Project Viewpoint) ne kérje feliratkozásra a feliratkozó ablak.
+      if (setup.SKIP_DOWNLOAD_IDS.has(String(it.id))) return false;
       const dir = require('./src/workshop').itemDir(
         st.steamPath ? require('./src/paths').parseLibraryPaths(st.steamPath) : [],
         it.id

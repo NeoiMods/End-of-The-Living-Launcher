@@ -1439,6 +1439,23 @@ function syncOptCards() {
   setDelVisible('eto', etoOn);
   setDelVisible('eto-max', etoMaxOn);
 
+  // Viewpoint NIGHTLY: a gyűjtemény régi Viewpointja (0.1.6.x) helyett ez a
+  // build kerül a játék Workshop mappájába, egy kattintással.
+  const nightly = modsStatus && modsStatus.nightly;
+  const nightlyState = $('#nightlyState');
+  if (nightlyState) {
+    const done = !!(nightly && nightly.installed);
+    nightlyState.textContent = done ? 'TELEPÍTVE' : 'TELEPÍTÉS';
+    nightlyState.classList.toggle('go', true);
+    const nightlyHint = $('#nightlyHint');
+    if (nightlyHint) {
+      nightlyHint.textContent = done
+        ? `Telepítve${nightly.version ? ' – ' + nightly.version : ''} – a gyűjtemény Viewpointja helyett ez fut`
+        : 'A gyűjtemény régi Viewpointja helyett – éjszakai build a Master mappából';
+    }
+    setDelVisible('nightly', done);
+  }
+
   // 6282 3D modell: 8 GB alatt letiltva, és soha nem települ magától.
   const voxel = $('#voxelCard');
   const voxelState = $('#voxelState');
@@ -1487,6 +1504,7 @@ function setDelVisible(id, visible) {
 const OPT_LABELS = {
   eto: 'ETO – alap',
   'eto-max': 'ETO – Max Performance',
+  nightly: 'Viewpoint NIGHTLY',
   voxel: '6282 3D modellcsomag',
   hu: 'Magyarítás (A-Life + Survivor PDA + gyári)',
 };
@@ -1494,8 +1512,9 @@ const OPT_LABELS = {
 // Telepített opcionális mod törlése a Zomboid\mods mappából.
 function removeOptMod(id) {
   const label = OPT_LABELS[id] || id;
+  const place = id === 'nightly' ? 'Zomboid\\Workshop\\Viewpoint' : 'Zomboid\\mods';
   const ok = window.confirm(
-    `Törlöd: ${label}?\n\nA mod mappája kikerül a Zomboid\\mods mappából (a többi modhoz nem nyúlunk).`
+    `Törlöd: ${label}?\n\nA mod mappája kikerül a ${place} mappából (a többi modhoz nem nyúlunk).`
   );
   if (!ok) {
     syncOptCards();
@@ -1581,7 +1600,7 @@ function runOptAction(action) {
     }, { reload: false });
     return;
   }
-  if (action === 'eto' || action === 'eto-max' || action === 'voxel') {
+  if (action === 'eto' || action === 'eto-max' || action === 'voxel' || action === 'nightly') {
     const ram = totalRamGb();
     if (action === 'voxel' && ram > 0 && ram < MODEL_MIN_RAM_GB) {
       appendLog(`⚠ 6282 3D modell: legalább ${MODEL_MIN_RAM_GB} GB RAM kell (nálad ${ram} GB).`);
@@ -1658,7 +1677,7 @@ function renderBrowserPreview() {
   document.body.classList.add('browser-mode');
   serverStatus = { online: true, players: 7, maxPlayers: 32, ping: 42 };
   pzoStatus = { installed: false, extracted: false };
-  modsStatus = { eto: false, 'eto-max': false, voxel: false };
+  modsStatus = { eto: false, 'eto-max': false, voxel: false, nightly: { installed: false } };
   huStatus = { installed: false };
   render(sampleStatus());
   renderServerStatus();

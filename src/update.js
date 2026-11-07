@@ -26,7 +26,18 @@ const HTTP_HEADERS = {
 };
 
 // A launchert alkotó fájlok/mappák – ezeket cseréli a frissítés.
-const APP_FILES = ['main.js', 'preload.js', 'renderer.js', 'index.html', 'styles.css', 'news.json', 'events.json'];
+// A package.json is cserélődik, különben a launcher fejléce a régi verziót
+// mutatná a frissítés után is.
+const APP_FILES = [
+  'main.js',
+  'preload.js',
+  'renderer.js',
+  'index.html',
+  'styles.css',
+  'news.json',
+  'events.json',
+  'package.json',
+];
 // Csak ezek szerkesztése nem indít launcher-frissítést (a játékos csak a hírt látja).
 const NOTE_FILES = ['news.json', 'events.json'];
 const APP_DIRS = ['src', 'assets', 'themes'];

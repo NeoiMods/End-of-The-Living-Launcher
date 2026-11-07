@@ -24,6 +24,15 @@ const approvals = require('./approvals');
 // alap, es a kettot egyszerre hasznalni ertelmetlen/konfliktusos.
 const SKIP_MOD_IDS = new Set(['siowar_distiller_easy']);
 
+// A gyűjtemény Project Viewpointját (3809306528) nem telepítjük/töltjük le:
+// helyette a Viewpoint NIGHTLY kerül a játékba (Optimalizálás → Viewpoint
+// NIGHTLY, Master mappa). A már meglévő másolatot viszont engedélyezzük, hogy a
+// Viewpoint-* modok ne maradjanak függőség nélkül, ha valaki nem teszi be a
+// nightly-t.
+const SKIP_DOWNLOAD_IDS = new Map([
+  ['3809306528', 'Project Viewpoint – helyette a Viewpoint NIGHTLY gomb (Optimalizálás)'],
+]);
+
 const RETRY_MS = 24 * 60 * 60 * 1000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -63,6 +72,9 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
   if (added.length) {
     onLog(`+ kollekción kívüli elem: ${added.map((it) => it.title).join(', ')}.`);
   }
+  for (const [id, note] of SKIP_DOWNLOAD_IDS) {
+    if (col.items.some((it) => String(it.id) === id)) onLog(`– ${id}: ${note}.`);
+  }
   if (col.childCount && col.childCount !== col.items.length) {
     onLog(`! A Steam ${col.childCount} elemet ígér, ${col.items.length} olvasható ki – a kiolvasottakkal folytatom.`);
   }
@@ -76,7 +88,9 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
   };
 
   // ---- 2) feliratkozás + várakozás --------------------------------------
-  const wanted = col.items.filter((it) => !recentFail(it.id));
+  const wanted = col.items.filter(
+    (it) => !recentFail(it.id) && !SKIP_DOWNLOAD_IDS.has(String(it.id))
+  );
   let missing = workshop.classify(libs, wanted).missing;
   onLog(`Már letöltve: ${workshop.classify(libs, col.items).present.size}/${col.items.length}`);
 
@@ -115,7 +129,9 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
     if (sources.has(String(id))) delete unresolved[id];
   }
 
-  const pending = col.items.filter((it) => !sources.has(String(it.id)) && !recentFail(it.id));
+  const pending = col.items.filter(
+    (it) => !sources.has(String(it.id)) && !recentFail(it.id) && !SKIP_DOWNLOAD_IDS.has(String(it.id))
+  );
   if (pending.length) {
     onLog(`⚠ ${pending.length} mod még hiányzik – SteamCMD letöltéssel pótolom…`);
     const exe = await mods.ensureSteamCMD(path.join(userDataDir, 'steamcmd'), onLog);
@@ -134,7 +150,9 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
     }
   }
 
-  const unresolvedCount = col.items.filter((it) => !sources.has(String(it.id))).length;
+  const unresolvedCount = col.items.filter(
+    (it) => !sources.has(String(it.id)) && !SKIP_DOWNLOAD_IDS.has(String(it.id))
+  ).length;
   if (unresolvedCount > 0) {
     onLog(`! ${unresolvedCount} mod jelenleg nem elérhető (24 óra múlva újrapróbálom).`);
   }
@@ -259,4 +277,4 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
   };
 }
 
-module.exports = { runSetup };
+module.exports = { runSetup, SKIP_DOWNLOAD_IDS };
