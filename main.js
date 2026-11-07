@@ -453,6 +453,34 @@ ipcMain.handle('game:find', () => {
   }
 });
 
+// A kritikus figyelmeztetés OK-ja: a launcher kérdés nélkül jelenti a szervernek,
+// hogy a játékos nem a helyes mappa struktúrát követi (Discord névvel).
+ipcMain.handle('game:reportPath', async (e, payload) => {
+  try {
+    const name = String((payload && payload.name) || '').trim();
+    if (name.length < 2) return { ok: false, error: 'Írd be a Discord neved (legalább 2 karakter).' };
+    const warning = gamePathWarning(resolveGamePath(cfg));
+    if (!warning) return { ok: false, error: 'A játék most az alap helyen van – nincs mit jelenteni.' };
+    const mem = system.getMemoryInfo(Number(cfg.jvmMaxMb) || 8192);
+    await discord.sendWarning({
+      webhookUrl: cfg.discordWebhook,
+      discordName: name,
+      warning,
+      meta: {
+        server: cfg.server && cfg.server.name,
+        version: app.getVersion(),
+        sha: baselineSha(),
+        ramGb: mem.totalGb,
+        heapMb: Number(cfg.jvmMaxMb) || 0,
+      },
+    });
+    log(`✓ Figyelmeztetés elküldve a szervernek (Discord: ${name}) – a játék nincs az alap mappában.`);
+    return { ok: true };
+  } catch (err) {
+    return reportError(err);
+  }
+});
+
 ipcMain.handle('game:setPath', (e, dir) => {
   try {
     const value = String(dir || '').trim().replace(/\//g, '\\').replace(/\\+$/, '');

@@ -47,6 +47,7 @@ contextBridge.exposeInMainWorld('api', {
   // ---- Project Zomboid keresése (játék mappa) ----
   findGame: () => ipcRenderer.invoke('game:find'),
   setGamePath: (dir) => ipcRenderer.invoke('game:setPath', dir),
+  reportWrongPath: (name) => ipcRenderer.invoke('game:reportPath', { name }),
 
   // ---- Discord: crash log + widget ----
   getDiscordWidget: () => ipcRenderer.invoke('discord:widget'),

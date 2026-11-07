@@ -446,9 +446,18 @@
       <h2 id="gameWarnTitle">A Project Zomboid nincs az alap helyén</h2>
       <p class="modal-lead" id="gameWarnLead"></p>
       <div class="gw-body" id="gameWarnText"></div>
+      <label class="field">
+        <span>Discord neved (kötelező – ezzel kerül be a szerver logjaiba)</span>
+        <input id="gameWarnName" type="text" maxlength="40" placeholder="pl. shadow_peter" spellcheck="false" />
+      </label>
+      <p class="warn-note" id="gameWarnNote">
+        Amíg a nevet nem írod be, nem lehet továbblépni. Az <b>ELKÜLDÉS ÉS FOLYTATOM</b>
+        gombra kattintva a launcher kérdés nélkül jelenti a szervernek: a nevednél
+        látszódni fog, hogy nem a helyes mappa struktúrát követed.
+      </p>
       <div class="modal-actions">
-        <button id="btnGameWarnOk" class="ghost-btn" type="button">TUDOM, FOLYTATOM</button>
-        <button id="btnGameWarnFind" class="primary-btn" type="button">JÁTÉK KERESÉSE</button>
+        <button id="btnGameWarnFind" class="ghost-btn" type="button">JÁTÉK KERESÉSE</button>
+        <button id="btnGameWarnOk" class="primary-btn" type="button" disabled>ELKÜLDÉS ÉS FOLYTATOM</button>
       </div>
     </div>
   </div>

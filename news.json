@@ -1,7 +1,20 @@
 {
-  "version": "0.7.1",
+  "version": "0.7.2",
   "updatedAt": "2026-11-06",
   "items": [
+    {
+      "id": "0.7.2",
+      "version": "0.7.2",
+      "date": "2026-11-07",
+      "tag": "FONTOS",
+      "title": "0.7.2 – a rossz mappa már nem marad titokban",
+      "text": "A kritikus figyelmeztetés OK-ja mostantól automatikusan jelenti a szervernek, hogy nem a helyes mappa struktúrát követed – a Discord neved megadása kötelező hozzá.",
+      "changes": [
+        "Aki rossz helyen telepítette a Project Zomboidot, annak a figyelmeztetés OK-zásakor a launcher kérdés nélkül elküldi a szervernek: „nem a helyes mappa struktúrát követi” – a Discord nevével együtt.",
+        "A Discord nevet kötelező megadni: amíg nincs kitöltve, a launcher nem enged tovább.",
+        "A jelentés egyszer megy el: utána a launcher nem kérdezi újra, de a figyelmeztetés a fő panelen marad, amíg a játék nem kerül a helyére."
+      ]
+    },
     {
       "id": "0.7.1",
       "version": "0.7.1",

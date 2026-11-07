@@ -192,9 +192,36 @@ async function sendCrash({ webhookUrl, discordName, files, meta = {} }) {
   return { ok: true, sent: files.map((f) => f.name), total };
 }
 
+// Figyelmeztetés (nem crash): pl. a játék nem a helyes mappa struktúrát követi.
+// Csatolmány nélküli üzenet megy a crash csatornára, hogy a szerveren is
+// látszódjon, kinél van rossz helyen a Project Zomboid.
+async function sendWarning({ webhookUrl, discordName, warning = {}, meta = {} }) {
+  const url = String(webhookUrl || '').trim();
+  if (!isAllowedWebhook(url)) {
+    throw new Error('Nincs beállítva érvényes Discord webhook a logokhoz.');
+  }
+
+  const name = cleanName(discordName);
+  if (name.length < 2) throw new Error('Írd be a Discord neved (legalább 2 karakter).');
+
+  const lines = [
+    '**⚠️ NEM A HELYES MAPPA STRUKTÚRA – ' + (meta.server || 'End of The Living') + '**',
+    '**Játékos Discord neve:** ' + name + ' – ez a játékos nem a helyes mappa struktúrát követi.',
+    '**Játék mappa:** `' + String(warning.gamePath || '?') + '`',
+    '**Alap hely (ide kellene):** `' + String(warning.defaultPath || '?') + '`',
+    '**Launcher:** ' + (meta.version || '?') + (meta.sha ? ` (${String(meta.sha).slice(0, 7)})` : ''),
+    '**Gép:** ' + (meta.ramGb ? meta.ramGb + ' GB RAM' : '?') + (meta.heapMb ? ` · heap ${meta.heapMb} MB` : ''),
+    '**Időpont:** ' + new Date().toLocaleString('hu-HU'),
+  ];
+
+  await postWebhook(url, { content: lines.join('\n'), allowed_mentions: { parse: [] } }, []);
+  return { ok: true, name };
+}
+
 module.exports = {
   widget,
   sendCrash,
+  sendWarning,
   isAllowedWebhook,
   cleanName,
   WIDGET_GUILD_ID,
