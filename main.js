@@ -17,6 +17,7 @@ const news = require('./src/news');
 const { launchGame, isGameRunning } = require('./src/launch');
 const { runSetup } = require('./src/setup');
 const { fetchCollection } = require('./src/collection');
+const hu = require('./src/hu');
 const subscribe = require('./src/subscribe');
 const a2s = require('./src/a2s');
 const system = require('./src/system');
@@ -113,6 +114,20 @@ app.whenReady().then(() => {
       }
     }, 1500);
   }
+
+  // ---- Kötelező magyarítások ------------------------------------------
+  // A Master mappába feltett HU csomagok (Projekt A-Life, Survivor PDA)
+  // minden indításnál ellenőrződnek: ha hiányoznak vagy frissebbek, bekerülnek.
+  setTimeout(async () => {
+    try {
+      const res = await hu.sync({ cfg, userDataDir: app.getPath('userData'), log });
+      if (res.installed && res.installed.length && win && !win.isDestroyed()) {
+        win.webContents.send('refresh');
+      }
+    } catch (err) {
+      log('! Magyarítások: ' + (err && err.message ? err.message : err));
+    }
+  }, 4000);
 
   // ---- Csomagfigyelő --------------------------------------------------
   // Ha a Beállításokban van csomagforrás, induláskor megnézi, került-e fel új

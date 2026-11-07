@@ -11,7 +11,10 @@ const DEFAULT_CONFIG = {
     password: 'forgotten',
   },
   // Steam Workshop collection the whole mod pack comes from.
-  collectionId: '3832006850',
+  collectionId: '3835271101',
+  // A korábbi alapértelmezett kollekció: a mentett configban ezt lecseréljük
+  // az újra, hogy a már telepített launcher is a friss modcsomagot kövesse.
+  legacyCollectionIds: ['3832006850'],
   // A kollekción kívüli, kézzel megadott workshop elemek (pl. saját főmenü).
   // Ezek ugyanúgy települnek és engedélyeződnek, mint a kollekció tagjai.
   extraWorkshopIds: [{ id: '3833539717', title: 'Custom Main Menu' }],
@@ -83,6 +86,9 @@ function loadConfig(dir) {
       port: rawServer.port || DEFAULT_CONFIG.server.port,
     },
     collectionId: String(raw.collectionId || DEFAULT_CONFIG.collectionId).trim(),
+    legacyCollectionIds: Array.isArray(raw.legacyCollectionIds)
+      ? raw.legacyCollectionIds.map(String)
+      : DEFAULT_CONFIG.legacyCollectionIds,
     packsFolder,
     collection: raw.collection && Array.isArray(raw.collection.items) ? raw.collection : null,
     unresolved:
@@ -98,6 +104,15 @@ function loadConfig(dir) {
     // (a korábbi mentett config.json üres értéke ne kapcsolja ki).
     discordWebhook: String(raw.discordWebhook || DEFAULT_CONFIG.discordWebhook || '').trim(),
   };
+
+  // A régi kollekcióról automatikusan az újra váltunk (a beállításból is).
+  if (cfg.legacyCollectionIds.includes(cfg.collectionId) && cfg.collectionId !== DEFAULT_CONFIG.collectionId) {
+    cfg.collectionId = DEFAULT_CONFIG.collectionId;
+    cfg.collection = null;
+  }
+  // A gyorsítótárazott lista csak akkor jó, ha ugyanahhoz a kollekcióhoz tartozik.
+  if (cfg.collection && String(cfg.collection.id) !== cfg.collectionId) cfg.collection = null;
+
   return cfg;
 }
 

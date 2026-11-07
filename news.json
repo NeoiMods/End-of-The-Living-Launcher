@@ -1,7 +1,20 @@
 {
-  "version": "0.7.2",
+  "version": "0.7.3",
   "updatedAt": "2026-11-06",
   "items": [
+    {
+      "id": "0.7.3",
+      "version": "0.7.3",
+      "date": "2026-11-07",
+      "tag": "MEGA FRISSÍTÉS",
+      "title": "0.7.3 – új modkollekció + magyarítások",
+      "text": "A launcher mostantól az új „End of The Living The Forgotten” kollekciót követi, és alapból telepíti a Projekt A-Life és a Survivor PDA magyarítását.",
+      "changes": [
+        "Új Steam Workshop kollekció (74 mod) – a launcher mindenkinél automatikusan erre vált.",
+        "A Projekt A-Life és a Survivor PDA magyarítása kötelezően, magától települ és bekapcsolódik.",
+        "A magyarítások a Master mappából jönnek, így mindig a szerverhez illő verzió kerül fel."
+      ]
+    },
     {
       "id": "0.7.2",
       "version": "0.7.2",

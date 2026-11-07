@@ -10,6 +10,7 @@ const collection = require('./collection');
 const workshop = require('./workshop');
 const zbInstaller = require('./zb-installer');
 const approvals = require('./approvals');
+const hu = require('./hu');
 
 // A teljes telepítési folyamat:
 //   1) Steam Workshop kollekció lekérése
@@ -173,6 +174,15 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
   if (en.created) onLog(`Létrehozva: ${modlist.modListFile(zomboidDir)}`);
   if (en.changed) onLog(`✓ ${en.added.length} mod engedélyezve a játék listájában.`);
   else onLog('✓ Minden mod már engedélyezve van a játék listájában.');
+
+  // ---- 4b) kötelező magyarítások (Master / HU csomagok) ------------------
+  // A Projekt A-Life és a Survivor PDA magyarítása mindig települ és
+  // engedélyeződik, a játékos nem kapcsolhatja ki.
+  onProgress({ label: 'Magyarítások telepítése…' });
+  const huRes = await hu.sync({ cfg, userDataDir, log: onLog, onProgress });
+  for (const id of huRes.ids || []) {
+    if (!enabledIds.some((x) => String(x).toLowerCase() === String(id).toLowerCase())) enabledIds.push(id);
+  }
 
   // ---- 5) ZombieBuddy telepítő ------------------------------------------
   let installer = null;
