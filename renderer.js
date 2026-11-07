@@ -1326,7 +1326,7 @@ function syncOptCards() {
     if (hintEl) {
       hintEl.textContent = done
         ? 'Telepítve – a magyar szövegek be vannak kapcsolva'
-        : 'Projekt A-Life + Survivor PDA magyar szövegei – opcionális';
+        : 'Projekt A-Life + Survivor PDA + gyári szövegek – opcionális';
     }
     setDelVisible('hu', done);
   }
@@ -1342,7 +1342,7 @@ const OPT_LABELS = {
   eto: 'ETO – alap',
   'eto-max': 'ETO – Max Performance',
   voxel: '6282 3D modellcsomag',
-  hu: 'Magyarítás (Projekt A-Life + Survivor PDA)',
+  hu: 'Magyarítás (A-Life + Survivor PDA + gyári)',
 };
 
 // Telepített opcionális mod törlése a Zomboid\mods mappából.
