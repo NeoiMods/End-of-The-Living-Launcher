@@ -8,10 +8,15 @@ const {
   resolveGamePath,
   zomboidDir,
   findGameCandidates,
+  findSteamPath,
+  parseLibraryPaths,
   isGameDir,
   DEFAULT_GAME_DIR,
   GAME_EXE,
+  PZ_APP_ID,
 } = require('./src/paths');
+const modinfo = require('./src/modinfo');
+const modlist = require('./src/modlist');
 const news = require('./src/news');
 const { launchGame, isGameRunning } = require('./src/launch');
 const { runSetup } = require('./src/setup');
@@ -250,7 +255,12 @@ async function updateInfoPayload() {
     update.checkForUpdate({ cfg, userDataDir, appRoot: __dirname }),
     news.fetchNews({ cfg, appRoot: __dirname }).catch(() => ({ items: [], version: '' })),
   ]);
-  const toVersion = (info && info.version) || (res && res.remoteSha ? res.remoteSha.slice(0, 7) : '');
+  const shortSha = res && res.remoteSha ? res.remoteSha.slice(0, 7) : '';
+  let toVersion = (info && info.version) || shortSha;
+  // Ugyanaz a verziószám, csak újabb commit: ne írjunk "0.7.5 → 0.7.5"-öt.
+  if (toVersion && toVersion === fromVersion && shortSha) {
+    toVersion = fromVersion + ' · ' + shortSha;
+  }
   const items = (info && info.items) || [];
   // Az új verzióhoz tartozó újdonságok (ha a news.json-ban meg van jelölve).
   const changes = items
@@ -296,6 +306,19 @@ ipcMain.handle('update:check', async () => {
     if (!payload.ok) log('! Frissítés ellenőrzés: ' + payload.reason);
     else if (payload.update) log(`✓ Új verzió érhető el: ${payload.fromVersion} → ${payload.toVersion}`);
     else log('✓ ' + payload.reason);
+
+    // Fejlesztői módban (electron .) a frissítés nem telepíthető, ezért nem is
+    // kínáljuk fel: csak a naplóba kerül, hogy van újabb commit a repóban.
+    if (!app.isPackaged) {
+      if (payload.update) log('• Fejlesztői mód: a frissítés nem telepíthető, dolgozz tovább a forrásból.');
+      return {
+        ...payload,
+        update: false,
+        devMode: true,
+        reason: payload.ok ? 'fejlesztői mód – nincs mit telepíteni' : payload.reason,
+      };
+    }
+
     return payload;
   } catch (err) {
     return reportError(err);
@@ -426,6 +449,105 @@ ipcMain.handle('events:get', async (e, force) => {
     return await events.fetchEvent({ cfg, force: !!force });
   } catch (err) {
     return reportError(err);
+  }
+});
+
+// ---- mod lista ----------------------------------------------------------
+// A játék modlistája (Zomboid\mods\default.txt) + a gépen ténylegesen megtalált
+// modok összevetése: mi van bekapcsolva, mi van telepítve, és mi az, ami
+// bekapcsolt, de már nincs a gépen (a régi kollekciók maradéka).
+
+function collectModRows() {
+  const zd = zomboidDir();
+  const content = modlist.readModList(zd);
+  const enabled = modlist.listEnabledIds(content);
+  const enabledSet = new Set(enabled.map((id) => id.toLowerCase()));
+  const rows = new Map();
+
+  const push = (mod, source, workshopId) => {
+    const key = String(mod.id).toLowerCase();
+    const row = {
+      id: mod.id,
+      name: mod.name || mod.id,
+      source,
+      workshopId: workshopId || '',
+      enabled: enabledSet.has(key),
+      dir: mod.modDir,
+    };
+    const prev = rows.get(key);
+    // A workshop példány elsőbbséget élvez a helyi másolattal szemben.
+    if (!prev || prev.source === 'local') rows.set(key, row);
+  };
+
+  const localRoot = path.join(zd, 'mods');
+  let localEntries = [];
+  try {
+    localEntries = fs.readdirSync(localRoot, { withFileTypes: true });
+  } catch {
+    localEntries = [];
+  }
+  for (const entry of localEntries) {
+    if (!entry.isDirectory() || entry.name.startsWith('.')) continue;
+    try {
+      for (const m of modinfo.discoverMods(path.join(localRoot, entry.name), 4)) push(m, 'local');
+    } catch {
+      // Egy hibás mod mappa ne borítsa a teljes listát.
+    }
+  }
+
+  const steamPath = findSteamPath();
+  const libs = steamPath ? parseLibraryPaths(steamPath) : [];
+  for (const lib of libs) {
+    const root = path.join(lib, 'steamapps', 'workshop', 'content', PZ_APP_ID);
+    let items = [];
+    try {
+      items = fs.readdirSync(root, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const it of items) {
+      if (!it.isDirectory()) continue;
+      try {
+        for (const m of modinfo.discoverMods(path.join(root, it.name), 4)) push(m, 'workshop', it.name);
+      } catch {
+        // Egy hibás workshop elem ne borítsa a teljes listát.
+      }
+    }
+  }
+
+  const list = [...rows.values()].sort((a, b) => a.name.localeCompare(b.name, 'hu'));
+  const installed = new Set(list.map((r) => r.id.toLowerCase()));
+  const missing = enabled.filter((id) => !installed.has(id.toLowerCase()));
+
+  return {
+    ok: true,
+    zomboidDir: zd,
+    modListPath: modlist.modListFile(zd),
+    mods: list,
+    missing,
+    counts: {
+      enabled: enabled.length,
+      installed: list.length,
+      enabledInstalled: list.filter((r) => r.enabled).length,
+      enabledMissing: missing.length,
+      disabled: list.filter((r) => !r.enabled).length,
+      workshop: list.filter((r) => r.source === 'workshop').length,
+      local: list.filter((r) => r.source === 'local').length,
+    },
+  };
+}
+
+ipcMain.handle('mods:report', () => {
+  try {
+    return collectModRows();
+  } catch (err) {
+    return {
+      ok: false,
+      error: err && err.message ? err.message : String(err),
+      mods: [],
+      missing: [],
+      counts: {},
+    };
   }
 });
 

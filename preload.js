@@ -47,6 +47,7 @@ contextBridge.exposeInMainWorld('api', {
   // ---- Project Zomboid keresése (játék mappa) ----
   findGame: () => ipcRenderer.invoke('game:find'),
   setGamePath: (dir) => ipcRenderer.invoke('game:setPath', dir),
+  getModList: () => ipcRenderer.invoke('mods:report'),
   getHuStatus: () => ipcRenderer.invoke('hu:status'),
   installHu: () => ipcRenderer.invoke('hu:install'),
   removeHu: () => ipcRenderer.invoke('hu:remove'),

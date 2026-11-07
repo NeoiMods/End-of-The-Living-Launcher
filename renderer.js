@@ -453,6 +453,12 @@ function wireEvents() {
     runBusy(() => bridge.installMods())
   );
 
+  $('#btnModList').addEventListener('click', openModList);
+  $('#btnModListClose').addEventListener('click', closeModList);
+  $('#btnModListRefresh').addEventListener('click', loadModList);
+  $('#modListSearch').addEventListener('input', renderModList);
+  $('#modListFilter').addEventListener('change', renderModList);
+
   $('#btnSettings').addEventListener('click', openSettings);
   $('#btnCancel').addEventListener('click', closeSettings);
   $('#btnSave').addEventListener('click', saveSettings);
@@ -1244,6 +1250,130 @@ function openOptimize() {
 
 function closeOptimize() {
   $('#optOverlay').classList.add('hidden');
+}
+
+// ---- mod lista ---------------------------------------------------------
+// A játék default.txt-je és a gépen megtalált modok összevetése.
+
+let modListData = null;
+let modListBusy = false;
+
+async function openModList() {
+  $('#modListOverlay').classList.remove('hidden');
+  const search = $('#modListSearch');
+  if (search) search.focus();
+  await loadModList();
+}
+
+function closeModList() {
+  $('#modListOverlay').classList.add('hidden');
+}
+
+async function loadModList() {
+  if (modListBusy) return;
+  modListBusy = true;
+  const body = $('#modListBody');
+  if (body) body.textContent = 'Betöltés…';
+  try {
+    modListData = await window.api.getModList();
+  } catch (err) {
+    modListData = {
+      ok: false,
+      error: err && err.message ? err.message : String(err),
+      mods: [],
+      missing: [],
+      counts: {},
+    };
+  } finally {
+    modListBusy = false;
+  }
+  renderModList();
+}
+
+function modListRow(entry) {
+  const row = document.createElement('div');
+  row.className = 'ml-row';
+  if (entry.missing) row.classList.add('miss');
+  else if (entry.enabled) row.classList.add('on');
+
+  const name = document.createElement('span');
+  name.className = 'ml-name';
+  name.textContent = entry.name;
+  if (entry.dir) name.title = entry.dir;
+
+  const id = document.createElement('span');
+  id.className = 'ml-id';
+  id.textContent = entry.id;
+
+  const tag = document.createElement('span');
+  tag.className = 'ml-tag' + (entry.missing ? ' miss' : entry.source === 'local' ? ' local' : '');
+  tag.textContent = entry.missing ? 'NINCS' : entry.source === 'local' ? 'HELYI' : 'WORKSHOP';
+  if (entry.workshopId) tag.title = 'Workshop item: ' + entry.workshopId;
+
+  const state = document.createElement('span');
+  state.className = 'ml-state' + (entry.enabled ? ' on' : '');
+  state.textContent = entry.enabled ? 'BE' : 'KI';
+
+  row.append(name, id, tag, state);
+  return row;
+}
+
+function renderModList() {
+  const body = $('#modListBody');
+  if (!body) return;
+  body.textContent = '';
+
+  const data = modListData || {};
+  if (!data.ok) {
+    const err = document.createElement('div');
+    err.className = 'ml-empty';
+    err.textContent = 'Nem sikerült kiolvasni a mod listát: ' + (data.error || 'ismeretlen hiba');
+    body.append(err);
+    $('#modListSummary').textContent = 'Hiba';
+    return;
+  }
+
+  const c = data.counts || {};
+  $('#modListSummary').textContent =
+    `Bekapcsolva: ${c.enabled || 0} · Telepítve: ${c.installed || 0} ` +
+    `(workshop ${c.workshop || 0}, helyi ${c.local || 0}) · ` +
+    `Bekapcsolt és megvan: ${c.enabledInstalled || 0} · Hiányzó: ${c.enabledMissing || 0} · ` +
+    `Kikapcsolt: ${c.disabled || 0}`;
+
+  const q = ($('#modListSearch').value || '').trim().toLowerCase();
+  const filter = $('#modListFilter').value;
+
+  const entries = [];
+  for (const m of data.mods || []) entries.push({ ...m, missing: false });
+  for (const id of data.missing || []) {
+    entries.push({ id, name: '(nincs telepítve)', source: 'missing', enabled: true, missing: true });
+  }
+
+  const shown = entries.filter((e) => {
+    if (filter === 'enabled' && !e.enabled) return false;
+    if (filter === 'disabled' && e.enabled) return false;
+    if (filter === 'missing' && !e.missing) return false;
+    if (!q) return true;
+    return String(e.name).toLowerCase().includes(q) || String(e.id).toLowerCase().includes(q);
+  });
+
+  // A telepített modok elöl, a hiányzó (régi kollekcióból maradt) sorok a végén.
+  shown.sort((a, b) => {
+    if (!!a.missing !== !!b.missing) return a.missing ? 1 : -1;
+    return String(a.name).localeCompare(String(b.name), 'hu');
+  });
+
+  if (!shown.length) {
+    const empty = document.createElement('div');
+    empty.className = 'ml-empty';
+    empty.textContent = 'Nincs a szűrésnek megfelelő mod.';
+    body.append(empty);
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+  for (const e of shown) frag.append(modListRow(e));
+  body.append(frag);
 }
 
 // A RAM-hoz igazítja a kártyák állapotát: 8 GB alatt a ZombieBuddy nem

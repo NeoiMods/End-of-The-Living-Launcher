@@ -137,6 +137,7 @@
         <button id="btnSubscribe" class="mini-btn" type="button">Feliratkozás</button>
         <button id="btnZombieBuddy" class="mini-btn" type="button">ZombieBuddy</button>
         <button id="btnModsFolder" class="mini-btn" type="button">Mod mappa</button>
+        <button id="btnModList" class="mini-btn" type="button" title="A játék modlistája: mi van bekapcsolva, telepítve, mi hiányzik">Mod lista</button>
         <button id="btnGameFindMini" class="mini-btn" type="button" title="Project Zomboid keresése a gépen">Játék keresése</button>
       </div>
     </section>
@@ -215,6 +216,33 @@
       </div>
     </section>
   </main>
+
+  <div id="modListOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modListTitle">
+    <div class="modal ml-modal">
+      <h2 id="modListTitle">Mod lista</h2>
+      <p class="modal-lead" id="modListSummary">Betöltés…</p>
+
+      <div class="ml-toolbar">
+        <input id="modListSearch" type="search" placeholder="Keresés név vagy mod ID szerint…" spellcheck="false" />
+        <select id="modListFilter">
+          <option value="all">Mind</option>
+          <option value="enabled">Bekapcsolt</option>
+          <option value="disabled">Kikapcsolt</option>
+          <option value="missing">Hiányzó (nincs telepítve)</option>
+        </select>
+        <button id="btnModListRefresh" class="mini-btn" type="button">Újraolvasás</button>
+      </div>
+
+      <div class="ml-head">
+        <span>Név</span><span>Mod ID</span><span>Forrás</span><span>Állapot</span>
+      </div>
+      <div id="modListBody" class="ml-body"></div>
+
+      <div class="modal-actions">
+        <button id="btnModListClose" class="ghost-btn" type="button">Bezárás</button>
+      </div>
+    </div>
+  </div>
 
   <div id="settingsOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <div class="modal">
