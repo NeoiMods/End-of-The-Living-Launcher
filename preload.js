@@ -48,6 +48,7 @@ contextBridge.exposeInMainWorld('api', {
   findGame: () => ipcRenderer.invoke('game:find'),
   setGamePath: (dir) => ipcRenderer.invoke('game:setPath', dir),
   getModList: () => ipcRenderer.invoke('mods:report'),
+  cleanMissingMods: () => ipcRenderer.invoke('mods:cleanMissing'),
   getHuStatus: () => ipcRenderer.invoke('hu:status'),
   installHu: () => ipcRenderer.invoke('hu:install'),
   removeHu: () => ipcRenderer.invoke('hu:remove'),

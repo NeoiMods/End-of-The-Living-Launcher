@@ -537,6 +537,37 @@ function collectModRows() {
   };
 }
 
+// A régi kollekciók maradék sorainak törlése: csak azok az ID-k mennek ki a
+// default.txt-ből, amikhez a gépen egyáltalán nincs mod (se workshopon, se
+// Zomboid\mods-ban). Játék közben nem nyúlunk hozzá, mert kilépéskor a játék
+// visszaírja a saját listáját.
+ipcMain.handle('mods:cleanMissing', () => {
+  try {
+    if (isGameRunning()) {
+      return { ok: false, error: 'A játék fut – zárd be, különben kilépéskor visszaírja a listát.' };
+    }
+
+    const report = collectModRows();
+    if (!report.ok) return report;
+
+    const ids = report.missing || [];
+    if (!ids.length) return { ok: true, removed: 0 };
+
+    try {
+      fs.copyFileSync(report.modListPath, report.modListPath + '.bak-cleanup');
+    } catch {
+      // A mentés best effort; a törlés így is megtörténik.
+    }
+
+    const res = modlist.removeEnabled(report.zomboidDir, ids);
+    const removed = (res && res.removed ? res.removed.length : 0);
+    log(`• Mod lista: ${removed} hiányzó sor törölve.`);
+    return { ok: true, removed };
+  } catch (err) {
+    return reportError(err);
+  }
+});
+
 ipcMain.handle('mods:report', () => {
   try {
     return collectModRows();

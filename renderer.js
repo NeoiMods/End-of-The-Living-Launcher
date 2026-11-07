@@ -456,6 +456,7 @@ function wireEvents() {
   $('#btnModList').addEventListener('click', openModList);
   $('#btnModListClose').addEventListener('click', closeModList);
   $('#btnModListRefresh').addEventListener('click', loadModList);
+  $('#btnModListClean').addEventListener('click', cleanMissingMods);
   $('#modListSearch').addEventListener('input', renderModList);
   $('#modListFilter').addEventListener('change', renderModList);
 
@@ -1288,6 +1289,30 @@ async function loadModList() {
     modListBusy = false;
   }
   renderModList();
+}
+
+async function cleanMissingMods() {
+  const data = modListData || {};
+  const count = (data.missing || []).length;
+  if (!count) {
+    window.alert('Nincs hiányzó sor – a mod lista rendben van.');
+    return;
+  }
+
+  const ok = window.confirm(
+    `${count} bekapcsolt sor mutat olyan modra, ami nincs a gépen (régi kollekció maradéka).\n\n` +
+      'Ezeket kiveszem a játék modlistájából. A többi modhoz nem nyúlok, és készül mentés (default.txt.bak-cleanup).\n\n' +
+      'Folytatod?'
+  );
+  if (!ok) return;
+
+  const res = await window.api.cleanMissingMods();
+  if (!res || !res.ok) {
+    window.alert('Nem sikerült: ' + ((res && res.error) || 'ismeretlen hiba'));
+    return;
+  }
+
+  await loadModList();
 }
 
 function modListRow(entry) {
