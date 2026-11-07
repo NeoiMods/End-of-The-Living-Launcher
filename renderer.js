@@ -1248,6 +1248,7 @@ const MODEL_MIN_RAM_GB = 8;
 
 let pzoStatus = null;
 let modsStatus = null;
+let huStatus = null;
 
 function totalRamGb() {
   const mem = lastStatus && lastStatus.memory;
@@ -1334,6 +1335,21 @@ function syncOptCards() {
     }
     setDelVisible('voxel', done);
   }
+
+  // Magyarítás: opcionális, a játékos dönti el – soha nem települ magától.
+  const huState = $('#huState');
+  if (huState) {
+    const done = !!(huStatus && huStatus.installed);
+    huState.classList.toggle('go', true);
+    huState.textContent = done ? 'TELEPÍTVE' : 'LETÖLTÉS';
+    const hintEl = $('#huHint');
+    if (hintEl) {
+      hintEl.textContent = done
+        ? 'Telepítve – a magyar szövegek be vannak kapcsolva'
+        : 'Projekt A-Life + Survivor PDA magyar szövegei – opcionális';
+    }
+    setDelVisible('hu', done);
+  }
 }
 
 // A TÖRLÉS gomb csak akkor látszik, ha a mod tényleg bent van.
@@ -1346,6 +1362,7 @@ const OPT_LABELS = {
   eto: 'ETO – alap',
   'eto-max': 'ETO – Max Performance',
   voxel: '6282 3D modellcsomag',
+  hu: 'Magyarítás (Projekt A-Life + Survivor PDA)',
 };
 
 // Telepített opcionális mod törlése a Zomboid\mods mappából.
@@ -1359,7 +1376,7 @@ function removeOptMod(id) {
     return;
   }
   runBusy(async () => {
-    const res = await bridge.removeMod(id);
+    const res = id === 'hu' ? await bridge.removeHu() : await bridge.removeMod(id);
     if (res && res.ok && !res.removed) appendLog(`• ${label}: nincs telepítve.`);
     await refreshModsState();
     return res;
@@ -1372,6 +1389,11 @@ async function refreshModsState() {
     modsStatus = await bridge.getModsStatus();
   } catch {
     modsStatus = null;
+  }
+  try {
+    huStatus = await bridge.getHuStatus();
+  } catch {
+    huStatus = null;
   }
   syncOptCards();
 }
@@ -1423,6 +1445,14 @@ function runOptAction(action) {
       return;
     }
     openZbWarn();
+    return;
+  }
+  if (action === 'hu') {
+    runBusy(async () => {
+      const res = await bridge.installHu();
+      await refreshModsState();
+      return res;
+    }, { reload: false });
     return;
   }
   if (action === 'eto' || action === 'eto-max' || action === 'voxel') {
@@ -1503,6 +1533,7 @@ function renderBrowserPreview() {
   serverStatus = { online: true, players: 7, maxPlayers: 32, ping: 42 };
   pzoStatus = { installed: false, extracted: false };
   modsStatus = { eto: false, 'eto-max': false, voxel: false };
+  huStatus = { installed: false };
   render(sampleStatus());
   renderServerStatus();
   const updateText = $('#updateText');

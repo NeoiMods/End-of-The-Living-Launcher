@@ -115,20 +115,6 @@ app.whenReady().then(() => {
     }, 1500);
   }
 
-  // ---- Kötelező magyarítások ------------------------------------------
-  // A Master mappába feltett HU csomagok (Projekt A-Life, Survivor PDA)
-  // minden indításnál ellenőrződnek: ha hiányoznak vagy frissebbek, bekerülnek.
-  setTimeout(async () => {
-    try {
-      const res = await hu.sync({ cfg, userDataDir: app.getPath('userData'), log });
-      if (res.installed && res.installed.length && win && !win.isDestroyed()) {
-        win.webContents.send('refresh');
-      }
-    } catch (err) {
-      log('! Magyarítások: ' + (err && err.message ? err.message : err));
-    }
-  }, 4000);
-
   // ---- Csomagfigyelő --------------------------------------------------
   // Ha a Beállításokban van csomagforrás, induláskor megnézi, került-e fel új
   // .zip / .exe a repóba, és ha igen, letölti és a helyére teszi.
@@ -526,6 +512,44 @@ ipcMain.handle('shell:openExternal', async (e, url) => {
   if (!/^(https:\/\/|steam:\/\/)/i.test(target)) return { ok: false, error: 'Nem engedélyezett hivatkozás.' };
   await shell.openExternal(target);
   return { ok: true };
+});
+
+// ---- magyarítás (opcionális) --------------------------------------------
+// A Master mappában lévő HU csomagok csak akkor kerülnek fel, ha a játékos
+// az Optimalizálás panelen kéri őket.
+ipcMain.handle('hu:status', () => {
+  try {
+    return hu.status(app.getPath('userData'));
+  } catch {
+    return { installed: false, ids: [], dirs: [] };
+  }
+});
+
+ipcMain.handle('hu:install', async () => {
+  if (busy) return { ok: false, error: 'Már fut egy művelet.' };
+  busy = true;
+  try {
+    progress({ label: 'Magyarítás telepítése…' });
+    const res = await hu.sync({ cfg, userDataDir: app.getPath('userData'), log });
+    progress(null);
+    if (res.ok) log('✓ Magyarítás telepítve és engedélyezve.');
+    return res;
+  } catch (err) {
+    progress(null);
+    return reportError(err);
+  } finally {
+    busy = false;
+  }
+});
+
+ipcMain.handle('hu:remove', async () => {
+  try {
+    const res = await hu.remove({ userDataDir: app.getPath('userData'), log });
+    if (!res.removed) log('• Magyarítás: nem volt telepítve.');
+    return res;
+  } catch (err) {
+    return reportError(err);
+  }
 });
 
 // ---- kollekció ----------------------------------------------------------

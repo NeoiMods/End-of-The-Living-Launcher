@@ -84,6 +84,36 @@ function ensureEnabled(zomboidDir, ids) {
   return { changed: true, created, added: missing };
 }
 
+// Kiveszi a megadott mod ID-ket a mods blokkból (a többi sort nem bántja).
+function removeEnabled(zomboidDir, ids) {
+  const wanted = new Set((ids || []).map((id) => String(id).toLowerCase()));
+  if (!wanted.size) return { changed: false, removed: [] };
+  const file = modListFile(zomboidDir);
+  const content = readModList(zomboidDir);
+  if (content === null) return { changed: false, removed: [] };
+
+  const nl = content.includes('\r\n') ? '\r\n' : '\n';
+  const removed = [];
+  const kept = [];
+  for (const line of content.split(/\r?\n/)) {
+    const m = /^\s*mod\s*=\s*([^,\s]+)\s*,?\s*$/.exec(line);
+    if (m && wanted.has(m[1].trim().toLowerCase())) {
+      removed.push(m[1].trim());
+      continue;
+    }
+    kept.push(line);
+  }
+  if (!removed.length) return { changed: false, removed: [] };
+
+  try {
+    fs.copyFileSync(file, file + '.bak');
+  } catch {
+    // A mentés best effort; az írás így is megtörténik.
+  }
+  fs.writeFileSync(file, kept.join(nl), 'utf8');
+  return { changed: true, removed };
+}
+
 module.exports = {
   DEFAULT_MODLIST,
   modListFile,
@@ -91,4 +121,5 @@ module.exports = {
   listEnabledIds,
   isEnabled,
   ensureEnabled,
+  removeEnabled,
 };

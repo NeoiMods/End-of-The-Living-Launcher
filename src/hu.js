@@ -1,6 +1,6 @@
 // Magyarítások: a Master mappába feltett HU csomagok (pl. ProjectALife_HU.zip,
-// SurvivorPDA_HU.zip) kötelező kiegészítők – a launcher alapból telepíti őket,
-// a játékos nem kapcsolhatja ki és nem kérdez rá.
+// SurvivorPDA_HU.zip) OPCIONÁLISAK – a játékos dönti el, hogy kéri-e őket
+// (Optimalizálás → Magyarítás kártya). Telepítés és törlés is innen megy.
 //
 // A zip B42-es szerkezetű mod:  <Mappa>/42/mod.info
 // Ezért ide kerül:              %USERPROFILE%\Zomboid\mods\<Mappa>\
@@ -167,4 +167,54 @@ async function sync({ cfg, userDataDir, force = false, log = () => {}, onProgres
   return { ok: true, ids: unique, installed };
 }
 
-module.exports = { sync, isHuPack, statePath, readState, listHuAssets, STEP };
+// Be van-e telepítve (a mod mappák bent vannak-e a Zomboid\mods alatt)?
+function status(userDataDir) {
+  const zomboidDir = require('./paths').zomboidDir();
+  const state = readState(userDataDir);
+  const ids = [];
+  const dirs = [];
+  for (const pack of Object.values(state.packs)) {
+    for (const id of (pack && pack.ids) || []) {
+      if (ids.includes(id)) continue;
+      const dir = modinfo.findLocalModDir(zomboidDir, id);
+      if (dir) {
+        ids.push(id);
+        dirs.push(dir);
+      }
+    }
+  }
+  return { installed: ids.length > 0, ids, dirs };
+}
+
+// Törlés: a magyarítás mod mappái kikerülnek, és a modlista sem engedélyezi.
+async function remove({ userDataDir, log = () => {} }) {
+  const zomboidDir = require('./paths').zomboidDir();
+  const state = readState(userDataDir);
+  const removed = [];
+  const ids = [];
+
+  for (const [name, pack] of Object.entries(state.packs)) {
+    for (const id of (pack && pack.ids) || []) {
+      ids.push(id);
+      const dir = modinfo.findLocalModDir(zomboidDir, id);
+      if (!dir) continue;
+      try {
+        fs.rmSync(dir, { recursive: true, force: true });
+        removed.push(dir);
+        log('✓ Magyarítás törölve: Zomboid\\mods\\' + path.basename(dir));
+      } catch (err) {
+        log(`✗ ${id}: nem sikerült törölni (${err && err.message ? err.message : err})`);
+      }
+    }
+    delete state.packs[name];
+  }
+
+  if (ids.length) {
+    const res = modlist.removeEnabled(zomboidDir, ids);
+    if (res.changed) log('✓ Magyarítás kikapcsolva a játék listájában.');
+  }
+  writeState(userDataDir, state);
+  return { ok: true, removed: removed.length, ids };
+}
+
+module.exports = { sync, remove, status, isHuPack, statePath, readState, listHuAssets, STEP };
