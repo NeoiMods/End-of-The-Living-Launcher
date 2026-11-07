@@ -19,6 +19,11 @@ const approvals = require('./approvals');
 //   5) A hivatalos ZombieBuddy telepítő automatizált lefuttatása
 //   6) Minden Java mod előre jóváhagyása (ZombieBuddy kérdések kihagyása)
 
+// Ezek a modok szandekosan nem kapcsolodnak be, akkor sem, ha a kollekcioban
+// benne vannak: a FuelCraft "Easy" valtozata ugyanabbol a csomagbol jon, mint az
+// alap, es a kettot egyszerre hasznalni ertelmetlen/konfliktusos.
+const SKIP_MOD_IDS = new Set(['siowar_distiller_easy']);
+
 const RETRY_MS = 24 * 60 * 60 * 1000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -152,6 +157,10 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
       const key = String(mod.id).toLowerCase();
       if (seen.has(key)) continue;
       seen.add(key);
+      if (SKIP_MOD_IDS.has(key)) {
+        onLog(`  – ${mod.name || mod.id}: kihagyva (nem kapcsoljuk be).`);
+        continue;
+      }
       enabledIds.push(mod.id);
     }
   }

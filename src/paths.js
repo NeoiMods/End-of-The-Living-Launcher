@@ -212,40 +212,6 @@ function findGameCandidates() {
     .map(({ path: p, source, isDefault }) => ({ path: p, source, isDefault }));
 }
 
-// Kritikus figyelmeztetés, ha a játék nem a C: meghajtó alap Steam mappájában van.
-function gamePathWarning(gamePath) {
-  if (!gamePath) return null;
-  let resolved;
-  try {
-    resolved = path.resolve(gamePath);
-  } catch {
-    return null;
-  }
-  if (resolved.toLowerCase() === path.resolve(DEFAULT_GAME_DIR).toLowerCase()) return null;
-
-  const drive = (resolved.match(/^([A-Za-z]):/) || [])[1];
-  const otherDrive = drive && drive.toUpperCase() !== 'C';
-  const where = otherDrive
-    ? `a ${drive.toUpperCase()}: meghajtón`
-    : 'a C: meghajtón, de nem az alap Steam mappában';
-
-  return {
-    critical: true,
-    gamePath: resolved,
-    defaultPath: DEFAULT_GAME_DIR,
-    drive: drive ? drive.toUpperCase() + ':' : '',
-    title: 'A Project Zomboid nincs az alap helyen',
-    short: `A játék ${where} van. A modok és gyakorlatilag minden, amit a launcher telepít, arra készült, hogy a játék a C: meghajtó alap Steam mappájában legyen – így crashek és glitchek jöhetnek, a hibátlan működést nem tudjuk garantálni.`,
-    paragraphs: [
-      `A játék most itt van: ${resolved}`,
-      `Az alap hely viszont: ${DEFAULT_GAME_DIR}`,
-      'Ez nem a launcher szeszélye: a Project Zomboid, a Steam Workshop modok, a PZO optimalizáló motor, a 3D modellek és nagyjából minden, amit a launcher telepít, alapból arra van tervezve, hogy a játék a C: meghajtó alap Steam mappájában legyen. A modok mappái, az elérési utak és a Windows jogosultságok miatt ez a biztos hely.',
-      'Ha így folytatod, előfordulhatnak crashek (összeomlások), glitchek, hiányzó textúrák és egyéb hibák. Ezekért nem tudunk felelősséget vállalni, és a hibátlan működést nem tudjuk garantálni.',
-      'Megoldás: telepítsd újra a játékot a C: meghajtó alap Steam mappájába, vagy ha már megvan a gépen, keresd meg a launcherrel – onnantól mindent oda telepítünk.',
-    ],
-  };
-}
-
 function zomboidDir() {
   return path.join(os.homedir(), 'Zomboid');
 }
@@ -265,7 +231,6 @@ function getEnvironment(cfg, options = {}) {
   return {
     gamePath,
     gameFound,
-    gameWarning: gamePathWarning(gamePath),
     defaultGameDir: DEFAULT_GAME_DIR,
     steamPath: steam,
     steamRunning: launch.isSteamRunning(),
@@ -298,7 +263,6 @@ module.exports = {
   findGamePath,
   findGameCandidates,
   isGameDir,
-  gamePathWarning,
   resolveGamePath,
   zomboidDir,
   getEnvironment,

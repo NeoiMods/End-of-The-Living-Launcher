@@ -60,17 +60,6 @@
     <div class="hero-phase"><i></i>TEST PHASE<i></i></div>
   </section>
 
-  <div id="gameWarn" class="game-warn hidden" role="alert">
-    <span class="gw-icon">!</span>
-    <div class="gw-text">
-      <strong>KRITIKUS: a Project Zomboid nincs az alap helyén (C: meghajtó)</strong>
-      <small id="gameWarnShort"></small>
-    </div>
-    <button id="btnGameFind" class="gw-btn" type="button">JÁTÉK KERESÉSE</button>
-    <button id="btnGameWarnInfo" class="gw-btn gw-ghost" type="button">RÉSZLETEK</button>
-    <button id="btnGameWarnHide" class="gw-hide" type="button" title="Elrejtés">×</button>
-  </div>
-
   <main class="layout">
     <section class="panel server-panel">
       <div class="panel-head">
@@ -443,28 +432,6 @@
       <div class="modal-actions">
         <button id="btnZbCancel" class="ghost-btn" type="button">Mégse</button>
         <button id="btnZbGo" class="primary-btn" type="button">Letöltés és telepítés</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="gameWarnOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="gameWarnTitle">
-    <div class="modal game-warn-modal">
-      <div class="gw-badge">KRITIKUS HIBA</div>
-      <h2 id="gameWarnTitle">A Project Zomboid nincs az alap helyén</h2>
-      <p class="modal-lead" id="gameWarnLead"></p>
-      <div class="gw-body" id="gameWarnText"></div>
-      <label class="field">
-        <span>Discord neved (kötelező – ezzel kerül be a szerver logjaiba)</span>
-        <input id="gameWarnName" type="text" maxlength="40" placeholder="pl. shadow_peter" spellcheck="false" />
-      </label>
-      <p class="warn-note" id="gameWarnNote">
-        Amíg a nevet nem írod be, nem lehet továbblépni. Az <b>ELKÜLDÉS ÉS FOLYTATOM</b>
-        gombra kattintva a launcher kérdés nélkül jelenti a szervernek: a nevednél
-        látszódni fog, hogy nem a helyes mappa struktúrát követed.
-      </p>
-      <div class="modal-actions">
-        <button id="btnGameWarnFind" class="ghost-btn" type="button">JÁTÉK KERESÉSE</button>
-        <button id="btnGameWarnOk" class="primary-btn" type="button" disabled>ELKÜLDÉS ÉS FOLYTATOM</button>
       </div>
     </div>
   </div>

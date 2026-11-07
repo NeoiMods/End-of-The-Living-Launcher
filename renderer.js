@@ -87,7 +87,6 @@ function render(st) {
   const heapMb = st.heapMb || 8192;
 
   // RAM kijelzés
-  renderGameWarning(st);
 
   const memBox = $('#memoryBox');
   const memValue = $('#memoryValue');
@@ -102,12 +101,10 @@ function render(st) {
   const items = [
     {
       ok: st.gameFound,
-      warn: !!(st.gameWarning && st.gameWarning.critical),
+      warn: false,
       label: 'Project Zomboid',
       detail: st.gameFound
-        ? st.gameWarning
-          ? `${st.gamePath} • KRITIKUS: nem az alap helyen van (Játék keresése)`
-          : st.gamePath
+        ? st.gamePath
         : 'Nem található – kattints a Játék keresése gombra',
     },
     {
@@ -484,24 +481,7 @@ function wireEvents() {
   $('#btnCheckUpdate').addEventListener('click', checkUpdateFromUi);
 
   // ---- kritikus játék-mappa figyelmeztetés + játék keresése ----
-  $('#btnGameFind').addEventListener('click', openGameFinder);
   $('#btnGameFindMini').addEventListener('click', openGameFinder);
-  $('#btnGameWarnInfo').addEventListener('click', openGameWarn);
-  $('#btnGameWarnHide').addEventListener('click', openGameWarn); // a sáv elrejtéséhez is név kell
-  $('#btnGameWarnOk').addEventListener('click', sendGameWarnReport);
-  $('#gameWarnName').addEventListener('input', () => {
-    const btn = $('#btnGameWarnOk');
-    const ok = $('#gameWarnName').value.trim().length >= 2;
-    btn.disabled = !ok;
-    if (btn.textContent !== 'KÜLDÉS…') btn.textContent = 'ELKÜLDÉS ÉS FOLYTATOM';
-  });
-  $('#gameWarnName').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !$('#btnGameWarnOk').disabled) sendGameWarnReport();
-  });
-  $('#btnGameWarnFind').addEventListener('click', () => {
-    closeGameWarn();
-    openGameFinder();
-  });
   $('#btnGameFindClose').addEventListener('click', () => $('#gameFindOverlay').classList.add('hidden'));
   $('#gameFindOverlay').addEventListener('click', (e) => {
     if (e.target === $('#gameFindOverlay')) $('#gameFindOverlay').classList.add('hidden');
@@ -1562,108 +1542,8 @@ function renderBrowserPreview() {
 // készült, hogy a Project Zomboid a C: meghajtón, az alap Steam mappában legyen.
 // Ha nem ott van, kritikus figyelmeztetést adunk, és felajánljuk a keresőt.
 
-const GAME_WARN_DONE_KEY = 'eotl.gameWarnReported';
-const GAME_WARN_NOTE =
-  'Amíg a nevet nem írod be, nem lehet továbblépni. Az ELKÜLDÉS ÉS FOLYTATOM gombra kattintva a launcher kérdés nélkül jelenti a szervernek: a nevednél látszódni fog, hogy nem a helyes mappa struktúrát követed.';
-let gameWarnShownThisRun = false;
-
-// Ez a játékos erre a mappára már jelentette magát (OK + Discord név).
-function gameWarnDone(warn) {
-  return !!warn && localStorage.getItem(GAME_WARN_DONE_KEY) === warn.gamePath;
-}
-
-function renderGameWarning(st) {
-  const box = $('#gameWarn');
-  const warn = st && st.gameWarning;
-  if (!box) return;
-  if (!warn) {
-    box.classList.add('hidden');
-    return;
-  }
-  $('#gameWarnShort').textContent = warn.short;
-  const hidden = gameWarnDone(warn);
-  box.classList.toggle('hidden', hidden);
-
-  // Induláskor egyszer nagy ablakban is elmagyarázzuk (ha még nem nyugtázták).
-  if (!hidden && !gameWarnShownThisRun) {
-    gameWarnShownThisRun = true;
-    setTimeout(openGameWarn, 1200);
-  }
-}
-
-function openGameWarn() {
-  const warn = lastStatus && lastStatus.gameWarning;
-  if (!warn) return;
-  $('#gameFindOverlay').classList.add('hidden'); // ne legyen két ablak egymáson
-  $('#gameWarnLead').textContent =
-    'Ez most tényleg fontos: ha a játék nem a C: meghajtó alap Steam mappájában van, crashek, glitchek és egyéb hibák jöhetnek. A hibátlan mûködést így nem tudjuk garantálni.';
-  const body = $('#gameWarnText');
-  body.innerHTML = '';
-  for (const text of warn.paragraphs || []) {
-    const el = document.createElement('p');
-    el.textContent = text;
-    body.appendChild(el);
-  }
-
-  // A név megadása kötelező: amíg nincs kész, a gomb nem aktív.
-  const nameInput = $('#gameWarnName');
-  nameInput.value = localStorage.getItem('eotl.discordName') || '';
-  nameInput.classList.remove('invalid');
-  $('#gameWarnNote').textContent = GAME_WARN_NOTE;
-  $('#btnGameWarnOk').disabled = nameInput.value.trim().length < 2;
-  $('#btnGameWarnOk').textContent = 'ELKÜLDÉS ÉS FOLYTATOM';
-
-  $('#gameWarnOverlay').classList.remove('hidden');
-  setTimeout(() => nameInput.focus(), 60);
-}
-
-function closeGameWarn() {
-  $('#gameWarnOverlay').classList.add('hidden');
-}
-
-// OK a kritikus figyelmeztetésen: a jelentés megy a szervernek, utána léphet tovább.
-async function sendGameWarnReport() {
-  const warn = lastStatus && lastStatus.gameWarning;
-  if (!warn) return;
-  const input = $('#gameWarnName');
-  const name = input.value.trim();
-  if (name.length < 2) {
-    input.classList.add('invalid');
-    input.focus();
-    $('#gameWarnNote').textContent = 'Írd be a Discord neved (legalább 2 karakter), hogy tudjuk, kitől jött a jelzés.';
-    return;
-  }
-  input.classList.remove('invalid');
-  localStorage.setItem('eotl.discordName', name); // a crash küldés is ezt használja
-
-  const btn = $('#btnGameWarnOk');
-  btn.disabled = true;
-  btn.textContent = 'KÜLDÉS…';
-  try {
-    const res = await bridge.reportWrongPath(name);
-    if (!res || !res.ok) {
-      // Ha a webhook nem érhető el, ne zárjuk be örökre a launchert – de szólunk.
-      $('#gameWarnNote').textContent =
-        'A jelentést most nem sikerült elküldeni (' + ((res && res.error) || 'ismeretlen hiba') + '). ' +
-        'A név mentve, próbáld újra, vagy lépj tovább a JÁTÉK KERESÉSE gombbal.';
-      btn.disabled = false;
-      btn.textContent = 'ÚJRA KÜLDÉS';
-      return;
-    }
-    localStorage.setItem(GAME_WARN_DONE_KEY, warn.gamePath);
-    closeGameWarn();
-    $('#gameWarn').classList.add('hidden');
-    appendLog('✓ Jelentve a szervernek (' + name + '): a játék nem a helyes mappa struktúrát követi.');
-  } catch (err) {
-    $('#gameWarnNote').textContent = 'Hiba a küldés közben: ' + (err && err.message ? err.message : err);
-    btn.disabled = false;
-    btn.textContent = 'ÚJRA KÜLDÉS';
-  }
-}
-
 async function openGameFinder() {
   if (browserMode) return;
-  $('#gameWarnOverlay').classList.add('hidden'); // ne legyen két ablak egymáson
   $('#gameFindOverlay').classList.remove('hidden');
   await findGame();
 }
@@ -1739,11 +1619,8 @@ async function applyGamePath(dir) {
       $('#gameFindNote').textContent = (res && res.error) || 'Nem sikerült beállítani ezt a mappát.';
       return;
     }
-    gameWarnShownThisRun = true;
     $('#setGamePath').value = dir || '';
     $('#gameFindOverlay').classList.add('hidden');
-    if (res.status && res.status.gameWarning) localStorage.removeItem(GAME_WARN_DONE_KEY);
-    if (lastStatus === null) renderGameWarning(res.status);
     await refresh();
     refreshPzoState();
     appendLog(

@@ -9,7 +9,6 @@ const {
   zomboidDir,
   findGameCandidates,
   isGameDir,
-  gamePathWarning,
   DEFAULT_GAME_DIR,
   GAME_EXE,
 } = require('./src/paths');
@@ -95,9 +94,6 @@ app.whenReady().then(() => {
   shortcuts.ensureDesktopShortcut().then((res) => {
     if (res && res.created) log('✓ Parancsikon létrehozva az asztalon.');
   });
-
-  const warn = gamePathWarning(resolveGamePath(cfg));
-  if (warn) log(`! KRITIKUS: a játék nem az alap Steam helyen van (${warn.gamePath}).`);
 
   // Első indításkor háttérben lekérjük a kollekciót, hogy a checklist valós
   // számokat mutasson (a felhasználónak ne kelljen külön frissítenie).
@@ -447,36 +443,7 @@ ipcMain.handle('game:find', () => {
       candidates,
       current,
       defaultPath: DEFAULT_GAME_DIR,
-      warning: gamePathWarning(current),
     };
-  } catch (err) {
-    return reportError(err);
-  }
-});
-
-// A kritikus figyelmeztetés OK-ja: a launcher kérdés nélkül jelenti a szervernek,
-// hogy a játékos nem a helyes mappa struktúrát követi (Discord névvel).
-ipcMain.handle('game:reportPath', async (e, payload) => {
-  try {
-    const name = String((payload && payload.name) || '').trim();
-    if (name.length < 2) return { ok: false, error: 'Írd be a Discord neved (legalább 2 karakter).' };
-    const warning = gamePathWarning(resolveGamePath(cfg));
-    if (!warning) return { ok: false, error: 'A játék most az alap helyen van – nincs mit jelenteni.' };
-    const mem = system.getMemoryInfo(Number(cfg.jvmMaxMb) || 8192);
-    await discord.sendWarning({
-      webhookUrl: cfg.discordWebhook,
-      discordName: name,
-      warning,
-      meta: {
-        server: cfg.server && cfg.server.name,
-        version: app.getVersion(),
-        sha: baselineSha(),
-        ramGb: mem.totalGb,
-        heapMb: Number(cfg.jvmMaxMb) || 0,
-      },
-    });
-    log(`✓ Figyelmeztetés elküldve a szervernek (Discord: ${name}) – a játék nincs az alap mappában.`);
-    return { ok: true };
   } catch (err) {
     return reportError(err);
   }
@@ -492,7 +459,6 @@ ipcMain.handle('game:setPath', (e, dir) => {
     save();
     log(value ? `✓ Játék mappa beállítva: ${value}` : '• Játék mappa: automatikus keresés (Steam)');
     const st = status();
-    if (st.gameWarning) log('! KRITIKUS: a játék nincs az alap Steam helyen – crashek/glitchek jöhetnek.');
     return { ok: true, status: st };
   } catch (err) {
     return reportError(err);
