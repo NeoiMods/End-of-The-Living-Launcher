@@ -44,6 +44,90 @@ function parseCollectionHtml(html, collectionId) {
   return { id: String(collectionId), appId, title, childCount, items };
 }
 
+// ---------------------------------------------------------------- API tartalék
+// A Steam a kollekció HTML oldalát gyakran rate-limiteli (HTTP 429). Ilyenkor a
+// publikus Web API-ból olvassuk ki ugyanazt: előbb a gyereklistát, utána a
+// címeket. Így a checklist akkor is feltöltődik, ha a HTML nem elérhető.
+
+function postForm(url, body, timeoutMs = 20000) {
+  const https = require('https');
+  return new Promise((resolve, reject) => {
+    const data = Buffer.from(body, 'utf8');
+    const req = https.request(
+      url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': data.length,
+          'User-Agent': UA,
+        },
+      },
+      (res) => {
+        let text = '';
+        res.setEncoding('utf8');
+        res.on('data', (c) => {
+          text += c;
+        });
+        res.on('end', () => {
+          if (res.statusCode !== 200) {
+            reject(new Error(`Steam API HTTP ${res.statusCode}`));
+            return;
+          }
+          try {
+            resolve(JSON.parse(text));
+          } catch {
+            reject(new Error('A Steam API válasza nem JSON.'));
+          }
+        });
+      }
+    );
+    req.setTimeout(timeoutMs, () => req.destroy(new Error('időtúllépés')));
+    req.on('error', reject);
+    req.end(data);
+  });
+}
+
+async function fetchTitles(ids) {
+  const titles = {};
+  for (let i = 0; i < ids.length; i += 100) {
+    const chunk = ids.slice(i, i + 100);
+    const body = [
+      'itemcount=' + chunk.length,
+      ...chunk.map((id, n) => `publishedfileids[${n}]=${encodeURIComponent(id)}`),
+    ].join('&');
+    try {
+      const out = await postForm('https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/', body);
+      for (const d of (out.response && out.response.publishedfiledetails) || []) {
+        if (d && d.publishedfileid) titles[String(d.publishedfileid)] = String(d.title || '').trim();
+      }
+    } catch {
+      // Cím nélkül is jó: az ID-t mutatjuk helyette.
+    }
+  }
+  return titles;
+}
+
+async function fetchCollectionViaApi(collectionId) {
+  const body = `collectioncount=1&publishedfileids[0]=${encodeURIComponent(collectionId)}`;
+  const out = await postForm('https://api.steampowered.com/ISteamRemoteStorage/GetCollectionDetails/v1/', body);
+  const detail = ((out.response && out.response.collectiondetails) || [])[0];
+  if (!detail || Number(detail.result) !== 1) {
+    throw new Error('A Steam API nem adta vissza a kollekciót (privát vagy törölt lehet).');
+  }
+  const ids = (detail.children || []).map((c) => String(c.publishedfileid || '')).filter(Boolean);
+  if (!ids.length) throw new Error('A kollekció üresnek tűnik a Steam API szerint.');
+  const titles = await fetchTitles(ids);
+  return {
+    id: String(collectionId),
+    appId: '108600',
+    title: 'Steam Workshop kollekció',
+    childCount: ids.length,
+    items: ids.map((id) => ({ id, title: titles[id] || id })),
+    viaApi: true,
+  };
+}
+
 // Fetches and parses a Steam Workshop collection. Retries on failure/empty result.
 async function fetchCollection(collectionId, { retries = 2 } = {}) {
   const url = `https://steamcommunity.com/sharedfiles/filedetails/?id=${encodeURIComponent(collectionId)}`;
@@ -55,8 +139,12 @@ async function fetchCollection(collectionId, { retries = 2 } = {}) {
         timeoutMs: 30000,
       });
       if (status === 429 || status === 503) {
-        // Steam rate limit: hosszabb várakozás, különben hiába próbáljuk.
-        await sleep(8000 * (attempt + 1));
+        // Steam rate limit: előbb az API-ból próbáljuk, csak utána várunk.
+        try {
+          return await fetchCollectionViaApi(collectionId);
+        } catch {
+          await sleep(8000 * (attempt + 1));
+        }
         throw new Error(`A Steam átmenetileg korlátoz (HTTP ${status}) – próbáld újra pár perc múlva.`);
       }
       if (status !== 200) throw new Error(`A kollekció lekérése nem sikerült (HTTP ${status}).`);
@@ -75,4 +163,4 @@ async function fetchCollection(collectionId, { retries = 2 } = {}) {
   throw lastError || new Error('A kollekció lekérése ismeretlen hibával végződött.');
 }
 
-module.exports = { fetchCollection, parseCollectionHtml };
+module.exports = { fetchCollection, parseCollectionHtml, fetchCollectionViaApi };
