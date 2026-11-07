@@ -1,7 +1,20 @@
 {
-  "version": "0.7",
+  "version": "0.7.1",
   "updatedAt": "2026-11-06",
   "items": [
+    {
+      "id": "0.7.1",
+      "version": "0.7.1",
+      "date": "2026-11-07",
+      "tag": "FONTOS",
+      "title": "0.7.1 – kritikus figyelmeztetés és játék kereső",
+      "text": "Ha a Project Zomboid nem a C: meghajtó alap Steam mappájában van, a launcher mostantól kritikus hibaként figyelmeztet, és egy kattintással megkeresi a játékot.",
+      "changes": [
+        "Kritikus figyelmeztetés, ha a játék nincs a C: meghajtó alap Steam mappájában (C:\\Program Files (x86)\\Steam\\steamapps\\common\\ProjectZomboid) – mert a modok és gyakorlatilag minden telepítő erre van tervezve.",
+        "Új JÁTÉK KERESÉSE gomb: végigfésüli a Steam könyvtárakat és az összes meghajtót, kilistázza a megtalált Project Zomboid mappákat, és a kiválasztottba telepít mindent.",
+        "A megtalált mappa a Beállításokban is megadható marad (Tallózás), és a launcher a választás után azonnal újraellenőrzi a rendszert."
+      ]
+    },
     {
       "id": "0.7",
       "version": "0.7",

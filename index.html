@@ -60,6 +60,17 @@
     <div class="hero-phase"><i></i>TEST PHASE<i></i></div>
   </section>
 
+  <div id="gameWarn" class="game-warn hidden" role="alert">
+    <span class="gw-icon">!</span>
+    <div class="gw-text">
+      <strong>KRITIKUS: a Project Zomboid nincs az alap helyén (C: meghajtó)</strong>
+      <small id="gameWarnShort"></small>
+    </div>
+    <button id="btnGameFind" class="gw-btn" type="button">JÁTÉK KERESÉSE</button>
+    <button id="btnGameWarnInfo" class="gw-btn gw-ghost" type="button">RÉSZLETEK</button>
+    <button id="btnGameWarnHide" class="gw-hide" type="button" title="Elrejtés">×</button>
+  </div>
+
   <main class="layout">
     <section class="panel server-panel">
       <div class="panel-head">
@@ -137,6 +148,7 @@
         <button id="btnSubscribe" class="mini-btn" type="button">Feliratkozás</button>
         <button id="btnZombieBuddy" class="mini-btn" type="button">ZombieBuddy</button>
         <button id="btnModsFolder" class="mini-btn" type="button">Mod mappa</button>
+        <button id="btnGameFindMini" class="mini-btn" type="button" title="Project Zomboid keresése a gépen">Játék keresése</button>
       </div>
     </section>
 
@@ -424,6 +436,36 @@
       <div class="modal-actions">
         <button id="btnZbCancel" class="ghost-btn" type="button">Mégse</button>
         <button id="btnZbGo" class="primary-btn" type="button">Letöltés és telepítés</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="gameWarnOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="gameWarnTitle">
+    <div class="modal game-warn-modal">
+      <div class="gw-badge">KRITIKUS HIBA</div>
+      <h2 id="gameWarnTitle">A Project Zomboid nincs az alap helyén</h2>
+      <p class="modal-lead" id="gameWarnLead"></p>
+      <div class="gw-body" id="gameWarnText"></div>
+      <div class="modal-actions">
+        <button id="btnGameWarnOk" class="ghost-btn" type="button">TUDOM, FOLYTATOM</button>
+        <button id="btnGameWarnFind" class="primary-btn" type="button">JÁTÉK KERESÉSE</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="gameFindOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="gameFindTitle">
+    <div class="modal game-find-modal">
+      <h2 id="gameFindTitle">Project Zomboid keresése</h2>
+      <p class="modal-lead">
+        Végignézzük a Steam könyvtárakat és az összes meghajtót. A kiválasztott
+        mappába települ minden: modok, PZO motor, 3D modellek, ZombieBuddy.
+      </p>
+      <div class="gf-list" id="gameFindList"></div>
+      <p class="gf-note" id="gameFindNote"></p>
+      <div class="modal-actions">
+        <button id="btnGameBrowse" class="ghost-btn" type="button">Tallózás…</button>
+        <button id="btnGameRescan" class="ghost-btn" type="button">Újrakeresés</button>
+        <button id="btnGameFindClose" class="primary-btn" type="button">BEZÁRÁS</button>
       </div>
     </div>
   </div>

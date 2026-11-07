@@ -12,6 +12,9 @@ const zbInstaller = require('./zb-installer');
 
 const PZ_APP_ID = '108600';
 const GAME_EXE = launch.GAME_EXE;
+// Az alap telepítési hely, amire a modok és a launcher minden telepítője készült.
+// Ha a játék máshol van, a launcher kritikus figyelmeztetést ad.
+const DEFAULT_GAME_DIR = 'C:\\Program Files (x86)\\Steam\\steamapps\\common\\ProjectZomboid';
 
 function regQuery(key, value) {
   try {
@@ -100,6 +103,149 @@ function resolveGamePath(cfg) {
   return findGamePath();
 }
 
+function isGameDir(dir) {
+  try {
+    return !!dir && fs.existsSync(path.join(dir, GAME_EXE));
+  } catch {
+    return false;
+  }
+}
+
+function driveRoots() {
+  const roots = [];
+  for (let code = 67; code <= 90; code += 1) {
+    const root = String.fromCharCode(code) + ':\\';
+    try {
+      if (fs.existsSync(root)) roots.push(root);
+    } catch {
+      // Nincs ilyen meghajtó.
+    }
+  }
+  return roots;
+}
+
+// Végigmegy a gépen a szokásos helyeken (Steam könyvtárak és minden meghajtó),
+// és visszaadja az összes megtalált Project Zomboid mappát.
+function findGameCandidates() {
+  const found = [];
+  const seen = new Set();
+  const defaultKey = path.resolve(DEFAULT_GAME_DIR).toLowerCase();
+
+  const push = (dir, source, rank) => {
+    if (!isGameDir(dir)) return;
+    let full;
+    try {
+      full = path.resolve(dir);
+    } catch {
+      return;
+    }
+    const key = full.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    found.push({ path: full, source, rank, isDefault: key === defaultKey });
+  };
+
+  push(DEFAULT_GAME_DIR, 'Alap Steam hely', 0);
+
+  const steam = findSteamPath();
+  if (steam) push(path.join(steam, 'steamapps', 'common', 'ProjectZomboid'), 'Steam', 1);
+
+  const libs = steam ? parseLibraryPaths(steam) : [];
+  for (const lib of libs) {
+    push(path.join(lib, 'steamapps', 'common', 'ProjectZomboid'), 'Steam könyvtár', 2);
+    try {
+      const txt = fs.readFileSync(path.join(lib, 'steamapps', 'appmanifest_108600.acf'), 'utf8');
+      const m = txt.match(/"installdir"\s*"([^"]+)"/);
+      if (m) push(path.join(lib, 'steamapps', 'common', m[1]), 'Steam könyvtár', 2);
+    } catch {
+      // Ebben a könyvtárban nincs játék.
+    }
+  }
+
+  // Kézi telepítések: minden meghajtón a szokásos mappanevek.
+  const patterns = [
+    'steamapps\\common\\ProjectZomboid',
+    'Steam\\steamapps\\common\\ProjectZomboid',
+    'SteamLibrary\\steamapps\\common\\ProjectZomboid',
+    'Games\\Steam\\steamapps\\common\\ProjectZomboid',
+    'Games\\SteamLibrary\\steamapps\\common\\ProjectZomboid',
+    'Program Files (x86)\\Steam\\steamapps\\common\\ProjectZomboid',
+    'Program Files\\Steam\\steamapps\\common\\ProjectZomboid',
+    'ProjectZomboid',
+    'Games\\ProjectZomboid',
+    'Program Files (x86)\\ProjectZomboid',
+    'Program Files\\ProjectZomboid',
+  ];
+
+  for (const root of driveRoots()) {
+    for (const pattern of patterns) push(root + pattern, 'Keresés', 3);
+
+    // A meghajtó gyökerében lévő mappák (pl. D:\\Steam2, E:\\Jatekok).
+    let dirs = [];
+    try {
+      dirs = fs
+        .readdirSync(root, { withFileTypes: true })
+        .filter((d) => d.isDirectory())
+        .map((d) => d.name);
+    } catch {
+      // Nem olvasható meghajtó (pl. üres DVD meghajtó).
+    }
+    for (const name of dirs) {
+      const base = path.join(root, name);
+      push(base, 'Keresés', 3);
+      push(path.join(base, 'steamapps', 'common', 'ProjectZomboid'), 'Keresés', 3);
+    }
+    const games = path.join(root, 'Games');
+    try {
+      for (const entry of fs.readdirSync(games, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue;
+        push(path.join(games, entry.name), 'Keresés', 3);
+        push(path.join(games, entry.name, 'steamapps', 'common', 'ProjectZomboid'), 'Keresés', 3);
+      }
+    } catch {
+      // Nincs Games mappa ezen a meghajtón.
+    }
+  }
+
+  return found
+    .sort((a, b) => a.rank - b.rank || a.path.localeCompare(b.path))
+    .map(({ path: p, source, isDefault }) => ({ path: p, source, isDefault }));
+}
+
+// Kritikus figyelmeztetés, ha a játék nem a C: meghajtó alap Steam mappájában van.
+function gamePathWarning(gamePath) {
+  if (!gamePath) return null;
+  let resolved;
+  try {
+    resolved = path.resolve(gamePath);
+  } catch {
+    return null;
+  }
+  if (resolved.toLowerCase() === path.resolve(DEFAULT_GAME_DIR).toLowerCase()) return null;
+
+  const drive = (resolved.match(/^([A-Za-z]):/) || [])[1];
+  const otherDrive = drive && drive.toUpperCase() !== 'C';
+  const where = otherDrive
+    ? `a ${drive.toUpperCase()}: meghajtón`
+    : 'a C: meghajtón, de nem az alap Steam mappában';
+
+  return {
+    critical: true,
+    gamePath: resolved,
+    defaultPath: DEFAULT_GAME_DIR,
+    drive: drive ? drive.toUpperCase() + ':' : '',
+    title: 'A Project Zomboid nincs az alap helyen',
+    short: `A játék ${where} van. A modok és gyakorlatilag minden, amit a launcher telepít, arra készült, hogy a játék a C: meghajtó alap Steam mappájában legyen – így crashek és glitchek jöhetnek, a hibátlan működést nem tudjuk garantálni.`,
+    paragraphs: [
+      `A játék most itt van: ${resolved}`,
+      `Az alap hely viszont: ${DEFAULT_GAME_DIR}`,
+      'Ez nem a launcher szeszélye: a Project Zomboid, a Steam Workshop modok, a PZO optimalizáló motor, a 3D modellek és nagyjából minden, amit a launcher telepít, alapból arra van tervezve, hogy a játék a C: meghajtó alap Steam mappájában legyen. A modok mappái, az elérési utak és a Windows jogosultságok miatt ez a biztos hely.',
+      'Ha így folytatod, előfordulhatnak crashek (összeomlások), glitchek, hiányzó textúrák és egyéb hibák. Ezekért nem tudunk felelősséget vállalni, és a hibátlan működést nem tudjuk garantálni.',
+      'Megoldás: telepítsd újra a játékot a C: meghajtó alap Steam mappájába, vagy ha már megvan a gépen, keresd meg a launcherrel – onnantól mindent oda telepítünk.',
+    ],
+  };
+}
+
 function zomboidDir() {
   return path.join(os.homedir(), 'Zomboid');
 }
@@ -119,6 +265,8 @@ function getEnvironment(cfg, options = {}) {
   return {
     gamePath,
     gameFound,
+    gameWarning: gamePathWarning(gamePath),
+    defaultGameDir: DEFAULT_GAME_DIR,
     steamPath: steam,
     steamRunning: launch.isSteamRunning(),
     gameRunning: launch.isGameRunning(),
@@ -144,9 +292,13 @@ function getEnvironment(cfg, options = {}) {
 module.exports = {
   PZ_APP_ID,
   GAME_EXE,
+  DEFAULT_GAME_DIR,
   findSteamPath,
   parseLibraryPaths,
   findGamePath,
+  findGameCandidates,
+  isGameDir,
+  gamePathWarning,
   resolveGamePath,
   zomboidDir,
   getEnvironment,

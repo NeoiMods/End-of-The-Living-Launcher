@@ -87,6 +87,8 @@ function render(st) {
   const heapMb = st.heapMb || 8192;
 
   // RAM kijelzés
+  renderGameWarning(st);
+
   const memBox = $('#memoryBox');
   const memValue = $('#memoryValue');
   if (memBox && memValue) {
@@ -100,8 +102,13 @@ function render(st) {
   const items = [
     {
       ok: st.gameFound,
+      warn: !!(st.gameWarning && st.gameWarning.critical),
       label: 'Project Zomboid',
-      detail: st.gameFound ? st.gamePath : 'Nem található – Beállítások → Játék mappája',
+      detail: st.gameFound
+        ? st.gameWarning
+          ? `${st.gamePath} • KRITIKUS: nem az alap helyen van (Játék keresése)`
+          : st.gamePath
+        : 'Nem található – kattints a Játék keresése gombra',
     },
     {
       ok: zbFiles && zbMod,
@@ -475,6 +482,34 @@ function wireEvents() {
     appendLog('• Frissítés későbbre hagyva – a Frissítés gombbal bármikor indítható.');
   });
   $('#btnCheckUpdate').addEventListener('click', checkUpdateFromUi);
+
+  // ---- kritikus játék-mappa figyelmeztetés + játék keresése ----
+  $('#btnGameFind').addEventListener('click', openGameFinder);
+  $('#btnGameFindMini').addEventListener('click', openGameFinder);
+  $('#btnGameWarnInfo').addEventListener('click', openGameWarn);
+  $('#btnGameWarnHide').addEventListener('click', () => closeGameWarn(true));
+  $('#btnGameWarnOk').addEventListener('click', () => closeGameWarn(true));
+  $('#btnGameWarnFind').addEventListener('click', () => {
+    closeGameWarn(false);
+    openGameFinder();
+  });
+  $('#gameWarnOverlay').addEventListener('click', (e) => {
+    if (e.target === $('#gameWarnOverlay')) closeGameWarn(false);
+  });
+  $('#btnGameFindClose').addEventListener('click', () => $('#gameFindOverlay').classList.add('hidden'));
+  $('#gameFindOverlay').addEventListener('click', (e) => {
+    if (e.target === $('#gameFindOverlay')) $('#gameFindOverlay').classList.add('hidden');
+  });
+  $('#btnGameRescan').addEventListener('click', findGame);
+  $('#btnGameBrowse').addEventListener('click', async () => {
+    if (browserMode) return;
+    try {
+      const dir = await bridge.pickDirectory();
+      if (dir) await applyGamePath(dir);
+    } catch (err) {
+      appendLog('✗ ' + (err && err.message ? err.message : err));
+    }
+  });
 
   $('#btnEventOpen').addEventListener('click', () => {
     if (currentEvent && currentEvent.url) bridge.openExternal(currentEvent.url);
@@ -1483,6 +1518,151 @@ function renderBrowserPreview() {
 }
 
 // ---------------------------------------------------------------- init
+
+// ---------------------------------------------- játék mappa / kritikus hiba
+//
+// A modok, a PZO motor, a 3D modellek és gyakorlatilag minden telepítő arra
+// készült, hogy a Project Zomboid a C: meghajtón, az alap Steam mappában legyen.
+// Ha nem ott van, kritikus figyelmeztetést adunk, és felajánljuk a keresőt.
+
+const GAME_WARN_HIDDEN_KEY = 'eotl.gameWarnHidden';
+let gameWarnShownThisRun = false;
+
+function renderGameWarning(st) {
+  const box = $('#gameWarn');
+  const warn = st && st.gameWarning;
+  if (!box) return;
+  if (!warn) {
+    box.classList.add('hidden');
+    return;
+  }
+  $('#gameWarnShort').textContent = warn.short;
+  const hidden = localStorage.getItem(GAME_WARN_HIDDEN_KEY) === warn.gamePath;
+  box.classList.toggle('hidden', hidden);
+
+  // Induláskor egyszer nagy ablakban is elmagyarázzuk (ha még nem nyugtázták).
+  if (!hidden && !gameWarnShownThisRun) {
+    gameWarnShownThisRun = true;
+    setTimeout(openGameWarn, 1200);
+  }
+}
+
+function openGameWarn() {
+  const warn = lastStatus && lastStatus.gameWarning;
+  if (!warn) return;
+  $('#gameFindOverlay').classList.add('hidden'); // ne legyen két ablak egymáson
+  $('#gameWarnLead').textContent =
+    'Ez most tényleg fontos: ha a játék nem a C: meghajtó alap Steam mappájában van, crashek, glitchek és egyéb hibák jöhetnek. A hibátlan mûködést így nem tudjuk garantálni.';
+  const body = $('#gameWarnText');
+  body.innerHTML = '';
+  for (const text of warn.paragraphs || []) {
+    const el = document.createElement('p');
+    el.textContent = text;
+    body.appendChild(el);
+  }
+  $('#gameWarnOverlay').classList.remove('hidden');
+}
+
+function closeGameWarn(remember) {
+  $('#gameWarnOverlay').classList.add('hidden');
+  if (remember && lastStatus && lastStatus.gameWarning) {
+    localStorage.setItem(GAME_WARN_HIDDEN_KEY, lastStatus.gameWarning.gamePath);
+    $('#gameWarn').classList.add('hidden');
+  }
+}
+
+async function openGameFinder() {
+  if (browserMode) return;
+  $('#gameWarnOverlay').classList.add('hidden'); // ne legyen két ablak egymáson
+  $('#gameFindOverlay').classList.remove('hidden');
+  await findGame();
+}
+
+async function findGame() {
+  if (browserMode) return;
+  const list = $('#gameFindList');
+  list.innerHTML = '';
+  const loading = document.createElement('div');
+  loading.className = 'gf-empty';
+  loading.textContent = 'Keresés a Steam könyvtárakban és a meghajtókon… (pár másodperc)';
+  list.appendChild(loading);
+  $('#gameFindNote').textContent = '';
+  try {
+    renderGameCandidates(await bridge.findGame());
+  } catch (err) {
+    list.innerHTML = '';
+    const el = document.createElement('div');
+    el.className = 'gf-empty err';
+    el.textContent = 'Hiba a keresés közben: ' + (err && err.message ? err.message : err);
+    list.appendChild(el);
+  }
+}
+
+function renderGameCandidates(res) {
+  const list = $('#gameFindList');
+  list.innerHTML = '';
+  const candidates = (res && res.candidates) || [];
+  const current = String((res && res.current) || '').toLowerCase();
+
+  if (!candidates.length) {
+    const el = document.createElement('div');
+    el.className = 'gf-empty';
+    el.textContent =
+      'Nem találtam Project Zomboidot a szokásos helyeken. Tallózással válaszd ki a ProjectZomboid64.exe mappáját.';
+    list.appendChild(el);
+  }
+
+  for (const c of candidates) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'gf-item' + (c.path.toLowerCase() === current ? ' is-current' : '');
+
+    const main = document.createElement('span');
+    main.className = 'gf-path';
+    main.textContent = c.path;
+
+    const meta = document.createElement('span');
+    meta.className = 'gf-src';
+    meta.textContent = c.isDefault ? 'ALAP HELY – ide kellene' : c.source;
+
+    btn.appendChild(main);
+    btn.appendChild(meta);
+    btn.addEventListener('click', () => applyGamePath(c.path));
+    list.appendChild(btn);
+  }
+
+  const note = $('#gameFindNote');
+  if (res && res.current) {
+    note.textContent = res.warning
+      ? `Most beállítva: ${res.current} – ez NEM az alap hely, ezért jön a kritikus figyelmeztetés.`
+      : `Most beállítva: ${res.current} – ez az alap hely, minden rendben.`;
+  } else if (candidates.length) {
+    note.textContent = 'Válassz egy mappát: onnantól a modok és minden telepítő oda kerül.';
+  }
+}
+
+async function applyGamePath(dir) {
+  if (browserMode) return;
+  try {
+    const res = await bridge.setGamePath(dir || '');
+    if (!res || !res.ok) {
+      $('#gameFindNote').textContent = (res && res.error) || 'Nem sikerült beállítani ezt a mappát.';
+      return;
+    }
+    gameWarnShownThisRun = true;
+    $('#setGamePath').value = dir || '';
+    $('#gameFindOverlay').classList.add('hidden');
+    if (res.status && res.status.gameWarning) localStorage.removeItem(GAME_WARN_HIDDEN_KEY);
+    if (lastStatus === null) renderGameWarning(res.status);
+    await refresh();
+    refreshPzoState();
+    appendLog(
+      '• Az új mappába a MODOK TELEPÍTÉSE / FRISSÍTÉSE gombbal telepíthetsz mindent (és az Optimalizálás fülön a PZO motort).'
+    );
+  } catch (err) {
+    $('#gameFindNote').textContent = 'Hiba: ' + (err && err.message ? err.message : err);
+  }
+}
 
 async function init() {
   wireEvents();

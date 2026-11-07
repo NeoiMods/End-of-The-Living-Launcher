@@ -3,7 +3,16 @@ const path = require('path');
 const fs = require('fs');
 
 const { loadConfig, saveConfig, DEFAULT_CONFIG } = require('./src/config');
-const { getEnvironment, resolveGamePath, zomboidDir } = require('./src/paths');
+const {
+  getEnvironment,
+  resolveGamePath,
+  zomboidDir,
+  findGameCandidates,
+  isGameDir,
+  gamePathWarning,
+  DEFAULT_GAME_DIR,
+  GAME_EXE,
+} = require('./src/paths');
 const news = require('./src/news');
 const { launchGame, isGameRunning } = require('./src/launch');
 const { runSetup } = require('./src/setup');
@@ -85,6 +94,9 @@ app.whenReady().then(() => {
   shortcuts.ensureDesktopShortcut().then((res) => {
     if (res && res.created) log('✓ Parancsikon létrehozva az asztalon.');
   });
+
+  const warn = gamePathWarning(resolveGamePath(cfg));
+  if (warn) log(`! KRITIKUS: a játék nem az alap Steam helyen van (${warn.gamePath}).`);
 
   // Első indításkor háttérben lekérjük a kollekciót, hogy a checklist valós
   // számokat mutasson (a felhasználónak ne kelljen külön frissítenie).
@@ -415,6 +427,44 @@ ipcMain.handle('optmods:remove', async (e, id) => {
 ipcMain.handle('events:get', async (e, force) => {
   try {
     return await events.fetchEvent({ cfg, force: !!force });
+  } catch (err) {
+    return reportError(err);
+  }
+});
+
+// ---- játék mappa kereső -------------------------------------------------
+// Végigfésüli a gépet (Steam könyvtárak + minden meghajtó), és a megtalált
+// Project Zomboid mappákból a játékos választ; onnantól minden oda települ.
+
+ipcMain.handle('game:find', () => {
+  try {
+    const candidates = findGameCandidates();
+    const current = resolveGamePath(cfg);
+    log(candidates.length ? `• Játék keresése: ${candidates.length} mappa található.` : '• Játék keresése: nincs Project Zomboid a gépen.');
+    return {
+      ok: true,
+      candidates,
+      current,
+      defaultPath: DEFAULT_GAME_DIR,
+      warning: gamePathWarning(current),
+    };
+  } catch (err) {
+    return reportError(err);
+  }
+});
+
+ipcMain.handle('game:setPath', (e, dir) => {
+  try {
+    const value = String(dir || '').trim().replace(/\//g, '\\').replace(/\\+$/, '');
+    if (value && !isGameDir(value)) {
+      return { ok: false, error: `Ebben a mappában nincs ${GAME_EXE} – válassz másik mappát.` };
+    }
+    cfg = { ...cfg, gamePath: value };
+    save();
+    log(value ? `✓ Játék mappa beállítva: ${value}` : '• Játék mappa: automatikus keresés (Steam)');
+    const st = status();
+    if (st.gameWarning) log('! KRITIKUS: a játék nincs az alap Steam helyen – crashek/glitchek jöhetnek.');
+    return { ok: true, status: st };
   } catch (err) {
     return reportError(err);
   }
