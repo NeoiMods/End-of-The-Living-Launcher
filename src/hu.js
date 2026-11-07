@@ -19,9 +19,12 @@ const STEP = 'hu';
 
 // HU, _HU, magyar, hungarian – a Master mappában csak a csomag neve számít.
 const HU_PATTERN = /(^|[^a-z])(hu|hun|magyar|hungarian)([^a-z]|$)/i;
+// CamelCase végződés is számít (pl. EOTL_VanillaHU), ahol nincs elválasztójel.
+const HU_SUFFIX = /(hu|hun|magyar|hungarian)$/i;
 
 function isHuPack(name) {
-  return HU_PATTERN.test(String(name || '').replace(/\.zip$/i, ''));
+  const base = String(name || '').replace(/\.zip$/i, '');
+  return HU_PATTERN.test(base) || HU_SUFFIX.test(base);
 }
 
 // ------------------------------------------------------------------ állapot
