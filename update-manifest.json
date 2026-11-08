@@ -1,7 +1,7 @@
 {
-  "sha": "5eee35f1612d01433994097d7281d60f15c06f01",
+  "sha": "58ce10dc9ced3a392831b5508ad929bc2386e2c5",
   "version": "0.8.4",
-  "generatedAt": "2026-11-08T14:22:34.387Z",
+  "generatedAt": "2026-11-08T14:26:58.652Z",
   "files": [
     {
       "path": "assets/bg.png",
@@ -105,8 +105,8 @@
     },
     {
       "path": "src/gh.js",
-      "size": 12334,
-      "sha256": "67ff58010c4a1d6ddba5f8f7d598d53628f6b0d34e5f7b5f8864bfb4735fec4e"
+      "size": 12412,
+      "sha256": "75495ac40a348b38571953d7ae307a1c79d41634d6815d22d64c6ceca099f269"
     },
     {
       "path": "src/hu.js",
