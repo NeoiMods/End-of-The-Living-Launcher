@@ -1,7 +1,21 @@
 {
-  "version": "0.8.3",
+  "version": "0.8.4",
   "updatedAt": "2026-11-08",
   "items": [
+    {
+      "id": "0.8.4",
+      "version": "0.8.4",
+      "date": "2026-11-08",
+      "tag": "FONTOS",
+      "title": "0.8.4 – a játék a főmenübe indul",
+      "text": "A közvetlen szerver-csatlakozás (a játék +connect paramétere) helyett a launcher mostantól a főmenübe indítja a Project Zomboidot – a szerverre a játékban csatlakozz. Így nem fordulhat elő, hogy a játék hibával indul, ha a szerver épp nem válaszol.",
+      "changes": [
+        "JÁTÉK INDÍTÁSA: a Project Zomboid a főmenübe indul, nem próbál azonnal a szerverre csatlakozni.",
+        "A szerver címe és a szerver státusza (online/offline, játékosok) változatlanul látszik a launcherben.",
+        "A memória-beállítás (-Xmx) és a ZombieBuddy agent ugyanúgy érvényes a játékra.",
+        "A frissítés-ellenőrzés és a csomagletöltés GitHub-kimaradás alatt is működik (0.8.3)."
+      ]
+    },
     {
       "id": "0.8.3",
       "version": "0.8.3",

@@ -110,25 +110,21 @@ function readHeapFromLauncherJson(gameDir) {
 
 // JVM args come first, then `--`, then game args. `--` is only required when JVM
 // arguments are present (see PZwiki "Startup parameters").
-function buildArgs({ server, useAgent, heapMb }) {
+// A játék a főmenübe indul: nincs `+connect`, a szerverre a játékos a menüből
+// csatlakozik (a közvetlen csatlakozás a szerver oldali beállítások miatt
+// megbízhatatlan volt).
+function buildArgs({ useAgent, heapMb }) {
   const jvmArgs = [];
   if (heapMb) jvmArgs.push(`-Xmx${heapMb}m`);
   // Ha a launcher JSON már tartalmazza az agentet, nem tesszük be újra.
   if (useAgent) jvmArgs.push('-agentlib:' + AGENT_LIB);
 
-  const gameArgs = ['+connect', `${server.ip}:${server.port}`];
-  if (server.password) gameArgs.push('+password', server.password);
-
-  return jvmArgs.length ? [...jvmArgs, '--', ...gameArgs] : gameArgs;
+  return jvmArgs;
 }
 
 async function launchGame({ gameDir, cfg, onLog }) {
   const exe = path.join(gameDir, GAME_EXE);
   if (!fs.existsSync(exe)) throw new Error(`Nem található: ${exe}`);
-
-  const server = (cfg && cfg.server) || {};
-  if (!server.ip) throw new Error('Nincs szerver cím megadva. (Beállítások → Szerver címe)');
-  if (!server.port) throw new Error('Nincs port megadva. (Beállítások → Port)');
 
   const heapMb = Number((cfg && cfg.jvmMaxMb) || 8192) || 8192;
   const st = agentStatus(gameDir);
@@ -138,9 +134,10 @@ async function launchGame({ gameDir, cfg, onLog }) {
   if (heap.changed) onLog(`Memória beállítva a játék launcherében: -Xmx${heapMb}m`);
   else if (heap.reason) onLog('! ' + heap.reason);
 
-  const args = buildArgs({ server, useAgent, heapMb });
+  const args = buildArgs({ useAgent, heapMb });
 
   onLog(`Indítás: ${GAME_EXE} ${args.join(' ')}`);
+  onLog('• A játék a főmenübe indul – a szerverre a játékban csatlakozz.');
   onLog(`JVM heap: -Xmx${heapMb}m (${(heapMb / 1024).toFixed(1)} GB)`);
   if (useAgent) onLog('ZombieBuddy betöltése: -agentlib:zbNative');
   else if (st.configured) onLog('ZombieBuddy agent már be van állítva a ProjectZomboid64.json fájlban.');

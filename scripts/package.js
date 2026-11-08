@@ -100,7 +100,8 @@ Első használat
    - Engedélyezi az összes modot a játékban.
    - Letölti és lefuttatja a ZombieBuddy telepítőt, minden kérdésre
      automatikusan válaszol, és előre jóváhagyja a Java modokat.
-3. JÁTÉK INDÍTÁSA - közvetlenül a szerverre csatlakozik.
+3. JÁTÉK INDÍTÁSA - a játék a főmenübe indul, a szerverre a játékban
+   csatlakozz (a szerver címe lent, a Beállításokban is megvan).
 
 Memória
 -------
