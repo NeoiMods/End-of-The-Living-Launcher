@@ -1,7 +1,6 @@
 {
-  "sha": "58ce10dc9ced3a392831b5508ad929bc2386e2c5",
+  "sha": "09e8523d40dfd67a0d4f0b83bd29b4429e0bf2d5",
   "version": "0.8.4",
-  "generatedAt": "2026-11-08T14:26:58.652Z",
   "files": [
     {
       "path": "assets/bg.png",
@@ -175,8 +174,8 @@
     },
     {
       "path": "src/update.js",
-      "size": 29623,
-      "sha256": "afd5bfdae099f45674ad9efb106004eb53ebd9cece70afe6454acd526040f0b5"
+      "size": 30140,
+      "sha256": "f83a0a83e9394bd2793fe88804d5f1d1d19c30e989eddc0ee9a78e07f8e932df"
     },
     {
       "path": "src/workshop.js",
