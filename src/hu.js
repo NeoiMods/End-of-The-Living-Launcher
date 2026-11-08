@@ -53,7 +53,7 @@ function writeState(userDataDir, state) {
 
 // ------------------------------------------------------------------ forrás
 
-async function listHuAssets(cfg, repo) {
+async function listHuAssets(cfg, repo, userDataDir) {
   const folders = [];
   for (const f of [pzo.folderOf(cfg), pzo.DEFAULT_FOLDER]) {
     if (!folders.includes(f)) folders.push(f);
@@ -61,8 +61,8 @@ async function listHuAssets(cfg, repo) {
   let lastError = null;
   for (const folder of folders) {
     try {
-      const plain = await pzo.listZips(cfg, repo, folder);
-      const split = await pzo.listSplitZips(cfg, repo, folder);
+      const plain = await pzo.listZips(cfg, repo, folder, userDataDir);
+      const split = await pzo.listSplitZips(cfg, repo, folder, userDataDir);
       const all = [...plain.map((z) => ({ ...z, folder })), ...split.map((z) => ({ ...z, folder }))];
       const hu = all.filter((z) => isHuPack(z.name));
       if (hu.length) return hu;
@@ -124,7 +124,7 @@ async function sync({ cfg, userDataDir, force = false, log = () => {}, onProgres
 
   let assets = [];
   try {
-    assets = await listHuAssets(cfg, repo);
+    assets = await listHuAssets(cfg, repo, userDataDir);
   } catch (err) {
     log('! Magyarítások: a Master mappa nem olvasható (' + (err && err.message ? err.message : err) + ').');
     return { ok: false, ids: [], installed: [], error: err && err.message ? err.message : String(err) };

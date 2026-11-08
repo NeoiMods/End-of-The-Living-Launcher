@@ -13,8 +13,9 @@ const fs = require('fs');
 const path = require('path');
 const { execFile } = require('child_process');
 
-const { fetchText, downloadFile } = require('./download');
+const { downloadFile } = require('./download');
 const { parseRepo } = require('./update');
+const gh = require('./gh');
 const packs = require('./packs');
 
 const DEFAULT_REPO = 'NeoiMods/End-of-The-Living-Launcher';
@@ -87,7 +88,7 @@ function status({ cfg, userDataDir, gameDir }) {
 
 // ------------------------------------------------------------------ forrás
 
-async function findAsset(cfg) {
+async function findAsset(cfg, userDataDir) {
   const repo = repoOf(cfg);
   const folder = folderOf(cfg);
   // Ha a beállított mappában nincs PZO zip, a Master mappát is megnézzük.
@@ -95,7 +96,7 @@ async function findAsset(cfg) {
   let lastError = null;
   for (const candidate of folders) {
     try {
-      return await findAssetIn(cfg, repo, candidate);
+      return await findAssetIn(cfg, repo, candidate, userDataDir);
     } catch (err) {
       lastError = err;
     }
@@ -103,33 +104,29 @@ async function findAsset(cfg) {
   throw lastError || new Error(`Nincs PZO telepítő a(z) ${repo} repóban.`);
 }
 
-// A repó egy mappájában lévő fájlok listája.
-async function listFiles(cfg, repo, folder) {
-  const url = `https://api.github.com/repos/${repo}/contents/${folder}`;
-  const { status: code, body } = await fetchText(url, { headers: headers(cfg) });
-
-  if (code === 404) throw new Error(`A repóban nincs ${folder}/ mappa (${repo}).`);
-  if (code !== 200) throw new Error(`GitHub API HTTP ${code} (${repo}/${folder}).`);
-
-  let items = [];
-  try {
-    const json = JSON.parse(body);
-    if (Array.isArray(json)) items = json.filter((it) => it && it.type === 'file');
-  } catch {
-    throw new Error('A GitHub válasz nem értelmezhető.');
+// A repó egy mappájában lévő fájlok listája. Három forrásból, sorrendben:
+// GitHub API → a repóban tárolt index.json (API nélkül) → helyi gyorsítótár.
+async function listFiles(cfg, repo, folder, userDataDir) {
+  const cleanFolder = String(folder || '').replace(/^\/+|\/+$/g, '');
+  const res = await gh.listFolder({
+    cfg,
+    repo,
+    folder: cleanFolder,
+    userDataDir,
+    cacheName: `gh-list-${cleanFolder.replace(/[^A-Za-z0-9._-]+/g, '-')}`,
+  });
+  if (!res.ok) {
+    if (/404/.test(String(res.error || ''))) {
+      throw new Error(`A repóban nincs ${cleanFolder}/ mappa (${repo}).`);
+    }
+    throw new Error(`GitHub hiba (${repo}/${cleanFolder}): ${res.error}`);
   }
-
-  return items.map((it) => ({
-    name: it.name,
-    size: Number(it.size) || 0,
-    url: it.download_url || '',
-    apiUrl: it.url || '',
-  }));
+  return res.files.map((file) => ({ ...file, repo }));
 }
 
 // A repó egy mappájában lévő .zip fájlok listája (más modulok is használják).
-async function listZips(cfg, repo, folder) {
-  const files = await listFiles(cfg, repo, folder);
+async function listZips(cfg, repo, folder, userDataDir) {
+  const files = await listFiles(cfg, repo, folder, userDataDir);
   return files.filter((it) => /\.zip$/i.test(it.name));
 }
 
@@ -162,12 +159,12 @@ function groupParts(files) {
 }
 
 // A repó mappájában lévő, darabokra vágott csomagok (a findAsset használja).
-async function listSplitZips(cfg, repo, folder) {
-  return groupParts(await listFiles(cfg, repo, folder));
+async function listSplitZips(cfg, repo, folder, userDataDir) {
+  return groupParts(await listFiles(cfg, repo, folder, userDataDir));
 }
 
-async function findAssetIn(cfg, repo, folder) {
-  const zips = await listZips(cfg, repo, folder);
+async function findAssetIn(cfg, repo, folder, userDataDir) {
+  const zips = await listZips(cfg, repo, folder, userDataDir);
   const pick = zips.find((z) => isPzoAsset(z.name)) || zips[0];
   if (!pick) throw new Error(`Nincs .zip a ${folder}/ mappában (${repo}).`);
   return pick;
@@ -217,21 +214,51 @@ async function downloadAsset(asset, dest, cfg, log = () => {}, onProgress = null
   return dest;
 }
 
-async function download(asset, dest, cfg, onProgress = null) {
+async function download(asset, dest, cfg, onProgress = null, log = () => {}) {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
+  let lastError = null;
+
+  // 1) Repó-fájl: raw → jsDelivr → API → github.com (tartalék utak, ismétléssel).
+  if (asset && asset.path) {
+    try {
+      return await gh.downloadRepoFile({
+        cfg,
+        repo: asset.repo || repoOf(cfg),
+        file: asset.path,
+        dest,
+        size: asset.size,
+        onProgress,
+        log,
+      });
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  // 2) GitHub Release asset (a fájl nem a repóban van).
   const token = String((cfg && cfg.githubToken) || '').trim();
   const attempts = [];
   if (asset.url) attempts.push({ url: asset.url, headers: { 'User-Agent': UA } });
-  if (token && asset.apiUrl) {
-    attempts.push({ url: asset.apiUrl, headers: { ...headers(cfg), Accept: 'application/vnd.github.raw' } });
+  if (asset.apiUrl) {
+    attempts.push({
+      url: asset.apiUrl,
+      headers: { ...headers(cfg), Accept: 'application/octet-stream' },
+    });
+    if (token) {
+      attempts.push({ url: asset.apiUrl, headers: { ...headers(cfg), Accept: 'application/vnd.github.raw' } });
+    }
   }
-  let lastError = null;
   for (const attempt of attempts) {
     try {
       await downloadFile(attempt.url, dest, { headers: attempt.headers, onProgress });
-      return true;
+      return { ok: true, source: 'release' };
     } catch (err) {
       lastError = err;
+      try {
+        fs.rmSync(dest, { force: true });
+      } catch {
+        /* maradhat */
+      }
     }
   }
   throw lastError || new Error('Nincs letöltési cím ehhez a fájlhoz.');
@@ -287,7 +314,7 @@ async function install({ cfg, userDataDir, log = () => {}, auto = false, onProgr
   const folder = folderOf(cfg);
 
   log(`• PZO Launcher keresése: ${repo}/${folder}/ …`);
-  const asset = await findAsset(cfg);
+  const asset = await findAsset(cfg, userDataDir);
 
   const sizeMb = asset.size ? (asset.size / 1048576).toFixed(1) + ' MB' : '?';
   const zipFile = path.join(userDataDir, 'packs', '_downloads', asset.name);

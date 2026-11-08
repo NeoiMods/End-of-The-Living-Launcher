@@ -17,6 +17,18 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 
 const { fetchText, downloadFile } = require('./download');
+const gh = require('./gh');
+
+// Egy ígéret felső időkorlátja: ha a GitHub API nem válaszol, ne várjunk rá
+// fél percig, mert közben a repóban tárolt indexből már megvan a válasz.
+function withTimeout(promise, ms, message) {
+  let timer = null;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(message || 'időtúllépés')), ms);
+    if (timer.unref) timer.unref();
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
 
 const DEFAULT_REPO = 'NeoiMods/End-of-The-Living-Launcher';
 const BRANCH = 'main';
@@ -118,39 +130,89 @@ function installedSha(userDataDir, appRoot) {
 
 // ----------------------------------------------------------------- GitHub
 
-async function fetchLatestCommit(repo) {
-  const url = `https://api.github.com/repos/${repo}/commits/${BRANCH}`;
-  const { status, body } = await fetchText(url, { headers: HTTP_HEADERS, timeoutMs: 20000 });
-
-  if (status === 404) {
+// A legutóbbi commit adatai. A GitHub API három különböző végpontját is
+// próbáljuk, mert kimaradáskor hol az egyik, hol a másik válaszol, és minden
+// kérés ismételhető – így egy pillanatnyi 503 nem állítja meg a frissítést.
+async function fetchLatestCommit(repo, cfg = {}) {
+  const endpoints = [
+    { path: `/repos/${repo}/commits/${BRANCH}`, kind: 'commit' },
+    { path: `/repos/${repo}/branches/${BRANCH}`, kind: 'branch' },
+    { path: `/repos/${repo}/git/refs/heads/${BRANCH}`, kind: 'ref' },
+  ];
+  let lastError = null;
+  let notFound = false;
+  for (const endpoint of endpoints) {
+    try {
+      const data = await gh.apiJson(cfg, endpoint.path, { timeoutMs: 6000, attempts: 1 });
+      const parsed = parseCommitPayload(endpoint.kind, data);
+      if (parsed) return parsed;
+      lastError = new Error('a GitHub válasz nem tartalmaz commitot');
+    } catch (err) {
+      if (err && err.status === 404) notFound = true;
+      lastError = err;
+    }
+  }
+  if (notFound) {
     throw new Error(
       `a repó nem érhető el nyilvánosan (${repo}). Ha privát, a frissítés nem működik.`
     );
   }
-  if (status === 403 || status === 429) {
-    throw new Error('a GitHub API átmenetileg korlátozza a kéréseket – próbáld később');
-  }
-  if (status !== 200) {
-    throw new Error(`GitHub API hiba (HTTP ${status})`);
-  }
+  throw lastError || new Error('a GitHub nem adta meg a legutóbbi commitot');
+}
 
-  let meta;
-  try {
-    meta = JSON.parse(body);
-  } catch {
-    throw new Error('a GitHub válasz nem értelmezhető');
+function parseCommitPayload(kind, data) {
+  if (!data || typeof data !== 'object') return null;
+  if (kind === 'commit') {
+    if (typeof data.sha !== 'string') return null;
+    const commit = data.commit || {};
+    return {
+      sha: data.sha,
+      shortSha: data.sha.slice(0, 7),
+      date: (commit.author && commit.author.date) || (commit.committer && commit.committer.date) || null,
+      message: String(commit.message || '').split('\n')[0],
+    };
   }
-  if (!meta || typeof meta.sha !== 'string') {
-    throw new Error('a GitHub válasz nem tartalmaz commitot');
+  if (kind === 'branch') {
+    const sha = data.commit && data.commit.sha;
+    if (typeof sha !== 'string') return null;
+    const inner = (data.commit && data.commit.commit) || {};
+    return {
+      sha,
+      shortSha: sha.slice(0, 7),
+      date: (inner.author && inner.author.date) || null,
+      message: String(inner.message || '').split('\n')[0],
+    };
   }
+  const sha = data.object && data.object.sha;
+  if (typeof sha !== 'string') return null;
+  return { sha, shortSha: sha.slice(0, 7), date: null, message: '' };
+}
 
-  const commit = meta.commit || {};
-  return {
-    sha: meta.sha,
-    shortSha: meta.sha.slice(0, 7),
-    date: (commit.author && commit.author.date) || (commit.committer && commit.committer.date) || null,
-    message: String(commit.message || '').split('\n')[0],
-  };
+// ------------------------------------------------------- frissítés indexből
+// Ha a GitHub API nem elérhető, a repóban tárolt update-manifest.json-ból
+// (raw.githubusercontent / jsDelivr) dolgozunk: ez fájlonként tartalmazza a
+// méretet és a sha256-ot, így API nélkül is eldönthető, változott-e valami,
+// és csak a megváltozott fájlokat kell letölteni.
+async function fetchUpdateManifest(repo, cfg = {}) {
+  const res = await gh.fetchRepoJson({ cfg, repo, ref: BRANCH, file: 'update-manifest.json' });
+  if (!res.ok || !res.data || !Array.isArray(res.data.files)) return null;
+  return res.data;
+}
+
+function changedFilesFromManifest(manifest, appRoot) {
+  const changed = [];
+  for (const entry of manifest.files) {
+    if (!entry || !entry.path) continue;
+    const hash = gh.hashFile(path.join(appRoot, String(entry.path)));
+    if (!hash || hash !== entry.sha256) {
+      changed.push({
+        path: String(entry.path),
+        size: Number(entry.size) || 0,
+        sha256: entry.sha256 || '',
+      });
+    }
+  }
+  return changed;
 }
 
 // ------------------------------------------------------------- ellenőrzés
@@ -163,9 +225,58 @@ async function checkForUpdate({ cfg = {}, userDataDir, appRoot }) {
   }
 
   let remote;
+  let manifestForFallback = null;
   try {
-    remote = await fetchLatestCommit(repo);
+    // Az API-t és a repóban tárolt indexet egyszerre kérjük: ha az API kiesik,
+    // nem kell megvárni a hosszú időtúllépéseket, a válasz már ott van.
+    const [commitResult, manifestResult] = await Promise.allSettled([
+      withTimeout(fetchLatestCommit(repo, cfg), 7000, 'a GitHub API nem válaszolt időben'),
+      fetchUpdateManifest(repo, cfg),
+    ]);
+    manifestForFallback = manifestResult.status === 'fulfilled' ? manifestResult.value : null;
+    if (commitResult.status === 'fulfilled') remote = commitResult.value;
+    else throw commitResult.reason;
   } catch (err) {
+    // Az API kiesett: a repóban tárolt frissítés-index alapján döntünk.
+    const manifest = manifestForFallback || (await fetchUpdateManifest(repo, cfg));
+    if (manifest) {
+      const files = changedFilesFromManifest(manifest, appRoot);
+      const remoteSha = typeof manifest.sha === 'string' ? manifest.sha : null;
+      const remoteInfo = {
+        sha: remoteSha,
+        shortSha: remoteSha ? remoteSha.slice(0, 7) : null,
+        date: null,
+        message: '',
+        via: 'manifest',
+      };
+      writeState(userDataDir, {
+        lastCheckedAt: Date.now(),
+        lastError: null,
+        remoteSha,
+      });
+      if (!files.length) {
+        return {
+          ok: true,
+          update: false,
+          repo,
+          localSha: installedSha(userDataDir, appRoot),
+          remoteSha,
+          remote: remoteInfo,
+          reason: 'naprakész (GitHub API nélkül, fájl-összevetéssel)',
+        };
+      }
+      return {
+        ok: true,
+        update: true,
+        mode: 'files',
+        files,
+        repo,
+        localSha: installedSha(userDataDir, appRoot),
+        remoteSha,
+        remote: remoteInfo,
+        reason: 'új fájlok a GitHubon (GitHub API nélkül)',
+      };
+    }
     writeState(userDataDir, { lastCheckedAt: Date.now(), lastError: err.message });
     return { ok: false, update: false, repo, reason: err.message };
   }
@@ -295,7 +406,11 @@ async function changesAreOnlyNotes(repo, base, head) {
   if (!base || !head || base === head) return false;
   const url = `https://api.github.com/repos/${repo}/compare/${base}...${head}`;
   try {
-    const { status, body } = await fetchText(url, { headers: HTTP_HEADERS, timeoutMs: 15000 });
+    const { status, body } = await gh.fetchTextRetry(
+      url,
+      { headers: HTTP_HEADERS, timeoutMs: 15000 },
+      2
+    );
     if (status !== 200) return false;
     const data = JSON.parse(body);
     const files = Array.isArray(data.files) ? data.files : null;
@@ -398,9 +513,140 @@ function findExtractedRoot(dir) {
   return null;
 }
 
+// A repóban tárolt index alapján csak a megváltozott fájlokat cseréli le.
+// Ez a GitHub API-t és a nagy zipballt sem használja: a fájlok a
+// raw.githubusercontent.com-ról (vagy a jsDelivr-ről) jönnek, ami kimaradáskor
+// is elérhető, és összesen pár száz KB-ot jelent.
+async function applyFileUpdate({ cfg = {}, repo, files, appRoot, userDataDir, res, log, progress }) {
+  const changed = [];
+  const failed = [];
+  let done = 0;
+  for (const file of files) {
+    done++;
+    const rel = String(file.path || '').replace(/^\.?\/+/, '');
+    if (!rel || rel.includes('..')) continue;
+    if (progress) {
+      progress({ label: 'Frissítés letöltése…', done: done - 1, total: files.length });
+    }
+    const dest = path.join(appRoot, rel);
+    try {
+      await gh.downloadRepoFile({
+        cfg,
+        repo,
+        ref: BRANCH,
+        file: rel,
+        dest,
+        size: file.size || 0,
+        log,
+      });
+      const hash = gh.hashFile(dest);
+      if (file.sha256 && hash && hash !== file.sha256) {
+        throw new Error('a letöltött fájl tartalma nem egyezik az indexben lévővel');
+      }
+      changed.push(rel);
+    } catch (err) {
+      failed.push({ file: rel, error: err && err.message ? err.message : String(err) });
+    }
+  }
+
+  const remoteSha = (res && res.remoteSha) || null;
+  if (failed.length) {
+    writeState(userDataDir, {
+      lastCheckedAt: Date.now(),
+      lastChanged: changed.length,
+      lastError: `${failed.length} fájl nem cserélhető le (${failed
+        .slice(0, 3)
+        .map((f) => f.file)
+        .join(', ')}${failed.length > 3 ? '…' : ''})`,
+    });
+    return {
+      ok: false,
+      error: `${failed.length} fájl nem cserélhető le – próbáld újra később`,
+      changed: changed.length,
+      failed,
+    };
+  }
+
+  writeState(userDataDir, {
+    ...(remoteSha ? { installedSha: remoteSha, installedAt: Date.now() } : {}),
+    lastCheckedAt: Date.now(),
+    lastChanged: changed.length,
+    lastError: null,
+  });
+  if (remoteSha) {
+    try {
+      fs.writeFileSync(
+        path.join(appRoot, 'update-baseline.json'),
+        JSON.stringify({ sha: remoteSha, updatedAt: new Date().toISOString() }, null, 2),
+        'utf8'
+      );
+    } catch {
+      /* írásvédett app mappa: az állapotfájl akkor is naprakész */
+    }
+  }
+  if (progress) progress({ label: 'Frissítés kész.' });
+  if (!changed.length) {
+    log('• Nem volt cserélendő fájl – a verzió megjelölve.');
+    return {
+      ok: true,
+      newVersion: remoteSha ? remoteSha.slice(0, 7) : '',
+      remoteSha,
+      changed: 0,
+      failed,
+      restartRequired: false,
+    };
+  }
+  // Ha csak a hírek/események változtak, nincs értelme újraindítani a launchert.
+  const restartRequired = changed.some((file) => !NOTE_FILES.includes(file));
+  log(
+    restartRequired
+      ? `✓ ${changed.length} fájl frissítve (GitHub API nélkül, fájlonként).`
+      : `✓ ${changed.length} tartalom-fájl frissítve – újraindítás nem kell.`
+  );
+  return {
+    ok: true,
+    newVersion: remoteSha ? remoteSha.slice(0, 7) : '',
+    remoteSha,
+    changed: changed.length,
+    failed,
+    restartRequired,
+  };
+}
+
 // Visszatérés: { ok, newVersion, changed, failed, error, restartRequired }
 async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}, progress = () => {} }) {
   const repo = (res && res.repo) || resolveRepo(cfg, appRoot);
+
+  // 1) Ha van frissítés-index (vagy azt kaptuk kézhez), fájlonként frissítünk:
+  // ez kicsi, gyors, és akkor is működik, amikor a GitHub API vagy a zipball
+  // végpont kiesik.
+  if (res && Array.isArray(res.files) && res.files.length) {
+    return applyFileUpdate({ cfg, repo, files: res.files, appRoot, userDataDir, res, log, progress });
+  }
+  try {
+    const manifest = await fetchUpdateManifest(repo, cfg);
+    if (manifest) {
+      const changed = changedFilesFromManifest(manifest, appRoot);
+      if (!changed.length) {
+        const sha = typeof manifest.sha === 'string' ? manifest.sha : null;
+        writeState(userDataDir, { installedSha: sha, installedAt: Date.now(), lastError: null });
+        log('✓ Nincs eltérő fájl a repóhoz képest – a verzió megjelölve.');
+        return { ok: true, newVersion: sha ? sha.slice(0, 7) : '', remoteSha: sha, changed: 0, failed: [], restartRequired: false };
+      }
+      return applyFileUpdate({
+        cfg,
+        repo,
+        files: changed,
+        appRoot,
+        userDataDir,
+        res: { ...res, remoteSha: manifest.sha || (res && res.remoteSha) },
+        log,
+        progress,
+      });
+    }
+  } catch (err) {
+    log('! Frissítés-index nem elérhető (' + (err && err.message ? err.message : err) + ') – zipball következik.');
+  }
   const stamp = Date.now();
   const workDir = path.join(os.tmpdir(), `eotl-update-${stamp}`);
   const zipPath = path.join(workDir, 'update.zip');
@@ -411,15 +657,43 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
 
     progress({ label: 'Frissítés letöltése…' });
     log(`Frissítés letöltése: ${repo} (${BRANCH})`);
-    await downloadFile(`https://api.github.com/repos/${repo}/zipball/${BRANCH}`, zipPath, {
-      headers: HTTP_HEADERS,
-      onProgress: (received, totalBytes) =>
-        progress({
-          label: 'Frissítés letöltése',
-          done: received,
-          total: totalBytes || 0,
-        }),
-    });
+    // A zipball három különböző kiszolgálóról elérhető – kimaradáskor a
+    // codeload.github.com még akkor is megy, amikor a github.com nem.
+    const zipMirrors = [
+      { name: 'api', url: `https://api.github.com/repos/${repo}/zipball/${BRANCH}`, headers: HTTP_HEADERS },
+      { name: 'codeload', url: `https://codeload.github.com/${repo}/zip/refs/heads/${BRANCH}`, headers: { 'User-Agent': 'EndOfTheLivingLauncher' } },
+      { name: 'web', url: `https://github.com/${repo}/archive/refs/heads/${BRANCH}.zip`, headers: { 'User-Agent': 'EndOfTheLivingLauncher' } },
+    ];
+    let zipError = null;
+    let zipDone = false;
+    for (const mirror of zipMirrors) {
+      for (let attempt = 0; attempt < 2 && !zipDone; attempt++) {
+        try {
+          await downloadFile(mirror.url, zipPath, {
+            headers: mirror.headers,
+            timeoutMs: 180000,
+            onProgress: (received, totalBytes) =>
+              progress({
+                label: 'Frissítés letöltése',
+                done: received,
+                total: totalBytes || 0,
+              }),
+          });
+          zipDone = true;
+          if (mirror.name !== 'api') log(`  (letöltés innen: ${mirror.name})`);
+        } catch (err) {
+          zipError = err;
+          try {
+            fs.rmSync(zipPath, { force: true });
+          } catch {
+            /* maradhat */
+          }
+          await sleep(500);
+        }
+      }
+      if (zipDone) break;
+    }
+    if (!zipDone) throw zipError || new Error('a frissítés nem tölthető le');
 
     progress({ label: 'Frissítés kicsomagolása…' });
     extractZip(zipPath, extractDir);
@@ -582,6 +856,8 @@ function getUpdateInfo({ cfg = {}, userDataDir, appRoot }) {
 module.exports = {
   DEFAULT_REPO,
   BRANCH,
+  APP_FILES,
+  APP_DIRS,
   parseRepo,
   resolveRepo,
   checkForUpdate,

@@ -1,13 +1,14 @@
 {
   "name": "end-of-the-living-launcher",
   "productName": "End of The Living Launcher",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Project Zomboid launcher: automatic mod install and direct server connect",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "preview": "node scripts/serve.js 5173",
-    "build": "node scripts/package.js",
+    "manifest": "node scripts/make-manifest.js",
+    "build": "node scripts/make-manifest.js && node scripts/package.js",
     "icon": "electron scripts/make-icon.js",
     "bg": "node scripts/make-bg.js",
     "test:installer": "node scripts/test-installer-flow.js",

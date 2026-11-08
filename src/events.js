@@ -11,9 +11,10 @@
 // A legközelebbi jövőbeli eseményt adja vissza; ha nincs ilyen,
 // a legutóbbi elmúltat (akkor a visszaszámláló helyett eltelt idő látszik).
 
-const https = require('https');
 const fs = require('fs');
 const path = require('path');
+
+const gh = require('./gh');
 
 const DEFAULT_REPO = 'NeoiMods/End-of-The-Living-Launcher';
 const CACHE_MS = 60 * 1000;
@@ -42,44 +43,31 @@ function resolveUrl(cfg) {
   return `https://raw.githubusercontent.com/${repo}/main/events.json`;
 }
 
-function request(url, redirects = 0) {
-  return new Promise((resolve, reject) => {
-    const req = https.get(
+// Az események a repó nyers tartalmából jönnek, több kiszolgálóról
+// (raw.githubusercontent → jsDelivr → API → github.com), hogy a GitHub API
+// kimaradása ne érintse. Abszolút URL-t is elfogadunk (beállításból).
+async function request(url, { cfg, forceDirect = false } = {}) {
+  if (forceDirect) {
+    const res = await gh.fetchTextRetry(
       url,
-      {
-        headers: { 'User-Agent': 'eotl-launcher', Accept: 'application/json' },
-        timeout: TIMEOUT_MS,
-      },
-      (res) => {
-        const status = res.statusCode || 0;
-        if (status >= 300 && status < 400 && res.headers.location && redirects < 3) {
-          res.resume();
-          resolve(request(new URL(res.headers.location, url).toString(), redirects + 1));
-          return;
-        }
-        if (status !== 200) {
-          res.resume();
-          reject(new Error(`HTTP ${status}`));
-          return;
-        }
-        let body = '';
-        res.setEncoding('utf8');
-        res.on('data', (chunk) => {
-          body += chunk;
-          if (body.length > MAX_BYTES) req.destroy(new Error('túl nagy válasz'));
-        });
-        res.on('end', () => {
-          try {
-            resolve(JSON.parse(body));
-          } catch {
-            reject(new Error('érvénytelen JSON'));
-          }
-        });
-      }
+      { headers: { 'User-Agent': 'eotl-launcher', Accept: 'application/json' }, timeoutMs: TIMEOUT_MS },
+      2
     );
-    req.on('timeout', () => req.destroy(new Error('időtúllépés')));
-    req.on('error', reject);
+    if (res.status !== 200) throw new Error(`HTTP ${res.status}`);
+    if (res.body.length > MAX_BYTES) throw new Error('túl nagy válasz');
+    return JSON.parse(res.body);
+  }
+  const repo = normalizeRepo((cfg && cfg.updateCheckUrl) || DEFAULT_REPO);
+  const fetched = await gh.fetchRepoText({
+    cfg,
+    repo,
+    ref: 'main',
+    file: 'events.json',
+    attempts: 2,
   });
+  if (!fetched.ok) throw new Error(fetched.error);
+  if (fetched.body.length > MAX_BYTES) throw new Error('túl nagy válasz');
+  return JSON.parse(fetched.body);
 }
 
 function asList(raw) {
@@ -125,7 +113,7 @@ async function fetchEvent({ cfg, force } = {}) {
   }
 
   try {
-    const raw = await request(url);
+    const raw = await request(url, { cfg, forceDirect: /^https?:\/\//i.test(String((cfg && cfg.eventsUrl) || '').trim()) });
     const event = pickEvent(raw);
     const data = event
       ? { ok: true, source: url, event }

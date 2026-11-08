@@ -12,7 +12,8 @@ const os = require('os');
 const path = require('path');
 const { execFile, execFileSync, spawn } = require('child_process');
 
-const { fetchText, downloadFile } = require('./download');
+const { downloadFile } = require('./download');
+const gh = require('./gh');
 const modinfo = require('./modinfo');
 const modlist = require('./modlist');
 const pzo = require('./pzo');
@@ -96,11 +97,7 @@ function status() {
 async function listReleaseZips(cfg) {
   const repo = pzo.repoOf(cfg);
   try {
-    const { status: code, body } = await fetchText(`https://api.github.com/repos/${repo}/releases/latest`, {
-      headers: headers(cfg),
-    });
-    if (code !== 200) return [];
-    const rel = JSON.parse(body);
+    const rel = await gh.apiJson(cfg, `/repos/${repo}/releases/latest`, { timeoutMs: 15000 });
     return (rel.assets || [])
       .filter((a) => a && /\.zip$/i.test(a.name))
       .map((a) => ({
@@ -114,7 +111,7 @@ async function listReleaseZips(cfg) {
   }
 }
 
-async function findAsset(cfg, id) {
+async function findAsset(cfg, id, userDataDir) {
   const spec = SPECS[id];
   if (!spec) throw new Error('Ismeretlen mod: ' + id);
 
@@ -128,7 +125,10 @@ async function findAsset(cfg, id) {
   let lastError = null;
   for (const candidate of folders) {
     try {
-      const list = [...(await pzo.listZips(cfg, repo, candidate)), ...(await pzo.listSplitZips(cfg, repo, candidate))];
+      const list = [
+        ...(await pzo.listZips(cfg, repo, candidate, userDataDir)),
+        ...(await pzo.listSplitZips(cfg, repo, candidate, userDataDir)),
+      ];
       if (list.length) {
         zips = list;
         break;
@@ -224,7 +224,7 @@ async function install({ cfg, userDataDir, id, log = () => {}, onProgress = null
   if (!spec) throw new Error('Ismeretlen mod: ' + id);
 
   log(`• ${spec.label} keresése a Master mappában…`);
-  const asset = await findAsset(cfg, id);
+  const asset = await findAsset(cfg, id, userDataDir);
   const sizeMb = asset.size ? (asset.size / 1048576).toFixed(1) + ' MB' : '?';
 
   const zipFile = path.join(userDataDir, 'packs', '_downloads', asset.name);

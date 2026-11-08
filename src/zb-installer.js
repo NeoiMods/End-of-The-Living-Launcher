@@ -3,7 +3,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
-const { fetchText, downloadFile } = require('./download');
+const { downloadFile } = require('./download');
+const gh = require('./gh');
 
 // A hivatalos ZombieBuddy telepítő (Go konzolos program) automatizálása.
 // A telepítő stdin-ről olvassa a válaszokat, kérdésenként; az alábbi prompt
@@ -37,13 +38,58 @@ function findLocalInstaller(userDataDir) {
 }
 
 function ghGet(url) {
-  return fetchText(url, {
-    headers: { 'User-Agent': 'end-of-the-living-launcher', Accept: 'application/vnd.github+json' },
-    timeoutMs: 20000,
-  }).then(({ status, body }) => {
-    if (status !== 200) throw new Error(`GitHub API hiba (HTTP ${status}).`);
-    return JSON.parse(body);
-  });
+  // Ismételhető lekérés: a GitHub 503/504-et adhat, ami pár másodperc múlva már jó.
+  return gh
+    .fetchTextRetry(
+      url,
+      {
+        headers: { 'User-Agent': 'end-of-the-living-launcher', Accept: 'application/vnd.github+json' },
+        timeoutMs: 15000,
+      },
+      3
+    )
+    .then(({ status, body }) => {
+      if (status !== 200) throw new Error(`GitHub API hiba (HTTP ${status}).`);
+      return JSON.parse(body);
+    });
+}
+
+// A telepítő letöltése: először a kiadás szokásos címe, majd a GitHub API
+// asset-végpontja (ami a release-assets.githubusercontent.com-ra irányít).
+// Utóbbi akkor is működik, amikor a github.com /releases/download/ 504-el.
+async function downloadInstallerFile(meta, dest) {
+  const attempts = [];
+  if (meta.url) attempts.push({ name: 'release', url: meta.url, headers: { 'User-Agent': 'end-of-the-living-launcher' } });
+  if (meta.apiUrl) {
+    attempts.push({
+      name: 'api',
+      url: meta.apiUrl,
+      headers: {
+        'User-Agent': 'end-of-the-living-launcher',
+        Accept: 'application/octet-stream',
+      },
+    });
+  }
+  let lastError = null;
+  for (const attempt of attempts) {
+    for (let i = 0; i < 2; i++) {
+      try {
+        await downloadFile(attempt.url, dest, {
+          headers: attempt.headers,
+          timeoutMs: 120000,
+        });
+        return true;
+      } catch (err) {
+        lastError = err;
+        try {
+          fs.rmSync(dest, { force: true });
+        } catch {
+          /* maradhat */
+        }
+      }
+    }
+  }
+  throw lastError || new Error('A ZombieBuddy telepítő nem tölthető le.');
 }
 
 function pickInstallerAsset(release) {
@@ -78,6 +124,7 @@ async function fetchReleaseMeta() {
   return {
     name: asset.name,
     url: asset.browser_download_url,
+    apiUrl: asset.url || '',
     sha256,
     version: versionMatch ? versionMatch[1] : '',
     tag: release.tag_name || '',
@@ -151,7 +198,7 @@ async function ensureInstaller(userDataDir, onLog = () => {}) {
 
   if (!fs.existsSync(exePath)) {
     onLog(`ZombieBuddy telepítő letöltése: ${meta.name}…`);
-    await downloadFile(meta.url, exePath);
+    await downloadInstallerFile(meta, exePath);
   }
 
   if (meta.sha256) {
@@ -159,7 +206,7 @@ async function ensureInstaller(userDataDir, onLog = () => {}) {
     if (hash !== meta.sha256) {
       onLog('✗ A letöltött telepítő SHA-256 ellenőrzése nem sikerült – újratöltés…');
       fs.rmSync(exePath, { force: true });
-      await downloadFile(meta.url, exePath);
+      await downloadInstallerFile(meta, exePath);
       const hash2 = await sha256File(exePath);
       if (hash2 !== meta.sha256) {
         fs.rmSync(exePath, { force: true });

@@ -1,7 +1,23 @@
 {
-  "version": "0.8.2",
+  "version": "0.8.3",
   "updatedAt": "2026-11-08",
   "items": [
+    {
+      "id": "0.8.3",
+      "version": "0.8.3",
+      "date": "2026-11-08",
+      "tag": "FONTOS",
+      "title": "0.8.3 – a launcher akkor is működik, ha a GitHub kiesik",
+      "text": "Ma a GitHub API és a github.com letöltő linkjei órákra 503/504 hibát adtak, ezért a launcher mostantól nem függ egyetlen GitHub-végponttól sem: minden kérése több kiszolgálón próbálkozik, ismétel, és ha kell, a repóban tárolt indexből dolgozik.",
+      "changes": [
+        "Ha a GitHub API nem válaszol, a frissítés-ellenőrzés a repóban tárolt indexből (update-manifest.json) fájlonként hasonlítja össze a launchert, és csak a megváltozott fájlokat tölti le.",
+        "A csomagok (ETO, 6282 3D, magyarítások, PZO, Viewpoint) négy kiszolgálóról jöhetnek sorban: raw.githubusercontent, jsDelivr CDN, GitHub API, github.com – méret-ellenőrzéssel.",
+        "A csomaglista a repóban tárolt Master/index.json-ból is felépül, így API-kimaradás alatt sem üres az Optimalizálás panel.",
+        "Minden GitHub-kérés ismételhető: 503/504/429 vagy hálózati hiba esetén várakozással újrapróbál.",
+        "A ZombieBuddy telepítő a GitHub API asset-végpontjáról is letölthető, ha a szokásos /releases/download/ link 504-el.",
+        "A hírek és az események is több forrásból jönnek; ha minden kiesik, a legutóbbi mentett példány marad meg."
+      ]
+    },
     {
       "id": "0.8.2",
       "version": "0.8.2",

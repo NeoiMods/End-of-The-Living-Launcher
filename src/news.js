@@ -18,7 +18,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { fetchText } = require('./download');
+const gh = require('./gh');
 
 const DEFAULT_REPO = 'NeoiMods/End-of-The-Living-Launcher';
 const CACHE_MS = 60 * 1000;
@@ -98,10 +98,18 @@ async function fetchNews({ cfg = {}, appRoot, force = false } = {}) {
   }
 
   try {
-    const { status, body } = await fetchText(url, { timeoutMs: 12000 });
-    if (status !== 200) throw new Error(`HTTP ${status}`);
-    const data = normalize(JSON.parse(body));
-    const res = { ok: true, source: url, ...data };
+    // A hírek a repó nyers tartalmából jönnek, több kiszolgálóról: így a GitHub
+    // API kimaradása (503/504) nem érinti.
+    const fetched = await gh.fetchRepoText({
+      cfg,
+      repo: repoOf(cfg),
+      ref: 'main',
+      file: 'news.json',
+      attempts: 2,
+    });
+    if (!fetched.ok) throw new Error(fetched.error);
+    const data = normalize(JSON.parse(fetched.body));
+    const res = { ok: true, source: fetched.source || url, ...data };
     cache = { at: now, key: url, data: res };
     return res;
   } catch (err) {

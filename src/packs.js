@@ -16,8 +16,9 @@ const fs = require('fs');
 const path = require('path');
 const { execFile, spawn } = require('child_process');
 
-const { fetchText, downloadFile } = require('./download');
+const { downloadFile } = require('./download');
 const { parseRepo } = require('./update');
+const gh = require('./gh');
 const { zomboidDir } = require('./paths');
 
 const DEFAULT_FOLDER = 'packs';
@@ -71,31 +72,36 @@ function writeState(userDataDir, state) {
 
 // ------------------------------------------------------------------ források
 
-async function listFromContents(cfg, repo) {
-  const url = `https://api.github.com/repos/${repo}/contents/${folderOf(cfg)}`;
-  const { status, body } = await fetchText(url, { headers: apiHeaders(cfg) });
-  if (status === 404) return null;
-  if (status !== 200) throw new Error(`GitHub API HTTP ${status}`);
-  const items = JSON.parse(body);
-  if (!Array.isArray(items)) return null;
-  return items
-    .filter((item) => item && item.type === 'file')
-    .map((item) => ({
-      name: item.name,
-      size: Number(item.size) || 0,
-      id: String(item.sha || item.name),
-      kind: kindOf(item.name),
-      url: item.download_url || '',
-      apiUrl: item.url || '',
-    }));
+// A repó mappájának listája: GitHub API → a repóban tárolt index.json →
+// helyi gyorsítótár. Így a csomaglista API-kimaradás alatt sem üres.
+async function listFromContents(cfg, repo, userDataDir) {
+  const folder = folderOf(cfg);
+  const res = await gh.listFolder({
+    cfg,
+    repo,
+    folder,
+    userDataDir,
+    cacheName: `gh-list-${folder.replace(/[^A-Za-z0-9._-]+/g, '-')}`,
+  });
+  if (!res.ok) {
+    if (/404/.test(String(res.error || ''))) return null;
+    throw new Error(res.error || 'a csomaglista nem érhető el');
+  }
+  return res.files.map((item) => ({
+    ...item,
+    repo,
+    kind: kindOf(item.name),
+  }));
 }
 
 async function listFromReleases(cfg, repo) {
-  const url = `https://api.github.com/repos/${repo}/releases/latest`;
-  const { status, body } = await fetchText(url, { headers: apiHeaders(cfg) });
-  if (status === 404) return null;
-  if (status !== 200) throw new Error(`GitHub API HTTP ${status}`);
-  const rel = JSON.parse(body);
+  let rel = null;
+  try {
+    rel = await gh.apiJson(cfg, `/repos/${repo}/releases/latest`, { timeoutMs: 15000 });
+  } catch (err) {
+    if (err && err.status === 404) return null;
+    throw err;
+  }
   return (rel.assets || []).map((asset) => ({
     name: asset.name,
     size: Number(asset.size) || 0,
@@ -126,22 +132,44 @@ function targetFor(asset, userDataDir) {
 
 async function downloadAsset(cfg, asset, dest) {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
-  const token = String((cfg && cfg.githubToken) || '').trim();
-  const attempts = [];
+  let lastError = null;
 
+  // Repó-fájl: raw → jsDelivr → API → github.com, ismétléssel.
+  if (asset.path) {
+    try {
+      return await gh.downloadRepoFile({
+        cfg,
+        repo: asset.repo,
+        file: asset.path,
+        dest,
+        size: asset.size,
+      });
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  const attempts = [];
+  if (asset.url) attempts.push({ url: asset.url, headers: { 'User-Agent': UA } });
+  if (asset.apiUrl) {
+    attempts.push({ url: asset.apiUrl, headers: apiHeaders(cfg, { Accept: 'application/octet-stream' }) });
+  }
+  const token = String((cfg && cfg.githubToken) || '').trim();
   if (token && asset.apiUrl) {
     attempts.push({ url: asset.apiUrl, headers: apiHeaders(cfg, { Accept: 'application/vnd.github.raw' }) });
   }
-  if (asset.url) attempts.push({ url: asset.url, headers: { 'User-Agent': UA } });
-  if (token && asset.apiUrl) attempts.push({ url: asset.apiUrl, headers: apiHeaders(cfg) });
 
-  let lastError = null;
   for (const attempt of attempts) {
     try {
       await downloadFile(attempt.url, dest, { headers: attempt.headers });
-      return true;
+      return { ok: true, source: 'release' };
     } catch (err) {
       lastError = err;
+      try {
+        fs.rmSync(dest, { force: true });
+      } catch {
+        /* maradhat */
+      }
     }
   }
   throw lastError || new Error('Nincs letöltési cím ehhez a fájlhoz.');
@@ -200,7 +228,7 @@ async function sync({ cfg, userDataDir, log = () => {}, force = false }) {
 
   let assets = null;
   try {
-    assets = await listFromContents(cfg, repo);
+    assets = await listFromContents(cfg, repo, userDataDir);
   } catch (err) {
     log('! ' + (err && err.message ? err.message : err));
   }
