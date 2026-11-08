@@ -101,6 +101,34 @@ app.whenReady().then(() => {
     if (res && res.created) log('✓ Parancsikon létrehozva az asztalon.');
   });
 
+  // Verziónként egyszer kikapcsoljuk a kollekción kívüli modokat: a Steam
+  // workshop mappából derítjük ki, mely modok tartoznak a kollekció elemeihez.
+  // (Verziónként csak egyszer, hogy a kézi újraengedélyezést ne írja felül.)
+  setTimeout(() => {
+    try {
+      if (cfg.modPruneVersion === app.getVersion()) return;
+      const steam = findSteamPath();
+      const libs = steam ? parseLibraryPaths(steam) : [];
+      const pr = setup.pruneToCollection({
+        cfg,
+        userDataDir: app.getPath('userData'),
+        libs,
+        onLog: log,
+      });
+      if (pr && !pr.skipped) {
+        cfg = { ...cfg, modPruneVersion: app.getVersion() };
+        save();
+      } else if (pr && pr.reason) {
+        log('! Mod lista szűrése kihagyva: ' + pr.reason + '.');
+      }
+      if (pr && pr.removed && pr.removed.length && win && !win.isDestroyed()) {
+        win.webContents.send('refresh');
+      }
+    } catch (err) {
+      log('! A mod lista szűrése nem sikerült: ' + (err && err.message ? err.message : err));
+    }
+  }, 3000);
+
   // Első indításkor háttérben lekérjük a kollekciót, hogy a checklist valós
   // számokat mutasson (a felhasználónak ne kelljen külön frissítenie).
   if (!cfg.collection) {

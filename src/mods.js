@@ -629,6 +629,8 @@ module.exports = {
   installNightly,
   removeNightly,
   nightlyStatus,
+  nightlyDir,
+  NIGHTLY_MOD_ID: NIGHTLY.modId,
   findAsset,
   extractFolder,
   isDedicated,

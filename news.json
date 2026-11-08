@@ -1,7 +1,21 @@
 {
-  "version": "0.7.9",
-  "updatedAt": "2026-11-07",
+  "version": "0.8.0",
+  "updatedAt": "2026-11-08",
   "items": [
+    {
+      "id": "0.8.0",
+      "version": "0.8.0",
+      "date": "2026-11-08",
+      "tag": "FONTOS",
+      "title": "0.8.0 – csak a kollekció modjai maradnak bekapcsolva",
+      "text": "A launcher mostantól kikapcsolja azokat a modokat, amelyek nem a követett kollekció elemeiből származnak. A saját főmenü, a menüzene, a magyarítás és a Viewpoint NIGHTLY kivétel – ezek a launcher saját csomagjai.",
+      "changes": [
+        "Telepítéskor és frissítés után a mod lista csak a kollekció elemeiből származó modokat tartalmazza; minden más bekapcsolt mod kikerül (a fájl előtte .bak-ként mentődik).",
+        "Kivétel: a launcher saját csomagjai – főmenü, menüzene, magyarítás és a Viewpoint NIGHTLY teljes mappája.",
+        "Ha a kollekció vagy a Steam workshop mappa nem olvasható, a launcher inkább nem kapcsol ki semmit, hogy ne tűnjenek el modok tömegesen.",
+        "A szűrés verziónként egyszer fut le, így a kézzel újra bekapcsolt mod marad bekapcsolva."
+      ]
+    },
     {
       "id": "0.7.9",
       "version": "0.7.9",

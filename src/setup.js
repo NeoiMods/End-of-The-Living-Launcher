@@ -5,6 +5,7 @@ const paths = require('./paths');
 const launch = require('./launch');
 const modinfo = require('./modinfo');
 const modlist = require('./modlist');
+const hu = require('./hu');
 const mods = require('./mods');
 const collection = require('./collection');
 const workshop = require('./workshop');
@@ -32,6 +33,10 @@ const SKIP_MOD_IDS = new Set(['siowar_distiller_easy']);
 const SKIP_DOWNLOAD_IDS = new Map([
   ['3809306528', 'Project Viewpoint – helyette a Viewpoint NIGHTLY gomb (Optimalizálás)'],
 ]);
+
+// A launcher saját modjai (főmenü, menüzene). Ezek nincsenek a kollekcióban,
+// mégis maradhatnak engedélyezve – enélkül elveszne a saját főmenü.
+const OWN_MOD_IDS = ['CustomMainMenuB42', 'EndofTheLivingMainMenuB42', 'EndOfTheLivingCustomMusic', 'EOTLCustomMusic'];
 
 const RETRY_MS = 24 * 60 * 60 * 1000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -201,6 +206,22 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
   if (en.changed) onLog(`✓ ${en.added.length} mod engedélyezve a játék listájában.`);
   else onLog('✓ Minden mod már engedélyezve van a játék listájában.');
 
+  // ---- 4b) csak a kollekció modjai maradhatnak engedélyezve ----------------
+  // A játék (vagy más program) által bekapcsolt, kollekción kívüli modok
+  // kikerülnek a listából. Kivétel a launcher saját csomagja: a magyarítás és
+  // az Optimalizálás panelről telepített Viewpoint NIGHTLY.
+  const allowed = new Set(enabledIds.map((id) => String(id).toLowerCase()));
+  for (const id of launcherManagedIds(userDataDir)) allowed.add(id);
+
+  // Ha a kollekció listája hiányosan jött le (Steam 429 / API tartalék), nem
+  // kapcsolunk ki semmit: egy csonka listából tömegesen tűnnének el a modok.
+  const complete = !col.childCount || col.items.length >= col.childCount;
+  if (complete) {
+    pruneOutsideMods({ zomboidDir, allowed, onLog });
+  } else {
+    onLog('! A kollekció listája hiányos – a kollekción kívüli modokat most nem kapcsolom ki.');
+  }
+
   // ---- 5) ZombieBuddy telepítő ------------------------------------------
   let installer = null;
   try {
@@ -277,4 +298,63 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
   };
 }
 
-module.exports = { runSetup, SKIP_DOWNLOAD_IDS };
+// Kikapcsolja a mod listából azokat a modokat, amelyek nincsenek a megengedett
+// (kollekcióból származó + launcher által telepített) halmazban.
+function pruneOutsideMods({ zomboidDir, allowed, onLog = () => {} }) {
+  const enabledNow = modlist.listEnabledIds(modlist.readModList(zomboidDir));
+  const outside = enabledNow.filter((id) => !allowed.has(String(id).toLowerCase()));
+  if (!outside.length) {
+    onLog('✓ Csak a kollekció modjai vannak engedélyezve.');
+    return { removed: [] };
+  }
+  const pr = modlist.removeEnabled(zomboidDir, outside);
+  if (pr.removed.length) {
+    const list = pr.removed.slice(0, 8).join(', ') + (pr.removed.length > 8 ? '…' : '');
+    onLog(`– ${pr.removed.length} kollekción kívüli mod kikapcsolva: ${list}`);
+  }
+  return pr;
+}
+
+// A launcher saját modjai + magyarítás + Viewpoint NIGHTLY: ezek akkor is
+// bekapcsolva maradhatnak, ha nincsenek a kollekcióban.
+function launcherManagedIds(userDataDir) {
+  const ids = new Set(OWN_MOD_IDS.map((id) => String(id).toLowerCase()));
+  try {
+    for (const id of hu.status(userDataDir).ids || []) ids.add(String(id).toLowerCase());
+  } catch {
+    // A magyarítás állapota nem kritikus ehhez a lépéshez.
+  }
+  try {
+    for (const m of modinfo.discoverMods(mods.nightlyDir())) ids.add(String(m.id).toLowerCase());
+  } catch {
+    // Nincs (vagy nem olvasható) a NIGHTLY mappa.
+  }
+  if (mods.nightlyStatus().installed) ids.add(String(mods.NIGHTLY_MOD_ID).toLowerCase());
+  return ids;
+}
+
+// Induláskor: a Steam workshop mappából derítjük ki, melyik mod tartozik a
+// kollekció egyik eleméhez, és a többi bekapcsolt modot kikapcsoljuk. Ha a
+// kollekció vagy a workshop mappa nem olvasható, nem nyúlunk a mod listához.
+function pruneToCollection({ cfg, userDataDir, libs, onLog = () => {} }) {
+  const items = (cfg && cfg.collection && Array.isArray(cfg.collection.items)) ? cfg.collection.items : [];
+  const extras = Array.isArray(cfg && cfg.extraWorkshopIds) ? cfg.extraWorkshopIds : [];
+  const itemIds = new Set(items.map((it) => String(it.id)));
+  for (const extra of extras) {
+    const id = String((extra && extra.id) || '').trim();
+    if (/^\d+$/.test(id)) itemIds.add(id);
+  }
+  if (!itemIds.size) return { removed: [], skipped: true, reason: 'nincs kollekció' };
+
+  const allowed = new Set();
+  for (const [id, m] of modinfo.buildWorkshopIndex(libs || [], paths.PZ_APP_ID)) {
+    if (m && m.itemId && itemIds.has(String(m.itemId))) allowed.add(id);
+  }
+  if (!allowed.size) {
+    return { removed: [], skipped: true, reason: 'a Steam workshop mappa nem olvasható' };
+  }
+  for (const id of launcherManagedIds(userDataDir)) allowed.add(id);
+  return pruneOutsideMods({ zomboidDir: paths.zomboidDir(), allowed, onLog });
+}
+
+module.exports = { runSetup, SKIP_DOWNLOAD_IDS, pruneOutsideMods, pruneToCollection };

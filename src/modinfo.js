@@ -107,7 +107,9 @@ function buildWorkshopIndex(libs, appId) {
       if (!it.isDirectory()) continue;
       for (const m of discoverMods(path.join(root, it.name))) {
         const key = m.id.toLowerCase();
-        if (!index.has(key)) index.set(key, m);
+        // Az itemId megmondja, melyik workshop elemből származik a mod – ebből
+        // tudjuk eldönteni, hogy a mod a követett kollekció része-e.
+        if (!index.has(key)) index.set(key, { ...m, itemId: String(it.name) });
       }
     }
   }
