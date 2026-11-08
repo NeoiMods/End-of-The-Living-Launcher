@@ -402,6 +402,13 @@ async function checkForUpdate({ cfg = {}, userDataDir, appRoot }) {
 
 // Csak a GitHubon szerkeszthető "tartalom" fájlok változtak? (news.json, events.json)
 // Hiba esetén inkább frissítünk – a rossz döntés itt a kimaradt frissítés lenne.
+function isLauncherFile(name) {
+  const file = String(name || '').replace(/\\/g, '/');
+  if (!file) return false;
+  if (APP_FILES.includes(file)) return true;
+  return APP_DIRS.some((dir) => file === dir || file.startsWith(dir + '/'));
+}
+
 async function changesAreOnlyNotes(repo, base, head) {
   if (!base || !head || base === head) return false;
   const url = `https://api.github.com/repos/${repo}/compare/${base}...${head}`;
@@ -415,7 +422,12 @@ async function changesAreOnlyNotes(repo, base, head) {
     const data = JSON.parse(body);
     const files = Array.isArray(data.files) ? data.files : null;
     if (!files || !files.length) return false;
-    return files.every((f) => NOTE_FILES.includes(String(f.filename || '')));
+    // Csak akkor kell frissíteni, ha a launchert alkotó fájl változott. Az
+    // indexek, a build-szkriptek vagy a dokumentáció nem indokolnak telepítést.
+    return files.every((f) => {
+      const name = String(f.filename || '');
+      return !isLauncherFile(name) || NOTE_FILES.includes(name);
+    });
   } catch {
     return false;
   }
@@ -858,6 +870,8 @@ module.exports = {
   BRANCH,
   APP_FILES,
   APP_DIRS,
+  isLauncherFile,
+  changesAreOnlyNotes,
   parseRepo,
   resolveRepo,
   checkForUpdate,

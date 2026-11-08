@@ -87,10 +87,11 @@ function buildUpdateManifest() {
     }
     files.push({ path: rel, size: content.length, sha256: sha256Normalized(content) });
   }
+  // Nincs benne időbélyeg: így a fájl csak akkor változik, ha a launcher
+  // tartalma változott (nem generál felesleges commitot minden build).
   const manifest = {
     sha: commitSha(),
     version: version(),
-    generatedAt: new Date().toISOString(),
     files,
   };
   fs.writeFileSync(path.join(ROOT, 'update-manifest.json'), JSON.stringify(manifest, null, 2) + '\n', 'utf8');
@@ -121,6 +122,9 @@ function buildMasterIndex() {
       const meta = line.slice(0, tab).split(/\s+/);
       const rel = line.slice(tab + 1).trim();
       if (meta.length < 4 || meta[1] !== 'blob') continue;
+      // Az index saját magát nem listázhatja: különben minden generálás után
+      // más lenne a tartalma (a benne lévő saját sha miatt).
+      if (path.posix.basename(rel) === 'index.json') continue;
       files.push({
         name: path.posix.basename(rel),
         size: Number(meta[3]) || 0,
@@ -145,7 +149,6 @@ function buildMasterIndex() {
 
   files.sort((a, b) => a.name.localeCompare(b.name));
   const index = {
-    generatedAt: new Date().toISOString(),
     folder,
     source: fromGit ? 'git' : 'disk',
     files,
