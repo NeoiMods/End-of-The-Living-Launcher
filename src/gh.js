@@ -30,6 +30,7 @@ const RETRY_DELAYS = [600, 1600, 3500, 6000];
 // Csak diagnosztikához/teszthez: a kiszolgálók címe felülírható.
 const RAW_BASE = String(process.env.EOTL_RAW_BASE || 'https://raw.githubusercontent.com').replace(/\/+$/, '');
 const CDN_BASE = String(process.env.EOTL_CDN_BASE || 'https://cdn.jsdelivr.net').replace(/\/+$/, '');
+const API_BASE = String(process.env.EOTL_API_BASE || 'https://api.github.com').replace(/\/+$/, '');
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -75,7 +76,7 @@ async function fetchTextRetry(url, opts = {}, attempts = RETRY_DELAYS.length + 1
 
 // GitHub API JSON ismétléssel. Hiba esetén magyar nyelvű üzenetet dob.
 async function apiJson(cfg, apiPath, { timeoutMs = 20000, attempts = 3 } = {}) {
-  const url = `https://api.github.com${apiPath.startsWith('/') ? apiPath : '/' + apiPath}`;
+  const url = `${API_BASE}${apiPath.startsWith('/') ? apiPath : '/' + apiPath}`;
   const res = await fetchTextRetry(url, { headers: headers(cfg), timeoutMs }, attempts);
   if (res.status === 404) {
     const err = new Error('a GitHub nem találja (HTTP 404)');
@@ -124,7 +125,7 @@ function repoFileUrls({ cfg, repo, file, ref = DEFAULT_BRANCH, size = 0 }) {
   }
   list.push({
     name: 'api',
-    url: `https://api.github.com/repos/${r}/contents/${encoded}?ref=${ref}`,
+    url: `${API_BASE}/repos/${r}/contents/${encoded}?ref=${ref}`,
     headers: headers(cfg, 'application/vnd.github.raw'),
   });
   list.push({
