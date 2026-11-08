@@ -170,30 +170,42 @@ async function checkForUpdate({ cfg = {}, userDataDir, appRoot }) {
     return { ok: false, update: false, repo, reason: err.message };
   }
 
-  const localSha = installedSha(userDataDir, appRoot);
+  let localSha = installedSha(userDataDir, appRoot);
 
   if (!localSha) {
-    // Első indítás: rögzítjük a mostani commitot alapvonalnak, hogy ne
-    // töltsön le feleslegesen egy „frissítést” a telepítés pillanatában.
-    writeState(userDataDir, {
-      installedSha: remote.sha,
-      installedAt: Date.now(),
-      lastCheckedAt: Date.now(),
-      remoteSha: remote.sha,
-      remoteDate: remote.date,
-      remoteMessage: remote.message,
-      lastError: null,
-    });
-    return {
-      ok: true,
-      update: false,
-      repo,
-      localSha: remote.sha,
-      remoteSha: remote.sha,
-      remote,
-      baseline: true,
-      reason: 'első ellenőrzés – a jelenlegi verzió lett az alapvonal',
-    };
+    // Nincs még frissítési állapot. Ha a build hozott magával alapvonalat
+    // (update-baseline.json), az a telepített verzió: így egy régebbi portable
+    // csomag már az első indításnál frissül. Fejlesztői futtatásnál nincs
+    // alapvonal, ott a jelenlegi commit lesz az alapvonal.
+    const buildBase = baselineSha(appRoot);
+    if (buildBase) {
+      localSha = buildBase;
+      writeState(userDataDir, {
+        installedSha: buildBase,
+        installedAt: Date.now(),
+        lastCheckedAt: Date.now(),
+      });
+    } else {
+      writeState(userDataDir, {
+        installedSha: remote.sha,
+        installedAt: Date.now(),
+        lastCheckedAt: Date.now(),
+        remoteSha: remote.sha,
+        remoteDate: remote.date,
+        remoteMessage: remote.message,
+        lastError: null,
+      });
+      return {
+        ok: true,
+        update: false,
+        repo,
+        localSha: remote.sha,
+        remoteSha: remote.sha,
+        remote,
+        baseline: true,
+        reason: 'első ellenőrzés – a jelenlegi verzió lett az alapvonal',
+      };
+    }
   }
 
   writeState(userDataDir, {
@@ -216,6 +228,24 @@ async function checkForUpdate({ cfg = {}, userDataDir, appRoot }) {
       remoteSha: remote.sha,
       remote,
       reason: 'naprakész',
+    };
+  }
+
+  // Ha a build alapvonala (update-baseline.json) és a telepített commit eltér,
+  // a fájlok nem abból a commitból származnak, amit a launcher telepítettnek
+  // hisz: a régi frissítők például nem cserélték a package.json-t, ezért a
+  // fejlécben régi verziószám ragadt. Egy újratelepítés helyre teszi a fájlokat.
+  const state = readState(userDataDir);
+  const base = baselineSha(appRoot);
+  if (base && state.installedSha && base !== state.installedSha) {
+    return {
+      ok: true,
+      update: true,
+      repo,
+      localSha,
+      remoteSha: remote.sha,
+      remote,
+      reason: 'a telepített build verziója elavult – újratelepítem',
     };
   }
 
