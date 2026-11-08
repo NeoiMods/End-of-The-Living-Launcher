@@ -21,14 +21,6 @@ function git(args) {
   return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', windowsHide: true });
 }
 
-function commitSha() {
-  try {
-    return git(['rev-parse', 'HEAD']).trim();
-  } catch {
-    return null;
-  }
-}
-
 function version() {
   try {
     return JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version || '';
@@ -87,10 +79,9 @@ function buildUpdateManifest() {
     }
     files.push({ path: rel, size: content.length, sha256: sha256Normalized(content) });
   }
-  // Nincs benne időbélyeg: így a fájl csak akkor változik, ha a launcher
-  // tartalma változott (nem generál felesleges commitot minden build).
+  // Se commit-azonosító, se időbélyeg: így a fájl csak akkor változik, ha a
+  // launcher tartalma változott (nem generál felesleges commitot minden build).
   const manifest = {
-    sha: commitSha(),
     version: version(),
     files,
   };
@@ -161,7 +152,7 @@ if (require.main === module) {
   const manifest = buildUpdateManifest();
   const index = buildMasterIndex();
   console.log(
-    `✓ update-manifest.json: ${manifest.files.length} fájl, commit ${String(manifest.sha).slice(0, 7) || '?'}`
+    `✓ update-manifest.json: ${manifest.files.length} fájl (v${manifest.version})`
   );
   console.log(`✓ ${index.folder}/index.json: ${index.files.length} fájl (${index.source})`);
 }
