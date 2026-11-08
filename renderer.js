@@ -536,18 +536,17 @@ function wireEvents() {
     });
   });
   // ---- Discord: crash log + widget ----
-  // A banner mindig a legfrissebb elérhető logot kínálja fel (kézi küldés),
-  // így "Most nem" után is működik.
+  // A banner mindig a legfrissebb elérhető logot kínálja fel (kézi küldés).
   $('#btnCrashBannerSend').addEventListener('click', openCrashManual);
   $('#btnCrashBannerHide').addEventListener('click', hideCrashBanner);
   $('#btnCrashManual').addEventListener('click', openCrashManual);
-  $('#btnCrashSkip').addEventListener('click', async () => {
-    closeCrash();
-    try {
-      await bridge.dismissCrash();
-    } catch {
-      /* nem baj */
-    }
+  // Ez a gomb csak akkor látszik, ha a küldés többször sem ment át:
+  // ilyenkor a játékos nem ragad bent a launcherben. A logot nem jelöljük
+  // elküldöttnek, így a következő indításnál újra felajánljuk.
+  $('#btnCrashSkip').addEventListener('click', () => {
+    closeCrash(true);
+    showCrashSkip(false);
+    hideCrashBanner();
     appendLog('• Crash log kihagyva – a következő indításnál újra felajánljuk.');
   });
   $('#btnCrashSend').addEventListener('click', () => sendCrashLog(false));
@@ -740,13 +739,28 @@ function renderDiscord(data) {
 // ---------------------------------------------------------------- crash log
 
 let pendingCrash = null;
+// Összeomlás után a log beküldése kötelező: az ablakot nem lehet kihagyni.
+// A DISCORD fülről indított kézi küldésnél nem kötelező.
+let crashRequired = false;
 
 function formatMb(bytes) {
   return (Number(bytes || 0) / 1048576).toFixed(1) + ' MB';
 }
 
-// A mindig látható felhívás a fő panelen: akkor is ott marad, ha a játékos
-// az ablakban "Most nem"-et nyomott – bármikor elküldheti.
+function setCrashError(text) {
+  const el = $('#crashError');
+  if (!el) return;
+  el.textContent = text || '';
+  el.classList.toggle('hidden', !text);
+}
+
+function showCrashSkip(show) {
+  const btn = $('#btnCrashSkip');
+  if (btn) btn.classList.toggle('hidden', show !== true);
+}
+
+// A mindig látható felhívás a fő panelen: a zárható ablak mellett is ott marad,
+// hogy a játékos bármikor pótolhassa a küldést.
 function showCrashBanner(info) {
   const banner = $('#crashBanner');
   if (!banner) return;
@@ -755,8 +769,8 @@ function showCrashBanner(info) {
   if (text) {
     const name = info && info.primary && info.primary.name;
     text.textContent = name
-      ? `${name} – küldd el, és megnézzük, mi okozta. Csak a Discord neved kell hozzá.`
-      : 'Küldd el nekünk a legfrissebb logot – megnézzük, mi okozta.';
+      ? `${name} – a log elküldése kötelező, hogy ki tudjuk javítani az összeomlást.`
+      : 'A log elküldése kötelező – csak így tudjuk kijavítani a hibát.';
   }
   banner.classList.remove('hidden');
 }
@@ -792,7 +806,14 @@ function openCrash(info) {
     list.appendChild(li);
   }
   const title = $('#crashTitle');
-  if (title) title.textContent = info.manual ? 'Log küldése a szervernek' : 'Összeomlott a játék';
+  if (title) {
+    title.textContent = info.manual
+      ? 'Log küldése a szervernek'
+      : 'Összeomlott a játék – küldd el a logot';
+  }
+  crashRequired = !info.manual;
+  showCrashSkip(false);
+  setCrashError('');
   showCrashBanner(info);
   let saved = '';
   try {
@@ -805,14 +826,23 @@ function openCrash(info) {
   $('#crashName').focus();
 }
 
-function closeCrash() {
+// force nélkül nem záródik be, ha a beküldés kötelező (összeomlás után).
+function closeCrash(force) {
+  if (crashRequired && force !== true) {
+    setCrashError('A log elküldése kötelező – enélkül nem tudjuk kijavítani az összeomlást.');
+    $('#crashName').focus();
+    return false;
+  }
   $('#crashOverlay').classList.add('hidden');
+  crashRequired = false;
+  return true;
 }
 
 async function sendCrashLog(manual) {
   const name = $('#crashName').value.trim();
   if (name.length < 2) {
     $('#crashName').classList.add('invalid');
+    setCrashError('Írd be a Discord nevedet – enélkül nem tudjuk, kitől jött a log.');
     $('#crashName').focus();
     return;
   }
@@ -830,15 +860,22 @@ async function sendCrashLog(manual) {
     const res = await bridge.sendCrash(name, manual === true || (pendingCrash && pendingCrash.manual === true));
     if (res && res.ok) {
       appendLog('✓ Crash log elküldve a szervernek (' + (res.sent || []).join(', ') + '). Köszönjük!');
-      closeCrash();
+      closeCrash(true);
       hideCrashBanner();
+      setCrashError('');
       pendingCrash = null;
     } else {
-      appendLog('✗ ' + ((res && res.error) || 'a küldés nem sikerült'));
+      const msg = (res && res.error) || 'a küldés nem sikerült';
+      appendLog('✗ ' + msg);
+      setCrashError('A küldés nem sikerült: ' + msg + ' – próbáld újra.');
+      showCrashSkip(true);
       btn.textContent = 'Újrapróbálom';
     }
   } catch (err) {
-    appendLog('✗ ' + (err && err.message ? err.message : err));
+    const msg = err && err.message ? err.message : String(err);
+    appendLog('✗ ' + msg);
+    setCrashError('A küldés nem sikerült: ' + msg + ' – próbáld újra.');
+    showCrashSkip(true);
     btn.textContent = 'Újrapróbálom';
   } finally {
     btn.disabled = false;

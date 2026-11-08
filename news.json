@@ -1,7 +1,21 @@
 {
-  "version": "0.8.1",
+  "version": "0.8.2",
   "updatedAt": "2026-11-08",
   "items": [
+    {
+      "id": "0.8.2",
+      "version": "0.8.2",
+      "date": "2026-11-08",
+      "tag": "FONTOS",
+      "title": "0.8.2 – összeomlás után kötelező a log beküldése",
+      "text": "Ha a játék összeomlik, a launcher mostantól kéri a crash logot és a Discord nevedet, és addig nem lehet továbblépni, amíg el nem küldted. Ez nem szivatás: a „nem működik, valami hiba van” megjegyzésből nem tudunk javítani, a log fájlból viszont pontosan látjuk, mi okozta.",
+      "changes": [
+        "Összeomlás után felugrik a kötelező ablak: a Discord neved megadása is kötelező, és csak a LOG ELKÜLDÉSE gombbal zárul be.",
+        "Az ablak elmagyarázza, miért kell: a logból tudjuk meg a hiba okát, a „nem működik” szövegből nem.",
+        "Ha küldés nélkül zárdnád be a launchert, figyelmeztet – a log a gépeden marad, és a következő indításnál újra felajánljuk.",
+        "Csak akkor jelenik meg a kilépés gomb, ha a küldés hálózati hiba miatt nem ment át, hogy senki ne ragadjon bent a launcherben."
+      ]
+    },
     {
       "id": "0.8.1",
       "version": "0.8.1",

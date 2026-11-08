@@ -1774,7 +1774,34 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
 
 /* ---------- crash log ablak ---------- */
 .crash-modal {
-  max-width: 560px;
+  max-width: 600px;
+}
+
+.crash-why {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #ffd9c2;
+  background: rgba(90, 40, 16, 0.35);
+  border-left: 2px solid #e8452f;
+  border-radius: 2px;
+}
+.crash-why b {
+  display: block;
+  margin-bottom: 3px;
+  color: #ffb27a;
+  letter-spacing: 0.4px;
+}
+
+.crash-error {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #ff9a80;
+}
+.crash-error.hidden {
+  display: none;
 }
 
 #crashName.invalid {

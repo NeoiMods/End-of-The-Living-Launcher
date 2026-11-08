@@ -526,22 +526,28 @@
     <div class="modal crash-modal">
       <h2 id="crashTitle">Összeomlás észlelve</h2>
       <p class="modal-lead">
-        Kattints a <b>LOG ELKÜLDÉSE</b> gombra: a crash log egy az egyben átmegy a
-        szerver Discord csatornájára, és megnézzük, mi okozta. Csak a Discord
-        nevedet kell megadnod hozzá – pár másodperc az egész.
+        A játék összeomlott. A folytatáshoz <b>el kell küldened a logot</b> és meg kell
+        adnod a Discord nevedet – ez nem opcionális, enélkül nem tudunk mit kezdeni a hibával.
       </p>
+      <div class="crash-why">
+        <b>Miért kötelező?</b>
+        Mert a „nem működik, valami hiba van” megjegyzésből nem derül ki, mi történt, és
+        abból nem tudunk javítani. A crash log fájlból viszont pontosan látjuk a hibát, így
+        meg tudjuk oldani – a neved pedig ahhoz kell, hogy vissza tudjunk jelezni neked.
+      </div>
       <ul class="warn-list" id="crashFiles"></ul>
       <label class="field">
-        <span>Discord neved (hogy tudjuk, kitől jött a log)</span>
+        <span>Discord neved (kötelező – így tudjuk, kitől jött a log)</span>
         <input id="crashName" type="text" maxlength="40" placeholder="pl. shadow_peter" spellcheck="false" />
       </label>
+      <p class="crash-error hidden" id="crashError"></p>
       <p class="warn-note">
-        A log a szerver saját Discord csatornájára kerül, a neveddel együtt. Ha most
-        kihagyod, a fő panel tetején marad a felhívás, és a DISCORD fülön is bármikor
-        elküldheted.
+        A csatornára csak a log fájlok, a Discord neved és a launcher verziója kerül.
+        Ha a küldés hálózati hiba miatt nem megy át, a gomb újrapróbálható, és csak
+        ilyenkor jelenik meg a kilépés lehetősége.
       </p>
       <div class="modal-actions">
-        <button id="btnCrashSkip" class="ghost-btn" type="button">Most nem</button>
+        <button id="btnCrashSkip" class="ghost-btn hidden" type="button">Kilépés küldés nélkül</button>
         <button id="btnCrashSend" class="primary-btn" type="button">LOG ELKÜLDÉSE</button>
       </div>
     </div>

@@ -48,6 +48,10 @@ let busy = false;
 let setupRunning = false;
 // Játék bezárásának figyelése a crash loghoz.
 let gameSeenRunning = false;
+// Összeomlás után a log beküldése kötelező: amíg nincs elküldve, a launcher
+// ablakát sem lehet csak úgy bezárni (kilépéskor rákérdezünk).
+let crashReportPending = false;
+let appQuitting = false;
 
 function log(line) {
   if (win && !win.isDestroyed()) win.webContents.send('log', String(line));
@@ -89,6 +93,36 @@ function createWindow() {
     },
   });
   win.loadFile('index.html');
+
+  // Ha a játékos összeomlás után küldés nélkül zárná be a launchert, szólunk,
+  // hogy a logból tudjuk meg, mi történt – de nem tartjuk fogva.
+  win.on('close', (e) => {
+    if (!crashReportPending || appQuitting) return;
+    let choice = 0;
+    try {
+      choice = dialog.showMessageBoxSync(win, {
+        type: 'warning',
+        buttons: ['Log elküldése', 'Kilépés küldés nélkül'],
+        defaultId: 0,
+        cancelId: 0,
+        noLink: true,
+        title: 'A crash logot még nem küldted el',
+        message: 'A log nélkül nem tudjuk kijavítani az összeomlást.',
+        detail:
+          'A „nem működik” megjegyzésből nem derül ki a hiba oka, a log fájlból igen. ' +
+          'Ha most kilépsz, a log a gépeden marad, és a következő indításnál újra felajánljuk.',
+      });
+    } catch {
+      choice = 0;
+    }
+    if (choice === 0) {
+      e.preventDefault();
+      if (win.isMinimized()) win.restore();
+      win.show();
+      win.focus();
+      win.webContents.send('crash', checkCrash());
+    }
+  });
 }
 
 app.whenReady().then(() => {
@@ -238,6 +272,10 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('before-quit', () => {
+  appQuitting = true;
 });
 
 ipcMain.handle('status:get', () => status());
@@ -910,6 +948,7 @@ function checkCrash() {
 // előjön és villog is, hogy a játékos biztosan észrevegye a felhívást.
 function notifyCrash(info) {
   if (!info || !info.detected) return;
+  crashReportPending = true;
   log(`• Összeomlás észlelve (${info.primary.name}) – elküldhető a szervernek.`);
   if (!win || win.isDestroyed()) return;
   try {
@@ -937,7 +976,12 @@ ipcMain.handle('discord:widget', async () => {
   }
 });
 
-ipcMain.handle('crash:check', () => checkCrash());
+ipcMain.handle('crash:check', () => {
+  const info = checkCrash();
+  // Amint a felület összeomlást lát, a beküldés kötelezővé válik (kilépéskor is).
+  if (info && info.detected) crashReportPending = true;
+  return info;
+});
 
 // Kézi küldéshez: mit tudnánk most elküldeni (a legfrissebb logok).
 ipcMain.handle('crash:latest', () => {
@@ -976,6 +1020,7 @@ ipcMain.handle('crash:send', async (e, payload) => {
       },
     });
     crash.markReported(app.getPath('userData'), info.files);
+    crashReportPending = false;
     log('✓ Crash log elküldve a szerver Discordjára: ' + res.sent.join(', '));
     return res;
   } catch (err) {
@@ -986,6 +1031,7 @@ ipcMain.handle('crash:send', async (e, payload) => {
 ipcMain.handle('crash:dismiss', () => {
   const info = checkCrash();
   if (info.detected) crash.markReported(app.getPath('userData'), info.files);
+  crashReportPending = false;
   return { ok: true };
 });
 
