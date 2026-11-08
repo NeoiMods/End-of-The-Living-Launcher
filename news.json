@@ -1,7 +1,20 @@
 {
-  "version": "0.8.0",
+  "version": "0.8.1",
   "updatedAt": "2026-11-08",
   "items": [
+    {
+      "id": "0.8.1",
+      "version": "0.8.1",
+      "date": "2026-11-08",
+      "tag": "JAVÍTÁS",
+      "title": "0.8.1 – rendben az automatikus frissítés",
+      "text": "A frissítő eddig nem cserélte a launcher verziófájlját, ezért a fejlécben a régi verziószám ragadt, és egy félbeszakadt frissítés után a launcher naprakésznek hitte magát. Mindkettő javítva.",
+      "changes": [
+        "A frissítés mostantól a verziószámot is frissíti, így a fejlécben a valódi verzió látszik.",
+        "Ha egy fájlt nem sikerül lecserélni (pl. zárolt fájl), a launcher nem jelöli készre a frissítést, hanem a következő indításnál újrapróbálja.",
+        "A frissítés után a build commitja is frissül, így a hibajelentésekben a helyes verzió szerepel."
+      ]
+    },
     {
       "id": "0.8.0",
       "version": "0.8.0",

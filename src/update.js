@@ -421,6 +421,27 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
     }
 
     const remoteSha = (res && res.remoteSha) || (await fetchLatestCommit(repo)).sha;
+
+    // Ha bármelyik fájlt nem sikerült lecserélni (zárolt fájl, jogosultság),
+    // nem jelöljük készre a frissítést: különben a következő indítás már
+    // naprakésznek hinné a launchert, és a félkész állapot megmaradna.
+    if (failed.length) {
+      writeState(userDataDir, {
+        lastCheckedAt: Date.now(),
+        lastChanged: changed.length,
+        lastError: `${failed.length} fájl nem cserélhető le (${failed
+          .slice(0, 3)
+          .map((f) => f.file)
+          .join(', ')}${failed.length > 3 ? '…' : ''})`,
+      });
+      return {
+        ok: false,
+        error: `${failed.length} fájl nem cserélhető le – zárd be a launchert, és indítsd újra`,
+        changed: changed.length,
+        failed,
+      };
+    }
+
     writeState(userDataDir, {
       installedSha: remoteSha,
       installedAt: Date.now(),
@@ -428,6 +449,17 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
       lastChanged: changed.length,
       lastError: null,
     });
+    // Az app mappájában lévő alapvonal (crash logokhoz, első indításhoz) is
+    // kövesse a telepített commitot, különben a build commitja ragad benne.
+    try {
+      fs.writeFileSync(
+        path.join(appRoot, 'update-baseline.json'),
+        JSON.stringify({ sha: remoteSha, updatedAt: new Date().toISOString() }, null, 2),
+        'utf8'
+      );
+    } catch {
+      /* ha az app mappa írásvédett, az állapotfájl akkor is naprakész */
+    }
 
     progress({ label: 'Frissítés kész.' });
     if (!changed.length) {
