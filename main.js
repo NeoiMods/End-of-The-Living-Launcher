@@ -944,6 +944,8 @@ async function installBlackoutModpack() {
     },
   };
   save();
+  // Az ellenőrző lista azonnal mutassa az új állapotot (ne kelljen frissíteni).
+  if (win && !win.isDestroyed()) win.webContents.send('refresh');
   return res;
 }
 

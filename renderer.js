@@ -13,6 +13,7 @@ let savedUpdateUrl = '';
 let lastStatus = null;
 let serverStatus = null;
 let statusTimer = null;
+let blackoutTimer = null;
 
 // ---------------------------------------------------------------- log
 
@@ -78,6 +79,9 @@ function render(st) {
   const server = st.server || {};
 
   const bo = st.blackout || null;
+  const boTotal = Number(bo && bo.total) || 0;
+  const boGot = Number(bo && bo.downloaded) || 0;
+  const boEnabled = Number(bo && bo.enabledCount) || 0;
   if (gameMode === 'blackout') {
     const total = Number(bo && bo.total) || 0;
     const done = Number(bo && bo.downloaded) || 0;
@@ -157,23 +161,52 @@ function render(st) {
             ? `${mem.totalGb} GB RAM – 16 GB alatt kötelező, az Optimalizálás fülön telepíthető`
             : 'Opcionális – az Optimalizálás fülön telepíthető',
     },
-    {
-      ok: colCount ? downloaded >= colCount : null,
-      warn: colCount > 0 && downloaded < colCount,
-      label: 'Mod kollekció',
-      detail: colCount
-        ? `${downloaded}/${colCount} mod letöltve a Steam Workshophoz`
-        : 'Még nincs letöltve a kollekció – kattints a MODOK TELEPÍTÉSE gombra',
-    },
-    {
-      ok: installed.length ? missingMods.length === 0 : null,
-      label: 'Modok engedélyezve',
-      detail: installed.length
-        ? missingMods.length === 0
-          ? `${installed.length} mod aktív a default.txt listában`
-          : `Hiányzik a listából: ${missingMods.slice(0, 6).join(', ')}${missingMods.length > 6 ? '…' : ''}`
-        : 'Még nem telepítettünk modot',
-    },
+    // Az ellenőrző lista a játékmódhoz igazodik: egyjátékos módban a Blackout
+    // modpack számít, nem a szerver kollekció.
+    ...(gameMode === 'blackout'
+      ? [
+          {
+            ok: boTotal ? boGot >= boTotal : null,
+            warn: boTotal > 0 && boGot < boTotal,
+            label: 'Blackout kollekció',
+            detail: boTotal
+              ? `${boGot}/${boTotal} mod letöltve a Blackout kollekcióból`
+              : 'Még nincs letöltve – kattints a MODOK TELEPÍTÉSE gombra',
+          },
+          {
+            ok: boEnabled ? true : null,
+            label: 'Blackout modok engedélyezve',
+            detail: boEnabled
+              ? `${boEnabled} mod aktív a default.txt listában`
+              : 'A modok még nincsenek engedélyezve',
+          },
+          {
+            ok: bo && bo.configAt ? true : null,
+            label: 'Modpack config',
+            detail: bo && bo.configAt
+              ? 'A modpack config fájlja be van másolva a játékba'
+              : blackoutConfigDetail(bo),
+          },
+        ]
+      : [
+          {
+            ok: colCount ? downloaded >= colCount : null,
+            warn: colCount > 0 && downloaded < colCount,
+            label: 'Mod kollekció',
+            detail: colCount
+              ? `${downloaded}/${colCount} mod letöltve a Steam Workshophoz`
+              : 'Még nincs letöltve a kollekció – kattints a MODOK TELEPÍTÉSE gombra',
+          },
+          {
+            ok: installed.length ? missingMods.length === 0 : null,
+            label: 'Modok engedélyezve',
+            detail: installed.length
+              ? missingMods.length === 0
+                ? `${installed.length} mod aktív a default.txt listában`
+                : `Hiányzik a listából: ${missingMods.slice(0, 6).join(', ')}${missingMods.length > 6 ? '…' : ''}`
+              : 'Még nem telepítettünk modot',
+          },
+        ]),
     {
       ok: mem.level === 'low' ? 'warn' : true,
       warn: mem.level === 'low',
@@ -491,6 +524,14 @@ const MODE_UI = {
   },
 };
 
+// A config állapot szövege az ellenőrző listához.
+function blackoutConfigDetail(bo) {
+  if (bo && bo.configPath) {
+    return `Még nincs feltöltve a repóba (${bo.configPath}) – a modpack config nélkül indul`;
+  }
+  return 'A modpack config még nem érhető el – a játék config nélkül indul';
+}
+
 function warnHidden() {
   try {
     return localStorage.getItem(BLACKOUT_WARN_KEY) === '1';
@@ -521,6 +562,10 @@ function applyMode() {
   $('#modeLabel').textContent = ui.modeButton;
   $('#panelModeLabel').textContent = ui.panel;
   $('#panelNote').textContent = ui.note;
+  const checkTitle = $('#checkTitle');
+  if (checkTitle) {
+    checkTitle.textContent = gameMode === 'blackout' ? 'ELLENŐRZÉS – BLACKOUT' : 'ELLENŐRZÉS';
+  }
   document.title =
     gameMode === 'blackout' ? 'Blackout Protocol – New Era' : 'End of The Living Launcher';
 }
@@ -2025,6 +2070,13 @@ async function init() {
       refreshServerStatus();
     }
   }, 45000);
+
+  // Egyjátékos módban nincs „Frissítés” gombnyomás: a modpack letöltése és
+  // engedélyezése közben az ellenőrző lista magától frissül.
+  if (blackoutTimer) clearInterval(blackoutTimer);
+  blackoutTimer = setInterval(() => {
+    if (gameMode === 'blackout') refresh();
+  }, 15000);
 }
 
 // Ha van saját fotóháttér (assets/bg.png), a paneleket sötétebbre vesszük,
