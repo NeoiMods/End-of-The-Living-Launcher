@@ -1,5 +1,5 @@
 {
-  "version": "0.8.4",
+  "version": "0.9.0",
   "files": [
     {
       "path": "assets/bg.png",
@@ -33,33 +33,33 @@
     },
     {
       "path": "index.html",
-      "size": 25361,
-      "sha256": "2f4fb32565e05c6a94efa943b497d3e98aef06d79508d0fae25bf6c5aaabe8e7"
+      "size": 27183,
+      "sha256": "efe10e821f80e38b610c3921f0a87fda37c9d904c8dd692cc8c59c8977d4eeac"
     },
     {
       "path": "main.js",
-      "size": 34264,
-      "sha256": "35443f40452acdc3b64c4e8d03914ea6243b8936d256440ae05257c231fd7edf"
+      "size": 37295,
+      "sha256": "c2153a1f71f104ff6c64499c8692221f32087f5a17c12e4e77f9894d0754fa14"
     },
     {
       "path": "news.json",
-      "size": 10111,
-      "sha256": "fbae7ee587de6f695ff44828c1bf9a6b6c3e29d8a17d127d311775d0dae3d090"
+      "size": 11483,
+      "sha256": "b758cc7d65cc71091f4aa1cc6f91cb61aa174745ef8ad48311624e55714f443e"
     },
     {
       "path": "package.json",
-      "size": 838,
-      "sha256": "b4afe65d79fedc58d8b30811f12802dce7834a3af3b3343132de11886c1fb91d"
+      "size": 864,
+      "sha256": "310c83b8cef267cea02f5b017625d4aca24d3363f0134d8181ae3c2b0387a806"
     },
     {
       "path": "preload.js",
-      "size": 3307,
-      "sha256": "b8654b461a9420fb142b297be99bf97bb2cc8cedd1d343d5d64f43913f8c808e"
+      "size": 3638,
+      "sha256": "81eea7da9702c5c3354dfc7c9a18144f82449ab4be0b1db9aa5e8a51a513198e"
     },
     {
       "path": "renderer.js",
-      "size": 62936,
-      "sha256": "e0d91af3b8de9a46ee52a5cfab1d3d2ae9831bf3fe7534efead221bbfd35a80d"
+      "size": 68343,
+      "sha256": "cf81753bd45bf23346424b92e7f7b619dc89fa067a68e8013e64fd328d705a21"
     },
     {
       "path": "src/a2s.js",
@@ -72,14 +72,19 @@
       "sha256": "a82166ad3aa5e868f64b0770bd7a9e5dc402b69b95294cd28ab5667f42673d25"
     },
     {
+      "path": "src/blackout.js",
+      "size": 7368,
+      "sha256": "c6d54a44111cc3dbd4a788b7c7195b8ce58c19468d6360666f90aec1a3ad160a"
+    },
+    {
       "path": "src/collection.js",
       "size": 6583,
       "sha256": "e7425f527cc78ab5d4dfc594f4d52281961a9aea0e3a68907b11510879f3f44f"
     },
     {
       "path": "src/config.js",
-      "size": 5622,
-      "sha256": "2e3d378e714d44537b18c84332e0268a8755fa49d80f8f2ab16052d31a07dc33"
+      "size": 6870,
+      "sha256": "2bf20bd4484852eb725258b5f0bad56f4b383d51cca78485e22f97a1d5d88b22"
     },
     {
       "path": "src/crash.js",
@@ -153,8 +158,8 @@
     },
     {
       "path": "src/setup.js",
-      "size": 15459,
-      "sha256": "4ede2b327b2bf0a70725f11722d7a8ec8d3666d3da53dafaa24a2e012bce061e"
+      "size": 15843,
+      "sha256": "afb52fc59037da877864f7b4ece2d15133873ac33a62a2bc851bb3f458c4fb72"
     },
     {
       "path": "src/shortcut.js",
@@ -188,8 +193,8 @@
     },
     {
       "path": "styles.css",
-      "size": 57314,
-      "sha256": "252163fdfb21a428de31753065889812e3506919e04318a526c4148e6f2fbfe1"
+      "size": 60749,
+      "sha256": "d525d06dd3f57283155f6262ffe42826af497d54847ebdfce23612d38ee35572"
     },
     {
       "path": "themes/README.md",
