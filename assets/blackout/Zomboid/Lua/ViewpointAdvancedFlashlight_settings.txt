@@ -1,0 +1,12 @@
+dragEnabled=1
+dragSpringFreq=16
+dragAmount=1
+lightColor=0
+airDust=1
+airAmount=0.2
+batteryDim=1
+batteryAmber=1
+batteryFlicker=1
+freezeEnabled=1
+noiseEnabled=1
+lighterFlicker=1

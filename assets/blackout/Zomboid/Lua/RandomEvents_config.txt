@@ -1,0 +1,1025 @@
+# =====================================================================================
+#  RANDOM EVENTS - config file.   Lines starting with # are comments.
+#  Edit and save, then press "Reload config" in the admin panel (F10 -> Loot / schedule).
+# =====================================================================================
+
+[settings]
+# HOW OFTEN: after each automatic event the next one comes after a random time between min and max game
+# days (decimals are fine, e.g. 0.5-1.5).  0-0 = that kind never happens by itself.  Only when the panel switch
+# "automatic events" is on and somebody is online.
+airdrop_days = 6-14
+heli_days = 10-22
+airdrop_chance = 100             # % chance that an automatic airdrop happens when its timer ends (0-100); otherwise the timer starts again
+heli_chance = 100                # the same for the automatic helicopter crash
+horde_chance = 100               # the same for an automatic horde (a town whose cooldown ended); on "no" the town's cooldown starts again
+# HORDES: every town has its OWN cooldown (see [cities], the last number: days min-max).  When a town's cooldown is over
+# and a player is online, a horde walks to a spot in that town (any town may be the target, near players or not: the
+# waves wait until somebody comes close enough for the forest to load).  After the attack the town's cooldown starts anew.
+# horde_city_days is used for a town without its own value.  The panel switch "automatic hordes" turns all of this off.
+horde_city_days = 14-20
+horde_max_active = 1             # at most this many automatic hordes at the same time (towns that are due wait their turn)
+
+# AIRDROP: automatic radio warnings in the last day before the drop (hours before: every 2 hours).
+# The warnings reach EVERY powered-on receiver on EVERY channel.  The position of the landed crate is
+# broadcast after the drop on the wave of this event (see radio_frequencies below) and is heard by every
+# receiver tuned to it.
+airdrop_warn_hours = 24 22 20 18 16 14 12 10 8 6 4 2
+airdrop_repeat_hours = 1         # after the drop, every N hours: EVERY channel hears "the cargo was already dropped, coordinates on wave F"; the coordinates only on that wave ...
+airdrop_repeat_count = 4         # ... this many times (4 x 1 h)
+airdrop_crates = 1
+airdrop_loot = random           # random  or  set:NAME   (e.g. set:Humanitarian cargo)
+
+# HELICOPTER, in order:
+#  1. heli_sos_lead_hours before the crash: a signal caught "by chance" (broken, with static): the call number
+#     of the helicopter, the crew talking to the command about other states, the pilot says they will enter
+#     the Kentucky airspace in half an hour.  Every receiver, every channel.
+#  2. at the crash: SOS with the wave for the rescue group (no coordinates).  Every channel.
+#  3. then every heli_sos_repeat_hours, heli_sos_repeat_count times (12 = 12 hours): SOS with the exact
+#     coordinates on the rescue wave of this crash - heard by receivers tuned to it.
+heli_sos_lead_hours = 0.5
+heli_sos_repeat_hours = 1
+heli_sos_repeat_count = 12
+# RADIO WAVES (kHz).  Every airdrop, helicopter crash and horde gets ONE of these at random; the radio texts
+# say which ({F}).  For the helicopter this is the wave of the rescue group.
+radio_frequencies = 89200 91400 93600 96200 97800 99400 101600 103800 105400 107000
+radio_note_seconds = 12           # real seconds a received radio line stays on screen above the player (0 = the game default only)
+radio_line_seconds = 7           # real seconds between the lines of one broadcast (0 = all at once)
+radio_range_limit = 0            # 1 = a receiver also needs to be within its own range of the event site
+unknown_radio_range = 2000      # tiles; used when a device does not report its range
+
+# SOUNDS (real seconds).  Airdrop: a plane flies over (heard within plane_range of the plane), the crate
+# lands plane_drop_seconds later.  Helicopter: heard within heli_range of the helicopter while it comes
+# in, then heli_flight_seconds later it crashes: impact + explosion heard within crash_range.
+# The ranges can only be LOWERED here; the maximum is distanceMax in media/scripts/RandomEvents_sounds.txt.
+sound_enabled = 1
+plane_range = 3000
+heli_range = 1000
+crash_range = 3000
+# Sound scripts (names, space separated).  Defaults are the game's own recordings; the mod's own files are
+# RE_HeliFlyby / RE_PlaneFlyby / RE_CrashExplosion (deep boom that carries far).
+heli_sound = Helicopter
+crash_sounds = VehicleCrash PipeBombExplode RE_CrashExplosion
+plane_drop_seconds = 20
+heli_flight_seconds = 25
+heli_hazmat = 1                 # zombies in chemical protection suits near the wreck
+wreck_days = 0                  # the wreck stays this many days (0 = until an admin removes it by hand)
+message_variants = 1            # 1 = radio texts are picked at random from several variants, 0 = always the first
+heli_cargo = 1                  # 1 = the helicopter wreck itself is a lootable container (loot from heli_loot)
+heli_crates = 2
+heli_crew = 6-11                # zombie crew at the wreck
+heli_loot = random              # random  or  set:NAME  (default loot of the helicopter and its crates)
+# Own loot for each part (the admin panel, tab Loot, changes them too).  "heli" = take heli_loot.
+heli_cargo_loot = heli          # the helicopter itself
+heli_crate1_loot = heli         # first crate
+heli_crate2_loot = heli         # second crate and every further one
+
+horde_size = 25-49              # only used by the instant "spawn horde" admin command
+
+# HORDE: radio reports zombies coming out of the forests toward a city; the horde arrives in waves.
+# horde_waves = zombies per wave, up to 5 numbers, in order.  Everything can also be typed in the panel (tab Horde).
+# The first report reaches every receiver; each wave report is broadcast on the wave of the horde and is heard only by
+# receivers (tuned to it) whose range reaches the target.  Waves appear horde_spawn_min..max tiles from the target,
+# ONLY in a forest, and the zombies are lured toward the target for horde_attract_minutes.
+horde_waves = 150 200 250
+site_outside_percent = 70         # % of random airdrop sites outside a town ([outskirts] spots); the rest is inside a town, on a [key_places] spot
+heli_outside_percent = 90         # % of helicopter crashes outside a town (the rest inside, on a [places] spot)
+horde_cluster_info = 1           # 1 = the warning also says: N large clusters, about a km apart, most likely arriving separately (0 = off)
+horde_group_size = 8              # a wave starts as groups of this many zombies, each at its own place
+horde_spread = 30                # radius (tiles) around a group's place over which its zombies are scattered (1-3 per tile)
+horde_target_spread = 30         # tiles: zombies are lured to random points this far around the target
+horde_wave_gap_minutes = 30
+horde_lead_hours = 2
+horde_spawn_min = 70
+horde_spawn_max = 120
+horde_terrain = forest field        # ground a horde may be created on: forest, field (never a road or near a building)
+horde_player_min = 40               # no zombie is created within this many tiles of a player
+horde_anchor_wait_hours = 2         # wait this long for the start area to load, then start on loaded ground along the same direction
+horde_attract_minutes = 40
+horde_retry_hours = 24
+horde_max_wave = 400
+prop_days = 3                   # crate / wreck sprites stay for this many in-game days
+
+# CAPTURE A CITY (panel tab Cities): 10-20 points inside the city (more points for a bigger city), moderate
+# zombie groups on them, up to capture_max in total.  The groups appear as soon as the area is loaded.
+capture_max = 300
+capture_per_point = 15
+capture_default_radius = 120
+capture_expire_days = 7
+# AUTOMATIC CAPTURES: like hordes, every town has its OWN capture cooldown (a random number of days between min and max).  When it is over
+# (and a player is online) the town is captured; then the cooldown starts anew.  A capture started from the panel restarts it too.
+# The town's own value is the 5th number in [cities]; 0-0 = this town is never captured automatically.
+capture_city_days = 5-7
+capture_chance = 100             # % that a due capture really happens (otherwise the cooldown just starts again)
+
+# Radio texts.  {X} {Y} = exact coordinates, {T} = "2 days" / "6 hours", {H} = hours, {D} = days, {F} = frequency in MHz, {C} = city, {N}/{M} = wave number / waves, {Z} = zombies
+[cities]
+# Name = x, y, radius, cooldown   (radius in tiles for 'capture a city', 0 = default; cooldown = days min-max between two
+# horde attacks on this town, optional: without it horde_city_days is used; 5th number: days min-max between two
+# automatic captures of this town, optional: without it capture_city_days is used)
+# Used by the panel ("From list"), by automatic hordes and by random places. Names may be in any language (save the file as UTF-8).
+Muldraugh = 10650, 9950, 240, 14-20
+Louisville = 13077, 2238, 450, 14-20
+West Point = 11900, 6900, 180, 14-20
+Brandenburg = 2056, 6070, 300, 14-20
+Valley Station = 13100, 5350, 300, 14-20
+Riverside = 6300, 5350, 140, 14-20
+Rosewood = 8130, 11550, 150, 14-20
+March Ridge = 10130, 12801, 100, 14-20
+Fallas Lake = 7253, 8279, 100, 14-20
+Ekron = 634, 9746, 100, 14-20
+Echo Creek = 3589, 10952, 100, 14-20
+Irvington = 2427, 14185, 100, 14-20
+
+[places]
+# Spots for random events (the plan buttons pick one at random). One line = one spot: Name = x, y, landmark
+# (the landmark is optional: the SOS names the nearest town and landmark on the radio;
+# e.g.  Muldraugh = 10636, 10411, police station).
+# The same name can repeat. Every town has the same chance; the spot inside the town is chosen at random.
+# Muldraugh, West Point, Riverside, Rosewood, Valley Station: real shops, stations, schools and houses.
+# Louisville, Brandenburg, March Ridge and the small towns: points around the map pin (approximate).
+Louisville = 13077, 2238
+Louisville = 13457, 2238
+Louisville = 13406, 2428
+Louisville = 13267, 2567
+Louisville = 13077, 2618
+Louisville = 12887, 2567
+Louisville = 12748, 2428
+Louisville = 12697, 2238
+Louisville = 12748, 2048
+Louisville = 12887, 1909
+Louisville = 13077, 1858
+Louisville = 13267, 1909
+Louisville = 13406, 2048
+Louisville = 13242, 2333
+Louisville = 13077, 2428
+Louisville = 12912, 2333
+Louisville = 12912, 2143
+Louisville = 13077, 2048
+Louisville = 13242, 2143
+West Point = 11069, 6711, cemetery
+West Point = 11342, 6774, school
+West Point = 11354, 6723, grocery store
+West Point = 11670, 7037, store at the entrance
+West Point = 11663, 7069, pizzeria
+West Point = 11739, 6923, daycare
+West Point = 11824, 6870, gas station
+West Point = 11897, 6942, police station
+West Point = 11940, 6869, town hall
+West Point = 11978, 6812, Spiffo's
+West Point = 12029, 6858, GigaMart
+West Point = 12066, 6760, gun range
+West Point = 12078, 7142, Fossoil gas station
+West Point = 12136, 7021, storage units
+West Point = 12258, 6931, tire shop
+West Point = 11931, 6786, laundromat
+Muldraugh = 10372, 9637, McCoy logging
+Muldraugh = 10617, 9313, Mass-Genfac warehouse
+Muldraugh = 10623, 9651, Spiffo's
+Muldraugh = 10629, 9697, Knox Bank
+Muldraugh = 10628, 9815, Sunstar motel
+Muldraugh = 10686, 9830, U-Store It storage
+Muldraugh = 10618, 9968, elementary school
+Muldraugh = 10840, 10031, Conven-U-Mart store
+Muldraugh = 10878, 10030, Cortman clinic
+Muldraugh = 10778, 10172, Holy Grace church
+Muldraugh = 10708, 10121, Clark storage
+Muldraugh = 10610, 10304, soup kitchen
+Muldraugh = 10752, 10348, Stor-A-Max storage
+Muldraugh = 10636, 10411, police station
+Muldraugh = 10712, 10443, L&B warehouse
+Muldraugh = 10762, 10550, Rusty Rifle bar
+Muldraugh = 10899, 9756, Waites motel
+Muldraugh = 11080, 9234, abandoned train station
+Muldraugh = 11645, 9938, railyard
+Valley Station = 12545, 5267, diner
+Valley Station = 12627, 5326, grocery store
+Valley Station = 13006, 5263, gun store
+Valley Station = 13058, 5294, soup kitchen
+Valley Station = 13093, 5450, cafe
+Valley Station = 13272, 5443, shooting range
+Valley Station = 12743, 5712, diner by the bus station
+Valley Station = 12733, 5772, bus station
+Valley Station = 13655, 5767, shopping street
+Valley Station = 13605, 5670, bookstore
+Valley Station = 13572, 5757, Yummmers cafe
+Valley Station = 12858, 4856, school
+Riverside = 6556, 5308, church
+Riverside = 6079, 5267, police station
+Riverside = 6315, 5265, post office
+Riverside = 6443, 5441, school
+Riverside = 6515, 5350, GigaMart
+Riverside = 6191, 5346, video rental
+Riverside = 6359, 5327, hardware store
+Riverside = 6128, 5309, Spiffo's
+Riverside = 5970, 5390, market
+Riverside = 6483, 5266, shopping street
+Riverside = 5916, 5243, bait shop
+Riverside = 6695, 5418, gated community
+Rosewood = 8017, 11427, Bright Flag inn
+Rosewood = 8078, 11454, Jenny's Table cafe
+Rosewood = 8086, 11500, Country Buffet restaurant
+Rosewood = 8091, 11524, hospital
+Rosewood = 8123, 11550, church
+Rosewood = 8081, 11588, bank
+Rosewood = 8065, 11652, courthouse
+Rosewood = 8142, 11386, GigaMart
+Rosewood = 8154, 11321, auto shop
+Rosewood = 8134, 11735, fire station
+Rosewood = 8247, 11671, residential block
+Rosewood = 8342, 11610, school
+Brandenburg = 2056, 6070
+Brandenburg = 2296, 6070
+Brandenburg = 2226, 6240
+Brandenburg = 2056, 6310
+Brandenburg = 1886, 6240
+Brandenburg = 1816, 6070
+Brandenburg = 1886, 5900
+Brandenburg = 2056, 5830
+Brandenburg = 2226, 5900
+Brandenburg = 2141, 6155
+Brandenburg = 1971, 6155
+Brandenburg = 1971, 5985
+Brandenburg = 2141, 5985
+March Ridge = 10130, 12801
+March Ridge = 10060, 12740
+March Ridge = 10200, 12860
+March Ridge = 10100, 12900
+March Ridge = 10220, 12750
+Fallas Lake = 7253, 8279
+Fallas Lake = 7300, 8240
+Ekron = 634, 9746
+Ekron = 660, 9700
+Echo Creek = 3589, 10952
+Echo Creek = 3620, 10990
+Irvington = 2427, 14185
+Irvington = 2460, 14150
+
+[outskirts]
+# 30 spots around every town, OUTSIDE it (350-800 tiles from the town's edge). A random plan picks a town (equal chances),
+# then, with the chance heli_outside_percent / site_outside_percent, one of its [outskirts] spots.  Name = x, y
+Muldraugh = 12146, 10220
+Muldraugh = 10033, 11238
+Muldraugh = 8940, 10018
+Muldraugh = 9990, 8715
+Muldraugh = 11635, 10957
+Muldraugh = 9911, 11165
+Muldraugh = 10777, 11600
+Muldraugh = 8995, 10538
+Muldraugh = 9113, 10096
+Muldraugh = 11260, 8394
+Muldraugh = 9243, 10143
+Muldraugh = 8904, 10164
+Muldraugh = 11890, 8828
+Muldraugh = 11414, 8493
+Muldraugh = 10913, 11552
+Muldraugh = 10909, 11383
+Muldraugh = 10296, 8407
+Muldraugh = 11930, 10700
+Muldraugh = 11016, 8407
+Muldraugh = 11734, 10751
+Muldraugh = 11041, 8544
+Muldraugh = 11285, 8520
+Muldraugh = 12215, 9805
+Muldraugh = 10192, 11467
+Muldraugh = 12382, 10228
+Muldraugh = 9897, 11484
+Muldraugh = 8965, 10411
+Muldraugh = 12103, 9860
+Muldraugh = 12009, 9669
+Muldraugh = 9840, 8514
+Louisville = 14004, 1888
+Louisville = 14255, 2551
+Louisville = 14117, 1556
+Louisville = 14169, 1910
+Louisville = 13974, 1376
+Louisville = 14257, 2200
+Louisville = 14060, 1734
+Louisville = 14246, 1814
+Louisville = 12984, 1305
+Louisville = 14233, 2339
+Louisville = 12530, 1642
+Louisville = 14288, 2026
+Louisville = 14159, 2040
+Louisville = 14003, 1499
+Louisville = 13124, 1315
+Louisville = 14036, 2028
+Louisville = 14195, 1691
+Louisville = 14000, 1623
+Louisville = 13116, 3730
+Louisville = 14570, 2654
+Louisville = 14531, 1543
+Louisville = 13298, 3859
+Louisville = 14265, 1332
+Louisville = 14685, 2450
+Louisville = 14361, 1418
+Louisville = 14390, 2331
+Louisville = 14576, 1844
+Louisville = 14632, 2334
+Louisville = 14404, 1891
+Louisville = 13162, 3855
+West Point = 12850, 8226
+West Point = 12875, 7745
+West Point = 11660, 8259
+West Point = 13062, 7884
+West Point = 12327, 8254
+West Point = 10676, 7861
+West Point = 12867, 7963
+West Point = 11278, 7976
+West Point = 12075, 8540
+West Point = 12116, 8203
+West Point = 11801, 8421
+West Point = 12676, 7885
+West Point = 12742, 8147
+West Point = 11598, 8137
+West Point = 11915, 8517
+West Point = 10728, 7581
+West Point = 12971, 7573
+West Point = 11514, 8254
+West Point = 12513, 8362
+West Point = 11910, 8265
+West Point = 12504, 8027
+West Point = 13209, 7723
+West Point = 11723, 8116
+West Point = 12944, 8102
+West Point = 11167, 8240
+West Point = 10767, 8051
+West Point = 10850, 7932
+West Point = 11455, 8100
+West Point = 10628, 7685
+West Point = 12608, 8163
+Brandenburg = 2981, 6318
+Brandenburg = 3037, 6509
+Brandenburg = 3098, 6252
+Brandenburg = 2697, 6784
+Brandenburg = 2918, 6546
+Brandenburg = 2912, 6691
+Brandenburg = 2598, 6650
+Brandenburg = 2993, 6166
+Brandenburg = 2745, 6598
+Brandenburg = 2696, 6956
+Brandenburg = 1152, 5462
+Brandenburg = 3092, 6402
+Brandenburg = 2040, 7002
+Brandenburg = 2792, 6868
+Brandenburg = 2325, 7453
+Brandenburg = 747, 5787
+Brandenburg = 3193, 6728
+Brandenburg = 593, 6229
+Brandenburg = 944, 5451
+Brandenburg = 775, 5509
+Brandenburg = 2856, 7078
+Brandenburg = 648, 5616
+Brandenburg = 2523, 7369
+Brandenburg = 838, 5269
+Brandenburg = 757, 6573
+Brandenburg = 2166, 7370
+Brandenburg = 2661, 7308
+Brandenburg = 3044, 6709
+Brandenburg = 778, 5375
+Brandenburg = 734, 6142
+Valley Station = 13879, 4297
+Valley Station = 13500, 6484
+Valley Station = 13694, 6299
+Valley Station = 12919, 4158
+Valley Station = 13829, 6304
+Valley Station = 13313, 4026
+Valley Station = 13384, 6437
+Valley Station = 13576, 6671
+Valley Station = 14046, 6373
+Valley Station = 13205, 4233
+Valley Station = 13418, 6583
+Valley Station = 13913, 6452
+Valley Station = 14561, 5425
+Valley Station = 14556, 5186
+Valley Station = 13024, 4032
+Valley Station = 13481, 6751
+Valley Station = 14525, 5620
+Valley Station = 13041, 4204
+Valley Station = 13420, 4313
+Valley Station = 14521, 5799
+Valley Station = 13694, 4416
+Valley Station = 13733, 6613
+Valley Station = 13631, 4281
+Valley Station = 13516, 6346
+Valley Station = 13628, 6518
+Valley Station = 12804, 6590
+Valley Station = 13903, 6208
+Valley Station = 13297, 4314
+Valley Station = 13196, 3881
+Valley Station = 13181, 4026
+Riverside = 5215, 5711
+Riverside = 6401, 6244
+Riverside = 5575, 6197
+Riverside = 5767, 6047
+Riverside = 6126, 6081
+Riverside = 5370, 5647
+Riverside = 6950, 5784
+Riverside = 7131, 5914
+Riverside = 6291, 6143
+Riverside = 5310, 5831
+Riverside = 5684, 6260
+Riverside = 5461, 5732
+Riverside = 5983, 6035
+Riverside = 7255, 6014
+Riverside = 7208, 5819
+Riverside = 5156, 5589
+Riverside = 5814, 6163
+Riverside = 7009, 5946
+Riverside = 5666, 6118
+Riverside = 5454, 6189
+Riverside = 7088, 5780
+Riverside = 5867, 5974
+Riverside = 4997, 5729
+Riverside = 5259, 6139
+Riverside = 5122, 6010
+Riverside = 5198, 6458
+Riverside = 6146, 6793
+Riverside = 5255, 6280
+Riverside = 5087, 6303
+Riverside = 5088, 6149
+Rosewood = 8424, 10748
+Rosewood = 8514, 12024
+Rosewood = 8752, 10806
+Rosewood = 8619, 11172
+Rosewood = 7469, 12056
+Rosewood = 8705, 12213
+Rosewood = 9052, 11191
+Rosewood = 7296, 11945
+Rosewood = 8474, 10882
+Rosewood = 7169, 11202
+Rosewood = 7170, 11791
+Rosewood = 8906, 11080
+Rosewood = 8663, 11877
+Rosewood = 7368, 11525
+Rosewood = 8820, 11232
+Rosewood = 8541, 11057
+Rosewood = 7495, 11235
+Rosewood = 7504, 11529
+Rosewood = 8711, 12040
+Rosewood = 7237, 11478
+Rosewood = 7248, 11332
+Rosewood = 7587, 11314
+Rosewood = 7663, 12211
+Rosewood = 7603, 12056
+Rosewood = 8885, 11373
+Rosewood = 7495, 10832
+Rosewood = 9011, 11397
+Rosewood = 8711, 10942
+Rosewood = 8672, 11340
+Rosewood = 9038, 11066
+March Ridge = 10172, 13347
+March Ridge = 10471, 12015
+March Ridge = 9721, 12524
+March Ridge = 10387, 12137
+March Ridge = 10177, 13510
+March Ridge = 9701, 13036
+March Ridge = 10513, 12552
+March Ridge = 10349, 13410
+March Ridge = 9984, 13483
+March Ridge = 9675, 12244
+March Ridge = 9981, 11975
+March Ridge = 9665, 13201
+March Ridge = 9375, 12613
+March Ridge = 10707, 12147
+March Ridge = 10378, 12327
+March Ridge = 9515, 12732
+March Ridge = 10242, 12278
+March Ridge = 9851, 12124
+March Ridge = 9922, 13265
+March Ridge = 9295, 12786
+March Ridge = 9518, 12470
+March Ridge = 10036, 13319
+March Ridge = 9243, 12898
+March Ridge = 10883, 12421
+March Ridge = 9343, 13138
+March Ridge = 9818, 13567
+March Ridge = 9514, 13258
+March Ridge = 10098, 12091
+March Ridge = 9414, 13029
+March Ridge = 10041, 13664
+Fallas Lake = 8047, 8559
+Fallas Lake = 6429, 8615
+Fallas Lake = 6577, 8687
+Fallas Lake = 8056, 8103
+Fallas Lake = 7997, 7821
+Fallas Lake = 7640, 7506
+Fallas Lake = 8016, 7967
+Fallas Lake = 8148, 8203
+Fallas Lake = 7774, 7571
+Fallas Lake = 6548, 7854
+Fallas Lake = 7532, 7425
+Fallas Lake = 6566, 8540
+Fallas Lake = 8052, 8679
+Fallas Lake = 7892, 7665
+Fallas Lake = 7906, 8502
+Fallas Lake = 7528, 7554
+Fallas Lake = 7915, 8037
+Fallas Lake = 8044, 7649
+Fallas Lake = 7967, 7483
+Fallas Lake = 8159, 8615
+Fallas Lake = 8206, 7967
+Fallas Lake = 7761, 7314
+Fallas Lake = 8310, 8235
+Fallas Lake = 8205, 8764
+Fallas Lake = 8325, 8726
+Fallas Lake = 8342, 7972
+Fallas Lake = 8201, 7835
+Fallas Lake = 6097, 8775
+Fallas Lake = 6237, 8821
+Fallas Lake = 7161, 7002
+Ekron = 406, 8973
+Ekron = 504, 10389
+Ekron = 1042, 10505
+Ekron = 1018, 9500
+Ekron = 393, 10452
+Ekron = 378, 10283
+Ekron = 835, 9308
+Ekron = 732, 9215
+Ekron = 1176, 10450
+Ekron = 580, 10611
+Ekron = 1063, 9145
+Ekron = 1223, 9645
+Ekron = 1110, 9372
+Ekron = 1270, 10209
+Ekron = 341, 9316
+Ekron = 1211, 10322
+Ekron = 1227, 9492
+Ekron = 451, 10619
+Ekron = 508, 10512
+Ekron = 942, 9400
+Ekron = 925, 9213
+Ekron = 334, 10126
+Ekron = 1124, 9571
+Ekron = 355, 9149
+Ekron = 551, 10266
+Ekron = 315, 10586
+Ekron = 1073, 10377
+Ekron = 1020, 9290
+Ekron = 1327, 9578
+Ekron = 303, 9436
+Echo Creek = 3031, 11294
+Echo Creek = 3936, 10567
+Echo Creek = 3811, 10429
+Echo Creek = 2827, 11282
+Echo Creek = 4376, 11183
+Echo Creek = 3952, 10392
+Echo Creek = 3038, 11492
+Echo Creek = 3938, 10257
+Echo Creek = 3064, 10273
+Echo Creek = 3228, 10503
+Echo Creek = 3117, 10436
+Echo Creek = 3107, 10603
+Echo Creek = 4058, 10578
+Echo Creek = 3150, 10774
+Echo Creek = 2961, 11186
+Echo Creek = 2732, 11163
+Echo Creek = 3132, 11408
+Echo Creek = 3191, 10331
+Echo Creek = 3130, 11597
+Echo Creek = 4389, 11062
+Echo Creek = 3964, 10699
+Echo Creek = 3359, 10539
+Echo Creek = 3219, 10667
+Echo Creek = 2913, 11509
+Echo Creek = 4050, 10302
+Echo Creek = 3003, 11626
+Echo Creek = 3704, 10493
+Echo Creek = 2925, 11365
+Echo Creek = 3166, 10201
+Echo Creek = 3094, 11174
+Irvington = 3192, 13925
+Irvington = 3034, 13922
+Irvington = 2655, 15162
+Irvington = 1721, 15066
+Irvington = 2133, 15130
+Irvington = 1639, 15202
+Irvington = 2385, 15268
+Irvington = 3089, 15190
+Irvington = 2408, 15103
+Irvington = 2828, 15330
+Irvington = 2344, 12958
+Irvington = 2292, 15387
+Irvington = 2958, 15124
+Irvington = 2062, 13060
+Irvington = 2025, 15333
+Irvington = 1901, 15250
+Irvington = 2254, 15244
+Irvington = 3226, 15179
+Irvington = 2153, 15374
+Irvington = 1771, 15248
+Irvington = 1825, 13095
+Irvington = 2486, 15401
+Irvington = 3511, 13959
+Irvington = 2694, 15356
+Irvington = 2012, 15194
+Irvington = 2820, 15182
+Irvington = 2966, 15276
+Irvington = 1681, 14882
+Irvington = 2125, 12949
+Irvington = 2539, 15111
+
+[key_places]
+# 4 spots inside every town next to key buildings (fire station, police, hospital, town hall, school ...).
+# The rest of the time the event lands here and the SOS names the landmark.  Name = x, y, landmark
+Muldraugh = 10636, 10411, police station
+Muldraugh = 10878, 10030, Cortman clinic
+Muldraugh = 10618, 9968, elementary school
+Muldraugh = 10778, 10172, Holy Grace church
+Louisville = 13077, 2238
+Louisville = 13077, 2618
+Louisville = 12748, 2048
+Louisville = 13406, 2048
+West Point = 11897, 6942, police station
+West Point = 11940, 6869, town hall
+West Point = 11342, 6774, school
+West Point = 11069, 6711, cemetery
+Brandenburg = 2056, 6070
+Brandenburg = 2056, 6310
+Brandenburg = 1886, 5900
+Brandenburg = 2141, 6155
+Valley Station = 12858, 4856, school
+Valley Station = 12743, 5712, diner by the bus station
+Valley Station = 12545, 5267, diner
+Valley Station = 13272, 5443, shooting range
+Riverside = 6079, 5267, police station
+Riverside = 6443, 5441, school
+Riverside = 6556, 5308, church
+Riverside = 6315, 5265, post office
+Rosewood = 8134, 11735, fire station
+Rosewood = 8091, 11524, hospital
+Rosewood = 8065, 11652, courthouse
+Rosewood = 8342, 11610, school
+March Ridge = 10130, 12801
+March Ridge = 10060, 12740
+March Ridge = 10200, 12860
+March Ridge = 10100, 12900
+Fallas Lake = 7253, 8279
+Fallas Lake = 7300, 8240
+Fallas Lake = 7213, 8254
+Fallas Lake = 7325, 8265
+Ekron = 634, 9746
+Ekron = 660, 9700
+Ekron = 674, 9706
+Ekron = 700, 9725
+Echo Creek = 3589, 10952
+Echo Creek = 3620, 10990
+Echo Creek = 3614, 10912
+Echo Creek = 3660, 10950
+Irvington = 2427, 14185
+Irvington = 2460, 14150
+Irvington = 2467, 14210
+Irvington = 2500, 14110
+
+[horde_spawns]
+# Where a horde starts: land points 60-160 tiles from the marked spots ([places] / [key_places]) of the towns.  The horde picks
+# a random point from those that lie 60-160 tiles from its target (the nearest one if none, none at all if it is > 220 away:
+# the horde then starts 70-120 tiles from the target on loaded ground).  The zombies are placed around the point on forest,
+# field and road squares, never near a player.  The admin sees the point in the panel.  Name = x, y
+Louisville = 13167, 2149
+Louisville = 13104, 2159
+Louisville = 13413, 2321
+Louisville = 13354, 2351
+Louisville = 13350, 2557
+Louisville = 13336, 2591
+Louisville = 13312, 2626
+Louisville = 13062, 2729
+Louisville = 13129, 2479
+Louisville = 12998, 2736
+Louisville = 12784, 2626
+Louisville = 12817, 2542
+Louisville = 12819, 2484
+Louisville = 12670, 2482
+Louisville = 12794, 2294
+Louisville = 12770, 2338
+Louisville = 12709, 2158
+Louisville = 12675, 2147
+Louisville = 12990, 1813
+Louisville = 12926, 1830
+Louisville = 13185, 1791
+Louisville = 13547, 2031
+Louisville = 13553, 1988
+Louisville = 13197, 2444
+Louisville = 13163, 2455
+Louisville = 12825, 2353
+Louisville = 12869, 2050
+Louisville = 13014, 2177
+West Point = 11138, 6794
+West Point = 11209, 6640
+West Point = 11187, 6809
+West Point = 11374, 6652
+West Point = 11221, 6654
+West Point = 11637, 7185
+West Point = 11795, 7072
+West Point = 11591, 7170
+West Point = 11758, 7081
+West Point = 11792, 7050
+West Point = 11924, 7099
+West Point = 11973, 6946
+West Point = 12000, 6922
+West Point = 12182, 6782
+West Point = 12167, 6872
+West Point = 12162, 7260
+West Point = 12020, 7274
+West Point = 12256, 7119
+West Point = 12275, 7085
+West Point = 12341, 7020
+Muldraugh = 10353, 9762
+Muldraugh = 10255, 9704
+Muldraugh = 10218, 9640
+Muldraugh = 10562, 9256
+Muldraugh = 10725, 9204
+Muldraugh = 10470, 9322
+Muldraugh = 10564, 9612
+Muldraugh = 10480, 9604
+Muldraugh = 10562, 9779
+Muldraugh = 10560, 9841
+Muldraugh = 10515, 9926
+Muldraugh = 10565, 9920
+Muldraugh = 10980, 10023
+Muldraugh = 10943, 10152
+Muldraugh = 11035, 10029
+Muldraugh = 10919, 10196
+Muldraugh = 10932, 10153
+Muldraugh = 10565, 10165
+Muldraugh = 10563, 10120
+Muldraugh = 10563, 10070
+Muldraugh = 10478, 10235
+Muldraugh = 10563, 10205
+Muldraugh = 10887, 10400
+Muldraugh = 10908, 10370
+Muldraugh = 10548, 10502
+Muldraugh = 10486, 10440
+Muldraugh = 10564, 10357
+Muldraugh = 10563, 10468
+Muldraugh = 10855, 10514
+Muldraugh = 10560, 10424
+Muldraugh = 10863, 10553
+Muldraugh = 10896, 10568
+Muldraugh = 11053, 9743
+Muldraugh = 11055, 9779
+Muldraugh = 11172, 9233
+Muldraugh = 11002, 9275
+Muldraugh = 11162, 9115
+Muldraugh = 11795, 9961
+Muldraugh = 11503, 9943
+Muldraugh = 11499, 9985
+Valley Station = 12639, 5152
+Valley Station = 12547, 5417
+Valley Station = 12784, 5338
+Valley Station = 12733, 5316
+Valley Station = 13124, 5240
+Valley Station = 12995, 5143
+Valley Station = 13005, 5405
+Valley Station = 13193, 5250
+Valley Station = 13110, 5547
+Valley Station = 13220, 5363
+Valley Station = 13189, 5442
+Valley Station = 13211, 5402
+Valley Station = 12866, 5696
+Valley Station = 12744, 5859
+Valley Station = 12762, 5571
+Valley Station = 12820, 5695
+Valley Station = 13776, 5785
+Valley Station = 13601, 5837
+Valley Station = 13697, 5825
+Valley Station = 13517, 5665
+Valley Station = 13583, 5528
+Valley Station = 13469, 5623
+Valley Station = 12719, 4836
+Valley Station = 12743, 4868
+Valley Station = 12972, 4950
+Riverside = 6411, 5272
+Riverside = 6042, 5404
+Riverside = 6244, 5278
+Riverside = 6473, 5596
+Riverside = 6418, 5597
+Riverside = 6169, 5469
+Riverside = 6173, 5461
+Riverside = 5988, 5513
+Riverside = 5940, 5478
+Riverside = 5815, 5347
+Riverside = 5865, 5294
+Riverside = 6684, 5577
+Riverside = 6735, 5572
+Rosewood = 7925, 11341
+Rosewood = 8053, 11308
+Rosewood = 8202, 11492
+Rosewood = 8166, 11494
+Rosewood = 7937, 11632
+Rosewood = 7906, 11674
+Rosewood = 7914, 11685
+Rosewood = 8116, 11211
+Rosewood = 8170, 11841
+Rosewood = 8141, 11816
+Rosewood = 8180, 11805
+Rosewood = 8390, 11719
+Rosewood = 8356, 11498
+Brandenburg = 2069, 6194
+Brandenburg = 1907, 6029
+Brandenburg = 2440, 6032
+Brandenburg = 2438, 6141
+Brandenburg = 2224, 6355
+Brandenburg = 2347, 6341
+Brandenburg = 1923, 6346
+Brandenburg = 1776, 6183
+Brandenburg = 1807, 6225
+Brandenburg = 1831, 5761
+Brandenburg = 1939, 5745
+Brandenburg = 1970, 5769
+Brandenburg = 2306, 5886
+Brandenburg = 2370, 5921
+Brandenburg = 2033, 6198
+Brandenburg = 1845, 5970
+Brandenburg = 2297, 5978
+Brandenburg = 2213, 5970
+March Ridge = 10085, 12647
+March Ridge = 10109, 12643
+March Ridge = 10061, 12826
+March Ridge = 10243, 13004
+March Ridge = 10181, 12942
+March Ridge = 10165, 12641
+Fallas Lake = 7136, 8250
+Fallas Lake = 7111, 8216
+Fallas Lake = 7408, 8175
+Fallas Lake = 7447, 8260
+Ekron = 724, 9808
+Ekron = 568, 9690
+Echo Creek = 3536, 10801
+Echo Creek = 3547, 10823
+Echo Creek = 3509, 10826
+Echo Creek = 3572, 10852
+Echo Creek = 3665, 11098
+Irvington = 2553, 14021
+Irvington = 2449, 13995
+Fallas Lake = 7483, 8274
+Echo Creek = 3693, 10849
+
+[messages]
+# The radio texts are built in (English). To change one, remove the # and write your own text (save the file as UTF-8).
+# In a text "|" starts a new line of the broadcast and a line "~" is radio static. {N} = helicopter call number.
+# airdrop_warn = ...
+# airdrop_dropped = ...
+# heli_intercept = ...
+# sos_first = ...
+# sos_after = ...
+# heli_down = ...
+# horde_warn = ...
+# horde_now = ...
+# horde_wave = ...
+# horde_last = ...
+
+# =====================================================================================
+#  LOOT
+#  An item line:   Module.ItemType  [amount]  [chance]  [w=weight]
+#       Base.Axe                  -> exactly 1
+#       Base.Bandage 2-4          -> 2 to 4
+#       Base.Pills x2             -> exactly 2
+#       Base.Antibiotics 50%      -> 50 percent chance to be included
+#       Base.Nails 5-10 80%       -> 80 percent chance, then 5 to 10
+#  A POOL is a bag of items used by "random N from POOL" (w=3 = three times as likely).
+#  A SET is the content of one crate.  Inside a set you can use:
+#       <item line>                                       always (or with its chance)
+#       pick N: A 1-2, B, C 2-3                           choose N different entries of this list (N may be a range: pick 3-7: ...)
+#       random N from POOLNAME                            N weighted random draws from a pool (also a range: random 1-5 from bats)
+#       volumes N-M: Base.BookFarming, Base.BookCooking   N..M different books, BOTH volumes of each (BookFarming1 + BookFarming2)
+#       guns N-M: Base.Pistol = Base.Bullets9mmBox 3-5 + Base.9mmClip 1-2, Base.X = ...   N..M different weapons, each with ITS OWN ammunition
+#  Set options:   kind = airdrop | helicrash | both      weight = how often it is chosen at random
+#  Unknown item names are skipped (and listed in console.txt).
+# =====================================================================================
+
+# --- pools --------------------------------------------------------------------------------
+[pool bats]
+Base.BaseballBat
+Base.BaseballBat_Metal
+
+[pool vests]
+Base.Vest_BulletCivilian
+Base.Vest_BulletPolice
+Base.Vest_BulletArmy
+Base.Vest_BulletMilitary
+
+[pool flasks]
+Base.Canteen w=3
+Base.WaterBottle
+
+[pool mil_clothes]
+Base.Shoes_ArmyBoots
+Base.Jacket_CamoGreen
+Base.Trousers_CamoGreen
+Base.Shirt_CamoGreen
+Base.Hat_Army
+Base.Hat_BeretArmy
+Base.Gloves_LeatherGlovesBlack
+
+[pool mil_medical]
+Base.Bandage 3-6 w=3
+Base.Antibiotics 1
+Base.SutureNeedle 1-2
+Base.Disinfectant 1
+Base.Pills 1-2
+Base.PillsBeta 2-4
+Base.PillsAntiDep 2-4
+
+[pool mil_bags]
+Base.Bag_ALICEpack
+Base.Bag_ALICEpack_Army
+Base.Bag_BigHikingBag
+
+# --- HUMANITARIAN CARGO: the same kinds of things every time, only the amounts and the choice vary -----
+#  volumes N-M: A, B, C   = N to M DIFFERENT books, each with BOTH volumes (Base.BookFarming -> BookFarming1 + BookFarming2)
+[set Humanitarian cargo]
+kind = airdrop
+weight = 1
+volumes 3-4: Base.BookCarpentry, Base.BookCooking, Base.BookElectrician, Base.BookFarming, Base.BookFirstAid, Base.BookFishing, Base.BookForaging, Base.BookMechanics, Base.BookMetalWelding, Base.BookTailoring, Base.BookTrapping, Base.BookAiming, Base.BookReloading, Base.BookMaintenance
+pick 3-7: Base.Magazine, Base.CarpentryMag1, Base.CarpentryMag2, Base.CookingMag1, Base.CookingMag2, Base.ElectronicsMag1, Base.ElectronicsMag2, Base.EngineerMagazine1, Base.FarmingMag1, Base.FishingMag1, Base.HuntingMag1, Base.HuntingMag2, Base.MechanicMag1, Base.MechanicMag2, Base.MetalworkMag1, Base.MetalworkMag2, Base.HerbalistMag, Base.RadioMag1
+# 1-3 "boxes" of canned food (a box = 6 cans of one kind)
+pick 1-3: Base.TinnedBeans 6, Base.CannedCorn 6, Base.CannedChili 6, Base.CannedBolognese 6, Base.CannedCornedBeef 6, Base.CannedPeaches 6, Base.CannedSardines 6, Base.CannedPeas 6, Base.CannedCarrots2 6, Base.CannedTomato2 6, Base.TinnedSoup 6
+Base.Antibiotics 50%
+Base.Bandage 5-10
+Base.SutureNeedle 3 50%
+Base.PillsAntiDep 3-7
+Base.PillsBeta 3-7
+random 1-5 from bats
+Base.Bag_BigHikingBag 1-3
+random 1-3 from vests
+random 2-4 from flasks
+# at least 4 DIFFERENT tools
+pick 4-6: Base.Axe, Base.Hammer, Base.Screwdriver, Base.Saw, Base.GardenSaw, Base.Wrench, Base.PipeWrench, Base.Pliers, Base.TinOpener, Base.HandShovel, Base.Crowbar, Base.Needle, Base.BlowTorch
+
+# --- HELICOPTER: military loot.  7 standard sets; the cargo bay and every crate take one of them at random ---
+[set Standard set version 1]
+kind = helicrash
+weight = 1
+# pistols and revolvers: 2-3 different ones, each with its own ammunition (3-5 boxes) and magazines
+guns 2-3: Base.Pistol = Base.Bullets9mmBox 3-5 + Base.9mmClip 1-2, Base.Pistol2 = Base.Bullets45Box 3-5 + Base.45Clip 1-2, Base.Pistol3 = Base.Bullets44Box 3-5 + Base.44Clip 1-2, Base.Revolver = Base.Bullets38Box 3-5
+random 2-3 from mil_medical
+random 1-2 from vests
+random 2-3 from mil_clothes
+random 1 from mil_bags
+
+[set Standard set version 2]
+kind = helicrash
+weight = 1
+# assault rifle + one sidearm
+guns 1: Base.AssaultRifle = Base.556Box 3-5 + Base.556Clip 1-2
+guns 1: Base.Pistol = Base.Bullets9mmBox 3-5 + Base.9mmClip 1-2, Base.Pistol2 = Base.Bullets45Box 3-5 + Base.45Clip 1-2
+random 2-3 from mil_medical
+Base.Vest_BulletArmy 1-2
+random 2-3 from mil_clothes
+random 1 from mil_bags
+
+[set Standard set version 3]
+kind = helicrash
+weight = 1
+# battle / sniper rifles
+guns 1: Base.AssaultRifle2 = Base.308Box 3-5 + Base.M14Clip 1-2, Base.HuntingRifle = Base.308Box 3-5, Base.VarmintRifle = Base.223Box 3-5
+guns 1: Base.Pistol = Base.Bullets9mmBox 3-5 + Base.9mmClip 1-2, Base.Pistol2 = Base.Bullets45Box 3-5 + Base.45Clip 1-2, Base.Revolver = Base.Bullets38Box 3-5
+random 2-3 from mil_medical
+random 1-2 from vests
+random 2-3 from mil_clothes
+Base.Binoculars 70%
+
+[set Standard set version 4]
+kind = helicrash
+weight = 1
+# shotgun + two sidearms
+guns 1: Base.Shotgun = Base.ShotgunShellsBox 3-5, Base.JS3T_Shotgun = Base.ShotgunShellsBox 3-5
+guns 2: Base.Pistol = Base.Bullets9mmBox 3-5 + Base.9mmClip 1-2, Base.Pistol2 = Base.Bullets45Box 3-5 + Base.45Clip 1-2, Base.Pistol3 = Base.Bullets44Box 3-5 + Base.44Clip 1-2, Base.Revolver = Base.Bullets38Box 3-5
+random 2 from mil_medical
+random 1-2 from vests
+random 2-3 from mil_clothes
+random 1 from mil_bags
+
+[set Standard set version 5]
+kind = helicrash
+weight = 1
+# field hospital with one sidearm
+random 6-8 from mil_medical
+Base.Bandage 8-12
+Base.SutureNeedle 2-3
+Base.Antibiotics 1-2
+guns 1: Base.Pistol = Base.Bullets9mmBox 3-5 + Base.9mmClip 1-2, Base.Pistol2 = Base.Bullets45Box 3-5 + Base.45Clip 1-2
+random 1-2 from vests
+random 2 from mil_clothes
+random 1 from mil_bags
+
+[set Standard set version 6]
+kind = helicrash
+weight = 1
+# armoury: three different weapons, each with 3-5 boxes of its own ammunition
+guns 3: Base.AssaultRifle = Base.556Box 3-5 + Base.556Clip 1-2, Base.Pistol2 = Base.Bullets45Box 3-5 + Base.45Clip 1-2, Base.Shotgun = Base.ShotgunShellsBox 3-5, Base.AssaultRifle2 = Base.308Box 3-5 + Base.M14Clip 1-2
+random 1-2 from mil_medical
+Base.Vest_BulletArmy
+random 1 from mil_bags
+pick 4: Base.Axe, Base.Hammer, Base.Screwdriver, Base.Saw, Base.Wrench, Base.Pliers, Base.Crowbar
+
+[set Standard set version 7]
+kind = helicrash
+weight = 1
+# mixed: 3-4 weapons of different kinds, each with its own ammunition
+guns 3-4: Base.Pistol = Base.Bullets9mmBox 3-5 + Base.9mmClip 1-2, Base.Pistol2 = Base.Bullets45Box 3-5 + Base.45Clip 1-2, Base.Revolver = Base.Bullets38Box 3-5, Base.AssaultRifle = Base.556Box 3-5 + Base.556Clip 1-2, Base.AssaultRifle2 = Base.308Box 3-5 + Base.M14Clip 1-2, Base.Shotgun = Base.ShotgunShellsBox 3-5, Base.VarmintRifle = Base.223Box 3-5
+random 3-4 from mil_medical
+random 1-2 from vests
+random 3-4 from mil_clothes
+random 1-2 from mil_bags
+Base.WalkieTalkie4 70%

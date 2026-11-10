@@ -1,0 +1,56 @@
+=== PerformanceProfiler report (loading): 48 s, measured 4436 ms total (9.2% of wall time), clock=getTimestampMs ===
+target frame time: 16.7 ms = 60 per second (assumed)
+--- per mod: total ms | calls | avg ms | max ms | mod ---
+   1626.0 |       6 | 271.000 | 1619.0 | Guns of Marz [GunsOfMarz]
+   1517.0 |      48 | 31.604 |  653.0 | Vanilla
+    453.0 |       2 | 226.500 |  453.0 | Long Term Preservation Extended [LongTermPreservationExtended]
+    293.0 |  130979 |  0.002 |    1.0 | Project A-Life [ALIFE NPCS] [ProjectALifeNPCs]
+    154.0 |   52346 |  0.003 |   17.0 | Authentic Z [Authentic Z - Current]
+    123.0 |   52342 |  0.002 |    1.0 | Viewpoint: Living Props [ViewpointLivingProps]
+    120.0 |       9 | 13.333 |  101.0 | Better Sorting [BetterSorting]
+     29.0 |   26174 |  0.001 |    1.0 | More Damaged Objects [MoreDamagedObjects]
+     18.0 |       3 |  6.000 |   17.0 | Common Sense Fix (Standalone) [CommonSense]
+     14.0 |      53 |  0.264 |   10.0 | Survivor PDA - RPG Skill Tree & Traders [ProjectRPGExpanded]
+     13.0 |       2 |  6.500 |   13.0 | Mini Health Panel [MiniHealthPanel]
+     12.0 |       4 |  3.000 |    9.0 | CleanHotBar
+      9.0 |       2 |  4.500 |    9.0 | Neat Crafting [Neat_Crafting]
+      9.0 |       6 |  1.500 |    9.0 | Neat Building [Neat_Building]
+      8.0 |      18 |  0.444 |    3.0 | Project Zomboid Optimiser [MPOptimiser]
+      8.0 |      10 |  0.800 |    8.0 | CH Status HUD [CHStatusHUD]
+      7.0 |      11 |  0.636 |    6.0 | Project Writing [ProjectWriting]
+      4.0 |       4 |  1.000 |    4.0 | that DAMN Library [damnlib]
+      4.0 |      13 |  0.308 |    3.0 | More Traits Definitive [moreTraitsDefinitive]
+      2.0 |       1 |  2.000 |    2.0 | Hot Brass - Tactical Reload [Hot_Brass_Tactical_Reload]
+--- per handler: total ms | calls | avg ms | max ms | mod / file | event ---
+   1619.0 |       1 | 1619.000 | 1619.0 | Guns of Marz [GunsOfMarz] / ItemInsertion.lua | OnPostDistributionMerge
+    822.0 |       3 | 274.000 |  653.0 | Vanilla / metazoneHandler.lua | OnLoadMapZones
+    453.0 |       1 | 453.000 |  453.0 | Long Term Preservation Extended [LongTermPreservationExtended] / LTPESeedPacketLoot.lua | OnPreDistributionMerge
+    381.0 |       1 | 381.000 |  381.0 | Vanilla / MainScreen.lua | OnMainMenuEnter
+    172.0 |       1 | 172.000 |  172.0 | Vanilla / ISPlayerData.lua | OnCreatePlayer
+    144.0 |   26171 |  0.006 |    1.0 | Project A-Life [ALIFE NPCS] [ProjectALifeNPCs] / ALifeFireSafety.lua | LoadGridsquare
+    134.0 |   52342 |  0.003 |    1.0 | Authentic Z [Authentic Z - Current] / AuthenticZ_GroundItemSpawner.lua | LoadGridsquare
+    119.0 |       2 | 59.500 |  101.0 | Better Sorting [BetterSorting] / BaseCategories.lua | OnGameBoot
+    102.0 |       1 | 102.000 |  102.0 | Vanilla / ConnectToServer.lua | OnConnected
+     71.0 |   26171 |  0.003 |    1.0 | Viewpoint: Living Props [ViewpointLivingProps] / ViewpointLivingPropsCampfire.lua | LoadGridsquare
+     53.0 |   26171 |  0.002 |    1.0 | Project A-Life [ALIFE NPCS] [ProjectALifeNPCs] / ALifeAnimations.lua | LoadGridsquare
+     52.0 |   26171 |  0.002 |    1.0 | Viewpoint: Living Props [ViewpointLivingProps] / ViewpointLivingPropsFireplace.lua | LoadGridsquare
+     49.0 |   26171 |  0.002 |    1.0 | Project A-Life [ALIFE NPCS] [ProjectALifeNPCs] / ALifePickedOver.lua | LoadGridsquare
+     29.0 |   26171 |  0.001 |    1.0 | More Damaged Objects [MoreDamagedObjects] / MDO_Main.lua | LoadGridsquare
+     27.0 |   26171 |  0.001 |    1.0 | Project A-Life [ALIFE NPCS] [ProjectALifeNPCs] / ALifeItemUses.lua | LoadGridsquare
+     19.0 |   26171 |  0.001 |    1.0 | Project A-Life [ALIFE NPCS] [ProjectALifeNPCs] / ALifeCleanupCommands.lua | LoadGridsquare
+     17.0 |       1 | 17.000 |   17.0 | Authentic Z [Authentic Z - Current] / AuthenticZ_BodyLocations.lua | OnGameBoot
+     17.0 |       1 | 17.000 |   17.0 | Common Sense Fix (Standalone) [CommonSense] / BB_CS_GunStats_UI.lua | OnInitGlobalModData
+     14.0 |       5 |  2.800 |   12.0 | Vanilla / CGlobalObjectSystem.lua | OnCGlobalObjectSystemInit
+     13.0 |       1 | 13.000 |   13.0 | Mini Health Panel [MiniHealthPanel] / MiniHealthInit.lua | OnCreatePlayer
+--- most registered handlers ---
+ 252 handlers  Vanilla
+ 250 handlers  Project A-Life [ALIFE NPCS] [ProjectALifeNPCs]
+ 245 handlers  Survivor PDA - RPG Skill Tree & Traders [ProjectRPGExpanded]
+  56 handlers  Gunworks-gang [Gunworks_gang_framework]
+  43 handlers  Project Zomboid Optimiser [MPOptimiser]
+  27 handlers  Viewpoint: Living Props [ViewpointLivingProps]
+  25 handlers  More Traits Definitive [moreTraitsDefinitive]
+  22 handlers  Authentic Z [Authentic Z - Current]
+--- memory ---
+heap used 3.94 GB of 5.56 GB, 0 garbage collections (avg 0 KB freed), heap growth 0 KB total
+frames with a GC: avg 0 ms, worst 0 ms; other frames avg 0.0 ms

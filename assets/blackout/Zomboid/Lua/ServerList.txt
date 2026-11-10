@@ -1,0 +1,8 @@
+name=[PVE] Just 4 Fun | DHRD
+ip=94.143.46.34
+port=16261
+serverpassword=
+description=Discord.gg/FnT56mQZ3Q  | PVE Survival 24/7 | 28 FREE Extra Points | SAFEHOUSE after 24 hours! | FACTION after 48 hours! | WIPED every 28th day
+user=eQue
+password=1751
+usesteamrelay=false

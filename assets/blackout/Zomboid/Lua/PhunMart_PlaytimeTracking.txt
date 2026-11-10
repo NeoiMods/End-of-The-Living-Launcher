@@ -1,0 +1,9 @@
+return {
+  [0] = {
+    previousHours = 0,
+    claimed = {
+      playtime_10 = true,
+      playtime_60 = true
+    }
+  }
+}

@@ -1,38 +1,32 @@
 // Blackout Protocol – New Era: egyjátékos modpack.
 //
 // Ugyanaz a mechanika, mint a szerver kollekciónál (feliratkozás a Steam
-// Workshop kollekcióra, várakozás a letöltésre, modok engedélyezése), csak más
-// kollekcióval és plusz egy lépéssel: a modpackhoz tartozó config fájl(ok)
-// bemásolása a játékba.
+// Workshop kollekcióra, várakozás a letöltésre), plusz a modpack szerzőjének
+// config csomagja: a launcherhez mellékelt `assets/blackout` mappa a játék
+// %USERPROFILE%\Zomboid mappájának kész tartalmát adja – benne a
+// pz_modlist_settings.cfg "Blackout Protocol" profiljával, ami a 807 modot a
+// helyes betöltési sorrendben engedélyezi (a kihagyott Waterpipes /
+// LastCupCoffee / PlumbingFuelGeneratorAddonB42 nélkül, mert azok
+// WorldDictionaryException-nel elszállítják a világbetöltést).
 //
-// A config fájl(ok) a repóban lesznek, egy leíró mellett:
-//   Master/blackout/index.json
-//   {
-//     "files": [
-//       { "path": "Master/blackout/sandbox.ini", "target": "%ZOMBOID%/Server/Blackout.ini" }
-//     ]
-//   }
-// Amíg ez a leíró nincs feltöltve, a lépés kimarad (nem hiba).
-//
-// A `target` helyén használható:
-//   %ZOMBOID%      → %USERPROFILE%\Zomboid
-//   %GAME%         → a Project Zomboid mappája
-//   %USERPROFILE%  → a Windows felhasználói mappa
+// A bemásolás minden egyjátékos indítás előtt lefut, a felülírt fájlokról
+// mentés készül (%USERPROFILE%\Zomboid\eotl-backup-*).
 
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 
-const gh = require('./gh');
+const launch = require('./launch');
 const paths = require('./paths');
-const pzo = require('./pzo');
 const setup = require('./setup');
 const workshop = require('./workshop');
 
 const COLLECTION_ID = '3814595736';
 const NAME = 'Blackout Protocol – New Era';
 const WORKSHOP_URL = `https://steamcommunity.com/sharedfiles/filedetails/?id=${COLLECTION_ID}`;
-const CONFIG_MANIFEST = 'Master/blackout/index.json';
+const PROFILE_NAME = 'Blackout Protocol';
+const PROFILE_FILE = 'pz_modlist_settings.cfg';
+const CONFIG_ROOT = path.join(__dirname, '..', 'assets', 'blackout');
+const CONFIG_TREE = path.join(CONFIG_ROOT, 'Zomboid');
 
 // --------------------------------------------------------------- alap adatok
 
@@ -46,11 +40,52 @@ function steamLibs() {
   return steam ? paths.parseLibraryPaths(steam) : [];
 }
 
+// A modpack profilja a játék pz_modlist_settings.cfg fájljából: az ebben a
+// sorban felsorolt modok az engedélyezettek.
+function profileOf(zomboidDir) {
+  const file = path.join(zomboidDir, 'Lua', PROFILE_FILE);
+  let text = null;
+  try {
+    text = fs.readFileSync(file, 'utf8');
+  } catch {
+    return { file, found: false, mods: [], mtime: 0 };
+  }
+  const line = text.split(/\r?\n/).find((l) => l.startsWith(PROFILE_NAME + ':'));
+  const mods = line
+    ? line
+        .slice(PROFILE_NAME.length + 1)
+        .split(';')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : [];
+  let mtime = 0;
+  try {
+    mtime = Math.round(fs.statSync(file).mtimeMs);
+  } catch {
+    mtime = 0;
+  }
+  return { file, found: !!line, mods, mtime };
+}
+
+// A config csomag állapota a játék mappájában (az ellenőrző listához).
+function configStatus() {
+  const st = profileOf(paths.zomboidDir());
+  return {
+    bundled: fs.existsSync(CONFIG_TREE),
+    installed: st.found,
+    profile: PROFILE_NAME,
+    enabled: st.mods.length,
+    configAt: st.found ? st.mtime : 0,
+    file: st.file,
+  };
+}
+
 // A felület ehhez a rövid összefoglalóhoz nyúl (modális ablak, gombok).
 function summary(cfg) {
   const b = (cfg && cfg.blackout) || {};
   const items = b.collection && Array.isArray(b.collection.items) ? b.collection.items : [];
   const libs = steamLibs();
+  const st = configStatus();
   return {
     name: NAME,
     collectionId: collectionId(cfg),
@@ -59,16 +94,20 @@ function summary(cfg) {
     collection: items.length ? b.collection : null,
     total: items.length,
     downloaded: items.length ? workshop.classify(libs, items).present.size : 0,
-    enabledCount: Array.isArray(b.enabledIds) ? b.enabledIds.length : 0,
+    enabledCount: st.installed ? st.enabled : Array.isArray(b.enabledIds) ? b.enabledIds.length : 0,
     unresolved: b.unresolved && typeof b.unresolved === 'object' ? Object.keys(b.unresolved).length : 0,
-    configPath: CONFIG_MANIFEST,
-    configAt: Number(b.configAt) || 0,
+    configBundled: st.bundled,
+    configInstalled: st.installed,
+    configProfile: st.profile,
+    configEnabled: st.enabled,
+    configAt: st.configAt,
+    configFile: st.file,
   };
 }
 
 // --------------------------------------------------------------- telepítés
 
-// Feliratkozás + letöltés + engedélyezés, majd a config bemásolása.
+// Feliratkozás + letöltés + engedélyezés, majd a config csomag bemásolása.
 async function install({ cfg, userDataDir, onLog = () => {}, onProgress = () => {}, openSubscribe, openSteamClient }) {
   const id = collectionId(cfg);
   onLog(`— ${NAME} modpack (Steam kollekció ${id}) —`);
@@ -93,7 +132,9 @@ async function install({ cfg, userDataDir, onLog = () => {}, onProgress = () => 
     skips: { download: new Map(), mods: new Set() },
   });
 
-  const config = await applyConfig({ cfg, onLog, onProgress });
+  // A config a modok után jön: felülírja a listát a modpack profiljára, így a
+  // kihagyott (crash-t okozó) modok nem maradnak engedélyezve.
+  const config = applyConfig({ onLog, onProgress });
 
   return {
     collection: res.collection,
@@ -104,123 +145,155 @@ async function install({ cfg, userDataDir, onLog = () => {}, onProgress = () => 
   };
 }
 
-// --------------------------------------------------------------- config fájl
+// --------------------------------------------------------------- config másolás
 
-function expandTarget(target, cfg) {
-  let value = String(target || '').trim();
-  if (!value) return null;
-
-  const roots = [
-    ['%ZOMBOID%', paths.zomboidDir()],
-    ['%GAME%', paths.resolveGamePath(cfg) || ''],
-    ['%USERPROFILE%', process.env.USERPROFILE || os.homedir()],
-  ];
-
-  for (const [token, root] of roots) {
-    const re = new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[\\\\/]?', 'i');
-    if (re.test(value)) {
-      if (!root) return null;
-      value = path.join(root, value.replace(re, ''));
-      break;
-    }
+function walk(dir, base = dir, out = []) {
+  let entries = [];
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return out;
   }
-
-  if (path.isAbsolute(value)) return value;
-  // Relatív cél: a Zomboid mappán belül értjük.
-  return path.join(paths.zomboidDir(), value);
-}
-
-function normalizeEntries(data) {
-  const raw = Array.isArray(data) ? data : (data && Array.isArray(data.files) ? data.files : []);
-  const out = [];
-  for (const entry of raw) {
-    if (!entry) continue;
-    const source = String(entry.path || entry.source || entry.file || '').trim();
-    const target = String(entry.target || '').trim();
-    if (!source || !target) continue;
-    out.push({
-      source,
-      target,
-      size: Number(entry.size) || 0,
-      optional: !!entry.optional,
-    });
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) walk(full, base, out);
+    else if (entry.isFile()) out.push(path.relative(base, full));
   }
   return out;
 }
 
-// A config fájl(ok) letöltése a repóból és bemásolása a megadott helyre.
-// Ha a leíró még nincs a repóban, az eredmény { ok:false, pending:true }.
-async function applyConfig({ cfg, userDataDir, onLog = () => {}, onProgress = () => {} }) {
-  const repo = pzo.repoOf(cfg);
-
-  onProgress({ label: 'Modpack config keresése…' });
-  const manifest = await gh.fetchRepoJson({ cfg, repo, file: CONFIG_MANIFEST });
-  if (!manifest.ok) {
-    onLog(
-      `• A modpack config még nincs a repóban (${CONFIG_MANIFEST}) – ezt a lépést most kihagyom.`
-    );
-    return { ok: false, pending: true, installed: [], error: manifest.error };
+// A default.txt (a launcher által is használt engedélyezett lista) a modpack
+// profiljára állítva – a maps blokkot és a többi sort nem bántja.
+function syncModList(zomboidDir, ids, onLog) {
+  if (!ids.length) return { changed: false, count: 0 };
+  const file = path.join(zomboidDir, 'mods', 'default.txt');
+  let content = null;
+  try {
+    content = fs.readFileSync(file, 'utf8');
+  } catch {
+    content = null;
   }
 
-  const entries = normalizeEntries(manifest.data);
-  if (!entries.length) {
-    onLog(`• A ${CONFIG_MANIFEST} nem tartalmaz bemásolható fájlt – kihagyom.`);
-    return { ok: false, pending: true, installed: [] };
-  }
+  const nl = content && content.includes('\r\n') ? '\r\n' : '\n';
+  const body = ['mods', '{']
+    .concat(ids.map((id) => `    mod = ${id},`))
+    .concat(['}'])
+    .join(nl);
 
-  const tempDir = path.join(userDataDir || os.tmpdir(), 'blackout-config');
-  fs.mkdirSync(tempDir, { recursive: true });
-
-  const installed = [];
-  const failed = [];
-  let done = 0;
-  for (const entry of entries) {
-    done++;
-    onProgress({ label: 'Modpack config bemásolása…', done, total: entries.length });
-    const dest = expandTarget(entry.target, cfg);
-    if (!dest) {
-      failed.push({ ...entry, error: 'ismeretlen vagy hiányzó célmappa' });
-      onLog(`✗ ${entry.source}: a cél (${entry.target}) nem oldható fel.`);
-      continue;
+  let next;
+  if (content === null) {
+    next = ['VERSION = 1,', body, 'maps', '{', '}', ''].join(nl);
+  } else {
+    const block = /mods\s*\{[\s\S]*?\}/.exec(content);
+    if (!block) {
+      // Ismeretlen formátum: nem írjuk felül, csak jelezzük.
+      onLog(`! A ${file} formátumát nem ismerem fel – a modok engedélyezését a játék profilja adja.`);
+      return { changed: false, count: 0 };
     }
-    const temp = path.join(tempDir, path.basename(entry.source));
-    try {
-      await gh.downloadRepoFile({
-        cfg,
-        repo,
-        file: entry.source,
-        dest: temp,
-        size: entry.size,
-        log: onLog,
-      });
-      fs.mkdirSync(path.dirname(dest), { recursive: true });
-      fs.copyFileSync(temp, dest);
-      installed.push({ ...entry, target: dest });
-      onLog(`✓ Config bemásolva: ${path.basename(dest)}`);
-    } catch (err) {
-      failed.push({ ...entry, error: err.message });
-      onLog(`✗ ${entry.source}: ${err.message}`);
-    } finally {
+    next = content.slice(0, block.index) + body + content.slice(block.index + block[0].length);
+  }
+
+  try {
+    if (next === content) return { changed: false, count: ids.length };
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    if (content !== null) {
       try {
-        fs.rmSync(temp, { force: true });
+        fs.copyFileSync(file, file + '.bak');
       } catch {
-        // A temp fájl maradhat.
+        // A mentés best effort.
       }
     }
+    fs.writeFileSync(file, next, 'utf8');
+    return { changed: true, count: ids.length };
+  } catch (err) {
+    onLog(`! A default.txt frissítése nem sikerült: ${err.message}`);
+    return { changed: false, count: 0 };
+  }
+}
+
+// A mellékelt config csomag bemásolása a játék Zomboid mappájába, majd a
+// modok engedélyezése a profil szerint.
+function applyConfig({ onLog = () => {}, onProgress = () => {} } = {}) {
+  if (!fs.existsSync(CONFIG_TREE)) {
+    const error = 'A launcherhez mellékelt Blackout config csomag hiányzik (assets/blackout).';
+    onLog('✗ ' + error);
+    return { ok: false, error };
+  }
+  if (launch.isGameRunning()) {
+    const error = 'A játék fut – a config csak zárt játék mellett másolható be. Zárd be, és indítsd újra.';
+    onLog('⚠ ' + error);
+    return { ok: false, running: true, error };
   }
 
-  return { ok: failed.length === 0 && installed.length > 0, installed, failed };
+  const zomboidDir = paths.zomboidDir();
+  const files = walk(CONFIG_TREE);
+  const stamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
+  const backupDir = path.join(zomboidDir, `eotl-backup-${stamp}`);
+
+  let copied = 0;
+  let backedUp = 0;
+  const failed = [];
+  let done = 0;
+
+  for (const rel of files) {
+    done++;
+    onProgress({ label: 'Modpack config bemásolása…', done, total: files.length });
+    const src = path.join(CONFIG_TREE, rel);
+    const dest = path.join(zomboidDir, rel);
+    try {
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      if (fs.existsSync(dest)) {
+        const have = fs.statSync(dest);
+        const want = fs.statSync(src);
+        if (have.size !== want.size) {
+          const backup = path.join(backupDir, rel);
+          fs.mkdirSync(path.dirname(backup), { recursive: true });
+          fs.copyFileSync(dest, backup);
+          backedUp++;
+        }
+      }
+      fs.copyFileSync(src, dest);
+      copied++;
+    } catch (err) {
+      failed.push({ file: rel, error: err.message });
+      onLog(`✗ ${rel}: ${err.message}`);
+    }
+  }
+
+  const profile = profileOf(zomboidDir);
+  const list = profile.found ? syncModList(zomboidDir, profile.mods, onLog) : { changed: false, count: 0 };
+
+  onLog(
+    `✓ Modpack config a helyén: ${copied} fájl a játék Zomboid mappájában` +
+      (backedUp ? `, ${backedUp} felülírt fájl mentve: ${backupDir}` : '')
+  );
+  if (profile.found) {
+    onLog(`✓ ${profile.mods.length} mod engedélyezve a(z) „${PROFILE_NAME}” profil szerint`);
+  } else {
+    onLog(`✗ A ${PROFILE_FILE} nem tartalmazza a(z) „${PROFILE_NAME}” profilt.`);
+  }
+
+  return {
+    ok: profile.found && failed.length === 0,
+    copied,
+    backedUp: backedUp ? backupDir : null,
+    failed,
+    profile: PROFILE_NAME,
+    enabled: profile.mods.length,
+    listChanged: list.changed,
+  };
 }
 
 module.exports = {
   COLLECTION_ID,
   NAME,
   WORKSHOP_URL,
-  CONFIG_MANIFEST,
+  PROFILE_NAME,
+  CONFIG_ROOT,
   collectionId,
   summary,
   install,
   applyConfig,
-  expandTarget,
-  normalizeEntries,
+  configStatus,
+  profileOf,
 };

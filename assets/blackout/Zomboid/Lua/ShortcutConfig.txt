@@ -1,0 +1,22 @@
+return {
+    settings = {
+        rowCount = 1,
+        columnCount = 5,
+        slotSize = "medium",
+        titleBarPosition = "top",
+        pageType = "items",
+        panelVisible = false,
+        locked = false,
+        backgroundAlpha = 0.9,
+        slotAlpha = 0.4,
+        hotkey = 15,
+        panelX = 267,
+        panelY = 999,
+    },
+    slotItems = {
+    },
+    recipeSlots = {
+    },
+    buildSlots = {
+    },
+}

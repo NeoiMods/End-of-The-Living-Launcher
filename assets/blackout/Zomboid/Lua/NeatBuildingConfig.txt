@@ -1,0 +1,17 @@
+# Neat Building local UI settings
+filterCanBuild=false
+filterSkill=false
+filterKnown=false
+recipeLayout=list
+recipeSortMode=RecipeName
+windowWidth=319
+windowHeight=470
+windowX=1056
+windowY=382
+rememberLastSearch=true
+rememberWindowGeometry=true
+mainPinned=true
+settingsPinned=true
+lastSearchMode=RecipeName
+lastSearchText=
+lastSearchCategory=

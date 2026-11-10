@@ -1,0 +1,68 @@
+PZO 1.9.8 - ZombieBuddy mod compatibility
+
+ZombieBuddy mods found (patches):
+  BlackHawk: 0
+  CraftFromContainers: 4
+  PerfectMoovment: 4
+  Viewpoint: 92
+  VisibleHelicopterEvent: 5
+  ZomboidRichPresence: 0
+
+Game classes they patch (PZO keeps these classes' stock shape):
+  fmod.fmod.FMODManager: [loadSound]
+  fmod.fmod.FMODSoundEmitter: [tick]
+  fmod.fmod.FMODSoundEmitter$FileSound: [tick]
+  fmod.fmod.SoundListener: [tick]
+  org.lwjglx.opengl.Display: [imguiEndFrame, update, updateMouseCursor]
+  viewpoint.models.Characters: [vehicles]
+  viewpoint.world.Flames: [snapshot]
+  zombie.CombatManager: [attackCollisionCheck, calculateHitInfoList, calculateHitListWeapon, missedShot, processBallisticsTargets]
+  zombie.EffectsManager: [startMuzzleFlash]
+  zombie.GameTime: [getViewDistMax]
+  zombie.LoadGridsquarePerformanceWorkaround$ItemPicker: [checkObject]
+  zombie.MovingObjectUpdateScheduler: [getUpdateSchedulerSimulationLevelForObject]
+  zombie.ZomboidFileSystem: [getRelativeFile]
+  zombie.audio.parameters.ParameterCameraZoom: [calculateCurrentValue]
+  zombie.characters.CharacterJoypadButtonBinding: [isDown]
+  zombie.characters.IsoGameCharacter: [getAnimationTimeDelta, getLookAngleRadians, isRunning, isSprinting, isStrafing]
+  zombie.characters.IsoPlayer: [getDeferredMovement, getInputMoveVector, setAngleFromAim, updateLOS, updateMovementFromInput]
+  zombie.characters.IsoZombie: [Hit, couldSeeHeadSquare, getScreenProperX, getScreenProperY]
+  zombie.characters.Stats: [get]
+  zombie.characters.component.CharacterInputComponent: [isJoypadAimingAxisApplied, isPrecisionAimKeyDownInternal]
+  zombie.core.Core: [RenderOffScreenBuffer, loadOptions, saveOptions]
+  zombie.core.PerformanceSettings: [getLockFPS, isFramerateUncapped]
+  zombie.core.SpriteRenderer: [drawGeneric, postRender, renderClamped]
+  zombie.core.opengl.RenderSettings$PlayerRenderSettings: [getViewDistance]
+  zombie.core.physics.BallisticsController: [getCachedTargetedBodyPart, isCameraTarget, isTarget, spreadCount]
+  zombie.core.skinnedmodel.ModelManager$ModelSlot: [Update]
+  zombie.core.skinnedmodel.animation.AnimationPlayer: [play, updateModelTransforms, updateMultiTrackBoneTransforms]
+  zombie.core.skinnedmodel.model.Model: [CreateShader]
+  zombie.core.textures.MultiTextureFBO2: [doZoomScroll, setTargetZoom]
+  zombie.gameStates.GameLoadingState: [enter]
+  zombie.gameStates.IngameState: [enter]
+  zombie.input.AimingReticle: [getXA, getYA]
+  zombie.input.KeyboardState: [isKeyDown]
+  zombie.input.Mouse: [isRightDelay, update]
+  zombie.iso.Helicopter: [deactivate, updateSound]
+  zombie.iso.IsoCell: [render]
+  zombie.iso.IsoObjectPicker: [ContextPick, PickCorpse, PickDoor, PickHoppable, PickThumpable, PickTree, PickVehicle, PickWindow, PickWindowFrame]
+  zombie.iso.IsoWorld: [renderWeatherFX, sceneCullAnimals, sceneCullZombies]
+  zombie.iso.LightingJNI: [calculateVisionCone, checkLights, update]
+  zombie.iso.PlayerCamera: [update]
+  zombie.iso.fboRenderChunk.FBORenderLevels: [invalidateAll, invalidateLevel]
+  zombie.iso.objects.IsoFireManager: [explode]
+  zombie.iso.objects.IsoLightSwitch: [hasElectricityAround]
+  zombie.iso.objects.IsoWindow: [ToggleWindow, setGlassRemoved, smashWindow, syncIsoObjectReceive]
+  zombie.iso.sprite.IsoCursor: [render]
+  zombie.iso.sprite.IsoReticle: [render]
+  zombie.iso.weather.ThunderStorm: [enqueueThunderEvent]
+  zombie.network.CoopMaster: [getGarbageCollector]
+  zombie.network.packets.AddInventoryItemToContainerPacket: [processClient]
+  zombie.network.packets.RemoveInventoryItemFromContainerPacket: [processClient]
+  zombie.network.packets.ReplaceInventoryItemInContainerPacket: [processClient]
+  zombie.ui.ActionProgressBar: [render, updateScreenPos]
+  zombie.ui.UIElement: [render, update]
+
+PZO optimisations left out because of them:
+  IsoLightSwitch power cache: also patched by Viewpoint (IsoLightSwitch.hasElectricityAround)
+  IngameState profiler chunk timing: also patched by Viewpoint (IngameState.enter)

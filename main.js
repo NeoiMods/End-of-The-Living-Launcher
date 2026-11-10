@@ -980,7 +980,7 @@ ipcMain.handle('blackout:config', async () => {
       onLog: log,
       onProgress: progress,
     });
-    if (res.installed.length) {
+    if (res.copied) {
       cfg = { ...cfg, blackout: { ...(cfg.blackout || {}), configAt: Date.now() } };
       save();
     }

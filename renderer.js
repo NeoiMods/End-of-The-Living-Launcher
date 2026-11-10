@@ -175,16 +175,17 @@ function render(st) {
           },
           {
             ok: boEnabled ? true : null,
+            warn: bo && bo.configInstalled && bo.total && boEnabled < bo.total ? true : undefined,
             label: 'Blackout modok engedélyezve',
             detail: boEnabled
-              ? `${boEnabled} mod aktív a default.txt listában`
+              ? `${boEnabled} mod aktív a(z) „${bo.configProfile || 'Blackout Protocol'}” profilban`
               : 'A modok még nincsenek engedélyezve',
           },
           {
-            ok: bo && bo.configAt ? true : null,
+            ok: bo && bo.configInstalled ? true : null,
             label: 'Modpack config',
-            detail: bo && bo.configAt
-              ? 'A modpack config fájlja be van másolva a játékba'
+            detail: bo && bo.configInstalled
+              ? `pz_modlist_settings.cfg a játékban – ${bo.configEnabled} mod engedélyezve, sandbox preset és billentyűk bemásolva`
               : blackoutConfigDetail(bo),
           },
         ]
@@ -526,10 +527,10 @@ const MODE_UI = {
 
 // A config állapot szövege az ellenőrző listához.
 function blackoutConfigDetail(bo) {
-  if (bo && bo.configPath) {
-    return `Még nincs feltöltve a repóba (${bo.configPath}) – a modpack config nélkül indul`;
+  if (bo && bo.configBundled === false) {
+    return 'A launcherből hiányzik a config csomag – telepítsd újra a launchert';
   }
-  return 'A modpack config még nem érhető el – a játék config nélkül indul';
+  return 'A JÁTÉK INDÍTÁSA előtt a launcher bemásolja a modpack config csomagját a játékba';
 }
 
 function warnHidden() {
@@ -1875,7 +1876,11 @@ function sampleStatus() {
       collectionId: '3814595736',
       total: 847,
       downloaded: 847,
-      enabledCount: 812,
+      enabledCount: 807,
+      configBundled: true,
+      configInstalled: true,
+      configProfile: 'Blackout Protocol',
+      configEnabled: 807,
       configAt: Date.now(),
     },
     heapMb: 8192,

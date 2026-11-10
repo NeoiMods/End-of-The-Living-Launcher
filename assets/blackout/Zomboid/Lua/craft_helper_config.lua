@@ -1,0 +1,60 @@
+{
+    show_recipe_module = true,
+    show_fav_items_inventory = true,
+    editable_category_selector = false,
+    recipe_selector_modifier = 1,
+    category_selector_modifier = 1,
+    tab_selector_modifier = 1,
+    tab_close_selector_modifier = 1,
+    list_font_size = 3,
+    show_icons = true,
+    allow_special_search = true,
+    show_hidden = false,
+    close_all_on_exit = false,
+    show_all_props = false,
+    delayed_search = false,
+    inv_context_behaviour = 2,
+    window_opacity = 8,
+    scroll_speed = 3,
+    main_window = {
+        x = 100,
+        y = 100,
+        w = 1000,
+        h = 600,
+        a = 0.7,
+    },
+    uses = {
+        sep_x = 500,
+        filter_asc = true,
+        filter_type = "all",
+    },
+    craft = {
+        sep_x = 500,
+        filter_asc = true,
+        filter_type = "all",
+    },
+    search = {
+        items = {
+            sep_x = 500,
+            filter_asc = true,
+            filter_type = "all",
+        },
+        recipes = {
+            sep_x = 500,
+            filter_asc = true,
+            filter_type = "all",
+        },
+    },
+    favorites = {
+        items = {
+            sep_x = 500,
+            filter_asc = true,
+            filter_type = "all",
+        },
+        recipes = {
+            sep_x = 500,
+            filter_asc = true,
+            filter_type = "all",
+        },
+    },
+}

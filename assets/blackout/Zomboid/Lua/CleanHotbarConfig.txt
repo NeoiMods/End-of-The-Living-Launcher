@@ -1,0 +1,33 @@
+return {
+    version = "1.0",
+    showItemDurability = {
+        hotbar = true,
+        equipitem = true,
+    },
+    showWeaponHeadCondition = {
+        hotbar = true,
+        equipitem = true,
+    },
+    showWeaponSharpness = {
+        hotbar = true,
+        equipitem = true,
+    },
+    showWeaponAmmo = {
+        hotbar = true,
+        equipitem = true,
+    },
+    showChamberedRoundSeparately = true,
+    showItemTooltip = {
+        hotbar = false,
+        equipitem = false,
+    },
+    statusBarHeightScale = 1,
+    ammoTextScale = 0.8,
+    hotbarScale = 1,
+    showWeaponDurabilityAlert = true,
+    showEmptySlots = true,
+    showHotbarWithController = true,
+    autoHideHotbar = false,
+    autoHideDelayMs = 3000,
+    hotbarOpacity = 0.6,
+}

@@ -1,7 +1,21 @@
 {
-  "version": "0.9.0",
+  "version": "0.9.1",
   "updatedAt": "2026-11-10",
   "items": [
+    {
+      "id": "0.9.1",
+      "version": "0.9.1",
+      "date": "2026-11-10",
+      "tag": "CONFIG",
+      "title": "0.9.1 – A modpack config csomagja a launcherben",
+      "text": "A launcher mostantól magával hozza a Blackout Protocol teljes config csomagját: a pz_modlist_settings.cfg-t a 807 modos profillal, a NeoMods sandbox preseleket, a billentyűket és a mod-configokat. Telepítéskor és minden egyjátékos indítás előtt bemásolja őket a játék Zomboid mappájába, a modokat pedig a profil szerint engedélyezi – így a Waterpipes / LastCupCoffee / PlumbingFuelGeneratorAddonB42 trió nem kerül be, ami világbetöltéskor elszállította a játékot.",
+      "changes": [
+        "A config csomag a launcherben van (assets/blackout) – nem kell kézzel másolgatni.",
+        "Telepítéskor és minden egyjátékos indítás előtt a helyére kerül; a felülírt fájlokról mentés készül (Zomboideotl-backup-*).",
+        "A modok a Blackout Protocol profilból engedélyeződnek (807 mod), és a default.txt is ezt a listát kapja.",
+        "Az ELLENŐRZÉS fül a valós állapotot mutatja: hány mod aktív a profilban, és hogy a config a helyén van-e."
+      ]
+    },
     {
       "id": "0.9.0",
       "version": "0.9.0",

@@ -1,0 +1,2 @@
+NeoiSurvivor:unemployed;caffeineaddict;heartyappetite;smoker;weightloss;highthirst;homichlophobia;sloweater;dextrous;fastreader;firstaid;irongut;outdoorsman;nightvision;bloodlust;hoarder;organized;resilient;stout;
+EOTLNEOI:doctor;heartyappetite;smoker;weightloss;highthirst;dextrous;fastreader;firstaid;outdoorsman;nightvision;

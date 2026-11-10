@@ -1,0 +1,1 @@
+[VRS LOG 742107619] PreTeleportPlayer -> No valid vehicleId saved, skipping teleport

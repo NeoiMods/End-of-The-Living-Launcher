@@ -1,0 +1,4 @@
+sizeIndex=2
+zoom=1.000000
+xOffset=0.000000
+yOffset=-0.500000
