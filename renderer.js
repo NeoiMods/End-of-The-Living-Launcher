@@ -175,7 +175,6 @@ function render(st) {
           },
           {
             ok: boEnabled ? true : null,
-            warn: bo && bo.configInstalled && bo.total && boEnabled < bo.total ? true : undefined,
             label: 'Blackout modok engedélyezve',
             detail: boEnabled
               ? `${boEnabled} mod aktív a(z) „${bo.configProfile || 'Blackout Protocol'}” profilban`
