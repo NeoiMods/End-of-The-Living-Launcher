@@ -1,5 +1,5 @@
 {
-  "version": "0.9.0",
+  "version": "0.9.1",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -15,6 +15,666 @@
       "path": "assets/bg.svg",
       "size": 60908,
       "sha256": "37c612294e8535a5227a72ee829918ec945f5ba346a6dd89afaadfd0097e89f0"
+    },
+    {
+      "path": "assets/blackout/README.md",
+      "size": 25120,
+      "sha256": "06aac1d20d06dcdf823186e0261e4b07e001ae2b3f79026c9abeb30d1bddad8a"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ALife_CombatTrace.txt",
+      "size": 278763,
+      "sha256": "7efc3e2c1d7b5c9b01650fbe11707bbf6c9e565e40b95858ebf2df3deb4ec7c0"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/AutoLoot_LastUsed.ini",
+      "size": 60890,
+      "sha256": "63fd837f995ba8ee454f838490fdffacc331d1980b1fd0904c6724542233cd4b"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/BetterWorldMap.ini",
+      "size": 10,
+      "sha256": "b14d174633fbd525195077ebd7946e57f03a79d5bfbe98acfca4cfa701ba4081"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/CHC_presets.lua",
+      "size": 47,
+      "sha256": "c67da25d4abaa9eb25ade4943ca2200a871a7d5fbb2378b33623bca1e16a41dd"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/CHStatusHUD.ini",
+      "size": 1063,
+      "sha256": "2198a4f477a2e686537962e11cc48da328b99cba21a9c637d24dabb513621323"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/CleanHotbarConfig.txt",
+      "size": 747,
+      "sha256": "395649096493df122027c6454935268c36846d6b1e6e6224556766e69707ec03"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/CompanionDogs_settings.ini",
+      "size": 560,
+      "sha256": "26f6fc8e89863b4bf5e2ef5042bca2411a02470f62628ef54e552f822b78fddc"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ContextMenuCleanup.ini",
+      "size": 98,
+      "sha256": "b2ea9ca7e86118205b89856e75557500599d1392df48518e2aa7be9d64948c51"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/DES_TurnSignals.ini",
+      "size": 255,
+      "sha256": "e58347b1834ac95463b637ebb81dd55197196a787361b8662c36a0d2ea1a47b1"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/FHDebug.txt",
+      "size": 27,
+      "sha256": "877293cde96ea84ad4849d598a62e3d869c3e802625f462a026bb593d4c041f1"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/FarSnowGround.ini",
+      "size": 988,
+      "sha256": "aaf967e72d9d81ce0a64929da70010373289cb5f53aba6e90b3e5274bc3b09ff"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/HydeCoUnderGround_HUD.ini",
+      "size": 24,
+      "sha256": "e170b745a90720d7ca92c3bcef8f06869575d8ae0c0028744a80669483021ef5"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/InventoryTetris_ContainerData.txt",
+      "size": 5358,
+      "sha256": "ccbb4c94ceb821871a9998d693a22fae3d31c5d1bd6dacc38be646b2719c14e7"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/InventoryTetris_EquipmentSlotData.txt",
+      "size": 36,
+      "sha256": "fac1e207327f8e6c428996d989abf5c99a9189b3b4d717b76d8311c50905f3ab"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/InventoryTetris_ItemData.txt",
+      "size": 4238,
+      "sha256": "fea80189738e9c5a3291470d8a7b5ea22d99d754c14ca2b1bb43691c3dec1113"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/InventoryTetris_PocketData.txt",
+      "size": 564,
+      "sha256": "7f5357b19eb0f4e03a7b599a5543bb61b2c59f1f82e5ef8a173a93446cc14e4f"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/KRSolar_Aviso14.txt",
+      "size": 9,
+      "sha256": "7111684708cd2f68a436d28a55a4495b0991a3912e6795ad5eb517f2e5987413"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/LSConfig.ini",
+      "size": 15,
+      "sha256": "67a7275ac656801dd1e5e9c55d96317442252c16f1b6f254180761c82e2e133d"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/LSUIPrefs.ini",
+      "size": 27,
+      "sha256": "d89dbee7c43421114691c9d9cddc9d8559950e09e0f15619421fe7cf8871340c"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/MPOptim_Settings.ini",
+      "size": 2523,
+      "sha256": "f66629cf9f5173c7fb1443d7649362457560b062bad9f647a7e1e060120044f8"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/MiniCompass_Position_user_GretaThomson.txt",
+      "size": 13,
+      "sha256": "4caecb0f9829d67c360470cce084b12333932e70ca67ed9a0e86c7980aa7f0a2"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/MiniCompass_Position_user_MauraMaudlin.txt",
+      "size": 9,
+      "sha256": "7fa50ea16c31ebb8fb2b7864bbb9780a1a28fb5786424808c8ea90346c562154"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/MiniCompass_Position_user_SerghioSantos.txt",
+      "size": 9,
+      "sha256": "bd73ec76d27c538446dae7f20b5f0f13ca451a6a481615c99462087338e2c4ae"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/MiniHealthPlus_conf.ini",
+      "size": 217,
+      "sha256": "a89475860878f441212c3f8c9e2196a914b5faf4122ded050b4e8f1e21f98b4c"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/Mini_health_conf.ini",
+      "size": 118,
+      "sha256": "69838e61ac84172d7708f49983139c3f69352cbac209d35d8fe55a8759b515c3"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ModManager/HistoryData.cfg",
+      "size": 330165,
+      "sha256": "f5fcd8ea3d814435e30fa1585ff3d8eb30f9074e508b5d14f9a53aa2f745e62c"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ModManager/ModListData.ini",
+      "size": 286306,
+      "sha256": "45901289660d45d53253334d9372bb7a4ec78f9a3a43ebf793af8fc3a2bf0864"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ModManager/ModListData.tmp.ini",
+      "size": 283307,
+      "sha256": "551f630b4e107df8d9c3fcc0ae950fdb467a64c234fe4c161ea43f2f05d77e3e"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ModManagerExtension.ini",
+      "size": 1811,
+      "sha256": "f548e14d40f08ae5512b5a1fd279e90ce6d669afe3c42e07426f9b7ed80e4b7c"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ModManagerExtension/LastOpened.txt",
+      "size": 17,
+      "sha256": "776fb787f0cff3c4591156f89b27178a5abec37c248014f5478186f387cc6951"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ModManagerExtension/PresetDates.txt",
+      "size": 35,
+      "sha256": "5343945093408d922312b4ae7f836a3fbb569c53e3f43959a71227d8d462a2d0"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ModManagerExtension/SandboxEdited.txt",
+      "size": 1052,
+      "sha256": "edcf2764a6fd9e1dd68e743f7d16a79f7179069cf8750519bc2430e83985aff2"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ModManagerExtension/SandboxLast.txt",
+      "size": 28,
+      "sha256": "634a81599ee84a80d2138809c1264a7c2f2e7c1d4878feaf5b09f7bed9658649"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/NVFramework_ClientOptions.ini",
+      "size": 15,
+      "sha256": "e6ee22c1d88c8c7a07659ab9de7e6ce757d7679d00c85f78a5aa444130b4689b"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/NeatBuildingConfig.txt",
+      "size": 343,
+      "sha256": "6561716f0d67252ee7be73966a9854dac10f3c414097d16d3c55e2cbd5aa3d43"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/NeatCraftingConfig.txt",
+      "size": 735,
+      "sha256": "9a27299658b961d2ddf2a2487d94026baff75e5a721c4bb1e34e7d8f1418068e"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/NeatUIEquipment.ini",
+      "size": 137,
+      "sha256": "87c3eaf88e3f57c0740ea162646bb09f60a0722c7f4184419a8d507a91604c56"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/NeatXPDrops.ini",
+      "size": 1231,
+      "sha256": "198bbec74815d68a9d84431240dccdcc59be7e622a453b12cdc4d03a4a8fa2dd"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ORGM.ini",
+      "size": 999,
+      "sha256": "7a599d8e9d81623a39fd25acc38bd24952ee5841756ae653524f125ba81271c4"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ObNoxPatchNotes.txt",
+      "size": 26,
+      "sha256": "9d048d6562309fd9b3f351e1a1d754825808dda43f30f6d734f14b5e037214d2"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/PRPGE_HUD_Layout.txt",
+      "size": 43,
+      "sha256": "31cb8044ec9130060edc6efa1f19e64934da048f854a84294bd3f85523a114b3"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/PRPGE_PDA_Layout.txt",
+      "size": 76,
+      "sha256": "d222883a9c4dcd9d1a912c7049a8c719bca2b3cea0aa1bae56f5a7553c101155"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/PerformanceProfiler.ini",
+      "size": 28,
+      "sha256": "d3a10369c8983b96dbd9c669f58df3c876068183067c05be734836e882335e22"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/PhunMart_PlaytimeTracking.txt",
+      "size": 120,
+      "sha256": "8416fdabb77031b560786e980f6c9162d04d6f0e4817ae0b92ee79d7aed086f8"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/PhunMart_Wallet.txt",
+      "size": 290,
+      "sha256": "1b217089708919b0616dd27d7cc57f56309be17a63804bba3340d561ae95a92d"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/PingItemsFriendsHotkey.ini",
+      "size": 31,
+      "sha256": "b1137aecbfccade19c60bb7f860e2a567288f6d2f844ddd2f7408fcc6276e887"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/PlayerTraits.txt",
+      "size": 405,
+      "sha256": "8a80b2be65b6b335b414a9320749fbdc2579c7b8deb6fa60a43e2ecf8e9adcef"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ProjectWriting_1793768088773_111398_NeoiMods.txt",
+      "size": 21,
+      "sha256": "176e99c6e42e19780ca4fc8fb2b02a3569a7a8ef201263fd73c73718540c1464"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/RUNE_EXP_conf.ini",
+      "size": 886,
+      "sha256": "c18d4f44884329662968413662c94679bec683d305f342b7b64c098f13a08071"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/RVVFX_ClientPreferences.ini",
+      "size": 289,
+      "sha256": "aca71c7bc8ae33e8b2e75fb78f5458a69395be32176616e18c46b64bba22b168"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/RandomEvents_config.txt",
+      "size": 37128,
+      "sha256": "c0bd8ec63b4ca3611e40a82a1c8b5929d799c335c071beb7054a8b3ef5bc0493"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ServerList.txt",
+      "size": 271,
+      "sha256": "a7deeccba11f0c6efc7a6e988eeec0ba3cc44af06a9a6454e30afbff0fc5aaee"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ShortcutConfig.txt",
+      "size": 425,
+      "sha256": "90195afc74dfb7545b29572afe1363af0d0a0138f29df8912f8005d7809294fe"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/SurvivorBriefing.ini",
+      "size": 1281,
+      "sha256": "075b804aad394d6d638783ff0119423cfda2eeb9843950b922f49afd1d25f8d6"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/SurvivorBriefing_deaths.ini",
+      "size": 76,
+      "sha256": "ac5fa4a20e43e3c1a5a237598662db7b719d58711e91c8be6c49e2e32414eee9"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/SurvivorBriefing_state.ini",
+      "size": 12,
+      "sha256": "11fe3a8c9b114564d747a7e8c1dff1fb2654f51103579e98451ec3e9e4b4a94b"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/SurvivorOptions.lua",
+      "size": 716,
+      "sha256": "361d4a4882372863e5c2f5260cfdadf6b685100805149f65e0f874d26eda0985"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/SurvivorPDA_Menu.txt",
+      "size": 23,
+      "sha256": "f5b328d9f01bb36601e29bd893303873ec07af7362fb57e709dcd3043786fbc3"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/TTF_BCI_AvatarSettings.txt",
+      "size": 61,
+      "sha256": "36f748b3cf354b9dad646f5c46a6b609ba24c341ee7f4705c2ef765eb2e6c307"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/TTF_BetterTrappingDockPos.txt",
+      "size": 6,
+      "sha256": "c2cb66b6db67f5ed9c100bf439d49183b551518f9df0d6f0938feeaf22bfd659"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/TWF_ToolPriority.ini",
+      "size": 21272,
+      "sha256": "f9717176665f68e3c5678fbb442ceaf81c75f872350877e9af468b86f34ecf40"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/TWKeyCombos.ini",
+      "size": 980,
+      "sha256": "50d16aff1c74442624196d5f76d3def8988542a22e091431c452eca6f25f8828"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/TWSTATScolors.txt",
+      "size": 135,
+      "sha256": "c0bce36fed9120f3e9e6d41bafe9e92b269a4ec64dbf248c3fa88c3cfdf88af7"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/TWSTATSpos.txt",
+      "size": 7,
+      "sha256": "b031450b7f1536624e10b609e0ad6dcc50844dfebd3c585cb8cb6718743faace"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/TWSTATSsettings.txt",
+      "size": 63,
+      "sha256": "667193ec75c81f0ff2553205d412bbc8092688d1c5a9c7c306db889d60c19607"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/TetrisDataPack.lua",
+      "size": 1018,
+      "sha256": "81c10714b9c6f0c69a946085b96d826e54c3cd7c4e617106a52b1d2e87f9c63d"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/TrueMusicJukebox.ini",
+      "size": 707,
+      "sha256": "387a0f2b4901a7deb4f2ac7bc2de31164157f383c60a0157c9317b0ec626c076"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/VPS3D_log.txt",
+      "size": 49,
+      "sha256": "df95fe2c2f5f6ae91cdb551f8eac81f19e0021ed9576fa2f261ebb7be653b6ca"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/VRS_DebugLog.txt",
+      "size": 85,
+      "sha256": "8b31cb05f1cea5ce44b89484e46592dc861d425bd42570cd3eca0c0361d1d4d6"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/VRS_ServerDebugLog.txt",
+      "size": 87,
+      "sha256": "5758affaf1fffb597ba422d43bb36bbd77ef1cc2dd7c612df2b53deb78b7e201"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ViewpointAdvancedFlashlight.ini",
+      "size": 3452,
+      "sha256": "e712a06e24e4af7f5eda9810dfad82fac58583adc5bc4c8160a216f35e19f916"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ViewpointAdvancedFlashlight_settings.txt",
+      "size": 175,
+      "sha256": "8c54a5f5f460ffaf7474dc86ead7e192a864a1449f2bc69a8227677f0586c6b0"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ViewpointBloodFXAddon.ini",
+      "size": 932,
+      "sha256": "612cc9b98a0f917007d26e459abbd5edf08fa8d952925c9716936d7099b6235c"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ViewpointControllerPromptDefault.txt",
+      "size": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ViewpointPhysicsProps_trace.txt",
+      "size": 28071,
+      "sha256": "6830507f048ea63e83a3dbcf461034cc44b5dee7f227d432413bbc9d8e102f22"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/VisualHealthBar.txt",
+      "size": 18,
+      "sha256": "2981a7f7a7b6e2d19be6e9937687ec67d63f6ffad182ad800153a52557505b3a"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/alife_cars_dump.txt",
+      "size": 7644,
+      "sha256": "91696907105dc4d991e1e89cf54f907a1db028f2e6e84eb97215877e4a5034f6"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/alife_creator_folders.ini",
+      "size": 11669,
+      "sha256": "9f4316637e98ad1b15ec24e2e065aa33d604dcfb80d6dd093638605f44685cfd"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/alife_creator_folders.ini.backup.ini",
+      "size": 11670,
+      "sha256": "975af36d564c18b73615e62a42bedda8073ef13242a4b6c4a6068d41bad369c5"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/alife_creator_help.ini",
+      "size": 12,
+      "sha256": "922fd0c71e1ede5e8ffe47e9f23ff92db8d1a90347ff90a9e373f661822b651b"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/alife_menu_prefs.ini",
+      "size": 682,
+      "sha256": "0a8c31bb2dfc6ff95cd677bdd3eeb58a9915ce085f82384d4da3afc83ac50d93"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/alife_ui2_prefs.txt",
+      "size": 410,
+      "sha256": "9b742f9d30d550463031933241c4d57671c9fd4cd83e2720870c7719e18f0047"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/backup_CHC_presets.lua",
+      "size": 47,
+      "sha256": "c67da25d4abaa9eb25ade4943ca2200a871a7d5fbb2378b33623bca1e16a41dd"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/chuckleberryFinn_moddingAlerts.txt",
+      "size": 1065,
+      "sha256": "bcf7c0c29ed237761966e47761129b1e7c797efe2e22ee418201f5301b4c22d5"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/chuckleberryFinn_moddingAlerts_config.txt",
+      "size": 15,
+      "sha256": "2f1fa6dd62960b958effc3a019f60dadc9583a9373d8ae7d490e5ba3843ab526"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/clothingui.ini",
+      "size": 93,
+      "sha256": "5075f05aa4b6d586d0cf583f5ba74d8f55ddf061596a08eb78da0d9cf6842c15"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/console_ata2tuning.txt",
+      "size": 149308,
+      "sha256": "7093dcd591254f45b841eec7866a73b715aad0ff6a5256b3081a211693bfd918"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/craft_helper_config.lua",
+      "size": 1349,
+      "sha256": "e430d335499248c96516a966c96c2471ad966e12885e5bf351d7766d02f09e9d"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/ctagssettings.cfg",
+      "size": 204,
+      "sha256": "ba8a0ba1e0741168db7eb5e414863732ba0502e3698d0baf113bb58a2c51cd12"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/daily_kill_record.txt",
+      "size": 1,
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/distance.txt",
+      "size": 9,
+      "sha256": "fd3b54be95dbeaa9ba3a75998099f43a140d5c7dbbe9d63d41cc957a2b33134b"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/emote.ini",
+      "size": 417,
+      "sha256": "2aeb16d684928090f9a1f74bb9193e92aa2bca94ff34e5b147d9416f954ad9be"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/entityLayout.ini",
+      "size": 239,
+      "sha256": "70e93fd95647a2747a86f034513721203174c806c94547937b8bcb424c569190"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/host.ini",
+      "size": 51,
+      "sha256": "de8e3cc595cca6e882808907d89b2e80ea37c71809665b10c6adf05f8527d1d7"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/invited.ini",
+      "size": 18,
+      "sha256": "1d0d7f7198f57c334dfd3266f574d64730234ea1e4d76879f1e7fca7ccaabc03"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/keys.ini",
+      "size": 3600,
+      "sha256": "7e2f31ecbcd9691cfc43e9330fc4c380cd6c1e83e205f0feb4792178865d44e7"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/keysB42.ini",
+      "size": 3738,
+      "sha256": "25a00a79a063ef81ea4961e2f2e4547d0852dd465f46940df6e03cdd62565d4c"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/killcount.txt",
+      "size": 2,
+      "sha256": "c2356069e9d1e79ca924378153cfbbfb4d4416b1f99d41a2940bfdb66c5319db"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/knox_changelog_seen.txt",
+      "size": 62,
+      "sha256": "ab79d597dac511f9a9805d55bf267fcc5678ffa17d99e3251cdbc7ece1735c4a"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/knox_config.txt",
+      "size": 1207,
+      "sha256": "8bff5fc045c7c178615d6c5ff31aa158728e40f6dd2fb211e7eb37cf855941e5"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/layout.ini",
+      "size": 7790,
+      "sha256": "35b9370ea7427804f0c20ffc4db2b3cbd83ca2f9192a6a8abc97298551e3d4c8"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/modOptions.ini",
+      "size": 90220,
+      "sha256": "8fa11e2c585f608657eac4974e7126974d827c15b072571c5ee52e24652dbf0b"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/modmanager-mods.txt",
+      "size": 14520,
+      "sha256": "3295849b3193e076cb22458e1930685cafcc2e75d405edffb8d07fdefeb06a3f"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/modmanager.ini",
+      "size": 1137,
+      "sha256": "87249d4e4f3daa91151ba2b564106ddb219adba6d4536d889de3ee6b2c922bc8"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/modprofile.txt",
+      "size": 4836,
+      "sha256": "d2927a081c75f1e8fc33c3190e1dbed0f1d7dadd54e745ce92e91481c53eb4a4"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/mods_options.ini",
+      "size": 7193,
+      "sha256": "2f216f96d879f0a9a92a654aebf3eb86529c1d25a51273b16e09f7c66af19aa2"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/pillduration.ini",
+      "size": 80,
+      "sha256": "4b8319b5cea30b4e5079c867d5739ec719cf56e52bed89199045684504ed1128"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/pz_modlist_settings.cfg",
+      "size": 14948,
+      "sha256": "cf74db9f395a0f580acb232d5176793e2dfbcc2587c1f65fd7bbc967ca756b95"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/saved_builds.txt",
+      "size": 328,
+      "sha256": "9df906f1ddf5d558f5a423d3af47f9752e41fa4caf5bad533eae3b04308f98b7"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/saved_modlists.txt",
+      "size": 71192,
+      "sha256": "b2ae32440d71d817d1dfa1d9e8fd3199cdb20c52859ec446f1f7bfa72b855a29"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/saved_modlists_server.txt",
+      "size": 17326,
+      "sha256": "e5684f5d66e6873d0329091c87a0e3287fd71bd666e3f566fa92ac390f510af5"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/saved_outfits.txt",
+      "size": 749,
+      "sha256": "dc316cee2b6d10c2dfd7cb6c5ca36da2dee3c70f489e40fea108e1c3199839c9"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/screenresolution.ini",
+      "size": 177,
+      "sha256": "c7e1908aa4677f87a5f52c8a8c2149a534b56a9b75b14895942d63d560d7b1c2"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/spiffui.ini",
+      "size": 21,
+      "sha256": "01c02343844ad46ca5ec68d1a8456869b01afd7124958417143546c2d6150de4"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/spncharcustom_saved_outfits.txt",
+      "size": 180,
+      "sha256": "b1256d624c8ca2b8a31b1cc60cdc1f285cf827b535bc024e43bc9f0294212e03"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/sup_settings.ini",
+      "size": 44,
+      "sha256": "f88a2ca3ad3f80e60429e888eeb990bf884c33b255a841c401b1ed918dd89645"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/timealive.txt",
+      "size": 6,
+      "sha256": "5a75775f5c025a7ba399c17ccdcba79217d02c2e2d4c148e2ac7204625f1d457"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Lua/zkills.txt",
+      "size": 1,
+      "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": "assets/blackout/Zomboid/PZO_mod_compat.txt",
+      "size": 3962,
+      "sha256": "8cb0af3ff3058ca25c55c79b576aea413732f98691acfc57aa8a5ff1bc958ef7"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Sandbox Presets/LATEST B42 MODS FOR SOLO.cfg",
+      "size": 550605,
+      "sha256": "39ebf8cff0e8cefdceb83cc69dd05893c7a7d7f291cbb2c6284061857ea94ccc"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Sandbox Presets/NeoiMods Ajanlott.cfg",
+      "size": 1292445,
+      "sha256": "f20d869e909f5312d463fd1fc256acdf83ed0a6e205173e394a235e32f1753d4"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Sandbox Presets/NeoiMods.cfg",
+      "size": 1292455,
+      "sha256": "2f7e2fe874da613df70c9f1e8cff08ec95776be98099d65624d6903b9e266e34"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Server/NeoiMods.ini",
+      "size": 31473,
+      "sha256": "29d936cf4065c0cea7649a0d075597c9f1c8917077a744000a408bc3fc43a0e5"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Server/NeoiMods_SandboxVars.lua",
+      "size": 802351,
+      "sha256": "d7fa0192315e32535daef6c67c73b745fd5baff8ce159f7022b8c94063178331"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Server/NeoiMods_spawnpoints.lua",
+      "size": 106,
+      "sha256": "8a6accbe44fffad67252417002b5917805432b055fabf60156ababc0b4e72714"
+    },
+    {
+      "path": "assets/blackout/Zomboid/Server/NeoiMods_spawnregions.lua",
+      "size": 912,
+      "sha256": "0a1eb0deaf355f809120cd8d4ff177b09f3e4f88ff45abe8a5fce50e74231427"
+    },
+    {
+      "path": "assets/blackout/Zomboid/SmoothFrames.properties",
+      "size": 753,
+      "sha256": "4331756f02d7ddac1112d6f96568a1ab6bffc5a2555ec06f1d1e77ed255cfef6"
+    },
+    {
+      "path": "assets/blackout/Zomboid/debug-options.ini",
+      "size": 393,
+      "sha256": "dd23138cb183871dfaffc09b3fb6d860e1a81444c4f4f34972349942216df9f5"
+    },
+    {
+      "path": "assets/blackout/Zomboid/latestSave.ini",
+      "size": 28,
+      "sha256": "f1932a0da3f6da5f6dc25e4b5cf057535c8c6f482691b29a3f2d00c656b3062d"
+    },
+    {
+      "path": "assets/blackout/Zomboid/options.ini",
+      "size": 3499,
+      "sha256": "00cebc5ce077da030cef2998961b499709fc750ca8d4cba645d3651c07c93d03"
+    },
+    {
+      "path": "assets/blackout/Zomboid/sounds.ini",
+      "size": 815692,
+      "sha256": "366f285556ff1c90f8677a7ed5f1f48e026fc379c79eae25ce71a3fdd65aff97"
     },
     {
       "path": "assets/icon.ico",
@@ -43,18 +703,18 @@
     },
     {
       "path": "main.js",
-      "size": 37447,
-      "sha256": "056dcdb577fc54b7d04970a996b4d359067718580aff6054c072f57d0640681b"
+      "size": 37437,
+      "sha256": "d9950fe667c34eeb427b8f3800ddc1b448c3e590eb1b50224301e3b4e87fe5b9"
     },
     {
       "path": "news.json",
-      "size": 11483,
-      "sha256": "b758cc7d65cc71091f4aa1cc6f91cb61aa174745ef8ad48311624e55714f443e"
+      "size": 12697,
+      "sha256": "720df6517e2f4554721d035a45a3ebf99c7bc903e0bc88bfdfcecb2d2cd6ad20"
     },
     {
       "path": "package.json",
       "size": 864,
-      "sha256": "310c83b8cef267cea02f5b017625d4aca24d3363f0134d8181ae3c2b0387a806"
+      "sha256": "9146a09670a3f936e3daef2c2da8447e6cf0d6a0b37fb4c4dfa32eabd2ed0b6c"
     },
     {
       "path": "preload.js",
@@ -63,8 +723,8 @@
     },
     {
       "path": "renderer.js",
-      "size": 70507,
-      "sha256": "c74f0cb440e9467b9f4881b4856bb50b7953c334e4642a6b06c98909153e74f8"
+      "size": 70869,
+      "sha256": "83cd7cd9fbe8464cf39c4b4ec1dc636ecd255ff7ff31d0ee72590ed174a0f32e"
     },
     {
       "path": "src/a2s.js",
@@ -78,8 +738,8 @@
     },
     {
       "path": "src/blackout.js",
-      "size": 7368,
-      "sha256": "c6d54a44111cc3dbd4a788b7c7195b8ce58c19468d6360666f90aec1a3ad160a"
+      "size": 9975,
+      "sha256": "041df2ea322dbc027acdaf8cad2d335269017bdd1880d437ec83759ad17c98ad"
     },
     {
       "path": "src/collection.js",
