@@ -2290,8 +2290,10 @@ body.mode-blackout .bg-layer {
     url('assets/bg-blackout.png'),
     radial-gradient(120% 85% at 50% 0%, rgba(46, 86, 148, 0.42) 0%, rgba(8, 14, 26, 0.92) 58%),
     linear-gradient(180deg, #070b14 0%, #04060b 100%);
-  background-size: cover;
-  background-position: center center;
+  /* A kép nagyobb, alulra igazítva: így a BLACKOUT PROTOCOL felirat feljebb
+     kerül, és a panelek fölötti sávban is látszik. */
+  background-size: auto 118%;
+  background-position: center bottom;
   background-repeat: no-repeat;
   filter: saturate(1.06) contrast(1.04);
 }
