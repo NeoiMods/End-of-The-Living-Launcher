@@ -42,7 +42,13 @@ contextBridge.exposeInMainWorld('api', {
   openModsFolder: () => ipcRenderer.invoke('mods:openFolder'),
   createShortcut: () => ipcRenderer.invoke('shortcut:create'),
 
-  launch: () => ipcRenderer.invoke('game:launch'),
+  // mode: 'eotl' (szerver) vagy 'blackout' (egyjátékos modpack)
+  launch: (mode) => ipcRenderer.invoke('game:launch', mode),
+
+  // ---- Blackout Protocol egyjátékos modpack ----
+  getBlackoutStatus: () => ipcRenderer.invoke('blackout:status'),
+  installBlackout: () => ipcRenderer.invoke('blackout:install'),
+  applyBlackoutConfig: () => ipcRenderer.invoke('blackout:config'),
 
   // ---- Project Zomboid keresése (játék mappa) ----
   findGame: () => ipcRenderer.invoke('game:find'),

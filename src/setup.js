@@ -48,7 +48,21 @@ function normalizeUnresolved(raw) {
   return out;
 }
 
-async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () => {}, openSubscribe, openSteamClient }) {
+async function runSetup({
+  cfg,
+  userDataDir,
+  onLog = () => {},
+  onProgress = () => {},
+  openSubscribe,
+  openSteamClient,
+  skips,
+}) {
+  // Az egyjátékos modpack (Blackout) nem hagyja ki a kollekció elemeit – ott a
+  // skips üres halmazokkal jön, a szerver telepítésnél a gyári kihagyások élnek.
+  const skipDownloadIds =
+    (skips && skips.download) instanceof Map ? skips.download : SKIP_DOWNLOAD_IDS;
+  const skipModIds = (skips && skips.mods) instanceof Set ? skips.mods : SKIP_MOD_IDS;
+
   const gameDir = paths.resolveGamePath(cfg);
   if (!gameDir) throw new Error('Project Zomboid nem található. Beállítások → Játék mappája.');
   const zomboidDir = paths.zomboidDir();
@@ -77,7 +91,7 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
   if (added.length) {
     onLog(`+ kollekción kívüli elem: ${added.map((it) => it.title).join(', ')}.`);
   }
-  for (const [id, note] of SKIP_DOWNLOAD_IDS) {
+  for (const [id, note] of skipDownloadIds) {
     if (col.items.some((it) => String(it.id) === id)) onLog(`– ${id}: ${note}.`);
   }
   if (col.childCount && col.childCount !== col.items.length) {
@@ -94,7 +108,7 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
 
   // ---- 2) feliratkozás + várakozás --------------------------------------
   const wanted = col.items.filter(
-    (it) => !recentFail(it.id) && !SKIP_DOWNLOAD_IDS.has(String(it.id))
+    (it) => !recentFail(it.id) && !skipDownloadIds.has(String(it.id))
   );
   let missing = workshop.classify(libs, wanted).missing;
   onLog(`Már letöltve: ${workshop.classify(libs, col.items).present.size}/${col.items.length}`);
@@ -135,7 +149,7 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
   }
 
   const pending = col.items.filter(
-    (it) => !sources.has(String(it.id)) && !recentFail(it.id) && !SKIP_DOWNLOAD_IDS.has(String(it.id))
+    (it) => !sources.has(String(it.id)) && !recentFail(it.id) && !skipDownloadIds.has(String(it.id))
   );
   if (pending.length) {
     onLog(`⚠ ${pending.length} mod még hiányzik – SteamCMD letöltéssel pótolom…`);
@@ -156,7 +170,7 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
   }
 
   const unresolvedCount = col.items.filter(
-    (it) => !sources.has(String(it.id)) && !SKIP_DOWNLOAD_IDS.has(String(it.id))
+    (it) => !sources.has(String(it.id)) && !skipDownloadIds.has(String(it.id))
   ).length;
   if (unresolvedCount > 0) {
     onLog(`! ${unresolvedCount} mod jelenleg nem elérhető (24 óra múlva újrapróbálom).`);
@@ -180,7 +194,7 @@ async function runSetup({ cfg, userDataDir, onLog = () => {}, onProgress = () =>
       const key = String(mod.id).toLowerCase();
       if (seen.has(key)) continue;
       seen.add(key);
-      if (SKIP_MOD_IDS.has(key)) {
+      if (skipModIds.has(key)) {
         onLog(`  – ${mod.name || mod.id}: kihagyva (nem kapcsoljuk be).`);
         continue;
       }

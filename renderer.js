@@ -1,6 +1,11 @@
 const bridge = window.api || null;
 const browserMode = !bridge;
 
+// Melyik játékmódban vagyunk:
+//   'eotl'     = End of The Living szerver (alap)
+//   'blackout' = Blackout Protocol – New Era egyjátékos modpack
+let gameMode = 'eotl';
+
 const $ = (sel) => document.querySelector(sel);
 
 let busy = false;
@@ -40,6 +45,14 @@ function renderServerStatus() {
   const text = el.querySelector('.status-text');
   const sub = el.querySelector('.status-sub');
 
+  // Egyjátékos módban nincs szerver, amit figyelni kellene.
+  if (gameMode === 'blackout') {
+    text.textContent = 'EGYJÁTÉKOS MÓD';
+    const bo = lastStatus && lastStatus.blackout;
+    sub.textContent = bo ? `Steam kollekció ${bo.collectionId}` : 'Blackout Protocol';
+    return;
+  }
+
   if (!serverStatus) {
     text.textContent = 'Szerver állapot ellenőrzése…';
     sub.textContent = '';
@@ -64,11 +77,24 @@ function render(st) {
   lastStatus = st;
   const server = st.server || {};
 
-  $('#serverName').textContent = server.name || 'Szerver';
-  $('#serverAddr').textContent = server.ip
-    ? `${server.ip}:${server.port || '16261'}`
-    : 'nincs beállítva';
-  $('#serverPass').textContent = server.password ? `Jelszó: ${'•'.repeat(6)}` : 'Jelszó: nincs';
+  const bo = st.blackout || null;
+  if (gameMode === 'blackout') {
+    const total = Number(bo && bo.total) || 0;
+    const done = Number(bo && bo.downloaded) || 0;
+    $('#serverName').textContent = 'Blackout Protocol – New Era';
+    $('#serverAddr').textContent = total
+      ? `${done}/${total} mod letöltve a Steam Workshophoz`
+      : 'A modpack még nincs letöltve';
+    $('#serverPass').textContent = bo && bo.enabledCount
+      ? `${bo.enabledCount} mod engedélyezve`
+      : 'A modok még nincsenek engedélyezve';
+  } else {
+    $('#serverName').textContent = server.name || 'Szerver';
+    $('#serverAddr').textContent = server.ip
+      ? `${server.ip}:${server.port || '16261'}`
+      : 'nincs beállítva';
+    $('#serverPass').textContent = server.password ? `Jelszó: ${'•'.repeat(6)}` : 'Jelszó: nincs';
+  }
 
   const badge = $('#steamBadge');
   badge.textContent = st.steamRunning ? 'Steam: fut' : 'Steam: áll';
@@ -185,13 +211,16 @@ function render(st) {
 
   const play = $('#btnPlay');
   const install = $('#btnInstall');
-  play.disabled = busy || !st.gameFound || !server.ip || !!st.gameRunning;
+  play.disabled = busy || !st.gameFound || (gameMode === 'eotl' && !server.ip) || !!st.gameRunning;
   install.disabled = busy || !st.gameFound;
 
   const hints = [];
   if (!st.gameFound) hints.push('Előbb telepítsd fel a játékot vagy állítsd be a mappáját.');
-  else if (!server.ip) hints.push('Nincs szerver cím – Beállítások.');
+  else if (gameMode === 'eotl' && !server.ip) hints.push('Nincs szerver cím – Beállítások.');
   else if (st.gameRunning) hints.push('A játék már fut.');
+  if (gameMode === 'blackout' && !st.gameRunning) {
+    hints.push('Egyjátékos mód: a játék a főmenübe indul, a Blackout mentést a játékban indítsd.');
+  }
   if (mem.level === 'low') {
     hints.push(`⚠ Csak ${mem.totalGb} GB RAM van, a ${heapMb} MB heap nem biztos, hogy elfut.`);
   }
@@ -424,6 +453,105 @@ async function saveSettings() {
   }
 }
 
+// ---------------------------------------------------------------- játékmód
+
+// A modpack mérete – a figyelmeztetésben és a fejlécben is ez látszik.
+const BLACKOUT_WARN_KEY = 'eotl.blackoutWarnHidden';
+
+const MODE_UI = {
+  eotl: {
+    brand: 'END OF THE LIVING',
+    brandSub: 'Project Zomboid Launcher',
+    a: 'END',
+    of: 'OF THE',
+    b: 'LIVING',
+    sub: 'THE FORGOTTEN',
+    phase: 'TEST PHASE',
+    modeButton: 'SINGLE-PLAYER',
+    panel: 'SZERVER',
+    note:
+      'A launcher feliratkozik a teljes Steam kollekcióra, kivárja a letöltést, ' +
+      'engedélyezi a modokat, lefuttatja a ZombieBuddy telepítőt, majd elindítja a ' +
+      'játékot a főmenübe – a szerverre a játékban csatlakozz.',
+  },
+  blackout: {
+    brand: 'BLACKOUT PROTOCOL',
+    brandSub: 'Single-player modpack',
+    a: 'BLACKOUT',
+    of: 'PROTOCOL',
+    b: 'NEW ERA',
+    sub: '847 ITEM • 800+ MOD',
+    phase: 'SINGLE-PLAYER',
+    modeButton: 'MULTIPLAYER',
+    panel: 'EGYJÁTÉKOS MODPACK',
+    note:
+      'A launcher feliratkozik a Blackout Protocol kollekcióra (3814595736), kivárja ' +
+      'a 800+ mod letöltését, engedélyezi őket, bemásolja a modpack config fájlját, ' +
+      'majd a játék a főmenübe indul – a mentést a játékban indítsd.',
+  },
+};
+
+function warnHidden() {
+  try {
+    return localStorage.getItem(BLACKOUT_WARN_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function setWarnHidden(value) {
+  try {
+    if (value) localStorage.setItem(BLACKOUT_WARN_KEY, '1');
+    else localStorage.removeItem(BLACKOUT_WARN_KEY);
+  } catch {
+    // Ha a tároló nem elérhető, a figyelmeztetés minden váltásnál megjelenik.
+  }
+}
+
+function applyMode() {
+  const ui = MODE_UI[gameMode] || MODE_UI.eotl;
+  document.body.classList.toggle('mode-blackout', gameMode === 'blackout');
+  $('#brandTitle').textContent = ui.brand;
+  $('#brandSub').textContent = ui.brandSub;
+  $('#heroA').textContent = ui.a;
+  $('#heroOf').textContent = ui.of;
+  $('#heroB').textContent = ui.b;
+  $('#heroSub').textContent = ui.sub;
+  $('#heroPhase').textContent = ui.phase;
+  $('#modeLabel').textContent = ui.modeButton;
+  $('#panelModeLabel').textContent = ui.panel;
+  $('#panelNote').textContent = ui.note;
+  document.title =
+    gameMode === 'blackout' ? 'Blackout Protocol – New Era' : 'End of The Living Launcher';
+}
+
+function switchMode(mode) {
+  if (mode === gameMode) return;
+  gameMode = mode;
+  applyMode();
+  appendLog(
+    mode === 'blackout'
+      ? '• Egyjátékos mód: Blackout Protocol – New Era (847 item, 800+ mod).'
+      : '• Visszaváltás: End of The Living szerver.'
+  );
+  // A figyelmeztetés minden belépésnél felugrik, amíg „ne mutasd többet” nincs bekapcsolva.
+  if (mode === 'blackout' && !warnHidden()) openBlackoutWarn();
+  if (lastStatus) render(lastStatus);
+  renderServerStatus();
+  if (!browserMode) refresh();
+}
+
+function openBlackoutWarn() {
+  const hide = $('#blackoutWarnHide');
+  if (hide) hide.checked = false;
+  $('#blackoutWarn').classList.remove('hidden');
+}
+
+function closeBlackoutWarn() {
+  if ($('#blackoutWarnHide').checked) setWarnHidden(true);
+  $('#blackoutWarn').classList.add('hidden');
+}
+
 // ---------------------------------------------------------------- actions
 
 async function runBusy(fn, { reload = true } = {}) {
@@ -445,13 +573,32 @@ async function runBusy(fn, { reload = true } = {}) {
 }
 
 function wireEvents() {
-  $('#btnPlay').addEventListener('click', () =>
-    runBusy(() => bridge.launch(), { reload: false }).then(() => refresh())
-  );
+  $('#btnPlay').addEventListener('click', () => {
+    if (browserMode) {
+      appendLog('• Böngészős előnézet: a játék indítása az asztali változatban működik.');
+      return;
+    }
+    const mode = gameMode;
+    runBusy(() => bridge.launch(mode), { reload: false }).then(() => refresh());
+  });
 
-  $('#btnInstall').addEventListener('click', () =>
-    runBusy(() => bridge.installMods())
+  $('#btnInstall').addEventListener('click', () => {
+    if (browserMode) {
+      appendLog('• Böngészős előnézet: a telepítés az asztali változatban működik.');
+      return;
+    }
+    if (gameMode === 'blackout') runBusy(() => bridge.installBlackout());
+    else runBusy(() => bridge.installMods());
+  });
+
+  // ---- SINGLE-PLAYER / MULTIPLAYER váltó ----
+  $('#btnMode').addEventListener('click', () =>
+    switchMode(gameMode === 'blackout' ? 'eotl' : 'blackout')
   );
+  $('#btnBlackoutOk').addEventListener('click', closeBlackoutWarn);
+  $('#blackoutWarn').addEventListener('click', (e) => {
+    if (e.target === $('#blackoutWarn')) closeBlackoutWarn();
+  });
 
   $('#btnModList').addEventListener('click', openModList);
   $('#btnModListClose').addEventListener('click', closeModList);
@@ -1678,6 +1825,14 @@ function sampleStatus() {
     agent: { jar: true, dll: true, present: true, configured: true },
     collectionCount: 113,
     downloadedCount: 113,
+    blackout: {
+      name: 'Blackout Protocol – New Era',
+      collectionId: '3814595736',
+      total: 847,
+      downloaded: 847,
+      enabledCount: 812,
+      configAt: Date.now(),
+    },
     heapMb: 8192,
     heapInGame: '8192m',
     memory: {
@@ -1881,4 +2036,5 @@ async function init() {
   probe.src = 'assets/bg.png';
 })();
 
+applyMode();
 init();

@@ -35,8 +35,8 @@
         </svg>
       </div>
       <div class="brand-text">
-        <h1>END OF THE LIVING</h1>
-        <p>Project Zomboid Launcher</p>
+        <h1 id="brandTitle">END OF THE LIVING</h1>
+        <p id="brandSub">Project Zomboid Launcher</p>
       </div>
     </div>
     <div class="topbar-right">
@@ -52,12 +52,12 @@
 
   <section class="hero">
     <div class="hero-title">
-      <span class="word">END</span>
-      <span class="of">OF THE</span>
-      <span class="word">LIVING</span>
+      <span class="word" id="heroA">END</span>
+      <span class="of" id="heroOf">OF THE</span>
+      <span class="word" id="heroB">LIVING</span>
     </div>
-    <div class="hero-sub">THE FORGOTTEN</div>
-    <div class="hero-phase"><i></i>TEST PHASE<i></i></div>
+    <div class="hero-sub" id="heroSub">THE FORGOTTEN</div>
+    <div class="hero-phase"><i></i><span id="heroPhase">TEST PHASE</span><i></i></div>
   </section>
 
   <main class="layout">
@@ -70,7 +70,7 @@
             <rect x="1.6" y="11" width="12.8" height="3" rx="1"/>
           </svg>
         </span>
-        <span>SZERVER</span>
+        <span id="panelModeLabel">SZERVER</span>
       </div>
 
       <div class="server-name" id="serverName">—</div>
@@ -92,6 +92,11 @@
         <button id="btnCrashBannerHide" class="cb-hide" type="button" title="Elrejtés">×</button>
       </div>
 
+      <button id="btnMode" class="mode-btn" type="button" title="Váltás az egyjátékos Blackout modpack és a szerver között">
+        <span class="mode-icon">◧</span>
+        <span id="modeLabel">SINGLE-PLAYER</span>
+      </button>
+
       <button id="btnPlay" class="play-btn" type="button" disabled>
         <span class="play-icon">▶</span> JÁTÉK INDÍTÁSA
       </button>
@@ -102,7 +107,7 @@
         <span class="mem-value" id="memoryValue">…</span>
       </div>
 
-      <div class="server-note">
+      <div class="server-note" id="panelNote">
         A launcher feliratkozik a teljes Steam kollekcióra, kivárja a letöltést,
         engedélyezi a modokat, lefuttatja a ZombieBuddy telepítőt, majd elindítja a
         játékot a főmenübe – a szerverre a játékban csatlakozz.
@@ -549,6 +554,39 @@
       <div class="modal-actions">
         <button id="btnCrashSkip" class="ghost-btn hidden" type="button">Kilépés küldés nélkül</button>
         <button id="btnCrashSend" class="primary-btn" type="button">LOG ELKÜLDÉSE</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="blackoutWarn" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="blackoutWarnTitle">
+    <div class="modal blackout-modal">
+      <h2 id="blackoutWarnTitle">BLACKOUT PROTOCOL – NEW ERA</h2>
+      <p class="modal-lead">
+        Ez a modpack <b>hatalmas</b>: <b>847 item</b> és közel <b>800+ mod</b>.
+        A letöltése sok időt vesz igénybe, és internetkapcsolatonként eltérő –
+        az első indítás akár órákig is eltarthat.
+      </p>
+      <ul class="warn-list">
+        <li>
+          <b>Első alkalommal</b> a launcher feliratkozik a teljes Steam kollekcióra
+          (3814595736), kivárja a letöltést, engedélyezi a modokat, majd bemásolja
+          a modpack config fájlját a játékba.
+        </li>
+        <li>
+          <b>A játék nem indul el magától:</b> a mód átvált, utána a JÁTÉK INDÍTÁSA
+          gombra kattintva indul a főmenübe.
+        </li>
+        <li>
+          <b>Visszaváltás:</b> a MULTIPLAYER gombbal minden visszaáll az End of The
+          Living szerver beállításaira.
+        </li>
+      </ul>
+      <label class="field checkbox-row">
+        <input id="blackoutWarnHide" type="checkbox" />
+        <span>Ne mutasd többet ezt a figyelmeztetést</span>
+      </label>
+      <div class="modal-actions">
+        <button id="btnBlackoutOk" class="primary-btn" type="button">ÉRTETTEM</button>
       </div>
     </div>
   </div>

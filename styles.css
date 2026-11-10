@@ -2226,3 +2226,105 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
   font-size: 12px;
   color: var(--muted);
 }
+
+/* =====================================================================
+   JÁTÉKMÓD VÁLTÓ (SINGLE-PLAYER / MULTIPLAYER)
+   ===================================================================== */
+.mode-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 11px 16px;
+  border: 1px solid rgba(147, 207, 74, 0.45);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(147, 207, 74, 0.14), rgba(0, 0, 0, 0.2));
+  color: #e8f2dd;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2.4px;
+  cursor: pointer;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  transition: background 0.18s, border-color 0.18s, transform 0.12s;
+}
+.mode-btn:hover {
+  background: linear-gradient(180deg, rgba(147, 207, 74, 0.24), rgba(0, 0, 0, 0.24));
+  border-color: rgba(163, 230, 53, 0.7);
+}
+.mode-btn:active { transform: translateY(1px); }
+.mode-btn .mode-icon { font-size: 15px; opacity: 0.9; }
+
+body.mode-blackout .mode-btn {
+  border-color: rgba(160, 196, 255, 0.55);
+  background: linear-gradient(180deg, rgba(120, 160, 255, 0.18), rgba(0, 0, 0, 0.3));
+  color: #e9f1ff;
+}
+body.mode-blackout .mode-btn:hover {
+  border-color: rgba(190, 214, 255, 0.85);
+  background: linear-gradient(180deg, rgba(120, 160, 255, 0.28), rgba(0, 0, 0, 0.34));
+}
+
+/* =====================================================================
+   BLACKOUT PROTOCOL – NEW ERA (egyjátékos mód)
+   A háttér: assets/bg-blackout.jpg (vagy .png). Ha a kép még nincs a
+   mappában, a gradiens ad éjszakai alaphangulatot.
+   ===================================================================== */
+body.mode-blackout {
+  --panel: rgba(10, 17, 28, 0.9);
+  --panel-2: rgba(6, 11, 20, 0.94);
+  --rust: #1d3f6d;
+  --rust-hot: #3f74b8;
+  --brass: #9fb6d8;
+  --accent: #7fb3ff;
+  --accent-strong: #a9ccff;
+  background: #05070d;
+}
+
+body.mode-blackout .bg-layer {
+  background-color: #05070d;
+  background-image:
+    url('assets/bg-blackout.jpg'),
+    url('assets/bg-blackout.png'),
+    radial-gradient(120% 85% at 50% 0%, rgba(46, 86, 148, 0.42) 0%, rgba(8, 14, 26, 0.92) 58%),
+    linear-gradient(180deg, #070b14 0%, #04060b 100%);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  filter: saturate(1.06) contrast(1.04);
+}
+
+body.mode-blackout .bg-glow {
+  background: radial-gradient(34% 28% at 50% 6%, rgba(130, 176, 255, 0.2) 0%, rgba(50, 84, 150, 0.08) 46%, transparent 76%);
+  animation: none;
+}
+
+body.mode-blackout .hero-title {
+  color: #f4f7fd;
+  text-shadow:
+    0 3px 0 #101826,
+    0 5px 2px rgba(0, 0, 0, 0.85),
+    0 12px 34px rgba(0, 0, 0, 0.95),
+    0 0 54px rgba(90, 140, 255, 0.25);
+}
+body.mode-blackout .hero-title .of {
+  color: #eef4ff;
+  border-color: rgba(238, 244, 255, 0.65);
+}
+body.mode-blackout .hero-sub {
+  font-size: 26px;
+  letter-spacing: 1.6px;
+  color: #cf2b1d;
+  text-shadow:
+    0 0 26px rgba(200, 30, 20, 0.62),
+    0 3px 0 rgba(40, 0, 0, 0.9),
+    0 6px 18px rgba(0, 0, 0, 0.95);
+}
+body.mode-blackout .hero-phase { color: #dfe8f7; }
+body.mode-blackout .panel { border-color: rgba(120, 160, 220, 0.34); }
+body.mode-blackout .server-name { color: #eaf1fb; }
+body.mode-blackout .server-status .status-text { color: #a9ccff; }
+body.mode-blackout .blackout-modal h2 { color: #e7efff; }
+body.mode-blackout .blackout-modal .warn-list b { color: #a9ccff; }

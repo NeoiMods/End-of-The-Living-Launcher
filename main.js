@@ -35,6 +35,7 @@ const pzo = require('./src/pzo');
 const mods = require('./src/mods');
 const discord = require('./src/discord');
 const crash = require('./src/crash');
+const blackout = require('./src/blackout');
 
 // A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
 // A GitHub projektben át lett állítva erre a repo-ra:
@@ -62,7 +63,10 @@ function progress(payload) {
 }
 
 function status() {
-  return getEnvironment(cfg, { userDataDir: app.getPath('userData') });
+  return {
+    ...getEnvironment(cfg, { userDataDir: app.getPath('userData') }),
+    blackout: blackout.summary(cfg),
+  };
 }
 
 function reportError(err) {
@@ -908,15 +912,109 @@ ipcMain.handle('shortcut:create', async () => {
   return res || { ok: false };
 });
 
+// ---- Blackout: egyjátékos modpack --------------------------------------
+
+// A modpack telepítése a szerver kollekcióval azonos úton megy (feliratkozás,
+// letöltés, engedélyezés), utána a config fájl bemásolása következik.
+async function installBlackoutModpack() {
+  const res = await blackout.install({
+    cfg,
+    userDataDir: app.getPath('userData'),
+    onLog: log,
+    onProgress: progress,
+    openSubscribe: (missing) =>
+      subscribe.openWindow({
+        collectionId: blackout.collectionId(cfg),
+        missingIds: missing.map((m) => m.id),
+        onLog: () => {},
+      }),
+    openSteamClient: () => subscribe.openSteamClient(blackout.collectionId(cfg)),
+  });
+
+  const prev = (cfg && cfg.blackout) || {};
+  cfg = {
+    ...cfg,
+    blackout: {
+      ...prev,
+      collectionId: blackout.collectionId(cfg),
+      collection: res.collection,
+      enabledIds: res.enabledIds,
+      unresolved: res.unresolved,
+      configAt: res.config && res.config.ok ? Date.now() : prev.configAt || 0,
+    },
+  };
+  save();
+  return res;
+}
+
+ipcMain.handle('blackout:status', () => blackout.summary(cfg));
+
+ipcMain.handle('blackout:install', async () => {
+  if (setupRunning) return { ok: false, error: 'Már fut a telepítés.' };
+  setupRunning = true;
+  busy = true;
+  try {
+    log('— Blackout egyjátékos modpack telepítése —');
+    const res = await installBlackoutModpack();
+    progress(null);
+    return { ok: true, config: res.config };
+  } catch (err) {
+    progress(null);
+    return reportError(err);
+  } finally {
+    setupRunning = false;
+    busy = false;
+  }
+});
+
+// Csak a config fájl(ok) újrapróbálása (a modok már letöltve vannak).
+ipcMain.handle('blackout:config', async () => {
+  if (busy) return { ok: false, error: 'Már fut egy művelet.' };
+  busy = true;
+  try {
+    const res = await blackout.applyConfig({
+      cfg,
+      userDataDir: app.getPath('userData'),
+      onLog: log,
+      onProgress: progress,
+    });
+    if (res.installed.length) {
+      cfg = { ...cfg, blackout: { ...(cfg.blackout || {}), configAt: Date.now() } };
+      save();
+    }
+    progress(null);
+    return { ok: !!res.ok, config: res };
+  } catch (err) {
+    progress(null);
+    return reportError(err);
+  } finally {
+    busy = false;
+  }
+});
+
 // ---- indítás -----------------------------------------------------------
 
-ipcMain.handle('game:launch', async () => {
+ipcMain.handle('game:launch', async (event, mode) => {
+  const blackoutMode = String(mode || '').toLowerCase() === 'blackout';
   try {
     const gameDir = resolveGamePath(cfg);
     if (!gameDir) throw new Error('Project Zomboid nem található. Beállítások → Játék mappája.');
     const mem = system.getMemoryInfo(Number(cfg.jvmMaxMb) || 8192);
     if (!mem.enough) {
       log('⚠ ' + mem.message);
+    }
+    if (blackoutMode && setupRunning) {
+      return { ok: false, error: 'Már fut a telepítés – várd meg, míg végez.' };
+    }
+    // Egyjátékos módban a modpack minden indítás előtt rendbe kerül (a már
+    // letöltött modoknál ez pár másodperc), utána jön a játék.
+    if (blackoutMode) {
+      try {
+        log('— Blackout egyjátékos mód: a modpack előkészítése —');
+        await installBlackoutModpack();
+      } catch (err) {
+        log('! A modpack előkészítése nem sikerült teljesen: ' + err.message);
+      }
     }
     await launchGame({ gameDir, cfg, onLog: log });
     gameSeenRunning = true;

@@ -29,6 +29,15 @@ const DEFAULT_CONFIG = {
   zbInstaller: null,
   // Mod IDs recorded after a successful install, used by the status checklist.
   installedModIds: [],
+  // Blackout Protocol – New Era: külön egyjátékos modpack (saját kollekció).
+  // A szerver beállításaitól független, ezért külön blokkban tároljuk.
+  blackout: {
+    collectionId: '3814595736',
+    collection: null,
+    enabledIds: [],
+    unresolved: {},
+    configAt: 0,
+  },
   // GitHub repokereshetőség: a launcher probe-olja először, ha nincs beállítva.
   updateCheckUrl: '',
   // Események forrása: üresen a fenti repo /events.json fájlja.
@@ -106,6 +115,31 @@ function loadConfig(dir) {
       ? raw.installedModIds.map(String).filter(Boolean)
       : [],
     extraWorkshopIds: normalizeExtras(raw.extraWorkshopIds),
+    blackout: {
+      ...DEFAULT_CONFIG.blackout,
+      ...(raw.blackout && typeof raw.blackout === 'object' && !Array.isArray(raw.blackout)
+        ? raw.blackout
+        : {}),
+      collectionId: String(
+        (raw.blackout && raw.blackout.collectionId) || DEFAULT_CONFIG.blackout.collectionId
+      ).trim(),
+      collection:
+        raw.blackout && raw.blackout.collection && Array.isArray(raw.blackout.collection.items)
+          ? raw.blackout.collection
+          : null,
+      enabledIds:
+        raw.blackout && Array.isArray(raw.blackout.enabledIds)
+          ? raw.blackout.enabledIds.map(String).filter(Boolean)
+          : [],
+      unresolved:
+        raw.blackout &&
+        raw.blackout.unresolved &&
+        typeof raw.blackout.unresolved === 'object' &&
+        !Array.isArray(raw.blackout.unresolved)
+          ? raw.blackout.unresolved
+          : {},
+      configAt: Number(raw.blackout && raw.blackout.configAt) || 0,
+    },
     // A beépített webhookot csak akkor írja felül, ha valaki sajátot adott meg
     // (a korábbi mentett config.json üres értéke ne kapcsolja ki).
     discordWebhook: String(raw.discordWebhook || DEFAULT_CONFIG.discordWebhook || '').trim(),

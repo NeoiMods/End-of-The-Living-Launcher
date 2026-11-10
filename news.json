@@ -1,7 +1,22 @@
 {
-  "version": "0.8.4",
-  "updatedAt": "2026-11-08",
+  "version": "0.9.0",
+  "updatedAt": "2026-11-10",
   "items": [
+    {
+      "id": "0.9.0",
+      "version": "0.9.0",
+      "date": "2026-11-10",
+      "tag": "MEGA UPDATE",
+      "title": "0.9.0 – Blackout Protocol egyjátékos mód",
+      "text": "A launcher új gombbal bővült: a SINGLE-PLAYER gombbal átvált a Blackout Protocol – New Era egyjátékos modpackra (847 item, közel 800+ mod). A háttér, a feliratok és a modlista is átvált, a MULTIPLAYER gombbal pedig minden visszaáll az End of The Living szerverre. A játék egyik módban sem indul el magától: a JÁTÉK INDÍTÁSA gombra kell kattintani, és a Project Zomboid a főmenübe indul.",
+      "changes": [
+        "Új SINGLE-PLAYER / MULTIPLAYER gomb a JÁTÉK INDÍTÁSA fölött – a módváltás nem indítja el a játékot.",
+        "Blackout Protocol – New Era: a 3814595736-os Steam kollekció telepítése ugyanazzal a mechanikával, mint a szerver modpack (feliratkozás, letöltés, engedélyezés).",
+        "Az első belépésnél figyelmeztetés a méretről (847 item, 800+ mod, hosszú letöltés) „Ne mutasd többet” lehetőséggel.",
+        "A launcher bemásolja a modpackhoz tartozó config fájlt a játékba, amint az felkerül a repóba (Master/blackout/index.json).",
+        "Új háttér és Blackout feliratok egyjátékos módban; visszaváltáskor minden az End of The Living kinézetre áll vissza."
+      ]
+    },
     {
       "id": "0.8.4",
       "version": "0.8.4",
