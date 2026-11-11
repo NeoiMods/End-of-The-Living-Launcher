@@ -183,6 +183,26 @@ app.whenReady().then(() => {
     }, 1500);
   }
 
+  // Ugyanez a Blackout kollekcióra: így az ellenőrző lista akkor is valós
+  // számot mutat, ha a modokat még nem a launcherral töltötték le.
+  if (!cfg.blackout || !cfg.blackout.collection) {
+    setTimeout(async () => {
+      try {
+        const id = blackout.collectionId(cfg);
+        const col = await fetchCollection(id);
+        cfg = {
+          ...cfg,
+          blackout: { ...(cfg.blackout || {}), collectionId: id, collection: { ...col, fetchedAt: Date.now() } },
+        };
+        save();
+        log(`✓ Blackout kollekció betöltve: ${col.title} – ${col.items.length} mod.`);
+        if (win && !win.isDestroyed()) win.webContents.send('refresh');
+      } catch (err) {
+        log('! A Blackout kollekció háttérben nem tölthető be: ' + (err && err.message ? err.message : err));
+      }
+    }, 4000);
+  }
+
   // ---- Csomagfigyelő --------------------------------------------------
   // Ha a Beállításokban van csomagforrás, induláskor megnézi, került-e fel új
   // .zip / .exe a repóba, és ha igen, letölti és a helyére teszi.
@@ -755,10 +775,28 @@ ipcMain.handle('hu:remove', async () => {
 
 // ---- kollekció ----------------------------------------------------------
 
-ipcMain.handle('collection:refresh', async () => {
+// mode: 'blackout' esetén az egyjátékos modpack kollekcióját tölti le, mert
+// az ellenőrző listának a valós Blackout számokat kell mutatnia.
+ipcMain.handle('collection:refresh', async (e, mode) => {
+  const blackoutMode = String(mode || '').toLowerCase() === 'blackout';
   try {
-    progress({ label: 'Steam Workshop kollekció lekérése…' });
-    const col = await fetchCollection(cfg.collectionId);
+    const id = blackoutMode ? blackout.collectionId(cfg) : cfg.collectionId;
+    progress({ label: blackoutMode ? 'Blackout kollekció lekérése…' : 'Steam Workshop kollekció lekérése…' });
+    const col = await fetchCollection(id);
+    if (blackoutMode) {
+      cfg = {
+        ...cfg,
+        blackout: {
+          ...(cfg.blackout || {}),
+          collectionId: id,
+          collection: { ...col, fetchedAt: Date.now() },
+        },
+      };
+      save();
+      log(`✓ Blackout kollekció frissítve: ${col.title} – ${col.items.length} mod.`);
+      progress(null);
+      return { ok: true, blackout: true, collection: cfg.blackout.collection };
+    }
     cfg = { ...cfg, collection: { ...col, fetchedAt: Date.now() } };
     save();
     log(`✓ Kollekció frissítve: ${col.title} – ${col.items.length} mod.`);
@@ -772,8 +810,26 @@ ipcMain.handle('collection:refresh', async () => {
 
 // ---- feliratkozás ------------------------------------------------------
 
-ipcMain.handle('subscribe:open', async () => {
+ipcMain.handle('subscribe:open', async (e, mode) => {
+  const blackoutMode = String(mode || '').toLowerCase() === 'blackout';
   try {
+    if (blackoutMode) {
+      const col = cfg.blackout && cfg.blackout.collection;
+      if (!col || !Array.isArray(col.items)) {
+        throw new Error('Előbb frissítsd a Blackout kollekciót (Kollekció frissítése).');
+      }
+      const st = status();
+      const libs = st.steamPath ? require('./src/paths').parseLibraryPaths(st.steamPath) : [];
+      const missing = (col.items || []).filter(
+        (it) => !require('./src/workshop').itemDir(libs, it.id)
+      );
+      subscribe.openWindow({
+        collectionId: blackout.collectionId(cfg),
+        missingIds: missing.map((m) => m.id),
+        onLog: log,
+      });
+      return { ok: true };
+    }
     if (!cfg.collection || !Array.isArray(cfg.collection.items)) {
       throw new Error('Előbb frissítsd a kollekciót (Modok telepítése).');
     }
@@ -799,9 +855,11 @@ ipcMain.handle('subscribe:open', async () => {
   }
 });
 
-ipcMain.handle('subscribe:steam', async () => {
+ipcMain.handle('subscribe:steam', async (e, mode) => {
+  const blackoutMode = String(mode || '').toLowerCase() === 'blackout';
   try {
-    await subscribe.openSteamClient(cfg.collectionId);
+    const id = blackoutMode ? blackout.collectionId(cfg) : cfg.collectionId;
+    await subscribe.openSteamClient(id);
     log('A kollekció megnyitva a Steam kliensben – nyomd meg a „Subscribe to all", majd az „Add" gombot.');
     return { ok: true };
   } catch (err) {
@@ -1005,17 +1063,21 @@ ipcMain.handle('game:launch', async (event, mode) => {
     if (!mem.enough) {
       log('⚠ ' + mem.message);
     }
-    if (blackoutMode && setupRunning) {
-      return { ok: false, error: 'Már fut a telepítés – várd meg, míg végez.' };
-    }
-    // Egyjátékos módban a modpack minden indítás előtt rendbe kerül (a már
-    // letöltött modoknál ez pár másodperc), utána jön a játék.
     if (blackoutMode) {
+      if (setupRunning) return { ok: false, error: 'Már fut a telepítés – várd meg, míg végez.' };
+      // A telepítés jelzője a dupla kattintás ellen véd: két párhuzamos
+      // config-másolás egymást írná felül.
+      setupRunning = true;
+      busy = true;
       try {
         log('— Blackout egyjátékos mód: a modpack előkészítése —');
         await installBlackoutModpack();
       } catch (err) {
         log('! A modpack előkészítése nem sikerült teljesen: ' + err.message);
+      } finally {
+        setupRunning = false;
+        busy = false;
+        progress(null);
       }
     }
     await launchGame({ gameDir, cfg, onLog: log });

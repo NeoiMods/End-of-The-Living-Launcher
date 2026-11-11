@@ -7,8 +7,9 @@ contextBridge.exposeInMainWorld('api', {
   pickDirectory: () => ipcRenderer.invoke('dialog:pickDirectory'),
   openExternal: (url) => ipcRenderer.invoke('shell:openExternal', url),
 
-  refreshCollection: () => ipcRenderer.invoke('collection:refresh'),
-  openSubscribe: () => ipcRenderer.invoke('subscribe:open'),
+  // mode: 'eotl' (szerver kollekció) vagy 'blackout' (egyjátékos modpack)
+  refreshCollection: (mode) => ipcRenderer.invoke('collection:refresh', mode),
+  openSubscribe: (mode) => ipcRenderer.invoke('subscribe:open', mode),
   openInSteam: () => ipcRenderer.invoke('subscribe:steam'),
 
   getServerStatus: () => ipcRenderer.invoke('server:status'),

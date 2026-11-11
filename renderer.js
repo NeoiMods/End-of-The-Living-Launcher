@@ -82,6 +82,9 @@ function render(st) {
   const boTotal = Number(bo && bo.total) || 0;
   const boGot = Number(bo && bo.downloaded) || 0;
   const boEnabled = Number(bo && bo.enabledCount) || 0;
+  const boListEnabled = Number(bo && bo.listEnabled) || 0;
+  const boListMissing = Number(bo && bo.listMissing) || 0;
+  const boConfigMissing = (bo && Array.isArray(bo.configMissing) && bo.configMissing) || [];
   if (gameMode === 'blackout') {
     const total = Number(bo && bo.total) || 0;
     const done = Number(bo && bo.downloaded) || 0;
@@ -171,17 +174,21 @@ function render(st) {
             label: 'Blackout kollekció',
             detail: boTotal
               ? `${boGot}/${boTotal} mod letöltve a Blackout kollekcióból`
-              : 'Még nincs letöltve – kattints a MODOK TELEPÍTÉSE gombra',
+              : 'A kollekció még nincs betöltve – nyomd meg a „Kollekció frissítése” gombot',
           },
           {
-            ok: boEnabled ? true : null,
+            ok: boListEnabled ? boListMissing === 0 : null,
+            warn: boListEnabled > 0 && boListMissing > 0,
             label: 'Blackout modok engedélyezve',
-            detail: boEnabled
-              ? `${boEnabled} mod aktív a(z) „${bo.configProfile || 'Blackout Protocol'}” profilban`
-              : 'A modok még nincsenek engedélyezve',
+            detail: !boListEnabled
+              ? 'A modok még nincsenek engedélyezve – a launcher a játék indításakor állítja be őket'
+              : boListMissing
+                ? `${boListEnabled} mod aktív a default.txt-ben, ${boListMissing} hiányzik a(z) „${bo.configProfile || 'Blackout Protocol'}” profilból – a játék indításakor pótolja`
+                : `${boListEnabled} mod aktív a(z) „${bo.configProfile || 'Blackout Protocol'}” profil szerint`,
           },
           {
             ok: bo && bo.configInstalled ? true : null,
+            warn: boConfigMissing.length > 0,
             label: 'Modpack config',
             detail: bo && bo.configInstalled
               ? `pz_modlist_settings.cfg a játékban – ${bo.configEnabled} mod engedélyezve, sandbox preset és billentyűk bemásolva`
@@ -529,6 +536,11 @@ function blackoutConfigDetail(bo) {
   if (bo && bo.configBundled === false) {
     return 'A launcherből hiányzik a config csomag – telepítsd újra a launchert';
   }
+  const missing = (bo && Array.isArray(bo.configMissing) && bo.configMissing) || [];
+  if (missing.length) {
+    const shown = missing.slice(0, 3).join(', ');
+    return `Hiányzik a configból: ${shown}${missing.length > 3 ? '…' : ''} – a launcher a játék indításakor pótolja`;
+  }
   return 'A JÁTÉK INDÍTÁSA előtt a launcher bemásolja a modpack config csomagját a játékba';
 }
 
@@ -812,8 +824,8 @@ function wireEvents() {
     const el = $(id);
     if (el) el.addEventListener('click', () => runBusy(fn, { reload }));
   };
-  mini('#btnRefreshCollection', () => bridge.refreshCollection());
-  mini('#btnSubscribe', () => bridge.openSubscribe(), false);
+  mini('#btnRefreshCollection', () => bridge.refreshCollection(gameMode));
+  mini('#btnSubscribe', () => bridge.openSubscribe(gameMode), false);
   mini('#btnZombieBuddy', () => bridge.installZombieBuddy());
   mini('#btnModsFolder', () => bridge.openModsFolder(), false);
 
@@ -1876,10 +1888,15 @@ function sampleStatus() {
       total: 847,
       downloaded: 847,
       enabledCount: 807,
+      listEnabled: 807,
+      listMissing: 0,
+      listExtra: 0,
       configBundled: true,
       configInstalled: true,
       configProfile: 'Blackout Protocol',
       configEnabled: 807,
+      configMissing: [],
+      configFiles: 10,
       configAt: Date.now(),
     },
     heapMb: 8192,

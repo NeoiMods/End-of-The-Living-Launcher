@@ -16,6 +16,7 @@ const fs = require('fs');
 const path = require('path');
 
 const launch = require('./launch');
+const modlist = require('./modlist');
 const paths = require('./paths');
 const setup = require('./setup');
 const workshop = require('./workshop');
@@ -27,6 +28,22 @@ const PROFILE_NAME = 'Blackout Protocol';
 const PROFILE_FILE = 'pz_modlist_settings.cfg';
 const CONFIG_ROOT = path.join(__dirname, '..', 'assets', 'blackout');
 const CONFIG_TREE = path.join(CONFIG_ROOT, 'Zomboid');
+
+// A csomag azon fájljai, amiknek a játék Zomboid mappájában is meg kell lenniük
+// ahhoz, hogy a modpack úgy induljon, ahogy a készítője beállította. Ha ezek
+// közül bármelyik hiányzik, az ellenőrző lista nem mondhatja készre a configot.
+const CONFIG_SENTINELS = [
+  'options.ini',
+  'sounds.ini',
+  'PZO_mod_compat.txt',
+  'Lua/pz_modlist_settings.cfg',
+  'Lua/keys.ini',
+  'Lua/keysB42.ini',
+  'Lua/modOptions.ini',
+  'Sandbox Presets/NeoiMods.cfg',
+  'Sandbox Presets/NeoiMods Ajanlott.cfg',
+  'Server/NeoiMods.ini',
+];
 
 // --------------------------------------------------------------- alap adatok
 
@@ -67,16 +84,37 @@ function profileOf(zomboidDir) {
   return { file, found: !!line, mods, mtime };
 }
 
-// A config csomag állapota a játék mappájában (az ellenőrző listához).
+// A config csomag állapota a játék mappájában (az ellenőrző listához). A profil
+// megléte önmagában nem elég: a preset, a billentyűk és az ini-k is kellenek.
 function configStatus() {
-  const st = profileOf(paths.zomboidDir());
+  const zomboidDir = paths.zomboidDir();
+  const st = profileOf(zomboidDir);
+  const wanted = CONFIG_SENTINELS.filter((rel) => fs.existsSync(path.join(CONFIG_TREE, rel)));
+  const missing = wanted.filter((rel) => !fs.existsSync(path.join(zomboidDir, rel)));
   return {
     bundled: fs.existsSync(CONFIG_TREE),
-    installed: st.found,
+    found: st.found,
+    installed: st.found && missing.length === 0,
     profile: PROFILE_NAME,
     enabled: st.mods.length,
+    mods: st.mods,
     configAt: st.found ? st.mtime : 0,
     file: st.file,
+    files: wanted.length,
+    missing,
+  };
+}
+
+// Mi van tényleg engedélyezve? A játék a mods/default.txt listát tölti be, a
+// pz_modlist_settings.cfg profil csak sablon – ezért a kettőt összevetjük.
+function listCounts(zomboidDir, profileMods) {
+  const enabled = modlist.listEnabledIds(modlist.readModList(zomboidDir));
+  const have = new Set(enabled.map((id) => String(id).toLowerCase()));
+  const wanted = new Set((profileMods || []).map((id) => String(id).toLowerCase()));
+  return {
+    enabled: enabled.length,
+    missing: (profileMods || []).filter((id) => !have.has(String(id).toLowerCase())).length,
+    extra: enabled.filter((id) => !wanted.has(String(id).toLowerCase())).length,
   };
 }
 
@@ -86,6 +124,7 @@ function summary(cfg) {
   const items = b.collection && Array.isArray(b.collection.items) ? b.collection.items : [];
   const libs = steamLibs();
   const st = configStatus();
+  const list = st.found ? listCounts(paths.zomboidDir(), st.mods) : { enabled: 0, missing: 0, extra: 0 };
   return {
     name: NAME,
     collectionId: collectionId(cfg),
@@ -94,12 +133,17 @@ function summary(cfg) {
     collection: items.length ? b.collection : null,
     total: items.length,
     downloaded: items.length ? workshop.classify(libs, items).present.size : 0,
-    enabledCount: st.installed ? st.enabled : Array.isArray(b.enabledIds) ? b.enabledIds.length : 0,
+    enabledCount: list.enabled || (st.installed ? st.enabled : Array.isArray(b.enabledIds) ? b.enabledIds.length : 0),
+    listEnabled: list.enabled,
+    listMissing: list.missing,
+    listExtra: list.extra,
     unresolved: b.unresolved && typeof b.unresolved === 'object' ? Object.keys(b.unresolved).length : 0,
     configBundled: st.bundled,
     configInstalled: st.installed,
     configProfile: st.profile,
     configEnabled: st.enabled,
+    configMissing: st.missing,
+    configFiles: st.files,
     configAt: st.configAt,
     configFile: st.file,
   };
@@ -242,17 +286,19 @@ function applyConfig({ onLog = () => {}, onProgress = () => {} } = {}) {
     const dest = path.join(zomboidDir, rel);
     try {
       fs.mkdirSync(path.dirname(dest), { recursive: true });
+      const srcBuf = fs.readFileSync(src);
       if (fs.existsSync(dest)) {
-        const have = fs.statSync(dest);
-        const want = fs.statSync(src);
-        if (have.size !== want.size) {
+        // Tartalom alapján döntünk: azonos méretű, de más tartalmú fájlt is
+        // elmentünk, különben a játékos beállítása csendben elveszne.
+        const haveBuf = fs.readFileSync(dest);
+        if (!haveBuf.equals(srcBuf)) {
           const backup = path.join(backupDir, rel);
           fs.mkdirSync(path.dirname(backup), { recursive: true });
-          fs.copyFileSync(dest, backup);
+          fs.writeFileSync(backup, haveBuf);
           backedUp++;
         }
       }
-      fs.copyFileSync(src, dest);
+      fs.writeFileSync(dest, srcBuf);
       copied++;
     } catch (err) {
       failed.push({ file: rel, error: err.message });
@@ -273,13 +319,16 @@ function applyConfig({ onLog = () => {}, onProgress = () => {} } = {}) {
     onLog(`✗ A ${PROFILE_FILE} nem tartalmazza a(z) „${PROFILE_NAME}” profilt.`);
   }
 
+  const after = configStatus();
   return {
-    ok: profile.found && failed.length === 0,
+    ok: after.installed && failed.length === 0,
     copied,
     backedUp: backedUp ? backupDir : null,
     failed,
     profile: PROFILE_NAME,
     enabled: profile.mods.length,
+    installed: after.installed,
+    missing: after.missing,
     listChanged: list.changed,
   };
 }
@@ -290,6 +339,7 @@ module.exports = {
   WORKSHOP_URL,
   PROFILE_NAME,
   CONFIG_ROOT,
+  CONFIG_SENTINELS,
   collectionId,
   summary,
   install,
