@@ -1,5 +1,5 @@
 {
-  "version": "0.9.1",
+  "version": "0.9.2",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -703,8 +703,8 @@
     },
     {
       "path": "main.js",
-      "size": 37437,
-      "sha256": "d9950fe667c34eeb427b8f3800ddc1b448c3e590eb1b50224301e3b4e87fe5b9"
+      "size": 40028,
+      "sha256": "3aec2ddea2cb46e376ef4e189045e959e882a23af243c0821b618d3ad206fbd6"
     },
     {
       "path": "news.json",
@@ -714,17 +714,17 @@
     {
       "path": "package.json",
       "size": 864,
-      "sha256": "9146a09670a3f936e3daef2c2da8447e6cf0d6a0b37fb4c4dfa32eabd2ed0b6c"
+      "sha256": "bc3ba0005688a8a165fbe919ead6ebcf13ec83d8e98236c8c425f2504a9806ae"
     },
     {
       "path": "preload.js",
-      "size": 3638,
-      "sha256": "81eea7da9702c5c3354dfc7c9a18144f82449ab4be0b1db9aa5e8a51a513198e"
+      "size": 3736,
+      "sha256": "2cde4ab3e5a926dab2ecd09b4d1ce1ed22a3b1c60b2f65d658d01a56b55090f1"
     },
     {
       "path": "renderer.js",
-      "size": 70770,
-      "sha256": "16c722429648454aa2c8b3b6b767770f3a04a2d166b75b7ba93336706e336815"
+      "size": 71851,
+      "sha256": "2af16dd15a5601859ebffee57d105449a5bd8cdf4425be2cf1d9970a9a1856eb"
     },
     {
       "path": "src/a2s.js",
@@ -738,8 +738,8 @@
     },
     {
       "path": "src/blackout.js",
-      "size": 9975,
-      "sha256": "041df2ea322dbc027acdaf8cad2d335269017bdd1880d437ec83759ad17c98ad"
+      "size": 12203,
+      "sha256": "14b51974d1f550a31e29736389f4a92c41ca84110648a17535fe160c18ef1eda"
     },
     {
       "path": "src/collection.js",
