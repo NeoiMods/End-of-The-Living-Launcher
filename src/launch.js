@@ -54,7 +54,7 @@ function isGameRunning() {
 // A JVM heap (-Xmx) beállítása a játék saját launcher JSON-jában is, hogy a
 // Steam-ből indított játék is ugyanannyi memóriát kapjon. Ha a fájl írásvédett
 // (Program Files), csak figyelmeztetünk – a parancssori -Xmx akkor is él.
-function applyHeapToLauncherJson(gameDir, heapMb) {
+function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
   const file = path.join(gameDir, LAUNCHER_JSON);
   let raw;
   try {
@@ -70,17 +70,20 @@ function applyHeapToLauncherJson(gameDir, heapMb) {
     return { changed: false, reason: 'A ProjectZomboid64.json nem érvényes JSON.' };
   }
 
-  const wanted = `-Xmx${heapMb}m`;
+  const wanted = [`-Xms${heapMb}m`, `-Xmx${heapMb}m`].concat(zgc ? ['-XX:+UseZGC'] : []);
   const vmArgs = Array.isArray(data.vmArgs) ? data.vmArgs : [];
-  const filtered = vmArgs.filter((a) => typeof a === 'string' && !/^-Xmx/i.test(a));
-  const nextVmArgs = [...filtered, wanted];
+  const filtered = vmArgs.filter(
+    (a) =>
+      typeof a === 'string' &&
+      !/^-Xm[sx]/i.test(a) &&
+      !(zgc && /^-XX:\+Use(G1GC|ParallelGC|SerialGC|ConcMarkSweepGC|ShenandoahGC)/i.test(a))
+  );
+  const nextVmArgs = [...filtered, ...wanted];
 
-  if (
+  const same =
     filtered.length === vmArgs.length &&
-    vmArgs.some((a) => typeof a === 'string' && a.toLowerCase() === wanted.toLowerCase())
-  ) {
-    return { changed: false, file, heapMb };
-  }
+    wanted.every((w) => vmArgs.some((a) => typeof a === 'string' && a.toLowerCase() === w.toLowerCase()));
+  if (same) return { changed: false, file, heapMb };
 
   data.vmArgs = nextVmArgs;
   try {
@@ -99,7 +102,10 @@ function applyHeapToLauncherJson(gameDir, heapMb) {
 
 // A játék Windowson a ProjectZomboid64.bat-on keresztül indul, ezért a valódi
 // memóriabeállítás ott van. Ha a fájl írható, ugyanazt a -Xmx értéket írjuk be.
-function applyHeapToLauncherBat(gameDir, heapMb) {
+// A B42 a .bat-on keresztül indul, ezért a JVM beállítások ott élnek. Az
+// egyjátékos (Blackout) indításnál a modpackhoz ajánlott beállítást írjuk be:
+// -Xms = -Xmx (előre lefoglalt heap) és ZGC (nincs hosszú GC-megállás).
+function applyHeapToLauncherBat(gameDir, heapMb, { zgc = false } = {}) {
   const file = path.join(gameDir, LAUNCHER_BAT);
   let raw;
   try {
@@ -107,15 +113,31 @@ function applyHeapToLauncherBat(gameDir, heapMb) {
   } catch {
     return { found: false, changed: false };
   }
-  const wanted = `-Xmx${heapMb}m`;
-  const re = /-Xmx\d+[mMgG]?/g;
-  if (!re.test(raw)) return { found: true, changed: false, file };
-  re.lastIndex = 0;
-  const next = raw.replace(re, wanted);
-  if (next === raw) return { found: true, changed: false, file, heapMb };
+
+  const xmx = `-Xmx${heapMb}m`;
+  const xms = `-Xms${heapMb}m`;
+  let next = raw;
+
+  // -Xmx cseréje (ha nincs, a java hívás elé tesszük).
+  if (/-Xmx\d+[mMgG]?/.test(next)) next = next.replace(/-Xmx\d+[mMgG]?/g, xmx);
+  else next = next.replace(/(java(?:\.exe)?\s)/i, `$1${xmx} `);
+
+  // -Xms: ha van, cseréljük; ha nincs, az -Xmx elé kerül.
+  if (/-Xms\d+[mMgG]?/.test(next)) next = next.replace(/-Xms\d+[mMgG]?/g, xms);
+  else next = next.replace(/-Xmx/g, `${xms} -Xmx`);
+
+  if (zgc) {
+    // Egyszerre csak egy GC lehet bekapcsolva: a régit kivesszük.
+    next = next.replace(/-XX:\+Use(G1GC|ParallelGC|SerialGC|ConcMarkSweepGC|ShenandoahGC)/g, '');
+    if (!/-XX:\+UseZGC/.test(next)) next = next.replace(/-Xmx\d+[mMgG]?/g, (m) => `${m} -XX:+UseZGC`);
+    next = next.replace(/[ \t]{2,}/g, ' ');
+  }
+
+  const args = [xms, xmx].concat(zgc ? ['-XX:+UseZGC'] : []).join(' ');
+  if (next === raw) return { found: true, changed: false, file, heapMb, args };
   try {
     fs.writeFileSync(file, next, 'utf8');
-    return { found: true, changed: true, file, heapMb };
+    return { found: true, changed: true, file, heapMb, args };
   } catch (err) {
     return {
       found: true,
@@ -151,7 +173,7 @@ function buildArgs({ useAgent, heapMb }) {
   return jvmArgs;
 }
 
-async function launchGame({ gameDir, cfg, onLog }) {
+async function launchGame({ gameDir, cfg, onLog, zgc = false }) {
   const exe = path.join(gameDir, GAME_EXE);
   if (!fs.existsSync(exe)) throw new Error(`Nem található: ${exe}`);
 
@@ -159,14 +181,15 @@ async function launchGame({ gameDir, cfg, onLog }) {
   const st = agentStatus(gameDir);
   const useAgent = st.present && !st.configured;
 
-  const heap = applyHeapToLauncherJson(gameDir, heapMb);
-  if (heap.changed) onLog(`Memória beállítva a játék launcherében: -Xmx${heapMb}m`);
+  const heap = applyHeapToLauncherJson(gameDir, heapMb, { zgc });
+  if (heap.changed) onLog(`Memória beállítva a játék launcherében: -Xms${heapMb}m -Xmx${heapMb}m${zgc ? ' -XX:+UseZGC' : ''}`);
   else if (heap.reason) onLog('! ' + heap.reason);
 
-  // A B42 a .bat-ot indítja, nem a JSON-t: ott is be kell állítani a heapet.
-  const bat = applyHeapToLauncherBat(gameDir, heapMb);
-  if (bat.changed) onLog(`Memória beállítva a ${LAUNCHER_BAT} fájlban: -Xmx${heapMb}m`);
+  // A B42 a .bat-ot indítja, nem a JSON-t: ott is be kell állítani a JVM-et.
+  const bat = applyHeapToLauncherBat(gameDir, heapMb, { zgc });
+  if (bat.changed) onLog(`Memória beállítva a ${LAUNCHER_BAT} fájlban: ${bat.args}`);
   else if (bat.reason) onLog('! ' + bat.reason);
+  else if (bat.found && zgc) onLog(`• A ${LAUNCHER_BAT} már a modpackhoz ajánlott beállítással fut: ${bat.args}`);
 
   const args = buildArgs({ useAgent, heapMb });
 

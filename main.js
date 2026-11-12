@@ -1085,7 +1085,8 @@ ipcMain.handle('game:launch', async (event, mode) => {
         progress(null);
       }
     }
-    await launchGame({ gameDir, cfg, onLog: log });
+    // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).
+    await launchGame({ gameDir, cfg, onLog: log, zgc: blackoutMode });
     gameSeenRunning = true;
     return { ok: true };
   } catch (err) {

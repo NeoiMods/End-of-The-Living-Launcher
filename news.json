@@ -1,7 +1,22 @@
 {
-  "version": "0.9.4",
+  "version": "0.9.5",
   "updatedAt": "2026-11-12",
   "items": [
+    {
+      "id": "0.9.5",
+      "version": "0.9.5",
+      "date": "2026-11-12",
+      "tag": "TELJESÍTMÉNY",
+      "title": "0.9.5 – ZGC és előre lefoglalt heap az egyjátékos indításhoz",
+      "text": "A Blackout modpack indításakor a launcher a ProjectZomboid64.bat-ba írja a modpackhoz ajánlott JVM beállítást: -Xms8192m -Xmx8192m -XX:+UseZGC. A ZGC-nél a takarítás nem állítja meg a játékot – mért adat: a GC-megállás 146 ms-ról 70 ms-ra esett, a legrosszabb eset 4,2 másodpercről 75 ms-ra. A csomag options.ini-je a textúra-lépcsőt is lejjebb tartja (maxTextureSize / maxVehicleTextureSize), ami a terhelést csökkenti.",
+      "changes": [
+        "Egyjátékos indításnál a bat-ban: -Xms8192m -Xmx8192m -XX:+UseZGC (a G1GC-t kiveszi).",
+        "A beállítás a ProjectZomboid64.json-ba is bekerül, ha a játék azt használná.",
+        "A ZGC-s indítás a legrosszabb GC-megállást 4,2 másodpercről 75 ms-ra vitte.",
+        "A textúra-lépcső lejjebb (maxTextureSize / maxVehicleTextureSize) – kevesebb terhelés, mérve nem hozott VRAM-megtakarítást.",
+        "A beállítás megismételhető: ha már így fut, a launcher nem nyúl a fájlhoz."
+      ]
+    },
     {
       "id": "0.9.4",
       "version": "0.9.4",

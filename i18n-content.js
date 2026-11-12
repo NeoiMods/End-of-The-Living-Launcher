@@ -12,6 +12,22 @@
     '– tétlen': '– idle',
     'Widget betöltése…': 'Loading widget…',
 
+    // ---- 0.9.5 ----
+    '0.9.5 – ZGC és előre lefoglalt heap az egyjátékos indításhoz':
+      '0.9.5 – ZGC and pre-allocated heap for the single-player launch',
+    'A Blackout modpack indításakor a launcher a ProjectZomboid64.bat-ba írja a modpackhoz ajánlott JVM beállítást: -Xms8192m -Xmx8192m -XX:+UseZGC. A ZGC-nél a takarítás nem állítja meg a játékot – mért adat: a GC-megállás 146 ms-ról 70 ms-ra esett, a legrosszabb eset 4,2 másodpercről 75 ms-ra. A csomag options.ini-je a textúra-lépcsőt is lejjebb tartja (maxTextureSize / maxVehicleTextureSize), ami a terhelést csökkenti.':
+      'When the Blackout modpack launches, the launcher writes the recommended JVM settings into ProjectZomboid64.bat: -Xms8192m -Xmx8192m -XX:+UseZGC. With ZGC the collection no longer stops the game – measured: GC pause dropped from 146 ms to 70 ms and the worst case from 4.2 seconds to 75 ms. The pack’s options.ini also keeps the texture step lower (maxTextureSize / maxVehicleTextureSize), which reduces load.',
+    'Egyjátékos indításnál a bat-ban: -Xms8192m -Xmx8192m -XX:+UseZGC (a G1GC-t kiveszi).':
+      'On single-player launch the bat gets -Xms8192m -Xmx8192m -XX:+UseZGC (G1GC is removed).',
+    'A beállítás a ProjectZomboid64.json-ba is bekerül, ha a játék azt használná.':
+      'The settings also go into ProjectZomboid64.json in case the game uses it.',
+    'A ZGC-s indítás a legrosszabb GC-megállást 4,2 másodpercről 75 ms-ra vitte.':
+      'The ZGC launch took the worst GC pause from 4.2 seconds to 75 ms.',
+    'A textúra-lépcső lejjebb (maxTextureSize / maxVehicleTextureSize) – kevesebb terhelés, mérve nem hozott VRAM-megtakarítást.':
+      'The texture step is lower (maxTextureSize / maxVehicleTextureSize) – less load, though measured it did not save VRAM.',
+    'A beállítás megismételhető: ha már így fut, a launcher nem nyúl a fájlhoz.':
+      'The change is repeatable: if it already runs this way the launcher leaves the file alone.',
+
     // ---- 0.9.4 ----
     '0.9.4 – Minden szöveg a választott nyelven, saját szerver widgettel':
       '0.9.4 – every text in your language, with your own server widget',
