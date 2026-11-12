@@ -1,5 +1,5 @@
 {
-  "version": "0.9.5",
+  "version": "0.9.6",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -728,8 +728,8 @@
     },
     {
       "path": "i18n.js",
-      "size": 33342,
-      "sha256": "0c3abc2c1f5c7ac342c5cd74291f8219c4e59e3ecc06e1562c0b0b97073c369c"
+      "size": 34073,
+      "sha256": "f9643fe28ed915a2fc58a403cdea338d4632954ef23be3766b55764111636312"
     },
     {
       "path": "index.html",
@@ -749,7 +749,7 @@
     {
       "path": "package.json",
       "size": 864,
-      "sha256": "7783db94a389dc55bd300368cdcf13ba59910058d50b6bb1aff766905685a8ef"
+      "sha256": "9039104202cdd73569acedb593c9e03c67adc7a20a45b5b025f597f7686721cd"
     },
     {
       "path": "preload.js",
