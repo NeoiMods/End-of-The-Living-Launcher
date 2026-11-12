@@ -34,6 +34,7 @@
     'ESEMÉNY': 'EVENT',
     'ÚJDONSÁGOK': 'NEWS',
     'ESEMÉNYIG': 'UNTIL EVENT',
+    'ELTELT': 'ELAPSED',
     'törlés': 'clear',
     'élő widget': 'live widget',
     'Csatlakozás a Discordra': 'Join the Discord',
@@ -418,11 +419,31 @@
     return m ? { pre: m[1], body: m[2], post: m[3] } : { pre: '', body: value, post: '' };
   }
 
+  // A visszaszámláló mértékegységei egyetlen betűk (n / ó / p / mp): ezeket
+  // csak a saját helyükön fordítjuk, hogy máshol ne alakítsunk át véletlenül
+  // egybetűs szöveget.
+  const COUNTDOWN_UNITS = { n: 'd', 'ó': 'h', p: 'm', mp: 's' };
+
+  function countdownUnit(node) {
+    const el = node.parentElement;
+    if (!el || el.tagName !== 'I' || !el.parentElement) return null;
+    if (!el.parentElement.classList.contains('hc-num')) return null;
+    return el.parentElement;
+  }
+
   function translateTextNode(node) {
     if (node.__hu === undefined) node.__hu = node.nodeValue;
     const { pre, body, post } = splitPad(node.__hu);
     if (!body.trim()) return;
-    const out = lang === 'hu' ? body : translate(body);
+
+    const unitHost = countdownUnit(node);
+    let out;
+    if (unitHost) {
+      const key = body.trim().toLowerCase();
+      out = lang === 'hu' ? body : COUNTDOWN_UNITS[key] || body;
+    } else {
+      out = lang === 'hu' ? body : translate(body);
+    }
     if (node.nodeValue !== pre + out + post) node.nodeValue = pre + out + post;
   }
 
