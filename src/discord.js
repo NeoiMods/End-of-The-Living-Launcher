@@ -74,6 +74,8 @@ async function widget(guildId) {
   const conf = guildConfig(guildId);
   const raw = await getJson(`https://discord.com/api/guilds/${conf.id}/widget.json`);
   const members = Array.isArray(raw.members) ? raw.members : [];
+  // Nincs mesterséges vágás: a widget JSON minden bent lévő tagot hoz, a
+  // felület pedig görgethető, tehát nem kell 24-nél megállni.
   const online = members
     .filter((m) => m && m.status && m.status !== 'offline')
     .map((m) => ({
@@ -81,14 +83,17 @@ async function widget(guildId) {
       status: String(m.status || 'online'),
       avatar: m.avatar_url ? String(m.avatar_url) : '',
       game: m.game && m.game.name ? String(m.game.name) : '',
-    }))
-    .slice(0, 24);
+    }));
+  // A presence_count a szerver teljes online létszáma (a listánál nagyobb is
+  // lehet, a Discord a widgetben csak egy részüket adja át).
+  const presenceCount = Number(raw.presence_count);
   return {
     guildId: conf.id,
     widgetUrl: conf.embed,
     name: String(raw.name || 'Discord'),
     online,
     onlineCount: online.length,
+    presenceCount: Number.isFinite(presenceCount) && presenceCount > 0 ? presenceCount : online.length,
     invite: String(raw.instant_invite || conf.invite),
     channelUrl: conf.channelUrl,
   };

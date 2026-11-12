@@ -249,6 +249,9 @@
       'Enabled: {n} · Installed: {n} (workshop {n}, local {n}) · Enabled and present: {n} · Missing: {n} · Disabled: {n}'],
     ['Hiba', 'Error'],
 
+    // --- Discord widget létszám ---
+    ['+{n} további tag online', '+{n} more members online'],
+
     // --- szerver állapot / esemény / mod lista rövid üzenetek ---
     ['Nincs szerver cím beállítva.', 'No server address is set.'],
     ['A szerver címe nem oldható fel (DNS hiba).', 'The server address cannot be resolved (DNS error).'],

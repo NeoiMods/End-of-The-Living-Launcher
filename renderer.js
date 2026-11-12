@@ -963,17 +963,20 @@ function renderDiscord(data) {
 
   discordInvite = data.invite || DISCORD_INVITE;
   nameEl.textContent = data.name || 'Discord';
-  countEl.textContent = `${data.onlineCount || 0} online`;
-  $('#discordDot').classList.toggle('is-on', (data.onlineCount || 0) > 0);
-
   const members = Array.isArray(data.online) ? data.online : [];
+  // A létszám a szerver teljes online száma, a lista pedig görgethető, ezért
+  // nem vágjuk le 24 tagnál.
+  const onlineTotal = Number(data.presenceCount) || Number(data.onlineCount) || members.length || 0;
+  countEl.textContent = `${onlineTotal} online`;
+  $('#discordDot').classList.toggle('is-on', onlineTotal > 0);
+
   if (!members.length) {
     box.innerHTML = '<span class="dc-empty">Most nincs bent senki – gyere te elsőnek.</span>';
     return;
   }
 
   box.innerHTML = '';
-  for (const member of members.slice(0, 24)) {
+  for (const member of members) {
     const row = document.createElement('span');
     row.className = 'dc-member ' + (member.status || 'online');
     if (member.avatar) {
@@ -996,6 +999,15 @@ function renderDiscord(data) {
     const localized = window.eotlI18n ? window.eotlI18n.translate(statusLabel) : statusLabel;
     row.title = `${member.name || ''} – ${localized}${member.game ? ' · ' + member.game : ''}`;
     box.appendChild(row);
+  }
+
+  // Ha a Discord több bent lévő tagot jelez, mint amennyit a widget átad,
+  // legalább a valós létszám látszódjon.
+  if (onlineTotal > members.length) {
+    const more = document.createElement('span');
+    more.className = 'dc-empty';
+    more.textContent = `+${onlineTotal - members.length} további tag online`;
+    box.appendChild(more);
   }
 }
 
