@@ -1,5 +1,5 @@
 {
-  "version": "0.9.7",
+  "version": "0.9.8",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -723,8 +723,8 @@
     },
     {
       "path": "i18n-logs.js",
-      "size": 28552,
-      "sha256": "b16254cf9fc488bd14e305674a8982767b02fb6ab1c884ed5d0b6fbd3ce659e9"
+      "size": 28655,
+      "sha256": "285b2ebab31b942272980c738db64fd2444e9ea0ebfe768745c2be053266bfd4"
     },
     {
       "path": "i18n.js",
@@ -749,7 +749,7 @@
     {
       "path": "package.json",
       "size": 864,
-      "sha256": "2580ee0afc416b7e15fd0eff37d7522c3c60c7de3f047a6caa371a05e9fce739"
+      "sha256": "3f64e6c3d84423f703138dad10b3eb71ef92a2110ca71cc03f72deac7e8b167e"
     },
     {
       "path": "preload.js",
@@ -758,8 +758,8 @@
     },
     {
       "path": "renderer.js",
-      "size": 74678,
-      "sha256": "98b9c6447e308859ff847b7fc74c77827d0703c33ebc9c7bfbab9d122d864377"
+      "size": 75218,
+      "sha256": "16127abca7ace33dcfb837aa5d5f76291f1ac5b340ba74a9c4b3b9a9a6631477"
     },
     {
       "path": "src/a2s.js",
@@ -793,8 +793,8 @@
     },
     {
       "path": "src/discord.js",
-      "size": 10016,
-      "sha256": "24a3e6492e71d2313ee5a969a442e4566f1fe09c6796c9db29a0e1e43d7eb81d"
+      "size": 10449,
+      "sha256": "b95ce3c9b4bd9836934c3939ea64a1e8d6c2b66cf771eab2060884c87f9c2296"
     },
     {
       "path": "src/download.js",
