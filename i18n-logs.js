@@ -216,5 +216,69 @@
     ['✗ Feliratkozás kezelési hiba: {s}', '✗ Subscription handling error: {s}'],
     ['✗ Frissítés sikertelen: {s}', '✗ Update failed: {s}'],
     ['✗ ZombieBuddy telepítő: {s}', '✗ ZombieBuddy installer: {s}'],
+
+    // --- előrejelző (progress) feliratok ---
+    ['Csomag letöltése', 'Downloading pack'],
+    ['Frissítés kicsomagolása…', 'Unpacking the update…'],
+    ['Frissítés kész.', 'Update done.'],
+    ['Frissítés letöltése', 'Downloading update'],
+    ['Frissítés letöltése…', 'Downloading the update…'],
+    ['Fájlok cseréje…', 'Replacing files…'],
+    ['Java modok jóváhagyása…', 'Approving Java mods…'],
+    ['Magyarítás telepítése…', 'Installing the Hungarian pack…'],
+    ['Modok felfedezése és engedélyezése…', 'Discovering and enabling mods…'],
+    ['Modpack config bemásolása…', 'Copying the modpack config…'],
+    ['PZO letöltése', 'Downloading PZO'],
+    ['Steam Workshop kollekció lekérése…', 'Fetching the Steam Workshop collection…'],
+    ['Steam letöltés folyamatban…', 'Steam download in progress…'],
+    ['SteamCMD letöltés…', 'Downloading SteamCMD…'],
+    ['Viewpoint NIGHTLY letöltése', 'Downloading Viewpoint NIGHTLY'],
+    ['ZombieBuddy telepítő előkészítése…', 'Preparing the ZombieBuddy installer…'],
+    ['ZombieBuddy telepítő fut…', 'The ZombieBuddy installer is running…'],
+
+    // --- memória állapotüzenetek (src/system.js) ---
+    ['A gépeden {n} GB RAM van, de a launcher {n} MB heap-et állít be (-Xmx{n}m). Ez nem biztos, hogy elfut – a játék lefagyhat vagy bezárulhat. Javasolt legalább 16 GB RAM.',
+      'Your machine has {n} GB RAM, but the launcher sets a {n} MB heap (-Xmx{n}m). That may not be enough – the game can freeze or close. At least 16 GB RAM is recommended.'],
+    ['A gépeden {n} GB RAM van, a játék {n} MB heap-et kap. Ez működhet, de közben ne fusson sok más program.',
+      'Your machine has {n} GB RAM and the game gets a {n} MB heap. It can work, but do not run many other programs at the same time.'],
+    ['A gépeden {n} GB RAM van – a {n} MB heap kényelmesen elfér.',
+      'Your machine has {n} GB RAM – the {n} MB heap fits comfortably.'],
+
+    // --- mod lista összegzés ---
+    ['Bekapcsolva: {n} · Telepítve: {n} (workshop {n}, helyi {n}) · Bekapcsolt és megvan: {n} · Hiányzó: {n} · Kikapcsolt: {n}',
+      'Enabled: {n} · Installed: {n} (workshop {n}, local {n}) · Enabled and present: {n} · Missing: {n} · Disabled: {n}'],
+    ['Hiba', 'Error'],
+
+    // --- szerver állapot / esemény / mod lista rövid üzenetek ---
+    ['Nincs szerver cím beállítva.', 'No server address is set.'],
+    ['A szerver címe nem oldható fel (DNS hiba).', 'The server address cannot be resolved (DNS error).'],
+    ['A szerver nem válaszol az A2S lekérdezésre (lehet, hogy épp nem fut).', 'The server does not answer the A2S query (it may not be running right now).'],
+    ['Nincs esemény a listában.', 'There are no events in the list.'],
+    ['A ProjectZomboid64.json nem olvasható.', 'ProjectZomboid64.json cannot be read.'],
+    ['A ProjectZomboid64.json nem érvényes JSON.', 'ProjectZomboid64.json is not valid JSON.'],
+    ['Nem sikerült beírni a memóriabeállítást ide: {s} ({s}).', 'Could not write the memory setting into {s} ({s}).'],
+    ['Nem sikerült beírni a memóriát a {s} fájlba ({s}).', 'Could not write the memory setting into {s} ({s}).'],
+    ['Nincs telepítve.', 'Not installed.'],
+    ['Nincs beállítva csomagforrás (Beállítások → Csomagok repója).', 'No pack source is set (Settings → Pack repository).'],
+    ['Nincs {s}/ mappa és nincs Release sem ebben a repóban: {s}.', 'There is no {s}/ folder and no Release in this repository either: {s}.'],
+    ['Nincs .zip vagy .exe a repóban.', 'There is no .zip or .exe in the repository.'],
+    ['nincs kollekció', 'no collection'],
+    ['a Steam workshop mappa nem olvasható', 'the Steam workshop folder cannot be read'],
+
+    // --- frissítés-ellenőrzés összegzései ---
+    ['nincs beállított GitHub repó', 'no GitHub repository is set'],
+    ['naprakész (GitHub API nélkül, fájl-összevetéssel)', 'up to date (without the GitHub API, by comparing files)'],
+    ['új fájlok a GitHubon (GitHub API nélkül)', 'new files on GitHub (without the GitHub API)'],
+    ['első ellenőrzés – a jelenlegi verzió lett az alapvonal', 'first check – the current version became the baseline'],
+    ['naprakész', 'up to date'],
+    ['a telepített build verziója elavult – újratelepítem', 'the installed build is outdated – reinstalling'],
+    ['csak az újdonságok/események frissültek', 'only the news/events were updated'],
+    ['új verzió érhető el', 'a new version is available'],
+    ['alapvonal rögzítve', 'baseline recorded'],
+    ['nincs launcher-változás', 'no launcher change'],
+
+    // --- általános: "felirat (1/5)" és "felirat – 42%" ---
+    ['{s} ({n}/{n})', '{s} ({n}/{n})'],
+    ['{s} – {n}%', '{s} – {n}%'],
   ]);
 })();

@@ -34,6 +34,23 @@
     'ESEMÉNY': 'EVENT',
     'ÚJDONSÁGOK': 'NEWS',
     'ESEMÉNYIG': 'UNTIL EVENT',
+
+    // --- súgók (title) ---
+    'Elrejtés': 'Hide',
+    'Launcher verzió': 'Launcher version',
+    'Váltás az egyjátékos Blackout modpack és a szerver között':
+      'Switch between the single-player Blackout modpack and the server',
+    'Új launcher verzió keresése a GitHubon': 'Check GitHub for a new launcher version',
+    'A játék modlistája: mi van bekapcsolva, telepítve, mi hiányzik':
+      'The game’s mod list: what is enabled, installed and missing',
+    'Project Zomboid keresése a gépen': 'Find Project Zomboid on this computer',
+    'A legfrissebb játék-log elküldése a szervernek': 'Send the latest game log to the server',
+    'A bekapcsolt, de már nem létező (régi kollekcióból maradt) sorok törlése':
+      'Remove enabled rows that no longer exist (left over from an old collection)',
+    'Telepített ETO törlése': 'Remove the installed ETO',
+    'Telepített Viewpoint NIGHTLY törlése': 'Remove the installed Viewpoint NIGHTLY',
+    'Telepített 3D modellcsomag törlése': 'Remove the installed 3D model pack',
+    'Magyarítás törlése': 'Remove the Hungarian pack',
     'ELTELT': 'ELAPSED',
     'törlés': 'clear',
     'élő widget': 'live widget',
@@ -456,6 +473,10 @@
     if (el.hasAttribute('title')) {
       if (el.__huTitle === undefined) el.__huTitle = el.getAttribute('title');
       el.setAttribute('title', lang === 'hu' ? el.__huTitle : translate(el.__huTitle));
+    }
+    if (el.hasAttribute('aria-label')) {
+      if (el.__huAria === undefined) el.__huAria = el.getAttribute('aria-label');
+      el.setAttribute('aria-label', lang === 'hu' ? el.__huAria : translate(el.__huAria));
     }
     if (el.tagName === 'OPTION' && el.__hu === undefined) el.__hu = el.textContent;
   }

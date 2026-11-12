@@ -1202,6 +1202,7 @@ ipcMain.handle('crash:send', async (e, payload) => {
         sha: baselineSha(),
         ramGb: mem.totalGb,
         heapMb: Number(cfg.jvmMaxMb) || 0,
+        lang: cfg.uiLang,
         summary: crash.summarize(info.files[0].path),
       },
     });

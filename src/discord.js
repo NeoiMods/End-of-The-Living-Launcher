@@ -199,15 +199,18 @@ async function sendCrash({ webhookUrl, discordName, files, meta = {} }) {
   const total = files.reduce((sum, f) => sum + f.size, 0);
   if (total > MAX_TOTAL_BYTES) throw new Error('A csatolmányok túl nagyok (' + formatMb(total) + ').');
 
+  // A jelentés a launcher választott nyelvén megy ki.
+  const en = String(meta.lang || '').toLowerCase() === 'en';
+  const t = (hu, eng) => (en ? eng : hu);
   const lines = [
-    '**🩸 ÖSSZEOMLÁS – ' + (meta.server || 'End of The Living') + '**',
-    '**Játékos Discord neve:** ' + name,
+    t('**🩸 ÖSSZEOMLÁS – ', '**🩸 CRASH – ') + (meta.server || 'End of The Living') + '**',
+    t('**Játékos Discord neve:** ', '**Player Discord name:** ') + name,
     '**Launcher:** ' + (meta.version || '?') + (meta.sha ? ` (${String(meta.sha).slice(0, 7)})` : ''),
-    '**Gép:** ' + (meta.ramGb ? meta.ramGb + ' GB RAM' : '?') + (meta.heapMb ? ` · heap ${meta.heapMb} MB` : ''),
-    '**Időpont:** ' + new Date().toLocaleString('hu-HU'),
-    '**Fájlok:** ' + files.map((f) => `${f.name} (${formatMb(f.size)})`).join(', '),
+    t('**Gép:** ', '**Machine:** ') + (meta.ramGb ? meta.ramGb + ' GB RAM' : '?') + (meta.heapMb ? ` · heap ${meta.heapMb} MB` : ''),
+    t('**Időpont:** ', '**Time:** ') + new Date().toLocaleString(en ? 'en-GB' : 'hu-HU'),
+    t('**Fájlok:** ', '**Files:** ') + files.map((f) => `${f.name} (${formatMb(f.size)})`).join(', '),
   ];
-  if (meta.summary) lines.push('**Hiba:** ' + meta.summary);
+  if (meta.summary) lines.push(t('**Hiba:** ', '**Error:** ') + meta.summary);
 
   const payload = {
     content: lines.join('\n'),
@@ -231,14 +234,17 @@ async function sendWarning({ webhookUrl, discordName, warning = {}, meta = {} })
   const name = cleanName(discordName);
   if (name.length < 2) throw new Error('Írd be a Discord neved (legalább 2 karakter).');
 
+  const en = String(meta.lang || '').toLowerCase() === 'en';
+  const t = (hu, eng) => (en ? eng : hu);
   const lines = [
-    '**⚠️ NEM A HELYES MAPPA STRUKTÚRA – ' + (meta.server || 'End of The Living') + '**',
-    '**Játékos Discord neve:** ' + name + ' – ez a játékos nem a helyes mappa struktúrát követi.',
-    '**Játék mappa:** `' + String(warning.gamePath || '?') + '`',
-    '**Alap hely (ide kellene):** `' + String(warning.defaultPath || '?') + '`',
+    t('**⚠️ NEM A HELYES MAPPA STRUKTÚRA – ', '**⚠️ WRONG FOLDER STRUCTURE – ') + (meta.server || 'End of The Living') + '**',
+    t('**Játékos Discord neve:** ', '**Player Discord name:** ') + name +
+      t(' – ez a játékos nem a helyes mappa struktúrát követi.', ' – this player does not follow the expected folder structure.'),
+    t('**Játék mappa:** `', '**Game folder:** `') + String(warning.gamePath || '?') + '`',
+    t('**Alap hely (ide kellene):** `', '**Default location (expected):** `') + String(warning.defaultPath || '?') + '`',
     '**Launcher:** ' + (meta.version || '?') + (meta.sha ? ` (${String(meta.sha).slice(0, 7)})` : ''),
-    '**Gép:** ' + (meta.ramGb ? meta.ramGb + ' GB RAM' : '?') + (meta.heapMb ? ` · heap ${meta.heapMb} MB` : ''),
-    '**Időpont:** ' + new Date().toLocaleString('hu-HU'),
+    t('**Gép:** ', '**Machine:** ') + (meta.ramGb ? meta.ramGb + ' GB RAM' : '?') + (meta.heapMb ? ` · heap ${meta.heapMb} MB` : ''),
+    t('**Időpont:** ', '**Time:** ') + new Date().toLocaleString(en ? 'en-GB' : 'hu-HU'),
   ];
 
   await postWebhook(url, { content: lines.join('\n'), allowed_mentions: { parse: [] } }, []);

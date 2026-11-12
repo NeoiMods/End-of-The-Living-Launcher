@@ -374,12 +374,17 @@ async function openSettings() {
 
 // ---------------------------------------------------------------- frissítés
 
+// A dátum/idő a választott nyelv formátumában jelenik meg.
+function uiLocale() {
+  return window.eotlI18n && window.eotlI18n.isEnglish() ? 'en-GB' : 'hu-HU';
+}
+
 function describeChecked(ts) {
   if (!ts) return 'még nem ellenőrizte';
   const mins = Math.round((Date.now() - ts) / 60000);
   if (mins < 1) return 'most';
   if (mins < 60) return mins + ' perce';
-  return new Date(ts).toLocaleString('hu-HU');
+  return new Date(ts).toLocaleString(uiLocale());
 }
 
 function renderUpdateInfo(info, res) {
@@ -413,7 +418,7 @@ function renderUpdateInfo(info, res) {
 
   if (res && res.ok) {
     const when =
-      res.remote && res.remote.date ? new Date(res.remote.date).toLocaleString('hu-HU') : '';
+      res.remote && res.remote.date ? new Date(res.remote.date).toLocaleString(uiLocale()) : '';
     text.textContent =
       'Naprakész • forrás: ' + res.repo + (when ? ' • legutóbbi commit: ' + when : '');
     return;
@@ -579,8 +584,10 @@ function setUiLanguage(next) {
   applyMode();
   if (lastStatus) render(lastStatus);
   renderServerStatus();
-  // A modálisok és a mod lista saját állapotból újrarenderelve követik a nyelvet.
+  // A modálisok, a mod lista és a Discord taglista saját állapotból
+  // újrarenderelve követi a nyelvet.
   renderModList();
+  if (lastDiscordData) renderDiscord(lastDiscordData);
   appendLog(next === 'en' ? '• Language: English.' : '• Nyelv: magyar.');
 }
 
@@ -945,11 +952,14 @@ async function loadDiscordWidget(force) {
   }
 }
 
+let lastDiscordData = null;
+
 function renderDiscord(data) {
   const nameEl = $('#dcName');
   const countEl = $('#dcCount');
   const box = $('#dcMembers');
   if (!nameEl || !box) return;
+  lastDiscordData = data;
 
   discordInvite = data.invite || DISCORD_INVITE;
   nameEl.textContent = data.name || 'Discord';
@@ -980,9 +990,11 @@ function renderDiscord(data) {
     label.className = 'dc-member-name';
     label.textContent = member.name || '? ';
     row.appendChild(label);
-    row.title = `${member.name || ''} – ${DISCORD_STATUS_LABEL[member.status] || member.status || ''}${
-      member.game ? ' · ' + member.game : ''
-    }`;
+    // A címke a választott nyelven kerül az egér fölé (a szótáron keresztül).
+    const statusLabel =
+      DISCORD_STATUS_LABEL[member.status] || member.status || '';
+    const localized = window.eotlI18n ? window.eotlI18n.translate(statusLabel) : statusLabel;
+    row.title = `${member.name || ''} – ${localized}${member.game ? ' · ' + member.game : ''}`;
     box.appendChild(row);
   }
 }
@@ -1385,7 +1397,8 @@ async function renderVersionChip() {
   try {
     const info = await bridge.getVersion();
     chip.textContent = 'v' + ((info && info.version) || '?');
-    chip.title = 'Launcher verzió' + (info && info.sha ? ' – ' + String(info.sha).slice(0, 7) : '');
+    const vLabel = window.eotlI18n ? window.eotlI18n.translate('Launcher verzió') : 'Launcher verzió';
+    chip.title = vLabel + (info && info.sha ? ' – ' + String(info.sha).slice(0, 7) : '');
   } catch {
     chip.textContent = 'v?';
   }
