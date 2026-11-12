@@ -40,6 +40,11 @@
       </div>
     </div>
     <div class="topbar-right">
+      <div class="lang-switch" role="group" aria-label="Nyelv / Language">
+        <span class="lang-globe" aria-hidden="true">🌐</span>
+        <button id="btnLangHu" class="lang-opt is-active" type="button" lang="hu">MAGYAR</button>
+        <button id="btnLangEn" class="lang-opt" type="button" lang="en">ENGLISH</button>
+      </div>
       <button id="btnOptimize" class="opt-btn" type="button">
         <span class="opt-spark">✦</span> OPTIMALIZÁLÁS
       </button>
@@ -591,6 +596,7 @@
     </div>
   </div>
 
+  <script src="i18n.js"></script>
   <script src="renderer.js"></script>
 </body>
 </html>

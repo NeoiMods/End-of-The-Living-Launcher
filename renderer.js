@@ -561,6 +561,27 @@ function setWarnHidden(value) {
   }
 }
 
+function syncLangButtons() {
+  const i18n = window.eotlI18n;
+  const lang = i18n ? i18n.lang : 'hu';
+  const hu = $('#btnLangHu');
+  const en = $('#btnLangEn');
+  if (hu) hu.classList.toggle('is-active', lang === 'hu');
+  if (en) en.classList.toggle('is-active', lang === 'en');
+}
+
+function setUiLanguage(next) {
+  if (!window.eotlI18n) return;
+  window.eotlI18n.setLanguage(next);
+  syncLangButtons();
+  applyMode();
+  if (lastStatus) render(lastStatus);
+  renderServerStatus();
+  // A modálisok és a mod lista saját állapotból újrarenderelve követik a nyelvet.
+  renderModList();
+  appendLog(next === 'en' ? '• Language: English.' : '• Nyelv: magyar.');
+}
+
 function applyMode() {
   const ui = MODE_UI[gameMode] || MODE_UI.eotl;
   document.body.classList.toggle('mode-blackout', gameMode === 'blackout');
@@ -580,6 +601,7 @@ function applyMode() {
   }
   document.title =
     gameMode === 'blackout' ? 'Blackout Protocol – New Era' : 'End of The Living Launcher';
+  syncLangButtons();
 }
 
 function switchMode(mode) {
@@ -652,6 +674,10 @@ function wireEvents() {
   $('#btnMode').addEventListener('click', () =>
     switchMode(gameMode === 'blackout' ? 'eotl' : 'blackout')
   );
+  // ---- nyelvváltó ----
+  $('#btnLangHu').addEventListener('click', () => setUiLanguage('hu'));
+  $('#btnLangEn').addEventListener('click', () => setUiLanguage('en'));
+
   $('#btnBlackoutOk').addEventListener('click', closeBlackoutWarn);
   $('#blackoutWarn').addEventListener('click', (e) => {
     if (e.target === $('#blackoutWarn')) closeBlackoutWarn();
@@ -1887,14 +1913,14 @@ function sampleStatus() {
       collectionId: '3814595736',
       total: 847,
       downloaded: 847,
-      enabledCount: 807,
-      listEnabled: 807,
+      enabledCount: 719,
+      listEnabled: 719,
       listMissing: 0,
       listExtra: 0,
       configBundled: true,
       configInstalled: true,
       configProfile: 'Blackout Protocol',
-      configEnabled: 807,
+      configEnabled: 719,
       configMissing: [],
       configFiles: 10,
       configAt: Date.now(),

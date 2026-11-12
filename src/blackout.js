@@ -40,8 +40,8 @@ const CONFIG_SENTINELS = [
   'Lua/keys.ini',
   'Lua/keysB42.ini',
   'Lua/modOptions.ini',
-  'Sandbox Presets/NeoiMods.cfg',
   'Sandbox Presets/NeoiMods Ajanlott.cfg',
+  'Sandbox Presets/Neoi-Suggested.cfg',
   'Server/NeoiMods.ini',
 ];
 

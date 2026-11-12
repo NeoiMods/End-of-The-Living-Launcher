@@ -97,6 +97,35 @@ function applyHeapToLauncherJson(gameDir, heapMb) {
   }
 }
 
+// A játék Windowson a ProjectZomboid64.bat-on keresztül indul, ezért a valódi
+// memóriabeállítás ott van. Ha a fájl írható, ugyanazt a -Xmx értéket írjuk be.
+function applyHeapToLauncherBat(gameDir, heapMb) {
+  const file = path.join(gameDir, LAUNCHER_BAT);
+  let raw;
+  try {
+    raw = fs.readFileSync(file, 'utf8');
+  } catch {
+    return { found: false, changed: false };
+  }
+  const wanted = `-Xmx${heapMb}m`;
+  const re = /-Xmx\d+[mMgG]?/g;
+  if (!re.test(raw)) return { found: true, changed: false, file };
+  re.lastIndex = 0;
+  const next = raw.replace(re, wanted);
+  if (next === raw) return { found: true, changed: false, file, heapMb };
+  try {
+    fs.writeFileSync(file, next, 'utf8');
+    return { found: true, changed: true, file, heapMb };
+  } catch (err) {
+    return {
+      found: true,
+      changed: false,
+      file,
+      reason: `Nem sikerült beírni a memóriát a ${LAUNCHER_BAT} fájlba (${err.message}).`,
+    };
+  }
+}
+
 function readHeapFromLauncherJson(gameDir) {
   try {
     const data = JSON.parse(fs.readFileSync(path.join(gameDir, LAUNCHER_JSON), 'utf8'));
@@ -134,6 +163,11 @@ async function launchGame({ gameDir, cfg, onLog }) {
   if (heap.changed) onLog(`Memória beállítva a játék launcherében: -Xmx${heapMb}m`);
   else if (heap.reason) onLog('! ' + heap.reason);
 
+  // A B42 a .bat-ot indítja, nem a JSON-t: ott is be kell állítani a heapet.
+  const bat = applyHeapToLauncherBat(gameDir, heapMb);
+  if (bat.changed) onLog(`Memória beállítva a ${LAUNCHER_BAT} fájlban: -Xmx${heapMb}m`);
+  else if (bat.reason) onLog('! ' + bat.reason);
+
   const args = buildArgs({ useAgent, heapMb });
 
   onLog(`Indítás: ${GAME_EXE} ${args.join(' ')}`);
@@ -164,6 +198,7 @@ module.exports = {
   LAUNCHER_BAT,
   agentStatus,
   applyHeapToLauncherJson,
+  applyHeapToLauncherBat,
   readHeapFromLauncherJson,
   buildArgs,
   isSteamRunning,

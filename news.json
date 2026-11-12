@@ -1,7 +1,22 @@
 {
-  "version": "0.9.1",
-  "updatedAt": "2026-11-10",
+  "version": "0.9.3",
+  "updatedAt": "2026-11-12",
   "items": [
+    {
+      "id": "0.9.3",
+      "version": "0.9.3",
+      "date": "2026-11-12",
+      "tag": "NYELV",
+      "title": "0.9.3 – Magyar / English nyelvváltó és friss Blackout config",
+      "text": "A launcher fejlécében megjelent a MAGYAR / ENGLISH kapcsoló: egy kattintással az egész felület – a szerveres (multiplayer) és az egyjátékos Blackout oldal is – átvált a választott nyelvre, és a beállítás megmarad a következő indításra. Emellett bekerült a legfrissebb Blackout config csomag: a profil most 719 modot engedélyez, új sandbox preset érkezett (NeoiMods Ajanlott / Neoi-Suggested), és a launcher a ProjectZomboid64.bat memóriabeállítását is átírja, ami a laggolás ellen számít.",
+      "changes": [
+        "Nyelvváltó gomb a fejlécben: MAGYAR / ENGLISH, a teljes felületre (multiplayer és single-player oldal).",
+        "A választott nyelv megjegyződik, a következő indításnál is az jön be.",
+        "Új Blackout config: 719 modos profil, NeoiMods Ajanlott / Neoi-Suggested sandbox preset, friss options.ini.",
+        "A launcher a ProjectZomboid64.bat -Xmx értékét is beállítja (a B42 ezen keresztül indul).",
+        "Az ellenőrző lista a valós default.txt állapotot és a hiányzó config fájlokat is mutatja."
+      ]
+    },
     {
       "id": "0.9.1",
       "version": "0.9.1",
@@ -11,7 +26,7 @@
       "text": "A launcher mostantól magával hozza a Blackout Protocol teljes config csomagját: a pz_modlist_settings.cfg-t a 807 modos profillal, a NeoMods sandbox preseleket, a billentyűket és a mod-configokat. Telepítéskor és minden egyjátékos indítás előtt bemásolja őket a játék Zomboid mappájába, a modokat pedig a profil szerint engedélyezi – így a Waterpipes / LastCupCoffee / PlumbingFuelGeneratorAddonB42 trió nem kerül be, ami világbetöltéskor elszállította a játékot.",
       "changes": [
         "A config csomag a launcherben van (assets/blackout) – nem kell kézzel másolgatni.",
-        "Telepítéskor és minden egyjátékos indítás előtt a helyére kerül; a felülírt fájlokról mentés készül (Zomboideotl-backup-*).",
+        "Telepítéskor és minden egyjátékos indítás előtt a helyére kerül; a felülírt fájlokról mentés készül (Zomboid\\eotl-backup-*).",
         "A modok a Blackout Protocol profilból engedélyeződnek (807 mod), és a default.txt is ezt a listát kapja.",
         "Az ELLENŐRZÉS fül a valós állapotot mutatja: hány mod aktív a profilban, és hogy a config a helyén van-e."
       ]
