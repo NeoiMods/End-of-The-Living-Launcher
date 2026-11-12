@@ -573,6 +573,8 @@ function syncLangButtons() {
 function setUiLanguage(next) {
   if (!window.eotlI18n) return;
   window.eotlI18n.setLanguage(next);
+  // A főfolyamat is tudja a nyelvet (natív ablakok, hibaszövegek).
+  if (!browserMode && bridge.setUiLang) bridge.setUiLang(next).catch(() => {});
   syncLangButtons();
   applyMode();
   if (lastStatus) render(lastStatus);
@@ -615,6 +617,9 @@ function switchMode(mode) {
   );
   // A figyelmeztetés minden belépésnél felugrik, amíg „ne mutasd többet” nincs bekapcsolva.
   if (mode === 'blackout' && !warnHidden()) openBlackoutWarn();
+  // A Discord fül a másik szerver widgetjére vált.
+  discordLoadedAt = 0;
+  loadDiscordWidget(true);
   if (lastStatus) render(lastStatus);
   renderServerStatus();
   if (!browserMode) refresh();
@@ -888,8 +893,16 @@ function setTab(name) {
 // ---------------------------------------------------------------- Discord
 
 const DISCORD_INVITE = 'https://discord.gg/fxzxE7yH';
+// A két mód két külön szervert mutat: a többjátékos az End of The Livingét,
+// az egyjátékos a Blackout közösség szerverét (326126573658963971).
+const DISCORD_GUILD = { eotl: '993506036545753158', blackout: '326126573658963971' };
+const DISCORD_FALLBACK_INVITE = {
+  eotl: DISCORD_INVITE,
+  blackout: 'https://discord.com/invite/326126573658963971',
+};
 let discordInvite = '';
 let discordLoadedAt = 0;
+let discordMode = '';
 
 const DISCORD_STATUS_LABEL = { online: 'elérhető', idle: 'tétlen', dnd: 'elfoglalt' };
 
@@ -913,13 +926,21 @@ async function loadDiscordWidget(force) {
 
   box.innerHTML = '<span class="dc-empty">Widget betöltése…</span>';
   try {
-    const res = await bridge.getDiscordWidget();
+    const res = await bridge.getDiscordWidget(gameMode);
     if (!res || !res.ok) throw new Error((res && res.error) || 'nem elérhető');
     discordLoadedAt = Date.now();
+    discordMode = gameMode;
     renderDiscord(res);
   } catch (err) {
     discordLoadedAt = Date.now();
-    box.innerHTML = '<span class="dc-empty">A Discord widget most nem érhető el.</span>';
+    discordMode = gameMode;
+    discordInvite = DISCORD_FALLBACK_INVITE[gameMode] || DISCORD_INVITE;
+    // Ha a widget JSON nem elérhető, a Discord beágyazható widgetje jön be.
+    const guild = DISCORD_GUILD[gameMode] || DISCORD_GUILD.eotl;
+    box.innerHTML =
+      `<iframe class="dc-frame" src="https://discord.com/widget?id=${guild}&theme=dark" ` +
+      'width="100%" height="100%" allowtransparency="true" frameborder="0" ' +
+      'sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>';
     appendLog('! Discord widget: ' + (err && err.message ? err.message : err));
   }
 }
@@ -2093,6 +2114,12 @@ async function init() {
   bridge.onUpdateAvailable((payload) => renderUpdateModal(payload));
   appendLog('End of The Living Launcher elindítva.');
   renderVersionChip();
+  // A főfolyamat is a választott nyelven szólal meg (natív ablakok, dialógusok).
+  if (bridge.setUiLang) {
+    bridge
+      .setUiLang(window.eotlI18n ? window.eotlI18n.lang : 'hu')
+      .catch(() => {});
+  }
   await refresh();
 
   // Ha a legutóbbi játék összeomlott, felajánljuk a crash log elküldését.

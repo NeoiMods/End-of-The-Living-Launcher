@@ -15,9 +15,33 @@ const MAX_TOTAL_BYTES = 7.5 * 1024 * 1024; // Discord: ~8 MB fájlonként
 
 // ------------------------------------------------------------------ widget
 
+// A szerverek widgetjei: a többjátékos mód az End of The Living szervert, az
+// egyjátékos mód a Blackout közösség szerverét mutatja.
 const WIDGET_GUILD_ID = '993506036545753158';
 const WIDGET_INVITE = 'https://discord.gg/fxzxE7yH';
 const DISCORD_CHANNEL_URL = 'https://discord.com/channels/993506036545753158/1567990881032732913';
+
+const BLACKOUT_GUILD_ID = '326126573658963971';
+const BLACKOUT_INVITE = 'https://discord.com/invite/326126573658963971';
+const BLACKOUT_CHANNEL_URL = 'https://discord.com/channels/326126573658963971';
+
+function guildConfig(guildId) {
+  const id = String(guildId || '').trim();
+  if (id === BLACKOUT_GUILD_ID) {
+    return {
+      id: BLACKOUT_GUILD_ID,
+      invite: BLACKOUT_INVITE,
+      channelUrl: BLACKOUT_CHANNEL_URL,
+      embed: `https://discord.com/widget?id=${BLACKOUT_GUILD_ID}&theme=dark`,
+    };
+  }
+  return {
+    id: WIDGET_GUILD_ID,
+    invite: WIDGET_INVITE,
+    channelUrl: DISCORD_CHANNEL_URL,
+    embed: `https://discord.com/widget?id=${WIDGET_GUILD_ID}&theme=dark`,
+  };
+}
 
 function getJson(url, timeoutMs = 8000) {
   return new Promise((resolve, reject) => {
@@ -46,8 +70,9 @@ function getJson(url, timeoutMs = 8000) {
 }
 
 // A szerver widget adatai: név, online tagok, meghívó.
-async function widget() {
-  const raw = await getJson(`https://discord.com/api/guilds/${WIDGET_GUILD_ID}/widget.json`);
+async function widget(guildId) {
+  const conf = guildConfig(guildId);
+  const raw = await getJson(`https://discord.com/api/guilds/${conf.id}/widget.json`);
   const members = Array.isArray(raw.members) ? raw.members : [];
   const online = members
     .filter((m) => m && m.status && m.status !== 'offline')
@@ -59,11 +84,13 @@ async function widget() {
     }))
     .slice(0, 24);
   return {
+    guildId: conf.id,
+    widgetUrl: conf.embed,
     name: String(raw.name || 'Discord'),
     online,
     onlineCount: online.length,
-    invite: String(raw.instant_invite || WIDGET_INVITE),
-    channelUrl: DISCORD_CHANNEL_URL,
+    invite: String(raw.instant_invite || conf.invite),
+    channelUrl: conf.channelUrl,
   };
 }
 
@@ -225,6 +252,8 @@ module.exports = {
   isAllowedWebhook,
   cleanName,
   WIDGET_GUILD_ID,
+  BLACKOUT_GUILD_ID,
+  guildConfig,
   DISCORD_CHANNEL_URL,
   MAX_TOTAL_BYTES,
 };

@@ -1,7 +1,22 @@
 {
-  "version": "0.9.3",
+  "version": "0.9.4",
   "updatedAt": "2026-11-12",
   "items": [
+    {
+      "id": "0.9.4",
+      "version": "0.9.4",
+      "date": "2026-11-12",
+      "tag": "NYELV",
+      "title": "0.9.4 – Minden szöveg a választott nyelven, saját szerver widgettel",
+      "text": "A nyelvváltó mostantól tényleg mindenre kiterjed: az Újdonságok bejegyzései, a napló sorai, a hibaüzenetek és a crash log beküldése is azon a nyelven jelenik meg, amelyiket kiválasztottad. Egyjátékos módban a Discord fül a saját szervered widgetjét mutatja, és ha a widget JSON nem érhető el, a Discord beágyazott widgetje jön be helyette.",
+      "changes": [
+        "A napló (telepítés, letöltés, indítás, hibák) a választott nyelven íródik.",
+        "Az Újdonságok összes bejegyzése – cím, leírás és pontok – fordul magyarra és angolra.",
+        "A crash log beküldése és minden hibaüzenet a választott nyelven jelenik meg.",
+        "Egyjátékos módban a Discord fül a saját szerver widgetjét tölti be (326126573658963971), beágyazott widgettel tartalékként.",
+        "A választott nyelvet a launcher a natív ablakokhoz is átadja."
+      ]
+    },
     {
       "id": "0.9.3",
       "version": "0.9.3",

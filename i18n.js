@@ -355,7 +355,8 @@
   const norm = (s) => String(s).replace(/\s+/g, ' ').trim();
 
   // A magyar sablonból reguláris kifejezés: {n} = szám, {s} = bármi.
-  const compiled = TPL.map(([hu, en]) => {
+  function compile(list) {
+    return list.map(([hu, en]) => {
     const parts = hu.split(/(\{n\}|\{s\})/);
     let re = '^';
     const order = [];
@@ -364,15 +365,19 @@
         re += '(-?\\d[\\d.,]*)';
         order.push('n');
       } else if (part === '{s}') {
-        re += '([\\s\\S]+?)';
+        // A szöveg lehet üres is (pl. a sor végén álló opcionális toldalék).
+        re += '([\\s\\S]*?)';
         order.push('s');
       } else {
         re += part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       }
     }
-    re += '$';
-    return { re: new RegExp(re), en, order };
-  });
+      re += '$';
+      return { re: new RegExp(re), en, order };
+    });
+  }
+
+  let compiled = compile(TPL);
 
   function translate(text) {
     const raw = String(text);
@@ -496,6 +501,17 @@
       return lang;
     },
     translate,
+    // Később betöltött szótárak (hírek, napló) bővíthetik a fordítást.
+    addEntries(extra) {
+      Object.assign(EN, extra || {});
+      if (lang === 'en') applyLanguage();
+    },
+    addTemplates(extra) {
+      const added = (extra || []).filter(Boolean);
+      if (!added.length) return;
+      compiled = compiled.concat(compile(added));
+      if (lang === 'en') applyLanguage();
+    },
     setLanguage,
     applyLanguage,
     isEnglish: () => lang === 'en',

@@ -1,7 +1,7 @@
 {
   "name": "end-of-the-living-launcher",
   "productName": "End of The Living Launcher",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Project Zomboid launcher: automatic mod install, server mode and the Blackout single-player modpack",
   "main": "main.js",
   "scripts": {

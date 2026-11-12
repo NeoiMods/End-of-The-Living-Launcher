@@ -103,18 +103,23 @@ function createWindow() {
   win.on('close', (e) => {
     if (!crashReportPending || appQuitting) return;
     let choice = 0;
+    const en = (cfg && cfg.uiLang) === 'en';
     try {
       choice = dialog.showMessageBoxSync(win, {
         type: 'warning',
-        buttons: ['Log elküldése', 'Kilépés küldés nélkül'],
+        buttons: en ? ['Send log', 'Exit without sending'] : ['Log elküldése', 'Kilépés küldés nélkül'],
         defaultId: 0,
         cancelId: 0,
         noLink: true,
-        title: 'A crash logot még nem küldted el',
-        message: 'A log nélkül nem tudjuk kijavítani az összeomlást.',
-        detail:
-          'A „nem működik” megjegyzésből nem derül ki a hiba oka, a log fájlból igen. ' +
-          'Ha most kilépsz, a log a gépeden marad, és a következő indításnál újra felajánljuk.',
+        title: en ? 'You have not sent the crash log yet' : 'A crash logot még nem küldted el',
+        message: en
+          ? 'We cannot fix the crash without the log.'
+          : 'A log nélkül nem tudjuk kijavítani az összeomlást.',
+        detail: en
+          ? '“It does not work” does not tell us the cause; the log file does. ' +
+            'If you exit now, the log stays on your machine and we will offer it again on the next start.'
+          : 'A „nem működik” megjegyzésből nem derül ki a hiba oka, a log fájlból igen. ' +
+            'Ha most kilépsz, a log a gépeden marad, és a következő indításnál újra felajánljuk.',
       });
     } catch {
       choice = 0;
@@ -1130,12 +1135,30 @@ function notifyCrash(info) {
   win.webContents.send('crash', info);
 }
 
-ipcMain.handle('discord:widget', async () => {
+// Az egyjátékos mód a Blackout szerver widgetjét kapja, a többjátékos a sajátot.
+ipcMain.handle('discord:widget', async (e, mode) => {
+  const blackoutMode = String(mode || '').toLowerCase() === 'blackout';
+  const guildId = blackoutMode ? discord.BLACKOUT_GUILD_ID : discord.WIDGET_GUILD_ID;
   try {
-    return { ok: true, ...(await discord.widget()) };
+    return { ok: true, ...(await discord.widget(guildId)) };
   } catch (err) {
-    return { ok: false, error: err && err.message ? err.message : String(err) };
+    return {
+      ok: false,
+      guildId,
+      widgetUrl: discord.guildConfig(guildId).embed,
+      invite: discord.guildConfig(guildId).invite,
+      error: err && err.message ? err.message : String(err),
+    };
   }
+});
+
+// A választott felületi nyelv a főfolyamatnak is kell (natív ablakok, üzenetek).
+ipcMain.handle('lang:get', () => (cfg && cfg.uiLang) || 'hu');
+ipcMain.handle('lang:set', (e, lang) => {
+  const next = String(lang || '').toLowerCase() === 'en' ? 'en' : 'hu';
+  cfg = { ...cfg, uiLang: next };
+  save();
+  return { ok: true, lang: next };
 });
 
 ipcMain.handle('crash:check', () => {

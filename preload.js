@@ -61,7 +61,9 @@ contextBridge.exposeInMainWorld('api', {
   removeHu: () => ipcRenderer.invoke('hu:remove'),
 
   // ---- Discord: crash log + widget ----
-  getDiscordWidget: () => ipcRenderer.invoke('discord:widget'),
+  getDiscordWidget: (mode) => ipcRenderer.invoke('discord:widget', mode),
+  getUiLang: () => ipcRenderer.invoke('lang:get'),
+  setUiLang: (lang) => ipcRenderer.invoke('lang:set', lang),
   openDiscord: () => ipcRenderer.invoke('discord:open'),
   checkCrash: () => ipcRenderer.invoke('crash:check'),
   getLatestCrash: () => ipcRenderer.invoke('crash:latest'),

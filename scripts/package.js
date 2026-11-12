@@ -16,6 +16,8 @@ const APP_FILES = [
   'preload.js',
   'renderer.js',
   'i18n.js',
+  'i18n-content.js',
+  'i18n-logs.js',
   'index.html',
   'styles.css',
   'events.json',
