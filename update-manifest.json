@@ -1,5 +1,5 @@
 {
-  "version": "0.9.3",
+  "version": "0.9.4",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -717,39 +717,49 @@
       "sha256": "babb18e3f15ba1d2386691d57257c55eca2d1f67e1c7b8a162d4f4da3e04b659"
     },
     {
+      "path": "i18n-content.js",
+      "size": 24930,
+      "sha256": "9bc2d6cdd9995c9d056cf4f3dcdc9f8eb07253930a3226e3afac27852dc33ffc"
+    },
+    {
+      "path": "i18n-logs.js",
+      "size": 23566,
+      "sha256": "87d2c7cf763ec778682c8d7576e2ba0bf439a6764cb4a723b0240c6b51d63057"
+    },
+    {
       "path": "i18n.js",
-      "size": 32790,
-      "sha256": "440a1b8d063a0467d1907028f42c40fc2ee48552c2959f01ba9b1e7e6a4389f2"
+      "size": 33342,
+      "sha256": "0c3abc2c1f5c7ac342c5cd74291f8219c4e59e3ecc06e1562c0b0b97073c369c"
     },
     {
       "path": "index.html",
-      "size": 27572,
-      "sha256": "e6f1624f7e35c15c1328e194c0396f9a88d8d144744082d233e1052cb4c8e3fa"
+      "size": 27684,
+      "sha256": "49a4f934ce7e67e7cdfa9ad7c1740e73a1d7787b4f9616e7bbabd17f622a2467"
     },
     {
       "path": "main.js",
-      "size": 40028,
-      "sha256": "3aec2ddea2cb46e376ef4e189045e959e882a23af243c0821b618d3ad206fbd6"
+      "size": 41179,
+      "sha256": "548549da6b249d62ab0e58f7d6e6b6d93fa4bf2f6a8328c77ed0f985a63a66fe"
     },
     {
       "path": "news.json",
-      "size": 14009,
-      "sha256": "99c575682602e10938122299d28126bd3ab0df64c86f10536be1274a4af09a69"
+      "size": 15138,
+      "sha256": "d38dbce036f0745028b045365f2b073ebf9bac33a85908aeaae5fb2566cca502"
     },
     {
       "path": "package.json",
       "size": 864,
-      "sha256": "56e15336666701d4957c875af2e3e2100c38abeccf1ed3f16cdd41ccb62ae32a"
+      "sha256": "49cc7e250ffedf7d7a132b08279aff911d00e053f3c48fe35f549cd71af3c365"
     },
     {
       "path": "preload.js",
-      "size": 3736,
-      "sha256": "2cde4ab3e5a926dab2ecd09b4d1ce1ed22a3b1c60b2f65d658d01a56b55090f1"
+      "size": 3858,
+      "sha256": "ddb3a13e47f7f292b1f81b0402581c3a018b626ce5157f9b19b7c6487e750ad0"
     },
     {
       "path": "renderer.js",
-      "size": 72715,
-      "sha256": "19657fb33d91e212f144d3faa9403bad35c210b4de4b335628f8c05a74273a43"
+      "size": 74067,
+      "sha256": "5fce0ae942dbabd839669d143d97c1205576f47e2e7d04dbcbedeca760a94afb"
     },
     {
       "path": "src/a2s.js",
@@ -783,8 +793,8 @@
     },
     {
       "path": "src/discord.js",
-      "size": 8383,
-      "sha256": "27fef72d5091cc8db2356287bda77193cd41f4f62bec1a8fb40f9a766a7f84d9"
+      "size": 9339,
+      "sha256": "e4ff9e0be85de4cc4cfd801982ccf2474e9dbbfbc474e1a2f9148673c0226a26"
     },
     {
       "path": "src/download.js",
@@ -868,8 +878,8 @@
     },
     {
       "path": "src/update.js",
-      "size": 30153,
-      "sha256": "5ff7605be0d5f7d90ce2b320f816bc2fb092217e6162c5592b8bb2fb02eb0830"
+      "size": 30192,
+      "sha256": "9838b2ef15df28083197de5cbe771689be06b42b1da2050cd841a01170b4832b"
     },
     {
       "path": "src/workshop.js",
@@ -883,8 +893,8 @@
     },
     {
       "path": "styles.css",
-      "size": 61935,
-      "sha256": "6d616e54cf648ba2b083cec3c6b2a96609a5e703b09b4694145f6e3b127bf8c5"
+      "size": 62125,
+      "sha256": "3897099676c5a5726698e415a5f08e45b01305039d53c3cc5d92649064d81761"
     },
     {
       "path": "themes/README.md",
