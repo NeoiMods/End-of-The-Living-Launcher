@@ -1,5 +1,5 @@
 {
-  "version": "0.9.10",
+  "version": "0.9.11",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -733,8 +733,8 @@
     },
     {
       "path": "i18n-logs.js",
-      "size": 30500,
-      "sha256": "a673c6fc0890d2fce30732c8158c2a7e21a38ba79af2aa5a5da4d767c22c5afa"
+      "size": 31462,
+      "sha256": "cf9bf482fca529aa34225782e73faae56242b14ae1cef42fe8e5a2453ed63c3b"
     },
     {
       "path": "i18n.js",
@@ -748,8 +748,8 @@
     },
     {
       "path": "main.js",
-      "size": 43733,
-      "sha256": "de69ea74ef8d4e63ed2f89db9a419be49e231b0f9de76392d49b3d00a510bbd8"
+      "size": 44072,
+      "sha256": "8a41b65b770475cd65b6bf5f7087d5bc48aa97291e9951036ff73cb31663d5f0"
     },
     {
       "path": "news.json",
@@ -759,7 +759,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "88e56a14cbab81d3c17b5e5bf7047560ebeff920930e7b17baba79925e79ca87"
+      "sha256": "b632340f7741b03da8f0152df128d5cfa2b362bf7dcc4b3a3f94f9c6f0b9fd01"
     },
     {
       "path": "preload.js",
@@ -813,8 +813,8 @@
     },
     {
       "path": "src/eotl-mods.js",
-      "size": 6686,
-      "sha256": "537eed26d89e0895dfd2ca73a70c68d4450afe027c79a8c1dc18c87e6b880d17"
+      "size": 8586,
+      "sha256": "b1bbca913a0d7090a45d31dc1aeed420a6f6bb9a324c6934d1d5a95396b82927"
     },
     {
       "path": "src/events.js",
@@ -873,8 +873,8 @@
     },
     {
       "path": "src/setup.js",
-      "size": 16609,
-      "sha256": "255f1ab6761bc0cba2cc81f6c8c28a69d2c85ea0037a362623defc491f3cf20c"
+      "size": 16980,
+      "sha256": "7b4c696684a84576c64babe5240bc7d43c3358b2bf0d6f5d5ebd55086720d7d6"
     },
     {
       "path": "src/shortcut.js",
@@ -900,6 +900,11 @@
       "path": "src/workshop.js",
       "size": 5607,
       "sha256": "e3f3b3b2a73ae47d7ca09d8771fd3868b4d34c60bb96898b59cf89066e6b4a9a"
+    },
+    {
+      "path": "src/zb-agent.js",
+      "size": 4550,
+      "sha256": "71cc74663a2c4c60a167d5ec545a467bd23a542d4632d5c6174ce14eb7e51b07"
     },
     {
       "path": "src/zb-installer.js",
