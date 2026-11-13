@@ -1042,6 +1042,7 @@ ipcMain.handle('blackout:config', async () => {
       userDataDir: app.getPath('userData'),
       onLog: log,
       onProgress: progress,
+      lang: cfg.uiLang,
     });
     if (res.copied) {
       cfg = { ...cfg, blackout: { ...(cfg.blackout || {}), configAt: Date.now() } };
@@ -1085,6 +1086,8 @@ ipcMain.handle('game:launch', async (event, mode) => {
         progress(null);
       }
     }
+    // A játék nyelve minden indításnál a launcher nyelvét követi.
+    if (blackoutMode) blackout.applyLanguageVariant(zomboidDir(), cfg.uiLang);
     // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).
     await launchGame({ gameDir, cfg, onLog: log, zgc: blackoutMode });
     gameSeenRunning = true;

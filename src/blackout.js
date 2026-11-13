@@ -29,6 +29,13 @@ const PROFILE_FILE = 'pz_modlist_settings.cfg';
 const CONFIG_ROOT = path.join(__dirname, '..', 'assets', 'blackout');
 const CONFIG_TREE = path.join(CONFIG_ROOT, 'Zomboid');
 
+// A játék nyelve két külön példányban él (magyar / angol options.ini sor).
+// Indításkor a launcher nyelvéhez tartozó példány kerül az options.ini-be.
+const LANG_VARIANTS = {
+  hu: path.join(CONFIG_ROOT, 'lang', 'language.hu.txt'),
+  en: path.join(CONFIG_ROOT, 'lang', 'language.en.txt'),
+};
+
 // A csomag azon fájljai, amiknek a játék Zomboid mappájában is meg kell lenniük
 // ahhoz, hogy a modpack úgy induljon, ahogy a készítője beállította. Ha ezek
 // közül bármelyik hiányzik, az ellenőrző lista nem mondhatja készre a configot.
@@ -178,7 +185,7 @@ async function install({ cfg, userDataDir, onLog = () => {}, onProgress = () => 
 
   // A config a modok után jön: felülírja a listát a modpack profiljára, így a
   // kihagyott (crash-t okozó) modok nem maradnak engedélyezve.
-  const config = applyConfig({ onLog, onProgress });
+  const config = applyConfig({ onLog, onProgress, lang: (cfg && cfg.uiLang) || 'hu' });
 
   return {
     collection: res.collection,
@@ -257,7 +264,39 @@ function syncModList(zomboidDir, ids, onLog) {
 
 // A mellékelt config csomag bemásolása a játék Zomboid mappájába, majd a
 // modok engedélyezése a profil szerint.
-function applyConfig({ onLog = () => {}, onProgress = () => {} } = {}) {
+// Az options.ini `language=` sorát a launcher választott nyelvére állítja.
+// A config csomag többi részéhez nem nyúl.
+function applyLanguageVariant(zomboidDir, lang) {
+  const file = path.join(zomboidDir, 'options.ini');
+  const variant = LANG_VARIANTS[lang === 'en' ? 'en' : 'hu'];
+  let line;
+  try {
+    line = fs.readFileSync(variant, 'utf8').trim();
+  } catch (err) {
+    return { ok: false, error: `Hiányzó nyelvi példány: ${path.basename(variant)} (${err.message})` };
+  }
+  if (!line) return { ok: false, error: `Üres nyelvi példány: ${path.basename(variant)}` };
+
+  let raw;
+  try {
+    raw = fs.readFileSync(file, 'utf8');
+  } catch (err) {
+    return { ok: false, error: `Az options.ini nem olvasható (${err.message})` };
+  }
+
+  const next = /^language=.*$/m.test(raw)
+    ? raw.replace(/^language=.*$/m, line)
+    : raw.replace(/\r?\n*$/, `\n${line}\n`);
+  if (next === raw) return { ok: true, changed: false, line };
+  try {
+    fs.writeFileSync(file, next, 'utf8');
+    return { ok: true, changed: true, line };
+  } catch (err) {
+    return { ok: false, error: `Az options.ini nem írható (${err.message})` };
+  }
+}
+
+function applyConfig({ onLog = () => {}, onProgress = () => {}, lang = 'hu' } = {}) {
   if (!fs.existsSync(CONFIG_TREE)) {
     const error = 'A launcherhez mellékelt Blackout config csomag hiányzik (assets/blackout).';
     onLog('✗ ' + error);
@@ -306,6 +345,10 @@ function applyConfig({ onLog = () => {}, onProgress = () => {} } = {}) {
     }
   }
 
+  // A bemásolt options.ini nyelvét a launcher nyelvéhez igazítjuk.
+  const langRes = applyLanguageVariant(zomboidDir, lang);
+  if (langRes.error) onLog('! ' + langRes.error);
+
   const profile = profileOf(zomboidDir);
   const list = profile.found ? syncModList(zomboidDir, profile.mods, onLog) : { changed: false, count: 0 };
 
@@ -340,6 +383,8 @@ module.exports = {
   PROFILE_NAME,
   CONFIG_ROOT,
   CONFIG_SENTINELS,
+  LANG_VARIANTS,
+  applyLanguageVariant,
   collectionId,
   summary,
   install,
