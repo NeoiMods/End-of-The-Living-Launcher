@@ -1,0 +1,6 @@
+name=6301 3D models for Viewpoint [sour_kisel]
+id=PZVoxelStudioViewpoint
+author=sour_kisel
+modversion=1.0
+versionMin=42.21
+description=Voxel Studio 3D models for Project Viewpoint (first-person view). Stairs and corner-laid models re-anchored for Viewpoint.
