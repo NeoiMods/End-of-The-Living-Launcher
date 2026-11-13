@@ -249,6 +249,14 @@
       'Enabled: {n} · Installed: {n} (workshop {n}, local {n}) · Enabled and present: {n} · Missing: {n} · Disabled: {n}'],
     ['Hiba', 'Error'],
 
+    // --- ZombieBuddy agent váltás (hivatalos / EOTL) ---
+    ['✓ ZombieBuddy: az End of The Living saját agentje van a játék mellett.', '✓ ZombieBuddy: the End of The Living agent is installed next to the game.'],
+    ['✓ ZombieBuddy: a hivatalos agent visszaállítva (Blackout Protocol).', '✓ ZombieBuddy: the official agent is restored (Blackout Protocol).'],
+    ['! ZombieBuddy ({s}) mentése nem sikerült: {s}', '! Could not save the ZombieBuddy ({s}) copy: {s}'],
+    ['! ZombieBuddy ({s}) telepítése nem sikerült: {s}', '! Could not install the ZombieBuddy ({s}) agent: {s}'],
+    ['Több 3D modell mod.info van a workshop modban – nem tudom, melyiket cseréljem.', 'There are several 3D model mod.info files in the workshop mod – I cannot tell which one to replace.'],
+    ['A mod.info a workshop mod mappáján kívül van – a csere leállítva.', 'The mod.info is outside the workshop mod folder – the swap was stopped.'],
+
     // --- End of The Living (többjátékos) saját kiegészítői ---
     ['• End of The Living ZombieBuddy keresése a Master mappában…', '• Looking for the End of The Living ZombieBuddy in the Master folder…'],
     ['✓ End of The Living ZombieBuddy telepítve: {s}', '✓ End of The Living ZombieBuddy installed: {s}'],

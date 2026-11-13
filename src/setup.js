@@ -11,6 +11,7 @@ const collection = require('./collection');
 const workshop = require('./workshop');
 const zbInstaller = require('./zb-installer');
 const eotl = require('./eotl-mods');
+const zbAgent = require('./zb-agent');
 const approvals = require('./approvals');
 
 // A teljes telepítési folyamat:
@@ -272,6 +273,17 @@ async function runSetup({
       onLog('✗ ' + err.message);
     }
   }
+  // A játék mappában lévő agentet eltároljuk a módjához (hivatalos / EOTL),
+  // hogy a másik mód indításakor a megfelelő kerülhessen vissza.
+  if (launch.agentStatus(gameDir).present) {
+    zbAgent.remember({
+      userDataDir,
+      gameDir,
+      kind: zbEotl ? 'eotl' : 'official',
+      log: onLog,
+    });
+  }
+
   const agent = launch.agentStatus(gameDir);
   if (!agent.present) {
     onLog('⚠ A ZombieBuddy agent fájljai (ZombieBuddy.jar + zbNative.dll) nincsenek a játék mappában.');

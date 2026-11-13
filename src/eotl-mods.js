@@ -14,6 +14,7 @@ const path = require('path');
 
 const gh = require('./gh');
 const pzo = require('./pzo');
+const zbAgent = require('./zb-agent');
 const workshop = require('./workshop');
 const { expandZip } = require('./packs');
 const { findSteamPath, parseLibraryPaths } = require('./paths');
@@ -24,6 +25,9 @@ const VOXEL_WORKSHOP_ID = '3810302175';
 // Amivel felismerjük, hogy a saját mod.info már bent van (a workshop item
 // több modot is tartalmazhat, ezért csak a 3D modellek mod.info-ját írjuk át).
 const VOXEL_SIGNATURE = '6301 3D models';
+const VOXEL_MOD_ID = 'PZVoxelStudioViewpoint';
+// A 3D modell mod.info-ja: az azonosítója egyedi, ezért erre szűrünk. A
+// lazább minta csak akkor jön szóba, ha a workshop itemben egyetlen mod.info van.
 const VOXEL_MATCH = /pzvoxel|sour_kisel|viewpoint.*3d|6282|6301/i;
 
 function repoOf(cfg) {
@@ -64,6 +68,13 @@ async function installZombieBuddy({ cfg, userDataDir, gameDir, log = () => {}, o
   log(`→ ${asset.name} letöltése (${sizeMb})…`);
   await pzo.downloadAsset(asset, zipFile, cfg, log, onProgress);
 
+  // Ha most a hivatalos (Blackout) agent van a játék mellett, előbb eltároljuk,
+  // hogy később az egyjátékos indítás visszakaphassa.
+  const before = zbAgent.status({ userDataDir, gameDir });
+  if (before.current !== 'eotl' && !before.cached.official && before.current !== null) {
+    zbAgent.remember({ userDataDir, gameDir, kind: 'official', log });
+  }
+
   const outDir = path.join(os.tmpdir(), 'eotl-zombiebuddy');
   fs.rmSync(outDir, { recursive: true, force: true });
   log('  kicsomagolás…');
@@ -82,6 +93,10 @@ async function installZombieBuddy({ cfg, userDataDir, gameDir, log = () => {}, o
   if (copied.length !== ZB_FILES.length) {
     throw new Error('A csomagban nincs meg a ZombieBuddy.jar és a zbNative.dll.');
   }
+
+  // Eltároljuk az EOTL agentet, hogy az egyjátékos indítás vissza tudja majd
+  // állítani a hivatalos ZombieBuddy-t, és fordítva.
+  zbAgent.remember({ userDataDir, gameDir, kind: 'eotl', log });
 
   log('✓ End of The Living ZombieBuddy telepítve: ' + copied.join(', '));
   return { ok: true, files: copied, dir: gameDir };
@@ -151,17 +166,44 @@ async function applyVoxelModInfo({ cfg, userDataDir, log = () => {}, dir = null 
   }
 
   // Csak a 3D modellek mod.info-ját írjuk át: a workshop item alatt más mod is
-  // lehet, azt nem szabad elrontani.
-  let targets = all.filter((file) => {
+  // lehet, azt nem szabad elrontani. Elsődleges szűrő a mod egyedi azonosítója.
+  const contentOf = (file) => {
     try {
-      return VOXEL_MATCH.test(fs.readFileSync(file, 'utf8'));
+      return fs.readFileSync(file, 'utf8');
     } catch {
-      return false;
+      return '';
     }
-  });
-  if (!targets.length && all.length === 1) targets = all;
+  };
+  const folderOfInfo = (file) => {
+    const parent = path.basename(path.dirname(file));
+    return parent === VOXEL_MOD_ID ? parent : path.basename(path.dirname(path.dirname(file)));
+  };
+
+  let targets = all.filter(
+    (file) =>
+      new RegExp(`^\\s*id\\s*=\\s*${VOXEL_MOD_ID}\\s*$`, 'im').test(contentOf(file)) ||
+      folderOfInfo(file) === VOXEL_MOD_ID
+  );
   if (!targets.length) {
-    throw new Error('Nem találtam a 3D modellek mod.info fájlját a workshop modban.');
+    // Régi/átnevezett változat: csak akkor, ha egyetlen mod.info van a modban.
+    if (all.length === 1) targets = all;
+    else targets = all.filter((file) => VOXEL_MATCH.test(contentOf(file)));
+  }
+  if (targets.length !== 1) {
+    throw new Error(
+      targets.length
+        ? 'Több 3D modell mod.info van a workshop modban – nem tudom, melyiket cseréljem.'
+        : 'Nem találtam a 3D modellek mod.info fájlját a workshop modban.'
+    );
+  }
+
+  // Biztonsági ellenőrzés: csak a 3810302175 workshop mappáján belül írunk.
+  const root = path.resolve(status.dir);
+  for (const file of targets) {
+    const resolved = path.resolve(file);
+    if (resolved !== root && !resolved.startsWith(root + path.sep)) {
+      throw new Error('A mod.info a workshop mod mappáján kívül van – a csere leállítva.');
+    }
   }
 
   for (const file of targets) fs.writeFileSync(file, body);

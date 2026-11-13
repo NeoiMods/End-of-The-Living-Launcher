@@ -37,6 +37,7 @@ const discord = require('./src/discord');
 const crash = require('./src/crash');
 const blackout = require('./src/blackout');
 const eotl = require('./src/eotl-mods');
+const zbAgent = require('./src/zb-agent');
 
 // A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
 // A GitHub projektben át lett állítva erre a repo-ra:
@@ -1162,6 +1163,14 @@ ipcMain.handle('game:launch', async (event, mode) => {
     }
     // A játék nyelve minden indításnál a launcher nyelvét követi.
     if (blackoutMode) blackout.applyLanguageVariant(zomboidDir(), cfg.uiLang);
+    // A módhoz tartozó ZombieBuddy agent kerül a játék mellé (a másikat
+    // eltároltuk, így a Blackout hivatalos változata sem sérül).
+    zbAgent.sync({
+      userDataDir: app.getPath('userData'),
+      gameDir,
+      mode: blackoutMode ? 'blackout' : 'eotl',
+      log,
+    });
     // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).
     await launchGame({ gameDir, cfg, onLog: log, zgc: blackoutMode });
     gameSeenRunning = true;
