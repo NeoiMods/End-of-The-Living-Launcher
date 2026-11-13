@@ -249,6 +249,22 @@
       'Enabled: {n} · Installed: {n} (workshop {n}, local {n}) · Enabled and present: {n} · Missing: {n} · Disabled: {n}'],
     ['Hiba', 'Error'],
 
+    // --- End of The Living (többjátékos) saját kiegészítői ---
+    ['• End of The Living ZombieBuddy keresése a Master mappában…', '• Looking for the End of The Living ZombieBuddy in the Master folder…'],
+    ['✓ End of The Living ZombieBuddy telepítve: {s}', '✓ End of The Living ZombieBuddy installed: {s}'],
+    ['End of The Living ZombieBuddy letöltése', 'Downloading the End of The Living ZombieBuddy'],
+    ['Nincs endoftheliving zombiebuddy zip a {s}/{s} mappában.', 'There is no endoftheliving zombiebuddy zip in the {s}/{s} folder.'],
+    ['A csomagban nincs meg a ZombieBuddy.jar és a zbNative.dll.', 'The pack does not contain ZombieBuddy.jar and zbNative.dll.'],
+    ['kicsomagolás…', 'unpacking…'],
+    ['• 3D models for Viewpoint: a saját mod.info letöltése…', '• 3D models for Viewpoint: downloading our own mod.info…'],
+    ['✓ 3D models for Viewpoint: mod.info lecserélve ({n} fájl).', '✓ 3D models for Viewpoint: mod.info replaced ({n} files).'],
+    ['A {s} workshop mod még nincs letöltve – iratkozz fel a kollekcióra, várd meg a Steam letöltést, és utána próbáld újra.', 'The {s} workshop mod is not downloaded yet – subscribe to the collection, wait for the Steam download and try again.'],
+    ['A workshop modban nincs mod.info – a csere nem lehetséges.', 'The workshop mod has no mod.info – the swap is not possible.'],
+    ['Nem találtam a 3D modellek mod.info fájlját a workshop modban.', 'Could not find the 3D models mod.info inside the workshop mod.'],
+    ['A játék fut – zárd be, és utána cserélhető.', 'The game is running – close it and the swap can be done.'],
+    ['✗ End of The Living ZombieBuddy: {s}', '✗ End of The Living ZombieBuddy: {s}'],
+    ['! 3D models for Viewpoint: {s}', '! 3D models for Viewpoint: {s}'],
+
     // --- Discord widget létszám ---
     ['+{n} további tag online', '+{n} more members online'],
 

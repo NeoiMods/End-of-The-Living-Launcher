@@ -756,6 +756,9 @@ function wireEvents() {
   $('#optOverlay').addEventListener('click', (e) => {
     if (e.target === $('#optOverlay')) closeOptimize();
   });
+  document.querySelectorAll('.opt-mode').forEach((btn) => {
+    btn.addEventListener('click', () => setOptMode(btn.dataset.mode));
+  });
   document.querySelectorAll('.opt-card[data-opt]').forEach((card) => {
     card.addEventListener('click', (e) => {
       if (e.target.closest('.opt-del')) return; // törlés külön gombon
@@ -1555,11 +1558,56 @@ function totalRamGb() {
   return mem && mem.totalGb ? Number(mem.totalGb) : 0;
 }
 
+// Az Optimalizálás panelen két külön lista van: egyjátékos (Blackout modpack)
+// és többjátékos (End of The Living szerver). A váltó alapból a mostani módra áll.
+let optMode = null;
+let eotlStatus = null;
+
+function setOptMode(mode) {
+  optMode = mode === 'multi' ? 'multi' : 'single';
+  document.querySelectorAll('.opt-mode').forEach((btn) => {
+    const active = btn.dataset.mode === optMode;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+  filterOptCards();
+}
+
+function filterOptCards() {
+  const mode = optMode || 'single';
+  document.querySelectorAll('.opt-card[data-modes]').forEach((card) => {
+    const modes = String(card.dataset.modes || '').split(/\s+/);
+    card.classList.toggle('opt-hidden', !modes.includes(mode));
+  });
+  // Ha egy szekció minden kártyája eltűnt, maga a szekció is eltűnik.
+  document.querySelectorAll('.opt-section').forEach((section) => {
+    const cards = [...section.querySelectorAll('.opt-card')];
+    const visible = cards.some((c) => !c.classList.contains('opt-hidden'));
+    section.classList.toggle('opt-hidden', !visible);
+  });
+}
+
 function openOptimize() {
   $('#optOverlay').classList.remove('hidden');
+  setOptMode(gameMode === 'blackout' ? 'single' : 'multi');
   syncOptCards();
   refreshPzoState();
   refreshModsState();
+  refreshEotlState();
+}
+
+async function refreshEotlState() {
+  if (browserMode) {
+    eotlStatus = { zb: false, voxel: { installed: false, patched: false } };
+    syncOptCards();
+    return;
+  }
+  try {
+    eotlStatus = await bridge.getEotlStatus();
+  } catch {
+    eotlStatus = null;
+  }
+  syncOptCards();
 }
 
 function closeOptimize() {
@@ -1792,6 +1840,37 @@ function syncOptCards() {
     setDelVisible('voxel', done);
   }
 
+  // ---- többjátékos (End of The Living) kártyák ----
+  const zbEotlState = $('#zbEotlState');
+  if (zbEotlState) {
+    const done = !!(eotlStatus && eotlStatus.zb);
+    zbEotlState.classList.toggle('go', true);
+    zbEotlState.textContent = done ? 'TELEPÍTVE' : 'TELEPÍTÉS';
+    const hintEl = $('#zbEotlHint');
+    if (hintEl) {
+      hintEl.textContent = done
+        ? 'Telepítve – a szerver saját ZombieBuddy agentje fut'
+        : 'Az End of The Living szerver saját ZombieBuddy csomagja';
+    }
+  }
+
+  const voxelMpState = $('#voxelMpState');
+  if (voxelMpState) {
+    const v = (eotlStatus && eotlStatus.voxel) || {};
+    const patched = !!v.patched;
+    voxelMpState.classList.toggle('go', true);
+    voxelMpState.classList.toggle('warn', !!v.installed && !patched ? false : false);
+    voxelMpState.textContent = patched ? 'KÉSZ' : v.installed ? 'CSERE' : 'NINCS MOD';
+    const hintEl = $('#voxelMpHint');
+    if (hintEl) {
+      hintEl.textContent = patched
+        ? 'Kész – a saját mod.info van a workshop modban'
+        : v.installed
+          ? 'A 3810302175 workshop mod – kattints a mod.info cseréjéhez'
+          : 'Előbb iratkozz fel a kollekcióra (3810302175), utána cserélhető a mod.info';
+    }
+  }
+
   // Magyarítás: opcionális, a játékos dönti el – soha nem települ magától.
   const huState = $('#huState');
   if (huState) {
@@ -1892,6 +1971,22 @@ function runOptAction(action) {
         appendLog('✓ PZO Launcher kicsomagolva – a telepítő konzolban fut tovább.');
         await refreshPzoState();
       }
+      return res;
+    }, { reload: false });
+    return;
+  }
+  if (action === 'zb-eotl') {
+    runBusy(async () => {
+      const res = await bridge.installEotlZombieBuddy();
+      await refreshEotlState();
+      return res;
+    }, { reload: false });
+    return;
+  }
+  if (action === 'voxel-mp') {
+    runBusy(async () => {
+      const res = await bridge.applyVoxelModInfo();
+      await refreshEotlState();
       return res;
     }, { reload: false });
     return;

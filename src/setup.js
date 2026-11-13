@@ -10,6 +10,7 @@ const mods = require('./mods');
 const collection = require('./collection');
 const workshop = require('./workshop');
 const zbInstaller = require('./zb-installer');
+const eotl = require('./eotl-mods');
 const approvals = require('./approvals');
 
 // A teljes telepítési folyamat:
@@ -56,6 +57,9 @@ async function runSetup({
   openSubscribe,
   openSteamClient,
   skips,
+  // A szerveres (többjátékos) telepítés a saját ZombieBuddy csomagot kapja,
+  // az egyjátékos modpack a hivatalos telepítőt használja tovább.
+  zbEotl = false,
 }) {
   // Az egyjátékos modpack (Blackout) nem hagyja ki a kollekció elemeit – ott a
   // skips üres halmazokkal jön, a szerver telepítésnél a gyári kihagyások élnek.
@@ -238,13 +242,25 @@ async function runSetup({
 
   // ---- 5) ZombieBuddy telepítő ------------------------------------------
   let installer = null;
-  try {
-    installer = await zbInstaller.runZombieBuddyInstaller({ userDataDir, onLog, onProgress });
-    if (!installer.ok) {
-      onLog('⚠ A ZombieBuddy telepítő nem járt sikerül – a launcher saját telepítése továbbra is működik.');
+  if (zbEotl) {
+    // Többjátékos: az End of The Living saját ZombieBuddy csomagja a Master
+    // mappából (ugyanaz az automatikus folyamat, csak a hivatalos telepítő
+    // helyett a saját fájljaink kerülnek a játék mellé).
+    try {
+      await eotl.installZombieBuddy({ cfg, userDataDir, gameDir, log: onLog, onProgress });
+      installer = { ok: true, version: 'EOTL', name: 'endoftheliving zombiebuddy.zip' };
+    } catch (err) {
+      onLog('✗ End of The Living ZombieBuddy: ' + err.message);
     }
-  } catch (err) {
-    onLog('✗ ZombieBuddy telepítő: ' + err.message);
+  } else {
+    try {
+      installer = await zbInstaller.runZombieBuddyInstaller({ userDataDir, onLog, onProgress });
+      if (!installer.ok) {
+        onLog('⚠ A ZombieBuddy telepítő nem járt sikerül – a launcher saját telepítése továbbra is működik.');
+      }
+    } catch (err) {
+      onLog('✗ ZombieBuddy telepítő: ' + err.message);
+    }
   }
 
   // Agent fájlok (ZombieBuddy.jar + zbNative.dll) a játék mappába – a

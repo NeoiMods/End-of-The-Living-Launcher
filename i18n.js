@@ -37,6 +37,27 @@
 
     // --- súgók (title) ---
     'Elrejtés': 'Hide',
+
+    // --- optimalizálás: egyjátékos / többjátékos ---
+    'EGYJÁTÉKOS': 'SINGLE-PLAYER',
+    'MULTIPLAYER': 'MULTIPLAYER',
+    'ZombieBuddy (EOTL)': 'ZombieBuddy (EOTL)',
+    'Az End of The Living szerver saját ZombieBuddy csomagja':
+      'The End of The Living server’s own ZombieBuddy pack',
+    'Telepítve – a szerver saját ZombieBuddy agentje fut':
+      'Installed – the server’s own ZombieBuddy agent is running',
+    '3D models for Viewpoint': '3D models for Viewpoint',
+    'A 3810302175 workshop mod – a saját mod.info-val':
+      'The 3810302175 workshop mod – with our own mod.info',
+    'A 3810302175 workshop mod – kattints a mod.info cseréjéhez':
+      'The 3810302175 workshop mod – click to replace its mod.info',
+    'Előbb iratkozz fel a kollekcióra (3810302175), utána cserélhető a mod.info':
+      'Subscribe to the collection first (3810302175), then its mod.info can be replaced',
+    'Kész – a saját mod.info van a workshop modban':
+      'Done – our mod.info is inside the workshop mod',
+    'NINCS MOD': 'NO MOD',
+    'CSERE': 'REPLACE',
+    'KÉSZ': 'DONE',
     'Launcher verzió': 'Launcher version',
     'Váltás az egyjátékos Blackout modpack és a szerver között':
       'Switch between the single-player Blackout modpack and the server',

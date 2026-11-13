@@ -355,6 +355,11 @@
         Állítsd be a launchert a gépedhez. A halvány kártyák még fejlesztés alatt állnak.
       </p>
 
+      <div class="opt-modes" role="tablist" aria-label="Optimalizálás módja">
+        <button class="opt-mode is-active" data-mode="single" type="button" role="tab">EGYJÁTÉKOS</button>
+        <button class="opt-mode" data-mode="multi" type="button" role="tab">MULTIPLAYER</button>
+      </div>
+
       <div class="opt-section">
         <div class="opt-section-head"><span class="opt-num">01</span> OPTIMALIZÁLÁS</div>
         <div class="opt-grid">
@@ -364,14 +369,14 @@
             <small>A PZO motor telepítése a játékhoz (Master mappa)</small>
             <span class="opt-state go" id="pzoState">TELEPÍTÉS</span>
           </button>
-          <div class="opt-card ready" data-opt="eto" id="etoCard" role="button" tabindex="0">
+          <div class="opt-card ready" data-opt="eto" id="etoCard" data-modes="single" role="button" tabindex="0">
             <span class="opt-icon">▣</span>
             <b>ETO – alap</b>
             <small id="etoHint">Szebb textúrák, jobb FPS – az ETO másik változatát lecseréli</small>
             <span class="opt-state go" id="etoState">LETÖLTÉS</span>
             <button class="opt-del hidden" data-del="eto" type="button" title="Telepített ETO törlése">TÖRLÉS</button>
           </div>
-          <div class="opt-card ready" data-opt="eto-max" id="etoMaxCard" role="button" tabindex="0">
+          <div class="opt-card ready" data-opt="eto-max" id="etoMaxCard" data-modes="single" role="button" tabindex="0">
             <span class="opt-icon">▤</span>
             <b>ETO – Max Performance</b>
             <small id="etoMaxHint">Maximum FPS egyszerűbb textúrákkal – a másik ETO-t lecseréli</small>
@@ -409,25 +414,37 @@
       <div class="opt-section">
         <div class="opt-section-head"><span class="opt-num">02</span> MODELLEK</div>
         <div class="opt-grid">
-          <button class="opt-card ready" data-opt="zombiebuddy" id="zbCard" type="button">
+          <button class="opt-card ready" data-opt="zombiebuddy" id="zbCard" data-modes="single" type="button">
             <span class="opt-icon">✚</span>
             <b>ZombieBuddy</b>
             <small id="zbHint">Opcionális segédmod – FPS/TPS nézetekhez</small>
             <span class="opt-state go" id="zbState">LETÖLTÉS</span>
           </button>
-          <div class="opt-card ready" data-opt="voxel" id="voxelCard" role="button" tabindex="0">
+          <div class="opt-card ready" data-opt="voxel" id="voxelCard" data-modes="single" role="button" tabindex="0">
             <span class="opt-icon">◫</span>
             <b>6282 3D modell</b>
             <small id="voxelHint">Viewpoint 3D modellek a ZombieBuddyhoz – opcionális</small>
             <span class="opt-state go" id="voxelState">LETÖLTÉS</span>
             <button class="opt-del hidden" data-del="voxel" type="button" title="Telepített 3D modellcsomag törlése">TÖRLÉS</button>
           </div>
-          <div class="opt-card ready" data-opt="hu" id="huCard" role="button" tabindex="0">
+          <div class="opt-card ready" data-opt="hu" id="huCard" data-modes="single" role="button" tabindex="0">
             <span class="opt-icon">HU</span>
             <b>Magyarítás</b>
             <small id="huHint">Projekt A-Life + Survivor PDA + gyári szövegek – opcionális</small>
             <span class="opt-state go" id="huState">LETÖLTÉS</span>
             <button class="opt-del hidden" data-del="hu" type="button" title="Magyarítás törlése">TÖRLÉS</button>
+          </div>
+          <div class="opt-card ready" data-opt="zb-eotl" id="zbEotlCard" data-modes="multi" role="button" tabindex="0">
+            <span class="opt-icon">✚</span>
+            <b>ZombieBuddy (EOTL)</b>
+            <small id="zbEotlHint">Az End of The Living szerver saját ZombieBuddy csomagja</small>
+            <span class="opt-state go" id="zbEotlState">TELEPÍTÉS</span>
+          </div>
+          <div class="opt-card ready" data-opt="voxel-mp" id="voxelMpCard" data-modes="multi" role="button" tabindex="0">
+            <span class="opt-icon">◫</span>
+            <b>3D models for Viewpoint</b>
+            <small id="voxelMpHint">A 3810302175 workshop mod – a saját mod.info-val</small>
+            <span class="opt-state go" id="voxelMpState">CSERE</span>
           </div>
           <button class="opt-card ready" data-opt="modsFolder" type="button">
             <span class="opt-icon">🗀</span>

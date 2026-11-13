@@ -18,7 +18,7 @@ const {
 const modinfo = require('./src/modinfo');
 const modlist = require('./src/modlist');
 const news = require('./src/news');
-const { launchGame, isGameRunning } = require('./src/launch');
+const { launchGame, isGameRunning, agentStatus } = require('./src/launch');
 const setup = require('./src/setup');
 const { runSetup } = setup;
 const { fetchCollection } = require('./src/collection');
@@ -36,6 +36,7 @@ const mods = require('./src/mods');
 const discord = require('./src/discord');
 const crash = require('./src/crash');
 const blackout = require('./src/blackout');
+const eotl = require('./src/eotl-mods');
 
 // A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
 // A GitHub projektben át lett állítva erre a repo-ra:
@@ -909,6 +910,8 @@ ipcMain.handle('mods:install', async () => {
           onLog: () => {},
         }),
       openSteamClient: () => subscribe.openSteamClient(cfg.collectionId),
+      // Szerveres telepítés: a saját (EOTL) ZombieBuddy csomag megy fel.
+      zbEotl: true,
     });
 
     cfg = {
@@ -921,6 +924,20 @@ ipcMain.handle('mods:install', async () => {
         ? { version: res.installer.version, name: res.installer.name, ok: !!res.installer.ok, at: Date.now() }
         : cfg.zbInstaller,
     };
+
+    // A szerver 3D modellje (3810302175) a saját mod.info-val fut: amint a
+    // workshop mod megvan, a Master mappában lévő mod.info-t ráírjuk.
+    try {
+      const voxel = await eotl.applyVoxelModInfo({
+        cfg,
+        userDataDir: app.getPath('userData'),
+        log,
+      });
+      if (voxel && voxel.changed) save();
+    } catch (err) {
+      log('! 3D models for Viewpoint: ' + (err && err.message ? err.message : err));
+    }
+
     save();
     progress(null);
     return { ok: true };
@@ -949,6 +966,63 @@ ipcMain.handle('zb:install', async () => {
     save();
     progress(null);
     return { ok: !!res.ok, error: res.ok ? undefined : res.message };
+  } catch (err) {
+    progress(null);
+    return reportError(err);
+  } finally {
+    busy = false;
+  }
+});
+
+// ---- End of The Living (többjátékos) saját kiegészítői ------------------
+// Ezek csak a szerveres Optimalizálás panelen jelennek meg.
+
+ipcMain.handle('eotl:status', () => {
+  try {
+    const gameDir = resolveGamePath(cfg);
+    const agent = gameDir ? agentStatus(gameDir) : { present: false };
+    const st = eotl.status();
+    return { ok: true, zb: !!agent.present, voxel: st.voxel };
+  } catch (err) {
+    return { ok: false, error: err && err.message ? err.message : String(err), zb: false, voxel: { installed: false, patched: false } };
+  }
+});
+
+ipcMain.handle('eotl:zb', async () => {
+  if (busy) return { ok: false, error: 'Már fut egy művelet.' };
+  busy = true;
+  try {
+    const gameDir = resolveGamePath(cfg);
+    const res = await eotl.installZombieBuddy({
+      cfg,
+      userDataDir: app.getPath('userData'),
+      gameDir,
+      log,
+      onProgress: (done, total) =>
+        progress({ label: 'End of The Living ZombieBuddy letöltése', done, total }),
+    });
+    progress(null);
+    return res;
+  } catch (err) {
+    progress(null);
+    return reportError(err);
+  } finally {
+    busy = false;
+  }
+});
+
+ipcMain.handle('eotl:voxel', async () => {
+  if (busy) return { ok: false, error: 'Már fut egy művelet.' };
+  if (isGameRunning()) return { ok: false, error: 'A játék fut – zárd be, és utána cserélhető.' };
+  busy = true;
+  try {
+    const res = await eotl.applyVoxelModInfo({
+      cfg,
+      userDataDir: app.getPath('userData'),
+      log,
+    });
+    progress(null);
+    return res;
   } catch (err) {
     progress(null);
     return reportError(err);
