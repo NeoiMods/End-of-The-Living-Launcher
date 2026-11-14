@@ -624,9 +624,11 @@ function switchMode(mode) {
   );
   // A figyelmeztetés minden belépésnél felugrik, amíg „ne mutasd többet” nincs bekapcsolva.
   if (mode === 'blackout' && !warnHidden()) openBlackoutWarn();
-  // A Discord fül a másik szerver widgetjére vált.
+  // A Discord fül a másik szerver widgetjére vált, az Újdonságok fül pedig a
+  // módhoz tartozó hírfolyamra.
   discordLoadedAt = 0;
   loadDiscordWidget(true);
+  loadNews(false);
   if (lastStatus) render(lastStatus);
   renderServerStatus();
   if (!browserMode) refresh();
@@ -896,7 +898,13 @@ function setTab(name) {
   $('#discordView').classList.toggle('hidden', name !== 'discord');
   $('#btnClear').classList.toggle('hidden', name !== 'log');
   if (name === 'event') markEventSeen();
-  if (name === 'news') markNewsSeen();
+  if (name === 'news') {
+    markNewsSeen();
+    // Ha még nincs betöltött hírfolyam (pl. az indítás közben nem futott le),
+    // a fül megnyitásakor pótoljuk – mindig a módhoz tartozót.
+    const list = $('#newsList');
+    if (list && !list.children.length) loadNews(false);
+  }
   if (name === 'discord') loadDiscordWidget(false);
 }
 
@@ -1251,7 +1259,9 @@ function renderNews(res) {
     empty.className = 'news-empty';
     empty.textContent =
       (res && res.error ? 'Az újdonságok most nem érhetők el (' + res.error + '). ' : '') +
-      'Amint feltöltünk valamit a GitHubra (news.json), itt megjelenik.';
+      (gameMode === 'blackout'
+        ? 'Amint feltöltünk valamit a GitHubra (news-blackout.json), itt megjelenik.'
+        : 'Amint feltöltünk valamit a GitHubra (news.json), itt megjelenik.');
     list.appendChild(empty);
   } else {
     for (const item of items) list.appendChild(newsCard(item));
@@ -1264,17 +1274,20 @@ function renderNews(res) {
 
 async function loadNews(force) {
   if (browserMode) {
+    const blackout = gameMode === 'blackout';
     renderNews({
       ok: true,
       version: '0.7',
       items: [
         {
-          id: '0.7',
+          id: blackout ? '0.7-blackout' : '0.7',
           version: '0.7',
           date: '2026-11-06',
-          tag: 'MEGA FRISSÍTÉS',
-          title: '0.7 – ez a legelső kiadás',
-          text: 'Új frissítés-ablak, újdonságok fül és töltőcsík.',
+          tag: blackout ? 'BLACKOUT PROTOCOL' : 'MEGA FRISSÍTÉS',
+          title: blackout ? '0.7 – Blackout Protocol hírek' : '0.7 – ez a legelső kiadás',
+          text: blackout
+            ? 'Ebben a hírfolyamban a modpack változásai vannak.'
+            : 'Új frissítés-ablak, újdonságok fül és töltőcsík.',
           changes: ['Új verzió ablak OK gombbal', 'Újdonságok fül', 'Töltőcsík a csomagokhoz'],
         },
       ],
@@ -1282,7 +1295,8 @@ async function loadNews(force) {
     return;
   }
   try {
-    renderNews(await bridge.getNews(!!force));
+    // A Blackout Protocol saját hírfolyamot kap: a mód dönti el, melyik jön le.
+    renderNews(await bridge.getNews(!!force, gameMode));
   } catch (err) {
     renderNews({ ok: false, items: [], error: err && err.message ? err.message : String(err) });
   }

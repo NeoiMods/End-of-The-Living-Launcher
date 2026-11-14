@@ -35,8 +35,14 @@ function repoOf(cfg) {
   return raw || DEFAULT_REPO;
 }
 
-function urlOf(cfg) {
-  return `https://raw.githubusercontent.com/${repoOf(cfg)}/main/news.json`;
+// Két külön hírfolyam van: a szerveres (news.json) és a Blackout Protocol
+// egyjátékos modpack saját hírei (news-blackout.json).
+function fileOf(mode) {
+  return String(mode || '').toLowerCase() === 'blackout' ? 'news-blackout.json' : 'news.json';
+}
+
+function urlOf(cfg, mode) {
+  return `https://raw.githubusercontent.com/${repoOf(cfg)}/main/${fileOf(mode)}`;
 }
 
 function toListItem(item) {
@@ -74,10 +80,11 @@ function normalize(raw) {
 }
 
 // A csomagolt példány (ha nincs net, vagy még nem került fel a repóba).
-function readLocal(appRoot) {
+function readLocal(appRoot, mode) {
+  const name = fileOf(mode);
   const files = [
-    path.join(appRoot || __dirname, 'news.json'),
-    path.join(appRoot || __dirname, 'assets', 'news.json'),
+    path.join(appRoot || __dirname, name),
+    path.join(appRoot || __dirname, 'assets', name),
   ];
   for (const file of files) {
     try {
@@ -90,8 +97,9 @@ function readLocal(appRoot) {
   return null;
 }
 
-async function fetchNews({ cfg = {}, appRoot, force = false } = {}) {
-  const url = urlOf(cfg);
+async function fetchNews({ cfg = {}, appRoot, force = false, mode = 'eotl' } = {}) {
+  const url = urlOf(cfg, mode);
+  const file = fileOf(mode);
   const now = Date.now();
   if (!force && cache.data && cache.key === url && now - cache.at < CACHE_MS) {
     return cache.data;
@@ -104,7 +112,7 @@ async function fetchNews({ cfg = {}, appRoot, force = false } = {}) {
       cfg,
       repo: repoOf(cfg),
       ref: 'main',
-      file: 'news.json',
+      file,
       attempts: 2,
     });
     if (!fetched.ok) throw new Error(fetched.error);
@@ -115,10 +123,10 @@ async function fetchNews({ cfg = {}, appRoot, force = false } = {}) {
   } catch (err) {
     const reason = err && err.message ? err.message : String(err);
     if (cache.data && cache.key === url) return { ...cache.data, stale: true };
-    const local = readLocal(appRoot);
+    const local = readLocal(appRoot, mode);
     if (local) return { ...local, error: reason };
     return { ok: false, source: url, version: '', items: [], error: reason };
   }
 }
 
-module.exports = { fetchNews, urlOf, normalize, readLocal };
+module.exports = { fetchNews, urlOf, fileOf, normalize, readLocal };

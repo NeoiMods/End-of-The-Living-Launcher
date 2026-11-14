@@ -1,0 +1,78 @@
+{
+  "version": "0.9.13",
+  "updatedAt": "2026-11-14",
+  "items": [
+    {
+      "id": "0.9.13",
+      "version": "0.9.13",
+      "date": "2026-11-14",
+      "tag": "BLACKOUT PROTOCOL",
+      "title": "0.9.13 – Külön Blackout hírek, hogy lásd, mi változott a modpackban",
+      "text": "A launcher hírei kettéváltak: ez itt a Blackout Protocol saját hírfolyama. Ami az egyjátékos modpackot érinti (config, indítás, nyelv, optimalizálás), az ide kerül, a szerveres hírek pedig a többjátékos nézetben maradnak. A bejegyzések a launcher nyelvén jelennek meg: magyar felületen magyarul, angolon angolul.",
+      "changes": [
+        "A Blackout Protocol saját hírfolyamot kapott, elkülönítve a szerveres hírektől.",
+        "A modpackhoz tartozó korábbi bejegyzések átkerültek ide (config, indítás, nyelv).",
+        "A bejegyzések a választott launcher-nyelven jelennek meg."
+      ]
+    },
+    {
+      "id": "0.9.5",
+      "version": "0.9.5",
+      "date": "2026-11-12",
+      "tag": "TELJESÍTMÉNY",
+      "title": "0.9.5 – ZGC és előre lefoglalt heap az egyjátékos indításhoz",
+      "text": "A Blackout modpack indításakor a launcher a ProjectZomboid64.bat-ba írja a modpackhoz ajánlott JVM beállítást: -Xms8192m -Xmx8192m -XX:+UseZGC. A ZGC-nél a takarítás nem állítja meg a játékot – mért adat: a GC-megállás 146 ms-ról 70 ms-ra esett, a legrosszabb eset 4,2 másodpercről 75 ms-ra. A csomag options.ini-je a textúra-lépcsőt is lejjebb tartja (maxTextureSize / maxVehicleTextureSize), ami a terhelést csökkenti.",
+      "changes": [
+        "Egyjátékos indításnál a bat-ban: -Xms8192m -Xmx8192m -XX:+UseZGC (a G1GC-t kiveszi).",
+        "A beállítás a ProjectZomboid64.json-ba is bekerül, ha a játék azt használná.",
+        "A ZGC-s indítás a legrosszabb GC-megállást 4,2 másodpercről 75 ms-ra vitte.",
+        "A textúra-lépcső lejjebb (maxTextureSize / maxVehicleTextureSize) – kevesebb terhelés, mérve nem hozott VRAM-megtakarítást.",
+        "A beállítás megismételhető: ha már így fut, a launcher nem nyúl a fájlhoz."
+      ]
+    },
+    {
+      "id": "0.9.3",
+      "version": "0.9.3",
+      "date": "2026-11-12",
+      "tag": "NYELV",
+      "title": "0.9.3 – Magyar / English nyelvváltó és friss Blackout config",
+      "text": "A launcher fejlécében megjelent a MAGYAR / ENGLISH kapcsoló: egy kattintással az egész felület – a szerveres (multiplayer) és az egyjátékos Blackout oldal is – átvált a választott nyelvre, és a beállítás megmarad a következő indításra. Emellett bekerült a legfrissebb Blackout config csomag: a profil most 719 modot engedélyez, új sandbox preset érkezett (NeoiMods Ajanlott / Neoi-Suggested), és a launcher a ProjectZomboid64.bat memóriabeállítását is átírja, ami a laggolás ellen számít.",
+      "changes": [
+        "Nyelvváltó gomb a fejlécben: MAGYAR / ENGLISH, a teljes felületre (multiplayer és single-player oldal).",
+        "A választott nyelv megjegyződik, a következő indításnál is az jön be.",
+        "Új Blackout config: 719 modos profil, NeoiMods Ajanlott / Neoi-Suggested sandbox preset, friss options.ini.",
+        "A launcher a ProjectZomboid64.bat -Xmx értékét is beállítja (a B42 ezen keresztül indul).",
+        "Az ellenőrző lista a valós default.txt állapotot és a hiányzó config fájlokat is mutatja."
+      ]
+    },
+    {
+      "id": "0.9.1",
+      "version": "0.9.1",
+      "date": "2026-11-10",
+      "tag": "CONFIG",
+      "title": "0.9.1 – A modpack config csomagja a launcherben",
+      "text": "A launcher mostantól magával hozza a Blackout Protocol teljes config csomagját: a pz_modlist_settings.cfg-t a 807 modos profillal, a NeoMods sandbox preseleket, a billentyűket és a mod-configokat. Telepítéskor és minden egyjátékos indítás előtt bemásolja őket a játék Zomboid mappájába, a modokat pedig a profil szerint engedélyezi – így a Waterpipes / LastCupCoffee / PlumbingFuelGeneratorAddonB42 trió nem kerül be, ami világbetöltéskor elszállította a játékot.",
+      "changes": [
+        "A config csomag a launcherben van (assets/blackout) – nem kell kézzel másolgatni.",
+        "Telepítéskor és minden egyjátékos indítás előtt a helyére kerül; a felülírt fájlokról mentés készül (Zomboid\\eotl-backup-*).",
+        "A modok a Blackout Protocol profilból engedélyeződnek (807 mod), és a default.txt is ezt a listát kapja.",
+        "Az ELLENŐRZÉS fül a valós állapotot mutatja: hány mod aktív a profilban, és hogy a config a helyén van-e."
+      ]
+    },
+    {
+      "id": "0.9.0",
+      "version": "0.9.0",
+      "date": "2026-11-10",
+      "tag": "MEGA UPDATE",
+      "title": "0.9.0 – Blackout Protocol egyjátékos mód",
+      "text": "A launcher új gombbal bővült: a SINGLE-PLAYER gombbal átvált a Blackout Protocol – New Era egyjátékos modpackra (847 item, közel 800+ mod). A háttér, a feliratok és a modlista is átvált, a MULTIPLAYER gombbal pedig minden visszaáll az End of The Living szerverre. A játék egyik módban sem indul el magától: a JÁTÉK INDÍTÁSA gombra kell kattintani, és a Project Zomboid a főmenübe indul.",
+      "changes": [
+        "Új SINGLE-PLAYER / MULTIPLAYER gomb a JÁTÉK INDÍTÁSA fölött – a módváltás nem indítja el a játékot.",
+        "Blackout Protocol – New Era: a 3814595736-os Steam kollekció telepítése ugyanazzal a mechanikával, mint a szerver modpack (feliratkozás, letöltés, engedélyezés).",
+        "Az első belépésnél figyelmeztetés a méretről (847 item, 800+ mod, hosszú letöltés) „Ne mutasd többet” lehetőséggel.",
+        "A launcher bemásolja a modpackhoz tartozó config fájlt a játékba, amint az felkerül a repóba (Master/blackout/index.json).",
+        "Új háttér és Blackout feliratok egyjátékos módban; visszaváltáskor minden az End of The Living kinézetre áll vissza."
+      ]
+    }
+  ]
+}

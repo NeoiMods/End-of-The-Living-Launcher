@@ -50,11 +50,12 @@ const APP_FILES = [
   'index.html',
   'styles.css',
   'news.json',
+  'news-blackout.json',
   'events.json',
   'package.json',
 ];
 // Csak ezek szerkesztése nem indít launcher-frissítést (a játékos csak a hírt látja).
-const NOTE_FILES = ['news.json', 'events.json'];
+const NOTE_FILES = ['news.json', 'news-blackout.json', 'events.json'];
 const APP_DIRS = ['src', 'assets', 'themes'];
 
 // ------------------------------------------------------------------ repo

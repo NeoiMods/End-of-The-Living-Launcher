@@ -382,9 +382,9 @@ ipcMain.handle('app:version', () => ({
   sha: baselineSha(),
 }));
 
-ipcMain.handle('news:get', async (e, force) => {
+ipcMain.handle('news:get', async (e, force, mode) => {
   try {
-    return await news.fetchNews({ cfg, appRoot: __dirname, force: !!force });
+    return await news.fetchNews({ cfg, appRoot: __dirname, force: !!force, mode });
   } catch (err) {
     return { ok: false, items: [], error: err && err.message ? err.message : String(err) };
   }

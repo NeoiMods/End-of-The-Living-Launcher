@@ -22,6 +22,7 @@ const APP_FILES = [
   'styles.css',
   'events.json',
   'news.json',
+  'news-blackout.json',
 ];
 const APP_DIRS = ['src', 'assets', 'themes'];
 // Csak ezeket a nyelveket tartjuk meg (a többi .pak ~47 MB).

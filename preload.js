@@ -23,7 +23,8 @@ contextBridge.exposeInMainWorld('api', {
   onUpdateAvailable: (cb) => ipcRenderer.on('update-available', (_event, payload) => cb(payload)),
 
   // ---- újdonságok (news.json a GitHubon) ----
-  getNews: (force) => ipcRenderer.invoke('news:get', force),
+  // mode: 'blackout' → a Blackout Protocol saját hírfolyama
+  getNews: (force, mode) => ipcRenderer.invoke('news:get', force, mode),
 
   // ---- események ----
   getEvent: (force) => ipcRenderer.invoke('events:get', force),

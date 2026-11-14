@@ -12,6 +12,33 @@
     '– tétlen': '– idle',
     'Widget betöltése…': 'Loading widget…',
 
+    // ---- előnézeti minta (csak böngészős preview) ----
+    '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
+    'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
+
+    // ---- 0.9.13 (Blackout hírek) ----
+    '0.9.13 – Külön Blackout hírek, hogy lásd, mi változott a modpackban':
+      '0.9.13 – Separate Blackout news so you can see what changed in the modpack',
+    'A launcher hírei kettéváltak: ez itt a Blackout Protocol saját hírfolyama. Ami az egyjátékos modpackot érinti (config, indítás, nyelv, optimalizálás), az ide kerül, a szerveres hírek pedig a többjátékos nézetben maradnak. A bejegyzések a launcher nyelvén jelennek meg: magyar felületen magyarul, angolon angolul.':
+      'The launcher news is now split: this is the Blackout Protocol feed. Anything that affects the single-player modpack (config, launch, language, optimization) lands here, while server news stays in the multiplayer view. Entries appear in the launcher’s language: Hungarian on a Hungarian UI, English on an English one.',
+    'A Blackout Protocol saját hírfolyamot kapott, elkülönítve a szerveres hírektől.':
+      'The Blackout Protocol now has its own news feed, kept apart from the server news.',
+    'A modpackhoz tartozó korábbi bejegyzések átkerültek ide (config, indítás, nyelv).':
+      'Earlier modpack entries moved here (config, launch, language).',
+    'A bejegyzések a választott launcher-nyelven jelennek meg.':
+      'Entries appear in the selected launcher language.',
+
+    // ---- 0.9.13 (szerveres hírek) ----
+    '0.9.13 – A Blackout Protocol saját hírfolyamot kapott':
+      '0.9.13 – The Blackout Protocol got its own news feed',
+    'Ezen a fülön a szerver hírei vannak. Az egyjátékos Blackout Protocol modpack bejegyzései külön hírfolyamba kerültek, ami egyjátékos módban jelenik meg – így a két mód hírei nem keverednek.':
+      'This tab holds the server news. Entries for the single-player Blackout Protocol modpack moved to a separate feed that appears in single-player mode, so the two sets never mix.',
+    'Két hírfolyam: szerveres (ez) és Blackout Protocol (egyjátékos módban).':
+      'Two feeds: server (this one) and Blackout Protocol (in single-player mode).',
+    'A modpackhoz tartozó régi bejegyzések átkerültek a Blackout hírek közé.':
+      'The old modpack entries moved into the Blackout news.',
+    'BLACKOUT PROTOCOL': 'BLACKOUT PROTOCOL',
+
     // ---- 0.9.5 ----
     '0.9.5 – ZGC és előre lefoglalt heap az egyjátékos indításhoz':
       '0.9.5 – ZGC and pre-allocated heap for the single-player launch',
