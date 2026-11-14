@@ -33,6 +33,10 @@
     'NAPLÓ': 'LOG',
     'ESEMÉNY': 'EVENT',
     'ÚJDONSÁGOK': 'NEWS',
+    'FIGYELEM': 'HEADS UP',
+    'A Blackout Protocol friss hírei – olvasd el, majd nyomj OK-t:':
+      'Fresh news for the Blackout Protocol – read it, then press OK:',
+    'OK – ÉRTETTEM': 'OK – GOT IT',
     'ESEMÉNYIG': 'UNTIL EVENT',
 
     // --- súgók (title) ---

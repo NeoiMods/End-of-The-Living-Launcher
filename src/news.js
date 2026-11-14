@@ -60,6 +60,9 @@ function toListItem(item) {
     title,
     text: String(item.text || item.description || ''),
     changes,
+    // Figyelmeztető bejegyzés: a launcher induláskor felugrik vele, és csak
+    // az OK gombbal lehet nyugtázni (a Blackout modpack hírei ilyenek).
+    attention: !!item.attention,
   };
 }
 

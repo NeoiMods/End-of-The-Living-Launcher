@@ -628,7 +628,7 @@ function switchMode(mode) {
   // módhoz tartozó hírfolyamra.
   discordLoadedAt = 0;
   loadDiscordWidget(true);
-  loadNews(false);
+  loadNews(false).then(maybeShowNewsPopup);
   if (lastStatus) render(lastStatus);
   renderServerStatus();
   if (!browserMode) refresh();
@@ -643,6 +643,8 @@ function openBlackoutWarn() {
 function closeBlackoutWarn() {
   if ($('#blackoutWarnHide').checked) setWarnHidden(true);
   $('#blackoutWarn').classList.add('hidden');
+  // A belépő figyelmeztetés után jöhet a Blackout hírek figyelmeztetése (ha van).
+  maybeShowNewsPopup();
 }
 
 // ---------------------------------------------------------------- actions
@@ -722,7 +724,7 @@ function wireEvents() {
   $('#btnNewsReload').addEventListener('click', () => loadNews(true));
   $('#btnNewsOk').addEventListener('click', () => {
     $('#newsOverlay').classList.add('hidden');
-    markNewsSeen();
+    markNewsSeen(true);
   });
   $('#btnUpdateNow').addEventListener('click', applyUpdateNow);
   $('#btnUpdateLater').addEventListener('click', () => {
@@ -1174,22 +1176,31 @@ async function sendCrashLog(manual) {
 const SEEN_NEWS_KEY = 'eotl.seenNews';
 let newsData = null;
 
+// Módtól függő „látott” kulcs: a Blackout figyelmeztetés akkor is felugrik,
+// ha a szerveres híreket valaki már nyugtázta (és fordítva).
+function newsSeenKey() {
+  return SEEN_NEWS_KEY + '.' + (gameMode === 'blackout' ? 'blackout' : 'eotl');
+}
+
 function seenNewsId() {
   try {
-    return localStorage.getItem(SEEN_NEWS_KEY) || '';
+    return localStorage.getItem(newsSeenKey()) || '';
   } catch {
     return '';
   }
 }
 
-function markNewsSeen() {
+// force = true: az OK gomb nyugtáz, figyelmeztető bejegyzésnél ez a kivétel.
+function markNewsSeen(force) {
   const items = (newsData && newsData.items) || [];
-  if (items.length) {
-    try {
-      localStorage.setItem(SEEN_NEWS_KEY, items[0].id);
-    } catch {
-      /* privát mód: nem baj */
-    }
+  const newest = items[0];
+  if (!items.length) return;
+  // A figyelmeztető (attention) bejegyzést csak az OK gomb tünteti el.
+  if (newest && newest.attention && !force) return;
+  try {
+    localStorage.setItem(newsSeenKey(), newest.id);
+  } catch {
+    /* privát mód: nem baj */
   }
   const dot = $('#newsDot');
   if (dot) dot.classList.remove('is-on');
@@ -1303,17 +1314,29 @@ async function loadNews(force) {
 }
 
 // Ha új újdonság van (és nem frissül most a launcher), induláskor felugrik.
+// A figyelmeztető (attention) bejegyzés – ilyen a Blackout modpack híre –
+// hangsúlyos ablakban jön, és csak az OK gombbal lehet eltüntetni.
 function maybeShowNewsPopup() {
   const items = (newsData && newsData.items) || [];
   if (!items.length) return;
   if (items[0].id === seenNewsId()) return;
   const upd = $('#updateOverlay');
   if (upd && !upd.classList.contains('hidden')) return; // a frissítés-ablak az első
+  // A Blackout belépő figyelmeztetés előbb jön; annak OK-ja után hívjuk újra.
+  const warn = $('#blackoutWarn');
+  if (warn && !warn.classList.contains('hidden')) return;
 
   const newest = items[0];
-  $('#newsOverlayLead').textContent = newest.version
-    ? `Launcher v${newest.version} – ezek változtak:`
-    : 'Ezek történtek mostanában:';
+  const attention = !!newest.attention;
+  $('#newsOverlayTitle').textContent = attention ? 'FIGYELEM' : 'Újdonságok';
+  $('#newsOverlayLead').textContent = attention
+    ? 'A Blackout Protocol friss hírei – olvasd el, majd nyomj OK-t:'
+    : newest.version
+      ? `Launcher v${newest.version} – ezek változtak:`
+      : 'Ezek történtek mostanában:';
+  $('#btnNewsOk').textContent = attention ? 'OK – ÉRTETTEM' : 'OK';
+  const modal = $('#newsOverlay .news-modal');
+  if (modal) modal.classList.toggle('is-attention', attention);
   const list = $('#newsOverlayList');
   list.innerHTML = '';
   list.appendChild(newsCard(newest));

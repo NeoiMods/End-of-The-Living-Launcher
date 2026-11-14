@@ -2052,6 +2052,18 @@ body.busy .mini-btn { pointer-events: none; opacity: 0.55; }
 
 /* ---------- újdonságok pop-up ---------- */
 .news-modal { max-width: 560px; }
+/* Figyelmeztető újdonság (Blackout): feltűnő keret, OK-zni kell. */
+.news-modal.is-attention {
+  border: 1px solid rgba(224, 160, 48, 0.85);
+  box-shadow: 0 0 0 1px rgba(224, 160, 48, 0.35), 0 18px 60px rgba(0, 0, 0, 0.65);
+}
+.news-modal.is-attention h2 {
+  color: #ffc46a;
+  letter-spacing: 1.2px;
+}
+.news-modal.is-attention .ni-tag {
+  background: linear-gradient(180deg, #ffd27a, #e0a030);
+}
 .news-overlay-list { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow: auto; }
 
 /* Ismeretlen fájlméretnél (pl. GitHub zipball) mozgó csík jelzi a töltést. */
