@@ -638,8 +638,10 @@ async function runMasterBat({ cfg = {}, userDataDir, gameDir, onLog = () => {}, 
 // ZombieBuddy telepítés: bat, ha van a Master mappában, különben az exe.
 async function installZombieBuddy({ cfg = {}, userDataDir, gameDir, onLog = () => {}, onProgress = () => {} }) {
   // A telepítő (exe és bat is) csak bezárt Steammel megy végig.
+  let steamWasRunning = false;
   try {
-    await closeSteam({ onLog });
+    const res = await closeSteam({ onLog });
+    steamWasRunning = !!res.running;
   } catch (err) {
     onLog('! A Steam bezárása nem sikerült: ' + err.message);
   }
@@ -650,11 +652,29 @@ async function installZombieBuddy({ cfg = {}, userDataDir, gameDir, onLog = () =
   } catch (err) {
     onLog('! A Master mappa nem olvasható (' + err.message + ') – az exe telepítőt próbálom.');
   }
-  if (found) return { ...(await runMasterBat({ cfg, userDataDir, gameDir, onLog, onProgress })), source: 'bat' };
+  let result;
+  if (found) {
+    result = { ...(await runMasterBat({ cfg, userDataDir, gameDir, onLog, onProgress })), source: 'bat' };
+  } else {
+    onLog('• Nincs bat a Master mappában – a hivatalos exe telepítőt futtatom.');
+    result = { ...(await runZombieBuddyInstaller({ userDataDir, onLog, onProgress })), source: 'exe' };
+  }
 
-  onLog('• Nincs bat a Master mappában – a hivatalos exe telepítőt futtatom.');
-  const res = await runZombieBuddyInstaller({ userDataDir, onLog, onProgress });
-  return { ...res, source: 'exe' };
+  // Ha a telepítő miatt zártuk be a Steamet, visszaindítjuk: a játék csak
+  // futó Steammel indul el.
+  if (steamWasRunning) {
+    try {
+      const steam = require('./steam');
+      if (!steam.isSteamRunning()) {
+        onLog('• A Steam visszaindítása (a telepítés miatt zártuk be)…');
+        steam.startSteam({ onLog });
+      }
+    } catch (err) {
+      onLog('! A Steam visszaindítása nem sikerült: ' + err.message);
+    }
+  }
+
+  return result;
 }
 
 module.exports = {

@@ -6,6 +6,17 @@
   if (!i18n) return;
 
   i18n.addTemplates([
+    // ---- 0.9.25 (Steam + játék indítás) ----
+    ["• A Steam nem fut – elindítom, mert a játék nélküle nem indul el.", "• Steam is not running – starting it, because the game will not start without it."],
+    ["• A Steam indítása a háttérben…", "• Starting Steam in the background…"],
+    ["! A Steam nem található – indítsd el kézzel, különben a játék kilép.", "! Steam was not found – start it by hand, otherwise the game exits."],
+    ["! A Steam 60 mp alatt sem indult el – a játék valószínűleg kilép.", "! Steam did not start within 60 s – the game will probably exit."],
+    ["✓ A Steam fut.", "✓ Steam is running."],
+    ["! A Steam indítása nem sikerült: {s}", "! Could not start Steam: {s}"],
+    ["⚠ A Steam nem indult el – a játék valószínűleg azonnal kilép.", "⚠ Steam did not start – the game will probably exit immediately."],
+    ["• A Steam visszaindítása (a telepítés miatt zártuk be)…", "• Restarting Steam (closed for the installation)…"],
+    ["! A Steam visszaindítása nem sikerült: {s}", "! Could not restart Steam: {s}"],
+    ["⚠ A játék 15 mp után sem látszik futónak – nézd meg a Steamet és a játék konzolját.", "⚠ The game does not look like it is running after 15 s – check Steam and the game console."],
     // ---- 0.9.24 (blackout nightly) ----
     "✗ Viewpoint NIGHTLY: {s}", "✗ Viewpoint NIGHTLY: {s}",
     // ---- 0.9.22 (Steam bezárás, helyi nightly) ----

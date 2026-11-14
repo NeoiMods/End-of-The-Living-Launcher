@@ -16,7 +16,22 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                        // ---- 0.9.24 (új blackout config + ONFIRE) ----
+                            // ---- 0.9.25 (játék indítás / Steam) ----
+    "0.9.25 – A játék nem indult el, mert zárt Steam mellett próbálta":
+      "0.9.25 – The game did not start because Steam had been closed",
+    "A ZombieBuddy telepítő miatt a launcher bezárja a Steamet – utána viszont a játékot zárt Steammel indította, ezért az azonnal kilépett, a launcher pedig azt írta, hogy „a játék bezárult”. Mostantól a telepítés végén a Steam visszaindul, a JÁTÉK INDÍTÁSA pedig ellenőrzi a Steamet: ha nem fut, elindítja és megvárja (max. 60 mp), csak utána indítja a játékot. A futásérzékelés is javult: a B42-nél a játékot a java.exe viszi, nem a ProjectZomboid64.exe, ezért a launcher eddig akkor is „bezárult”-ot írt, ha a játék ment.":
+      "The ZombieBuddy installer makes the launcher close Steam – and then the launcher started the game with Steam closed, so it exited immediately and the launcher reported that “the game closed”. Now Steam is started again at the end of the installation, and START GAME checks Steam: if it is not running, the launcher starts it and waits (up to 60 s) before launching the game. Process detection improved as well: on B42 the game runs in java.exe, not ProjectZomboid64.exe, so the launcher used to report “closed” even while the game was running.",
+    "Játék indítása: ha a Steam nem fut, a launcher elindítja és megvárja, mielőtt a játékot indítaná.":
+      "Starting the game: if Steam is not running, the launcher starts it and waits before launching the game.",
+    "ZombieBuddy telepítés után a Steam automatikusan visszaindul (a telepítő miatt zártuk be).":
+      "Steam is restarted automatically after the ZombieBuddy installation (it was closed for the installer).",
+    "Futásérzékelés: a java.exe-s játékfolyamatot is felismeri, nem csak a ProjectZomboid64.exe-t.":
+      "Process detection also recognises the java.exe game process, not only ProjectZomboid64.exe.",
+    "Indítás után 15 mp-cel ellenőrzi, hogy a játék tényleg fut-e, és ha nem, a naplóban jelzi.":
+      "Fifteen seconds after launch the launcher verifies that the game is really running and says so in the log if not.",
+    "Nincs több hamis „a játék bezárult” üzenet a sikeres indítás után.":
+      "No more false “the game closed” messages after a successful start.",
+// ---- 0.9.24 (új blackout config + ONFIRE) ----
     "ON FIRE – ami most a legfontosabb (Blackout Protocol)":
       "ON FIRE – what matters most right now (Blackout Protocol)",
     "Új Blackout Protocol config csomag: 714 aktív mod, újrahangolt balance (zombik alacsony, városra összpontosítva; élelem 0.4 / fegyver 0.2 / gazdálkodás 0.4; víz és áram 7–14 nap között megy el; 1 órás napok, július 1-i indulás; ritkább helikopter/meta esemény; generátor 0.1 fogyasztás). A config csak az EGYJÁTÉKOS (single-player) módot érinti, és automatikusan bekerül a játékba, ahogy eddig: a MODOK TELEPÍTÉSE / FRISSÍTÉSE után a launcher bemásolja, és a „Blackout Protocol” profilt használja. 1) PROJECT VIEWPOINT – NIGHTLY 0.1.7 rc4: ez NEM a Workshop-ös alpha 0.1.6! A launcher a Master mappából teszi be a Zomboid\\mods mappába, és kell hozzá ZombieBuddy ≥ 2.3.0. A nightly a Project Viewpoint Discord „nightly-releases” csatornájából jön (role: select roles → nightly test). Teszt build: először csak a magot + ZombieBuddy-t tedd be, az addonokat utána, egyesével – ha fekete a kép, addon a bűnös. 2) PROJECT A-LIFE 1.5.2 (Workshop 3803984183, mod id ProjectALifeNPCs): NPC-k vezetnek autót, 148 frakció, outpostok, rádió, rablás, raid. Kell hozzá ZombieBuddy + Viewpoint x A-LIFE (3822854313). Ha lagol: A-Life sandbox → Performance level = Auto, Zombie path/sec 10. 3) A PRESETEK: ujj játéknál a „Neoi-Suggested” (angol) vagy „NeoiMods Ajánlott” (magyar) sandbox preset – a kettő tartalma azonos. 4) UNDYING OPTIMIZER: bent van a listában (a PZO utódja); a Tempo_PerfKit és a Multi-CPU kikerült, mert az utóbbi egy vanilla ProjectZomboid64.json-t hozna, és tönkretenné a ZGC-s indítót.":

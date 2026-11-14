@@ -1143,7 +1143,23 @@ ipcMain.handle('game:launch', async (event, mode) => {
     mods.removeBaseViewpoint({ log });
     // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).
     await launchGame({ gameDir, cfg, onLog: log, zgc: blackoutMode });
-    gameSeenRunning = true;
+    // A tényleges futást a figyelő állapítja meg (a B42-nél a java.exe viszi a
+    // játékot, nem az indító exe) – így nem lesz hamis „bezárult” üzenet.
+    gameSeenRunning = false;
+    setTimeout(() => {
+      let running = false;
+      try {
+        running = isGameRunning();
+      } catch {
+        running = false;
+      }
+      if (running) {
+        gameSeenRunning = true;
+        log('• A játék elindult.');
+      } else {
+        log('⚠ A játék 15 mp után sem látszik futónak – nézd meg a Steamet és a játék konzolját.');
+      }
+    }, 15000);
     return { ok: true };
   } catch (err) {
     return reportError(err);

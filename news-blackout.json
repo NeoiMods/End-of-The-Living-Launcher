@@ -1,7 +1,22 @@
 {
-  "version": "0.9.24",
+  "version": "0.9.25",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.25",
+      "version": "0.9.25",
+      "date": "2026-11-14",
+      "tag": "JAVÍTÁS",
+      "title": "0.9.25 – A játék nem indult el, mert zárt Steam mellett próbálta",
+      "text": "A ZombieBuddy telepítő miatt a launcher bezárja a Steamet – utána viszont a játékot zárt Steammel indította, ezért az azonnal kilépett, a launcher pedig azt írta, hogy „a játék bezárult”. Mostantól a telepítés végén a Steam visszaindul, a JÁTÉK INDÍTÁSA pedig ellenőrzi a Steamet: ha nem fut, elindítja és megvárja (max. 60 mp), csak utána indítja a játékot. A futásérzékelés is javult: a B42-nél a játékot a java.exe viszi, nem a ProjectZomboid64.exe, ezért a launcher eddig akkor is „bezárult”-ot írt, ha a játék ment.",
+      "changes": [
+        "Játék indítása: ha a Steam nem fut, a launcher elindítja és megvárja, mielőtt a játékot indítaná.",
+        "ZombieBuddy telepítés után a Steam automatikusan visszaindul (a telepítő miatt zártuk be).",
+        "Futásérzékelés: a java.exe-s játékfolyamatot is felismeri, nem csak a ProjectZomboid64.exe-t.",
+        "Indítás után 15 mp-cel ellenőrzi, hogy a játék tényleg fut-e, és ha nem, a naplóban jelzi.",
+        "Nincs több hamis „a játék bezárult” üzenet a sikeres indítás után."
+      ]
+    },
     {
       "id": "onfire-0.9.24",
       "version": "0.9.24",
