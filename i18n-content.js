@@ -16,6 +16,21 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
+    // ---- 0.9.14 (Blackout figyelmeztetés) ----
+    '0.9.14 – FIGYELEM: a Blackout Protocol modpack átdolgozás alatt':
+      '0.9.14 – HEADS UP: the Blackout Protocol modpack is being reworked',
+    'Megérkezett az új Project-Alife frissítés, ezért a Blackout Protocol modpackot átdolgozzuk. Ez alatt előfordulhat, hogy egy indítás nem a megszokott módon zajlik, vagy egy mod ideiglenesen kikerül a csomagból. A Project-Alife sok új config-lehetőséget hozott, így jó eséllyel visszakerülnek az NPC-k: ez nagy lehetőség, de semmit nem ígérünk – hogy végül bent maradnak-e, a teszteken múlik. Amint végeztünk, itt és a Blackout hírek között jelezzük.':
+      'The new Project-Alife update has landed, so we are reworking the Blackout Protocol modpack. While that lasts a launch may not go the usual way, or a mod may drop out of the pack for a while. Project-Alife brought a lot of new config options, so the NPCs will very likely come back: that is a big opportunity, but we promise nothing – whether they end up staying depends on testing. We will say so here and in the Blackout news feed once we are done.',
+    'A modpack átdolgozás alatt van az új Project-Alife frissítés miatt.':
+      'The modpack is being reworked because of the new Project-Alife update.',
+    'A Project-Alife sok új config-lehetőséget hozott, így valószínűleg visszatérnek az NPC-k.':
+      'Project-Alife brought a lot of new config options, so the NPCs will probably return.',
+    'Ez nagy lehetőség, de semmit nem ígérünk: a végeredmény a teszteken múlik.':
+      'A big opportunity, but no promises: the final result depends on testing.',
+    'Az átdolgozás alatt egy-egy mod ideiglenesen kikerülhet a csomagból.':
+      'While the rework runs, a mod may temporarily leave the pack.',
+    'FIGYELEM': 'HEADS UP',
+
     // ---- 0.9.13 (Blackout hírek) ----
     '0.9.13 – Külön Blackout hírek, hogy lásd, mi változott a modpackban':
       '0.9.13 – Separate Blackout news so you can see what changed in the modpack',
