@@ -6,6 +6,8 @@
   if (!i18n) return;
 
   i18n.addTemplates([
+    // ---- 0.9.29 (nightly csak kérésre) ----
+    "• Viewpoint NIGHTLY nem települ magától – az Optimalizálás panelen tudod feltenni.", "• Viewpoint NIGHTLY is no longer installed automatically – install it from the Optimisations panel.",
     // ---- 0.9.27 (GC ütközés) ----
     "⚠ A ProjectZomboid64.json több garbage collector-t tartalmaz ({s}) – a játék nem indulna el. Írható fájl esetén a launcher kijavítja; ha nem, indítsd rendszergazdaként.", "⚠ ProjectZomboid64.json contains multiple garbage collectors ({s}) – the game would not start. The launcher fixes it when the file is writable; otherwise run as administrator.",
     // ---- 0.9.26 (ZombieBuddy csak ha kell) ----

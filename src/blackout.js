@@ -184,15 +184,9 @@ async function install({ cfg, userDataDir, onLog = () => {}, onProgress = () => 
     skips: { download: new Map(), mods: new Set() },
   });
 
-  // A Viewpoint NIGHTLY (rc4) az egyjátékos modpack része: a Master mappából
-  // automatikusan felkerül, ha még nincs bent a kért rc (a csomag profilja is
-  // a Viewpointot használja, ezért kell a nightly).
-  let nightly = null;
-  try {
-    nightly = await mods.ensureNightly({ cfg: scoped, userDataDir, log: onLog, onProgress });
-  } catch (err) {
-    onLog('✗ Viewpoint NIGHTLY: ' + err.message);
-  }
+  // A Viewpoint NIGHTLY ALAPBÓL nem települ (ez a játékos döntése az
+  // Optimalizálás panelen) – csak akkor vesszük figyelembe, ha már bent van.
+  const nightly = mods.nightlyStatus().installed ? mods.nightlyStatus() : null;
 
   // A config a modok után jön: felülírja a listát a modpack profiljára, így a
   // kihagyott (crash-t okozó) modok nem maradnak engedélyezve.

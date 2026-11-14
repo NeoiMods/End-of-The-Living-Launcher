@@ -95,15 +95,12 @@ async function runSetup({
     onLog(`+ kollekción kívüli elem: ${added.map((it) => it.title).join(', ')}.`);
   }
 
-  // Viewpoint NIGHTLY (rc4): a szerveres telepítés magától felrakja. Ha bent
-  // van, a kollekció alap Project Viewpointja kimarad, mert két azonos ID-jű
-  // Viewpoint összeakadna – és a már letöltött példányt is töröljük.
-  if (serverInstall) {
-    try {
-      await mods.ensureNightly({ cfg, userDataDir, log: onLog, onProgress });
-    } catch (err) {
-      onLog('✗ Viewpoint NIGHTLY: ' + err.message);
-    }
+  // Viewpoint NIGHTLY: ALAPBÓL NEM települ, ez a játékos döntése
+  // (Optimalizálás → Viewpoint NIGHTLY kártya). Ha viszont bent van, a
+  // kollekció alap Project Viewpointja kimarad, mert két azonos ID-jű Viewpoint
+  // összeakadna – és a már letöltött példányt is kivesszük.
+  if (!mods.nightlyStatus().installed && serverInstall) {
+    onLog('• Viewpoint NIGHTLY nem települ magától – az Optimalizálás panelen tudod feltenni.');
   }
   if (mods.nightlyStatus().installed) {
     const baseId = String(mods.NIGHTLY_WORKSHOP_ID);

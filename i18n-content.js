@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                        // ---- 0.9.28 (csak ZGC) ----
+                                            // ---- 0.9.29 (nightly csak kérésre) ----
+    "0.9.29 – A Viewpoint NIGHTLY alapból nem települ le":
+      "0.9.29 – The Viewpoint NIGHTLY is no longer downloaded by default",
+    "A nightly mostantól opt-in: a mod-telepítés és az egyjátékos modpack sem tölti le magától. Ha kell, az Optimalizálás panel „Viewpoint NIGHTLY” kártyájával tehetsz fel (a Master mappából, a legújabb rc-t). Ha egyszer már bent van, a launcher továbbra is kezeli: engedélyezi, és a kollekció alap Project Viewpointját kiveszi mellőle, hogy ne legyen két azonos ID-jű mod.":
+      "The nightly is opt-in now: neither the mod install nor the single-player modpack downloads it on its own. If you want it, use the “Viewpoint NIGHTLY” card in the Optimisations panel (from the Master folder, newest rc). Once it is installed the launcher still manages it: enables it and removes the collection’s base Project Viewpoint so there are no two mods with the same ID.",
+    "A Viewpoint NIGHTLY nem települ magától (sem többjátékos, sem egyjátékos telepítésnél).":
+      "The Viewpoint NIGHTLY is not installed automatically (neither multiplayer nor single-player install).",
+    "Telepítés továbbra is: Optimalizálás → Viewpoint NIGHTLY (a Master mappából, a legújabb rc).":
+      "To install: Optimisations → Viewpoint NIGHTLY (from the Master folder, newest rc).",
+    "Ha bent van, a launcher engedélyezi és kiveszi mellőle az alap Project Viewpointot.":
+      "When present, the launcher enables it and removes the base Project Viewpoint.",
+    "Viewpoint NIGHTLY rc4: alapból NEM települ – az Optimalizálás panelen tudod feltenni (Zomboid\\mods), ZombieBuddy ≥ 2.3.0 kell hozzá.":
+      "Viewpoint NIGHTLY rc4: NOT installed by default – install it from the Optimisations panel (Zomboid\\mods); needs ZombieBuddy ≥ 2.3.0.",
+// ---- 0.9.28 (csak ZGC) ----
     "0.9.28 – Csak a ZGC marad":
       "0.9.28 – ZGC only",
     "A játék launcher JSON-jában mostantól kizárólag a ZGC szerepel: a launcher minden indításnál kiszedi a G1-re vonatkozó kapcsolókat (a windows szekciókból is), beteszi a ZGC-t, majd a fájlt írásvédetté teszi – így a PZO/optimalizáló sem tudja visszaírni a G1-et. A ProjectZomboid64.bat-ból is kikerülnek a ZGC-vel ütköző G1 opciók. Mindez mindkét módban (egyjátékos és többjátékos) így működik.":
