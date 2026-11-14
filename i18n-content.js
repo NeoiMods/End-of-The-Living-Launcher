@@ -16,6 +16,23 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
+// ---- 0.9.18 (frissítő javítás) ----
+    "FRISSÍTŐ":
+      "UPDATER",
+    "0.9.18 – Javítva a frissítő, ami beragaszthatta a launchert":
+      "0.9.18 – Fixed the updater that could jam the launcher",
+    "A frissítő eddig fájlonként írta felül a launchert, ezért ha egy fájl letöltése elbukott (például a GitHub néhány percig a régi változatot adta), a launcher félig frissülten maradt, és utána már nem tudott frissülni. Mostantól minden fájl előbb egy ideiglenes mappába töltődik, méret- és hash-ellenőrzéssel, és csak akkor cserélődik, ha mindegyik hibátlan – ha bármi elbukik, a launcher érintetlen marad. A letöltés újrapróbálkozik (cache-busting), a cseréről pedig biztonsági mentés készül, hiba esetén automatikus visszaállítással.":
+      "The updater used to overwrite the launcher file by file, so if one download failed (for example GitHub served the old version for a few minutes) the launcher was left half-updated and could not update afterwards. Now every file first goes into a staging folder with size and hash checks, and is only swapped in when all of them are intact – if anything fails, the launcher stays untouched. Downloads retry with cache-busting, and the swap is backed up with automatic rollback on error.",
+    "Minden fájl staging mappába töltődik, méret/hash ellenőrzéssel; csere csak teljes siker esetén.":
+      "Every file is downloaded into a staging folder with size/hash checks; the swap only happens when all succeed.",
+    "Hiba esetén a launcher változatlan marad – nincs több félig frissített állapot.":
+      "On failure the launcher stays untouched – no more half-updated state.",
+    "Letöltésnél 3 próba és cache-busting, hogy a CDN késleltetett másolata ne akassza meg a frissítést.":
+      "Downloads retry three times with cache-busting so a delayed CDN copy cannot block the update.",
+    "A cseréről mentés készül (update-backup), hiba esetén automatikus visszaállítás.":
+      "The swap is backed up (update-backup) with automatic rollback on error.",
+    "Akit már beragasztott a régi frissítő: a pixeldrain-es zip újratelepítése hozza helyre.":
+      "Already stuck with the old updater? Reinstalling the pixeldrain zip fixes it.",
     // ---- 0.9.17 (Viewpoint NIGHTLY) ----
     '0.9.17 – A Viewpoint NIGHTLY most már tényleg betöltődik':
       '0.9.17 – The Viewpoint NIGHTLY actually loads now',

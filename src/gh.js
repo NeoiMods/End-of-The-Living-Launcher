@@ -186,9 +186,12 @@ async function downloadRepoFile({
   const mirrors = repoFileUrls({ cfg, repo, file, ref, size });
   let lastError = null;
   for (const mirror of mirrors) {
-    for (let attempt = 0; attempt < 2; attempt++) {
+    for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        await downloadFile(mirror.url, dest, {
+        // Újrapróbálkozásnál cache-busting: a CDN néhány percig a régi
+        // változatot adhatja, ilyenkor a méret/hash ellenőrzés elbukna.
+        const url = attempt === 0 ? mirror.url : mirror.url + (mirror.url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
+        await downloadFile(url, dest, {
           headers: mirror.headers,
           timeoutMs: 180000,
           onProgress,
@@ -208,7 +211,7 @@ async function downloadRepoFile({
         } catch {
           /* maradhat */
         }
-        if (attempt === 0) await sleep(500);
+        await sleep(attempt === 0 ? 500 : 1500);
       }
     }
   }

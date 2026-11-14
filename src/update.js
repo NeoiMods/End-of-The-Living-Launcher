@@ -536,6 +536,13 @@ function findExtractedRoot(dir) {
 async function applyFileUpdate({ cfg = {}, repo, files, appRoot, userDataDir, res, log, progress }) {
   const changed = [];
   const failed = [];
+  // Minden fájl előbb egy staging mappába töltődik, ellenőrzéssel. Az app
+  // fájljaihoz csak akkor nyúlunk, ha az összes letöltés hibátlan – így egy
+  // félresikerült frissítés nem hagy maga után használhatatlan launchert.
+  const stamp = Date.now();
+  const stageDir = path.join(userDataDir, 'update-staging', String(stamp));
+  const backupDir = path.join(userDataDir, 'update-backup', String(stamp));
+  const staged = [];
   let done = 0;
   for (const file of files) {
     done++;
@@ -544,7 +551,7 @@ async function applyFileUpdate({ cfg = {}, repo, files, appRoot, userDataDir, re
     if (progress) {
       progress({ label: 'Frissítés letöltése…', done: done - 1, total: files.length });
     }
-    const dest = path.join(appRoot, rel);
+    const dest = path.join(stageDir, rel);
     try {
       await gh.downloadRepoFile({
         cfg,
@@ -559,29 +566,94 @@ async function applyFileUpdate({ cfg = {}, repo, files, appRoot, userDataDir, re
       if (file.sha256 && hash && hash !== file.sha256) {
         throw new Error('a letöltött fájl tartalma nem egyezik az indexben lévővel');
       }
-      changed.push(rel);
+      staged.push(rel);
     } catch (err) {
       failed.push({ file: rel, error: err && err.message ? err.message : String(err) });
     }
   }
 
-  const remoteSha = (res && res.remoteSha) || null;
+  // Valamelyik fájl nem jött le: semmit nem írunk felül, csak jelentjük.
   if (failed.length) {
+    fs.rmSync(stageDir, { recursive: true, force: true });
+    try {
+      fs.rmdirSync(path.dirname(stageDir));
+    } catch {
+      /* nem üres: maradhat */
+    }
     writeState(userDataDir, {
       lastCheckedAt: Date.now(),
-      lastChanged: changed.length,
-      lastError: `${failed.length} fájl nem cserélhető le (${failed
+      lastChanged: 0,
+      lastError: `${failed.length} fájl nem tölthető le (${failed
         .slice(0, 3)
         .map((f) => f.file)
         .join(', ')}${failed.length > 3 ? '…' : ''})`,
     });
     return {
       ok: false,
-      error: `${failed.length} fájl nem cserélhető le – próbáld újra később`,
-      changed: changed.length,
+      error: `${failed.length} fájl nem tölthető le – a launcher változatlan maradt, próbáld újra később`,
+      changed: 0,
       failed,
+      rolledBack: true,
     };
   }
+
+  // Csere biztonsági mentéssel: hiba esetén az eddig lecserélt fájlok visszaállnak.
+  try {
+    for (const rel of staged) {
+      const src = path.join(stageDir, rel);
+      const dest = path.join(appRoot, rel);
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      if (fs.existsSync(dest)) {
+        const bak = path.join(backupDir, rel);
+        try {
+          fs.mkdirSync(path.dirname(bak), { recursive: true });
+          fs.copyFileSync(dest, bak);
+        } catch {
+          /* a mentés best effort, a másolás így is megy */
+        }
+      }
+      await copyFileRetry(src, dest);
+      changed.push(rel);
+    }
+  } catch (err) {
+    for (const rel of changed) {
+      const bak = path.join(backupDir, rel);
+      const dest = path.join(appRoot, rel);
+      try {
+        if (fs.existsSync(bak)) fs.copyFileSync(bak, dest);
+      } catch {
+        /* a visszaállítás nem garantált, de megpróbáljuk */
+      }
+    }
+    fs.rmSync(stageDir, { recursive: true, force: true });
+    writeState(userDataDir, {
+      lastCheckedAt: Date.now(),
+      lastChanged: 0,
+      lastError: `fájlcsere hiba: ${err && err.message ? err.message : err}`,
+    });
+    return {
+      ok: false,
+      error: 'A fájlok cseréje nem sikerült – a korábbi állapot visszaállítva. Zárd be a launchert, és próbáld újra.',
+      changed: 0,
+      failed: [{ file: 'copy', error: err && err.message ? err.message : String(err) }],
+      rolledBack: true,
+    };
+  } finally {
+    fs.rmSync(stageDir, { recursive: true, force: true });
+    try {
+      fs.rmdirSync(path.dirname(stageDir));
+    } catch {
+      /* nem üres: maradhat */
+    }
+    // A mentést megtartjuk egy ideig, hogy kézzel is visszaállítható legyen.
+    try {
+      if (fs.existsSync(backupDir) && !staged.length) fs.rmSync(backupDir, { recursive: true, force: true });
+    } catch {
+      /* maradhat */
+    }
+  }
+
+  const remoteSha = (res && res.remoteSha) || null;
 
   writeState(userDataDir, {
     ...(remoteSha ? { installedSha: remoteSha, installedAt: Date.now() } : {}),

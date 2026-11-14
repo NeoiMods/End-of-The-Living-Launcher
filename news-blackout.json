@@ -1,7 +1,22 @@
 {
-  "version": "0.9.17",
+  "version": "0.9.18",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.18",
+      "version": "0.9.18",
+      "date": "2026-11-14",
+      "tag": "FRISSÍTŐ",
+      "title": "0.9.18 – Javítva a frissítő, ami beragaszthatta a launchert",
+      "text": "A frissítő eddig fájlonként írta felül a launchert, ezért ha egy fájl letöltése elbukott (például a GitHub néhány percig a régi változatot adta), a launcher félig frissülten maradt, és utána már nem tudott frissülni. Mostantól minden fájl előbb egy ideiglenes mappába töltődik, méret- és hash-ellenőrzéssel, és csak akkor cserélődik, ha mindegyik hibátlan – ha bármi elbukik, a launcher érintetlen marad. A letöltés újrapróbálkozik (cache-busting), a cseréről pedig biztonsági mentés készül, hiba esetén automatikus visszaállítással.",
+      "changes": [
+        "Minden fájl staging mappába töltődik, méret/hash ellenőrzéssel; csere csak teljes siker esetén.",
+        "Hiba esetén a launcher változatlan marad – nincs több félig frissített állapot.",
+        "Letöltésnél 3 próba és cache-busting, hogy a CDN késleltetett másolata ne akassza meg a frissítést.",
+        "A cseréről mentés készül (update-backup), hiba esetén automatikus visszaállítás.",
+        "Akit már beragasztott a régi frissítő: a pixeldrain-es zip újratelepítése hozza helyre."
+      ]
+    },
     {
       "id": "0.9.17",
       "version": "0.9.17",
