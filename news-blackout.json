@@ -1,7 +1,19 @@
 {
-  "version": "0.9.22",
+  "version": "0.9.23",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.23",
+      "version": "0.9.23",
+      "date": "2026-11-14",
+      "tag": "VIEWPOINT",
+      "title": "0.9.23 – A nightly mostantól a legújabb rc-t telepíti (rc4)",
+      "text": "A Master mappában két nightly zip van (rc2 és rc4), és a launcher a lista első találatát telepítette – ez az rc2 volt. Mostantól a verzió és az rc szám szerint a legújabb nyer, tehát a 42.22-re készült 0.1.7-rc4 kerül be. Aki eddig rc2-t kapott, annál a következő telepítés automatikusan rc4-re cseréli.",
+      "changes": [
+        "NIGHTLY: a legújabb verzió/rc nyer (rc4 az rc2 helyett), nem a lista első találata.",
+        "NIGHTLY: a meglévő rc2 telepítést a következő futás rc4-re cseréli."
+      ]
+    },
     {
       "id": "0.9.22",
       "version": "0.9.22",

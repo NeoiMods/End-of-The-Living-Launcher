@@ -16,7 +16,16 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                // ---- 0.9.22 (Steam bezárás + helyi nightly) ----
+                    // ---- 0.9.23 (rc4 kiválasztás) ----
+    "0.9.23 – A nightly mostantól a legújabb rc-t telepíti (rc4)":
+      "0.9.23 – The nightly now installs the newest rc (rc4)",
+    "A Master mappában két nightly zip van (rc2 és rc4), és a launcher a lista első találatát telepítette – ez az rc2 volt. Mostantól a verzió és az rc szám szerint a legújabb nyer, tehát a 42.22-re készült 0.1.7-rc4 kerül be. Aki eddig rc2-t kapott, annál a következő telepítés automatikusan rc4-re cseréli.":
+      "The Master folder holds two nightly zips (rc2 and rc4) and the launcher installed the first match in the list – which was rc2. The newest version and rc number now wins, so the 0.1.7-rc4 build made for 42.22 is installed. Anyone who got rc2 before is switched to rc4 by the next install.",
+    "NIGHTLY: a legújabb verzió/rc nyer (rc4 az rc2 helyett), nem a lista első találata.":
+      "NIGHTLY: the newest version/rc wins (rc4 instead of rc2), not the first match in the list.",
+    "NIGHTLY: a meglévő rc2 telepítést a következő futás rc4-re cseréli.":
+      "NIGHTLY: an existing rc2 install is replaced with rc4 on the next run.",
+// ---- 0.9.22 (Steam bezárás + helyi nightly) ----
     "0.9.22 – ZombieBuddy telepítő újra, Steam bezárással; a nightly a mods mappában marad":
       "0.9.22 – ZombieBuddy installer back, with Steam shutdown; the nightly stays in the mods folder",
     "A ZombieBuddy telepítő ismét lefut: a launcher bezárja a Steamet, ha fut (előbb szabályosan, ha kell, kényszerítve) – enélkül a telepítő nem megy végig –, és a telepítő saját ablakában fut, hogy végig lehessen követni. A Viewpoint NIGHTLY továbbra is kizárólag a Zomboid\\mods mappába települ, a workshop mappába nem írunk: a bent maradt workshop Viewpoint példányt vesszük ki, hogy ne legyen két azonos ID-jű mod. A ZombieBuddy kártya az endoftheliving oldalon is elérhető, tehát onnan is telepíthető.":

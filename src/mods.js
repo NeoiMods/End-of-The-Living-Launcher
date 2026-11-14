@@ -660,6 +660,32 @@ function steamViewpointDir() {
   return null;
 }
 
+// A Master mappában több nightly is lehet (rc2, rc4, …): mindig a legújabb rc
+// kell, nem az, amelyik véletlenül elöl van a listában.
+function pickNewestNightly(zips) {
+  const candidates = (zips || []).filter((z) => NIGHTLY.asset.test(String(z.name || '')));
+  if (!candidates.length) return null;
+
+  const versionOf = (name) => {
+    const m = String(name || '').match(/(\d+(?:\.\d+)+)/);
+    return m ? m[1] : '0';
+  };
+  const rcOf = (name) => {
+    const m = String(name || '').match(/rc\s*(\d+)/i);
+    return m ? parseInt(m[1], 10) : -1;
+  };
+
+  return candidates.sort((a, b) => {
+    const byVersion = compareVersionParts(
+      parseVersion(versionOf(b.name)),
+      parseVersion(versionOf(a.name)),
+      Math.max(parseVersion(versionOf(b.name)).length, parseVersion(versionOf(a.name)).length)
+    );
+    if (byVersion !== 0) return byVersion;
+    return rcOf(b.name) - rcOf(a.name);
+  })[0];
+}
+
 async function findNightlyAsset(cfg) {
   const repo = pzo.repoOf(cfg);
   const folder = pzo.folderOf(cfg);
@@ -682,7 +708,7 @@ async function findNightlyAsset(cfg) {
     }
   }
 
-  const pick = zips.find((z) => NIGHTLY.asset.test(z.name));
+  const pick = pickNewestNightly(zips);
   if (!pick) {
     throw new Error(
       lastError && !zips.length
@@ -963,6 +989,7 @@ module.exports = {
   disableBaseViewpointMods,
   NIGHTLY_MOD_ID: NIGHTLY.modId,
   findAsset,
+  pickNewestNightly,
   extractFolder,
   isDedicated,
   modInstalled,
