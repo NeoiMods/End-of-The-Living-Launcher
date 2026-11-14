@@ -1,6 +1,6 @@
 {
-  "version": "0.9.19",
-  "sha": "567f88944eb840e2a5b10f8b2d1049c22bf058b8",
+  "version": "0.9.20",
+  "sha": "e8c7bff75c218ec8b479d398724549d6c559b8b8",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -729,13 +729,13 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 39951,
-      "sha256": "bad4d08367b85d21c6c3860e71791d46d670093cb384f2801c821e1ed76e542d"
+      "size": 42094,
+      "sha256": "f46473618420859ad0945dd60fbd420e590ae6cbadf65e25495643f1c5c3186b"
     },
     {
       "path": "i18n-logs.js",
-      "size": 32089,
-      "sha256": "224ac8eeb9374c322f33ccf74b074497bf49451c168e05a8ed3b27ebea0af093"
+      "size": 33274,
+      "sha256": "87b41c80d55fd68cd300497319de86492b4c16e6f15bfebf68d015d42eaac45e"
     },
     {
       "path": "i18n.js",
@@ -749,13 +749,13 @@
     },
     {
       "path": "main.js",
-      "size": 43229,
-      "sha256": "e3b3221f39bfc62d078947d383ae63d8b9f338ccfdb131db413c1fe16e946a9b"
+      "size": 43266,
+      "sha256": "ec9af724d6809a52cb31e3ed1aecf940eaa1cb8948e47d2fe3c0f2c9fe17d0d1"
     },
     {
       "path": "news-blackout.json",
-      "size": 11243,
-      "sha256": "8974f96efb1661a5e2e86886a1c9f6e32084ba6febeda99cda5c5f6b811db1c0"
+      "size": 12515,
+      "sha256": "ef802557ca5eb683dfbd65b8c068b572ad114cedc10aacf9483439e99579eaf5"
     },
     {
       "path": "news.json",
@@ -765,7 +765,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "8a6a9aa8bd8c5998c02c069c1ca0da382e81fbd98ab138c9a02fe74236144801"
+      "sha256": "b71a5570fa3f6db6ee446a97d73c87a63751eb3c1bb2987581e733a78719c230"
     },
     {
       "path": "preload.js",
@@ -879,8 +879,8 @@
     },
     {
       "path": "src/setup.js",
-      "size": 17477,
-      "sha256": "07a100838b8ddf56a026ea74c3641ca32deb18fc771fe7a19a629856b0eafbaa"
+      "size": 17191,
+      "sha256": "4ffe12129533505fb8d5ed8fa58efd41ce6a57e88ddb2e84e99ed0651eeb2ddc"
     },
     {
       "path": "src/shortcut.js",
@@ -909,8 +909,8 @@
     },
     {
       "path": "src/zb-installer.js",
-      "size": 15417,
-      "sha256": "9fc7c468d5aabe7440c2068541bc23469706f42c8de64a0c54e888ec1f99d026"
+      "size": 18516,
+      "sha256": "6e52885de55c774cb12661a55b44bb5d662df0dda4ce37f2570371f7e9b680fa"
     },
     {
       "path": "styles.css",
