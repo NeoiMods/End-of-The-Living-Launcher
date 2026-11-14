@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                // ---- 0.9.30 (ne induljon kétszer) ----
+                                                    // ---- 0.9.31 (a Viewpoint nem törlődik) ----
+    "0.9.31 – A launcher nem törli többé a Viewpointot (újra 714 mod)":
+      "0.9.31 – The launcher no longer deletes the Viewpoint (714 mods again)",
+    "A NIGHTLY bevezetésekor a launcher kivette a gépről az alap Project Viewpoint workshop mappáját, hogy ne legyen két azonos ID-jű Viewpoint. Ez viszont az egész Viewpoint-ökoszisztémát magával vitte: a rá épülő kiegészítők (require=Viewpoint) csendben kimaradtak, ezért töltött be a játék csak 659 modot a 714 helyett. A launcher mostantól nem töröl és nem kapcsol ki semmit a workshopból. A hiányzó Viewpoint visszakerült a helyére (a lista ismét 714 mod), és ha valaha üres/kitörölt workshop mappa lenne, a modpack-telepítés újra letölti a SteamCMD-vel.":
+      "When the NIGHTLY was introduced, the launcher removed the base Project Viewpoint workshop folder so there would not be two mods with the same ID. That took the whole Viewpoint ecosystem with it: the add-ons built on it (require=Viewpoint) were silently skipped, which is why the game loaded only 659 mods instead of 714. The launcher no longer deletes or disables anything in the workshop. The missing Viewpoint is back in place (the list is 714 mods again), and if a workshop folder ever ends up empty or deleted, the modpack install downloads it again with SteamCMD.",
+    "A launcher nem törli az alap Viewpoint workshop mappáját – ez okozta a 659 modot.":
+      "The launcher no longer deletes the base Viewpoint workshop folder – that caused the 659 mods.",
+    "A Viewpoint visszaállt, a Blackout Protocol profil ismét 714 mod, a rá épülő kiegészítőkkel.":
+      "The Viewpoint is restored, the Blackout Protocol profile is 714 mods again, with its add-ons.",
+    "Üres workshop mappa (kitörölt tartalom) mostantól hiányzó modnak számít: a telepítés újra letölti.":
+      "An empty workshop folder (deleted content) now counts as a missing mod: the install downloads it again.",
+    "Ha a NIGHTLY és az alap Viewpoint egyszerre van a gépen, a launcher csak figyelmeztet, nem nyúl hozzá.":
+      "If the NIGHTLY and the base Viewpoint are both present, the launcher only warns and touches nothing.",
+// ---- 0.9.30 (ne induljon kétszer) ----
     "0.9.30 – A launcher nem indít második játékot":
       "0.9.30 – The launcher no longer starts a second game",
     "Ha a játék már fut vagy éppen tölt, a Play gomb többé nem indít mellé egy második példányt – nagy modpacknél a betöltés percekig tart, és eddig közben egy újabb kattintás második játékot indított. A launcherből is csak egy példány futhat: ha véletlenül másodszor is elindítod, a már nyitott ablak jön elő. Az állapotellenőrzés mostantól a valóban futó JVM-et nézi, a beragadt indító exe nem „futó játék” többé.":

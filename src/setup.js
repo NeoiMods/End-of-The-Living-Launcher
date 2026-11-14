@@ -161,7 +161,10 @@ async function runSetup({
   const sources = new Map();
   for (const it of col.items) {
     const dir = workshop.itemDir(libs, it.id);
-    if (dir) sources.set(String(it.id), dir);
+    // Üres (pl. kitörölt) workshop mappa nem számít letöltöttnek: enélkül a
+    // benne lévő modok csendben kimaradnak a profilból, és a játék kevesebb
+    // modot tölt be, mint amennyi a listán van.
+    if (dir && modinfo.discoverMods(dir).length) sources.set(String(it.id), dir);
   }
 
   const unresolved = { ...unresolvedMap };

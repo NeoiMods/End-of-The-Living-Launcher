@@ -6,6 +6,8 @@
   if (!i18n) return;
 
   i18n.addTemplates([
+    // ---- 0.9.31 (a Viewpoint nem törlődik) ----
+    "⚠ A Viewpoint NIGHTLY és az alap Viewpoint is a gépen van – a launcher egyiket sem törli. Ha a NIGHTLY kell, a Steam Workshopon iratkozz le az alap Project Viewpointról.", "⚠ Both the Viewpoint NIGHTLY and the base Viewpoint are on this machine – the launcher deletes neither. If you want the NIGHTLY, unsubscribe from the base Project Viewpoint on the Steam Workshop.",
     // ---- 0.9.30 (ne induljon kétszer) ----
     "• A játék már fut – nem indítok második példányt.", "• The game is already running – I will not start a second instance.",
     "• A játék időközben elindult – nem indítok második példányt.", "• The game started in the meantime – I will not start a second instance.",

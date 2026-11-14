@@ -1,7 +1,21 @@
 {
-  "version": "0.9.30",
+  "version": "0.9.31",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.31",
+      "version": "0.9.31",
+      "date": "2026-11-14",
+      "tag": "VIEWPOINT",
+      "title": "0.9.31 – A launcher nem törli többé a Viewpointot (újra 714 mod)",
+      "text": "A NIGHTLY bevezetésekor a launcher kivette a gépről az alap Project Viewpoint workshop mappáját, hogy ne legyen két azonos ID-jű Viewpoint. Ez viszont az egész Viewpoint-ökoszisztémát magával vitte: a rá épülő kiegészítők (require=Viewpoint) csendben kimaradtak, ezért töltött be a játék csak 659 modot a 714 helyett. A launcher mostantól nem töröl és nem kapcsol ki semmit a workshopból. A hiányzó Viewpoint visszakerült a helyére (a lista ismét 714 mod), és ha valaha üres/kitörölt workshop mappa lenne, a modpack-telepítés újra letölti a SteamCMD-vel.",
+      "changes": [
+        "A launcher nem törli az alap Viewpoint workshop mappáját – ez okozta a 659 modot.",
+        "A Viewpoint visszaállt, a Blackout Protocol profil ismét 714 mod, a rá épülő kiegészítőkkel.",
+        "Üres workshop mappa (kitörölt tartalom) mostantól hiányzó modnak számít: a telepítés újra letölti.",
+        "Ha a NIGHTLY és az alap Viewpoint egyszerre van a gépen, a launcher csak figyelmeztet, nem nyúl hozzá."
+      ]
+    },
     {
       "id": "0.9.30",
       "version": "0.9.30",

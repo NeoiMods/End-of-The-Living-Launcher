@@ -500,63 +500,22 @@ function nightlyTag(name) {
   return m ? m[0].toLowerCase() : '';
 }
 
-// A kollekcióból kivett alap Viewpointot is töröljük a gépről, hogy ne
-// ütközzön a nightly-vel (a Steam később újra letöltheti, ezért indításkor is
-// lefut ez az ellenőrzés). Előbb a belőle származó, a nightly-ben nem létező
-// mod ID-ket kikapcsoljuk – így ha a mappa törlése nem sikerül (Steam zárja),
-// akkor sem kapcsolódik be az eredeti.
+// Az alap Viewpoint (workshop) és a nightly ugyanazzal az ID-vel ("Viewpoint")
+// fut, ezért egyszerre nem lehet mindkettő aktív. A launcher viszont SOHA nem
+// töröl és nem kapcsol ki semmit: a workshop mappa a Steamé, és a Viewpointra
+// 60+ kiegészítő épül (require=Viewpoint) – ha az alap eltűnik, azok csendben
+// kimaradnak a betöltésből (659 a 714 helyett). Ezért csak jelezzük, ha a
+// nightly és az alap is a gépen van; a döntés a játékosé.
 function removeBaseViewpoint({ log = () => {} } = {}) {
   if (!nightlyStatus().installed) return { ok: true, removed: [], disabled: [] };
-
-  const disabled = disableBaseViewpointMods({ log });
-
-  // A nightly a Zomboid\\mods mappában fut, ezért a workshop példány nem
-  // maradhat bent (két azonos ID-jű Viewpoint közül a játék a régit venné).
-  // Bele nem írunk, csak a duplikált mappát vesszük ki – a Steam visszatöltheti,
-  // ezért induláskor is lefut ez az ellenőrzés.
-  const removed = [];
-  const ws = nightlyWorkshopDir();
-  if (ws && fs.existsSync(ws)) {
-    try {
-      fs.rmSync(ws, { recursive: true, force: true });
-      removed.push(ws);
-      log('• A workshop Viewpoint példány eltávolítva – a NIGHTLY a Zomboid\\mods mappában fut.');
-    } catch (err) {
-      log(`! A workshop Viewpoint nem törölhető (${err.message}) – zárd be a Steamet.`);
-    }
-  }
-  return { ok: true, removed, disabled: disabled.disabled || [] };
-}
-
-// Az alap workshop Viewpoint mod ID-jai közül kikapcsolja azokat, amiket a
-// nightly nem tartalmaz (magát a Viewpoint ID-t nem, mert az most a nightly).
-function disableBaseViewpointMods({ log = () => {} } = {}) {
   const base = steamViewpointDir();
-  if (!base) return { ok: true, disabled: [] };
+  if (!base) return { ok: true, removed: [], disabled: [] };
 
-  let baseIds = [];
-  try {
-    baseIds = modinfo.discoverMods(base).map((m) => String(m.id || '').trim()).filter(Boolean);
-  } catch {
-    baseIds = [];
-  }
-  if (!baseIds.length) return { ok: true, disabled: [] };
-
-  const ownIds = new Set([NIGHTLY.modId.toLowerCase()]);
-  try {
-    for (const m of modinfo.discoverMods(nightlyDir())) ownIds.add(String(m.id || '').toLowerCase());
-  } catch {
-    // Nem olvasható a nightly: akkor is csak a Viewpoint ID marad bent.
-  }
-
-  const extra = baseIds.filter((id) => !ownIds.has(id.toLowerCase()));
-  if (!extra.length) return { ok: true, disabled: [] };
-
-  const res = modlist.removeEnabled(zomboidDir(), extra);
-  if (res.removed.length) {
-    log(`• Alap Viewpoint kikapcsolva (${res.removed.join(', ')}) – a NIGHTLY fut helyette.`);
-  }
-  return { ok: true, disabled: res.removed };
+  log(
+    '⚠ A Viewpoint NIGHTLY és az alap Viewpoint is a gépen van – a launcher egyiket sem törli. ' +
+      'Ha a NIGHTLY kell, a Steam Workshopon iratkozz le az alap Project Viewpointról.'
+  );
+  return { ok: true, removed: [], disabled: [] };
 }
 
 // A nightly helye. Ha a régi Project Viewpoint (Workshop 3809306528) fent van,
@@ -985,9 +944,7 @@ module.exports = {
   checkNightlyRequirements,
   zombieBuddyDirs,
   gameBuild,
-  nightlyLegacyDir,
-  disableBaseViewpointMods,
-  NIGHTLY_MOD_ID: NIGHTLY.modId,
+  nightlyLegacyDir,  NIGHTLY_MOD_ID: NIGHTLY.modId,
   findAsset,
   pickNewestNightly,
   extractFolder,
