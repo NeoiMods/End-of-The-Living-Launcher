@@ -1928,7 +1928,7 @@ const OPT_LABELS = {
 // Telepített opcionális mod törlése a Zomboid\mods mappából.
 function removeOptMod(id) {
   const label = OPT_LABELS[id] || id;
-  const place = id === 'nightly' ? 'Zomboid\\Workshop\\Viewpoint' : 'Zomboid\\mods';
+  const place = id === 'nightly' ? 'Zomboid\\mods\\Viewpoint' : 'Zomboid\\mods';
   const ok = window.confirm(
     `Törlöd: ${label}?\n\nA mod mappája kikerül a ${place} mappából (a többi modhoz nem nyúlunk).`
   );

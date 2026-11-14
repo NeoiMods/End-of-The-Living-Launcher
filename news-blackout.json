@@ -1,7 +1,22 @@
 {
-  "version": "0.9.14",
+  "version": "0.9.17",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.17",
+      "version": "0.9.17",
+      "date": "2026-11-14",
+      "tag": "VIEWPOINT",
+      "title": "0.9.17 – A Viewpoint NIGHTLY most már tényleg betöltődik",
+      "text": "A NIGHTLY eddig a Zomboid\\Workshop mappába került, amit a játék nem tölt be, ezért sokaknál nem csinált semmit. Mostantól a játék saját mod mappájába települ (Zomboid\\mods\\Viewpoint), így a 42-es verziómappával együtt rendesen betöltődik – és a kicsomagolás a backslash-es zip-ekkel is működik. Ha valakinél véletlenül bent van az eredeti Project Viewpoint, az nem kapcsolódik be mellé, sem a Blackout Protocolban, sem az End of The Livingben: a launcher kiveszi a listából, a workshop példányt pedig törli, ha lehet.",
+      "changes": [
+        "A NIGHTLY helye: Zomboid\\mods\\Viewpoint (eddig Zomboid\\Workshop\\Viewpoint – onnan nem tölt be).",
+        "A kicsomagolás a backslash-t használó zip-ekkel is működik, ezért nem áll meg „nincs Viewpoint/... a zipben” hibával.",
+        "Az eredeti Project Viewpoint nem kapcsolódik be a NIGHTLY mellé – egyjátékosban és szerveres módban sem.",
+        "Ha a workshop mappa nem törölhető (Steam zárja), a mod ID-jai akkor is kikerülnek az engedélyezett listából.",
+        "A NIGHTLY telepítése után a launcher engedélyezi a modot, így nem kell kézzel a modlistához nyúlni."
+      ]
+    },
     {
       "id": "0.9.14",
       "version": "0.9.14",

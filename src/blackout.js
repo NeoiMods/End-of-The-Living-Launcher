@@ -17,6 +17,7 @@ const path = require('path');
 
 const launch = require('./launch');
 const modlist = require('./modlist');
+const mods = require('./mods');
 const paths = require('./paths');
 const setup = require('./setup');
 const workshop = require('./workshop');
@@ -351,6 +352,15 @@ function applyConfig({ onLog = () => {}, onProgress = () => {}, lang = 'hu' } = 
 
   const profile = profileOf(zomboidDir);
   const list = profile.found ? syncModList(zomboidDir, profile.mods, onLog) : { changed: false, count: 0 };
+
+  // Ha a Viewpoint NIGHTLY bent van (Optimalizálás panel), az alap workshop
+  // Viewpoint nem kapcsolódhat be mellé, és a nightly maradjon engedélyezve.
+  // A profil a gyűjtemény Viewpointjára mutat, ezért ezt itt igazítjuk.
+  if (mods.nightlyStatus().installed) {
+    mods.removeBaseViewpoint({ log: onLog });
+    const nightlyEnabled = modlist.ensureEnabled(zomboidDir, [mods.NIGHTLY_MOD_ID]);
+    if (nightlyEnabled.changed) onLog(`✓ ${mods.NIGHTLY_MOD_ID} (NIGHTLY) engedélyezve.`);
+  }
 
   onLog(
     `✓ Modpack config a helyén: ${copied} fájl a játék Zomboid mappájában` +

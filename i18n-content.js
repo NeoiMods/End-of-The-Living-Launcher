@@ -16,6 +16,23 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
+    // ---- 0.9.17 (Viewpoint NIGHTLY) ----
+    '0.9.17 – A Viewpoint NIGHTLY most már tényleg betöltődik':
+      '0.9.17 – The Viewpoint NIGHTLY actually loads now',
+    'A NIGHTLY eddig a Zomboid\\Workshop mappába került, amit a játék nem tölt be, ezért sokaknál nem csinált semmit. Mostantól a játék saját mod mappájába települ (Zomboid\\mods\\Viewpoint), így a 42-es verziómappával együtt rendesen betöltődik – és a kicsomagolás a backslash-es zip-ekkel is működik. Ha valakinél véletlenül bent van az eredeti Project Viewpoint, az nem kapcsolódik be mellé, sem a Blackout Protocolban, sem az End of The Livingben: a launcher kiveszi a listából, a workshop példányt pedig törli, ha lehet.':
+      'Until now the NIGHTLY went into the Zomboid\\Workshop folder, which the game does not load, so for many people it did nothing. It now installs into the game’s own mod folder (Zomboid\\mods\\Viewpoint), so it loads properly with its 42 version folder – and unpacking works with zips that use backslashes too. If the original Project Viewpoint happens to be present, it will not load next to it, in the Blackout Protocol or in End of The Living: the launcher removes it from the list and deletes the workshop copy where it can.',
+    'A NIGHTLY helye: Zomboid\\mods\\Viewpoint (eddig Zomboid\\Workshop\\Viewpoint – onnan nem tölt be).':
+      'NIGHTLY now lives in Zomboid\\mods\\Viewpoint (it used to be Zomboid\\Workshop\\Viewpoint – the game does not load from there).',
+    'A kicsomagolás a backslash-t használó zip-ekkel is működik, ezért nem áll meg „nincs Viewpoint/... a zipben” hibával.':
+      'Unpacking works with backslash-style zips too, so it no longer stops with a “no Viewpoint/... in the zip” error.',
+    'Az eredeti Project Viewpoint nem kapcsolódik be a NIGHTLY mellé – egyjátékosban és szerveres módban sem.':
+      'The original Project Viewpoint no longer gets enabled next to the NIGHTLY – in single-player or in server mode.',
+    'Ha a workshop mappa nem törölhető (Steam zárja), a mod ID-jai akkor is kikerülnek az engedélyezett listából.':
+      'If the workshop folder cannot be deleted (Steam holds it), its mod IDs still leave the enabled list.',
+    'A NIGHTLY telepítése után a launcher engedélyezi a modot, így nem kell kézzel a modlistához nyúlni.':
+      'After installing the NIGHTLY the launcher enables the mod, so you do not have to touch the mod list by hand.',
+    'VIEWPOINT': 'VIEWPOINT',
+
     // ---- 0.9.14 (Blackout figyelmeztetés) ----
     '0.9.14 – FIGYELEM: a Blackout Protocol modpack átdolgozás alatt':
       '0.9.14 – HEADS UP: the Blackout Protocol modpack is being reworked',

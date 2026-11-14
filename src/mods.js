@@ -171,8 +171,11 @@ function extractFolder(zipFile, prefix, outDir) {
       "$dirs = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)",
       'try {',
       '  foreach ($e in $zip.Entries) {',
-      '    if (-not $e.FullName.StartsWith($Prefix, [System.StringComparison]::OrdinalIgnoreCase)) { continue }',
-      '    $rel = $e.FullName.Substring($Prefix.Length)',
+      // A zip bejegyzések néha backslash-t használnak (pl. Compress-Archive),
+      // ezért összehasonlítás előtt egységesítjük / jelre.
+      '    $name = $e.FullName.Replace([string][char]92, \"/\")',
+      '    if (-not $name.StartsWith($Prefix, [System.StringComparison]::OrdinalIgnoreCase)) { continue }',
+      '    $rel = $name.Substring($Prefix.Length)',
       '    if ([string]::IsNullOrEmpty($rel)) { continue }',
       "    $dest = [System.IO.Path]::Combine($Out, $rel.Replace('/', [System.IO.Path]::DirectorySeparatorChar))",
       '    if ([string]::IsNullOrEmpty($e.Name)) {',
@@ -480,7 +483,9 @@ function copyAgentLibs(modDir, sourceRoot, gameDir, onLog) {
 const NIGHTLY = {
   label: 'Viewpoint NIGHTLY',
   asset: /viewpoint[^/]*nightly|nightly[^/]*viewpoint/i,
-  zipPrefix: 'Viewpoint/',
+  // A zip belseje: Viewpoint/Contents/mods/Viewpoint/<verzió>/mod.info – ezt a
+  // prefixet levágva kerül a mod a Zomboid\\mods alá.
+  modsPrefix: 'Viewpoint/Contents/mods/',
   folder: 'Viewpoint',
   modId: 'Viewpoint',
   // A kollekcióban lévő alap Project Viewpoint workshop ID-ja. Ha a nightly
@@ -497,9 +502,13 @@ function nightlyTag(name) {
 
 // A kollekcióból kivett alap Viewpointot is töröljük a gépről, hogy ne
 // ütközzön a nightly-vel (a Steam később újra letöltheti, ezért indításkor is
-// lefut ez az ellenőrzés).
+// lefut ez az ellenőrzés). Előbb a belőle származó, a nightly-ben nem létező
+// mod ID-ket kikapcsoljuk – így ha a mappa törlése nem sikerül (Steam zárja),
+// akkor sem kapcsolódik be az eredeti.
 function removeBaseViewpoint({ log = () => {} } = {}) {
-  if (!nightlyStatus().installed) return { ok: true, removed: [] };
+  if (!nightlyStatus().installed) return { ok: true, removed: [], disabled: [] };
+
+  const disabled = disableBaseViewpointMods({ log });
 
   let libs = [];
   try {
@@ -521,10 +530,48 @@ function removeBaseViewpoint({ log = () => {} } = {}) {
       log(`! Az alap Project Viewpoint nem törölhető (${err.message}).`);
     }
   }
-  return { ok: true, removed };
+  return { ok: true, removed, disabled: disabled.disabled || [] };
 }
 
+// Az alap workshop Viewpoint mod ID-jai közül kikapcsolja azokat, amiket a
+// nightly nem tartalmaz (magát a Viewpoint ID-t nem, mert az most a nightly).
+function disableBaseViewpointMods({ log = () => {} } = {}) {
+  const base = steamViewpointDir();
+  if (!base) return { ok: true, disabled: [] };
+
+  let baseIds = [];
+  try {
+    baseIds = modinfo.discoverMods(base).map((m) => String(m.id || '').trim()).filter(Boolean);
+  } catch {
+    baseIds = [];
+  }
+  if (!baseIds.length) return { ok: true, disabled: [] };
+
+  const ownIds = new Set([NIGHTLY.modId.toLowerCase()]);
+  try {
+    for (const m of modinfo.discoverMods(nightlyDir())) ownIds.add(String(m.id || '').toLowerCase());
+  } catch {
+    // Nem olvasható a nightly: akkor is csak a Viewpoint ID marad bent.
+  }
+
+  const extra = baseIds.filter((id) => !ownIds.has(id.toLowerCase()));
+  if (!extra.length) return { ok: true, disabled: [] };
+
+  const res = modlist.removeEnabled(zomboidDir(), extra);
+  if (res.removed.length) {
+    log(`• Alap Viewpoint kikapcsolva (${res.removed.join(', ')}) – a NIGHTLY fut helyette.`);
+  }
+  return { ok: true, disabled: res.removed };
+}
+
+// A nightly a játék saját mod mappájába kerül (Zomboid\\mods\\Viewpoint):
+// a régi Zomboid\\Workshop alatti helyet a játék nem tölti be.
 function nightlyDir() {
+  return path.join(zomboidDir(), 'mods', NIGHTLY.folder);
+}
+
+// A régi (hibás) hely, amit telepítéskor/törléskor takarítunk.
+function nightlyLegacyDir() {
   return path.join(zomboidDir(), 'Workshop', NIGHTLY.folder);
 }
 
@@ -537,25 +584,24 @@ function readModVersion(modInfoPath) {
   }
 }
 
-// A kicsomagolt nightly mod mappája + verziója (Contents\mods\Viewpoint\42).
+// A kicsomagolt nightly mod mappája + verziója (Zomboid\mods\Viewpoint\42).
 function nightlyStatus() {
-  const root = path.join(nightlyDir(), 'Contents', 'mods');
+  const base = nightlyDir();
+  const direct = path.join(base, 'mod.info');
+  if (fs.existsSync(direct)) return { installed: true, dir: base, version: readModVersion(direct) };
+
   let names = [];
   try {
     names = fs
-      .readdirSync(root, { withFileTypes: true })
+      .readdirSync(base, { withFileTypes: true })
       .filter((e) => e.isDirectory())
       .map((e) => e.name);
   } catch {
     return { installed: false, dir: null, version: '' };
   }
-  for (const name of names) {
-    for (const sub of ['42', 'common', '41', '']) {
-      const p = sub ? path.join(root, name, sub, 'mod.info') : path.join(root, name, 'mod.info');
-      if (fs.existsSync(p)) {
-        return { installed: true, dir: path.join(root, name), version: readModVersion(p) };
-      }
-    }
+  for (const sub of ['42', 'common', '41', ...names]) {
+    const p = path.join(base, sub, 'mod.info');
+    if (fs.existsSync(p)) return { installed: true, dir: base, version: readModVersion(p) };
   }
   return { installed: false, dir: null, version: '' };
 }
@@ -618,30 +664,37 @@ async function installNightly({ cfg, userDataDir, log = () => {}, onProgress = n
   log(`→ ${asset.name} letöltése (${sizeMb})…`);
   await pzo.downloadAsset(asset, zipFile, cfg, log, onProgress);
 
-  const target = nightlyDir();
-  fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.rmSync(target, { recursive: true, force: true });
+  const modsRoot = path.join(zomboidDir(), 'mods');
+  fs.mkdirSync(modsRoot, { recursive: true });
+  // Takarítás: a régi hely (Zomboid\Workshop\Viewpoint) és egy korábbi félkész
+  // telepítés. A nightly a játék mod mappájába kerül, mert csak onnan tölt be.
+  for (const stale of [nightlyLegacyDir(), nightlyDir()]) {
+    fs.rmSync(stale, { recursive: true, force: true });
+  }
 
-  log('  kicsomagolás: Zomboid\\Workshop\\Viewpoint');
-  await extractFolder(zipFile, NIGHTLY.zipPrefix, target);
+  log('  kicsomagolás: Zomboid\\mods\\Viewpoint');
+  await extractFolder(zipFile, NIGHTLY.modsPrefix, modsRoot);
   fs.rmSync(zipFile, { force: true });
 
   const st = nightlyStatus();
   if (!st.installed) {
-    fs.rmSync(target, { recursive: true, force: true });
-    throw new Error(`${NIGHTLY.label}: a zipben nincs Viewpoint\\Contents\\mods\\Viewpoint – a mod nem tölthető be.`);
+    fs.rmSync(nightlyDir(), { recursive: true, force: true });
+    throw new Error(
+      `${NIGHTLY.label}: a zipben nincs Viewpoint\\Contents\\mods\\Viewpoint – a mod nem tölthető be.`
+    );
   }
 
   const en = modlist.ensureEnabled(zomboidDir(), [NIGHTLY.modId]);
   if (en.changed) log(`✓ ${NIGHTLY.modId} engedélyezve a játék mod listájában.`);
 
   // A kollekció alap Viewpointja nem maradhat bent: két azonos ID-jű Viewpoint
-  // összeakad, ezért a nightly mellé tettük a törlést is.
+  // összeakad, ezért a nightly mellé tettük a törlést is. Ha a mappa nem
+  // törölhető (Steam zárja), a mod ID-jai akkor is kikerülnek a listából.
   removeBaseViewpoint({ log });
 
   const version = st.version ? ` ${st.version}` : '';
-  log(`✓ ${NIGHTLY.label}${version} telepítve: Zomboid\\Workshop\\Viewpoint`);
-  return { ok: true, id: 'nightly', name: asset.name, version: st.version, dir: target };
+  log(`✓ ${NIGHTLY.label}${version} telepítve: Zomboid\\mods\\Viewpoint`);
+  return { ok: true, id: 'nightly', name: asset.name, version: st.version, dir: nightlyDir() };
 }
 
 // Ha már a kért verzió van bent, nem tölti le újra.
@@ -666,15 +719,15 @@ async function ensureNightly({ cfg, userDataDir, log = () => {}, onProgress = nu
 }
 
 function removeNightly({ log = () => {} }) {
-  const target = nightlyDir();
-  if (!fs.existsSync(target)) return { ok: true, id: 'nightly', removed: false, reason: 'Nincs telepítve.' };
-  log('• ' + NIGHTLY.label + ' törlése: Zomboid\\Workshop\\Viewpoint');
-  fs.rmSync(target, { recursive: true, force: true });
-  if (fs.existsSync(target)) {
+  const targets = [nightlyLegacyDir(), nightlyDir()].filter((p) => fs.existsSync(p));
+  if (!targets.length) return { ok: true, id: 'nightly', removed: false, reason: 'Nincs telepítve.' };
+  log('• ' + NIGHTLY.label + ' törlése: Zomboid\\mods\\Viewpoint');
+  for (const target of targets) fs.rmSync(target, { recursive: true, force: true });
+  if (targets.some((p) => fs.existsSync(p))) {
     throw new Error('A mappa nem törölhető – zárd be a játékot, és próbáld újra.');
   }
   log('✓ ' + NIGHTLY.label + ' törölve (a gyűjtemény Viewpointja marad érvényben).');
-  return { ok: true, id: 'nightly', removed: true, dir: target };
+  return { ok: true, id: 'nightly', removed: true, dir: nightlyDir() };
 }
 
 module.exports = {
@@ -689,6 +742,8 @@ module.exports = {
   nightlyTag,
   nightlyStatus,
   nightlyDir,
+  nightlyLegacyDir,
+  disableBaseViewpointMods,
   NIGHTLY_MOD_ID: NIGHTLY.modId,
   findAsset,
   extractFolder,

@@ -259,6 +259,16 @@ async function runSetup({
     onLog('! A kollekció listája hiányos – a kollekción kívüli modokat most nem kapcsolom ki.');
   }
 
+  // ---- 4c) Viewpoint NIGHTLY (ha bent van) -------------------------------
+  // A nightly a Zomboid\mods alatt él, és az alap workshop Viewpoint nem
+  // kapcsolódhat be mellé – a szerveres telepítésnél is ugyanaz a szabály, mint
+  // az egyjátékos modpacknál.
+  if (mods.nightlyStatus().installed) {
+    mods.removeBaseViewpoint({ log: onLog });
+    const nightlyEnabled = modlist.ensureEnabled(zomboidDir, [mods.NIGHTLY_MOD_ID]);
+    if (nightlyEnabled.changed) onLog(`✓ ${mods.NIGHTLY_MOD_ID} (NIGHTLY) engedélyezve.`);
+  }
+
   // ---- 5) ZombieBuddy telepítő ------------------------------------------
   // Mindkét mód a hivatalos ZombieBuddy-t használja (a szerverre is az került).
   let installer = null;
