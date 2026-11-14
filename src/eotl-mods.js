@@ -1,26 +1,19 @@
-// End of The Living (többjátékos) saját kiegészítői. Ezek CSAK a szerveres
-// oldalon jelennek meg az Optimalizálás panelen:
+// End of The Living (többjátékos) saját kiegészítője: 3D models for Viewpoint
+// [sour_kisel]. Ez CSAK a szerveres oldalon jelenik meg az Optimalizálás
+// panelen, és csak a 3810302175 workshop mod mod.info-ja cserélődik a Master
+// mappában tárolt változatra. Nem települ magától: a játékos kattint rá.
 //
-//   1) ZombieBuddy – a Master mappában lévő „endoftheliving zombiebuddy.zip”
-//      csomag (a szerver saját agent fájljai), nem a hivatalos telepítő.
-//   2) 3D models for Viewpoint [sour_kisel] – a 3810302175 workshop mod mellé
-//      csak a mod.info cserélődik a Master mappában tárolt változatra.
-//
-// Egyik sem települ magától: a játékos kattint rá.
+// A ZombieBuddy mostantól mindkét módban a hivatalos (a szerverre is az került),
+// ezért a szerver saját agent csomagja és a mód szerinti agent-váltás kikerült.
 
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 
 const gh = require('./gh');
 const pzo = require('./pzo');
-const zbAgent = require('./zb-agent');
 const workshop = require('./workshop');
-const { expandZip } = require('./packs');
 const { findSteamPath, parseLibraryPaths } = require('./paths');
 
-const ZB_ZIP = /endoftheliving[\s._-]*zombiebuddy/i;
-const ZB_FILES = ['ZombieBuddy.jar', 'zbNative.dll'];
 const VOXEL_WORKSHOP_ID = '3810302175';
 // Amivel felismerjük, hogy a saját mod.info már bent van (a workshop item
 // több modot is tartalmazhat, ezért csak a 3D modellek mod.info-ját írjuk át).
@@ -40,66 +33,6 @@ function folderOf(cfg) {
 
 function downloadDir(userDataDir) {
   return path.join(userDataDir, 'packs', '_downloads');
-}
-
-// ------------------------------------------------------------------ ZombieBuddy
-
-async function findZbZip(cfg, userDataDir) {
-  const list = await pzo.listZips(cfg, repoOf(cfg), folderOf(cfg), userDataDir);
-  const pick = list.find((a) => ZB_ZIP.test(a.name));
-  if (!pick) {
-    throw new Error(
-      `Nincs endoftheliving zombiebuddy zip a ${repoOf(cfg)}/${folderOf(cfg)} mappában.`
-    );
-  }
-  return pick;
-}
-
-// A Master mappából letöltött csomagból csak az agent fájlokat tesszük a játék
-// mellé; az -agentlib:zbNative kapcsolót indításkor a launcher adja hozzá.
-async function installZombieBuddy({ cfg, userDataDir, gameDir, log = () => {}, onProgress = null }) {
-  if (!gameDir) throw new Error('Project Zomboid nem található. Beállítások → Játék mappája.');
-
-  log('• End of The Living ZombieBuddy keresése a Master mappában…');
-  const asset = await findZbZip(cfg, userDataDir);
-  const sizeMb = asset.size ? (asset.size / 1048576).toFixed(1) + ' MB' : '?';
-
-  const zipFile = path.join(downloadDir(userDataDir), asset.name);
-  log(`→ ${asset.name} letöltése (${sizeMb})…`);
-  await pzo.downloadAsset(asset, zipFile, cfg, log, onProgress);
-
-  // Ha most a hivatalos (Blackout) agent van a játék mellett, előbb eltároljuk,
-  // hogy később az egyjátékos indítás visszakaphassa.
-  const before = zbAgent.status({ userDataDir, gameDir });
-  if (before.current !== 'eotl' && !before.cached.official && before.current !== null) {
-    zbAgent.remember({ userDataDir, gameDir, kind: 'official', log });
-  }
-
-  const outDir = path.join(os.tmpdir(), 'eotl-zombiebuddy');
-  fs.rmSync(outDir, { recursive: true, force: true });
-  log('  kicsomagolás…');
-  await expandZip(zipFile, outDir);
-
-  const copied = [];
-  for (const name of ZB_FILES) {
-    const src = path.join(outDir, name);
-    if (!fs.existsSync(src)) continue;
-    fs.copyFileSync(src, path.join(gameDir, name));
-    copied.push(name);
-  }
-  fs.rmSync(zipFile, { force: true });
-  fs.rmSync(outDir, { recursive: true, force: true });
-
-  if (copied.length !== ZB_FILES.length) {
-    throw new Error('A csomagban nincs meg a ZombieBuddy.jar és a zbNative.dll.');
-  }
-
-  // Eltároljuk az EOTL agentet, hogy az egyjátékos indítás vissza tudja majd
-  // állítani a hivatalos ZombieBuddy-t, és fordítva.
-  zbAgent.remember({ userDataDir, gameDir, kind: 'eotl', log });
-
-  log('✓ End of The Living ZombieBuddy telepítve: ' + copied.join(', '));
-  return { ok: true, files: copied, dir: gameDir };
 }
 
 // ------------------------------------------------------------------ 3D modellek
@@ -218,7 +151,6 @@ async function applyVoxelModInfo({ cfg, userDataDir, log = () => {}, dir = null 
 function status() {
   const dir = workshop.itemDir(workshopLibs(), VOXEL_WORKSHOP_ID);
   return {
-    zb: false, // a játék mappát a hívó tölti ki (launch.agentStatus)
     voxel: voxelStatus(),
     voxelId: VOXEL_WORKSHOP_ID,
     voxelDir: dir,
@@ -226,11 +158,7 @@ function status() {
 }
 
 module.exports = {
-  ZB_ZIP,
-  ZB_FILES,
   VOXEL_WORKSHOP_ID,
-  findZbZip,
-  installZombieBuddy,
   applyVoxelModInfo,
   voxelStatus,
   walkModInfos,

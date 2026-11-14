@@ -43,6 +43,21 @@
     'A bejegyzések a választott launcher-nyelven jelennek meg.':
       'Entries appear in the selected launcher language.',
 
+    // ---- 0.9.16 (ZombieBuddy) ----
+    '0.9.16 – A szerver is a hivatalos ZombieBuddy-t használja':
+      '0.9.16 – The server uses the official ZombieBuddy too',
+    'Az End of The Living szerverre is a normál (hivatalos) ZombieBuddy került, ezért a launcher már nem telepít külön EOTL ZombieBuddy csomagot, és indításkor sem váltogat agentet a két mód között. Ha nálad még a régi, szerveres változat van a játék mappájában, futtasd a MODOK TELEPÍTÉSE / FRISSÍTÉSE gombot – az felteszi a hivatalosat.':
+      'The End of The Living server now runs the normal (official) ZombieBuddy, so the launcher no longer installs a separate EOTL ZombieBuddy pack and no longer swaps agents between the two modes on launch. If the old server variant is still in your game folder, run INSTALL / UPDATE MODS – that puts the official one in place.',
+    'A szerveres mód is a hivatalos ZombieBuddy-t használja – az EOTL csomag kikerült.':
+      'The server mode uses the official ZombieBuddy as well – the EOTL pack is gone.',
+    'A launcher már nem cserélgeti az agentet módváltásnál, így nincs mit félretenni.':
+      'The launcher no longer swaps the agent when switching modes, so nothing has to be set aside.',
+    'Az Optimalizálás panelen eltűnt a „ZombieBuddy (EOTL)” kártya.':
+      'The “ZombieBuddy (EOTL)” card is gone from the Optimize panel.',
+    'Régi EOTL agent esetén a MODOK TELEPÍTÉSE / FRISSÍTÉSE gomb felteszi a hivatalosat.':
+      'With an old EOTL agent, INSTALL / UPDATE MODS puts the official one in place.',
+    'ZOMBIEBUDDY': 'ZOMBIEBUDDY',
+
     // ---- 0.9.13 (szerveres hírek) ----
     '0.9.13 – A Blackout Protocol saját hírfolyamot kapott':
       '0.9.13 – The Blackout Protocol got its own news feed',

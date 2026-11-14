@@ -10,8 +10,6 @@ const mods = require('./mods');
 const collection = require('./collection');
 const workshop = require('./workshop');
 const zbInstaller = require('./zb-installer');
-const eotl = require('./eotl-mods');
-const zbAgent = require('./zb-agent');
 const approvals = require('./approvals');
 
 // A teljes telepítési folyamat:
@@ -58,9 +56,9 @@ async function runSetup({
   openSubscribe,
   openSteamClient,
   skips,
-  // A szerveres (többjátékos) telepítés a saját ZombieBuddy csomagot kapja,
-  // az egyjátékos modpack a hivatalos telepítőt használja tovább.
-  zbEotl = false,
+  // Szerveres (többjátékos) telepítés: a Viewpoint NIGHTLY (rc4) is felkerül.
+  // A ZombieBuddy mindkét módban a hivatalos telepítővel jön.
+  serverInstall = false,
 }) {
   // Az egyjátékos modpack (Blackout) nem hagyja ki a kollekció elemeit – ott a
   // skips üres halmazokkal jön, a szerver telepítésnél a gyári kihagyások élnek.
@@ -100,7 +98,7 @@ async function runSetup({
   // Viewpoint NIGHTLY (rc4): a szerveres telepítés magától felrakja. Ha bent
   // van, a kollekció alap Project Viewpointja kimarad, mert két azonos ID-jű
   // Viewpoint összeakadna – és a már letöltött példányt is töröljük.
-  if (zbEotl) {
+  if (serverInstall) {
     try {
       await mods.ensureNightly({ cfg, userDataDir, log: onLog, onProgress });
     } catch (err) {
@@ -262,26 +260,15 @@ async function runSetup({
   }
 
   // ---- 5) ZombieBuddy telepítő ------------------------------------------
+  // Mindkét mód a hivatalos ZombieBuddy-t használja (a szerverre is az került).
   let installer = null;
-  if (zbEotl) {
-    // Többjátékos: az End of The Living saját ZombieBuddy csomagja a Master
-    // mappából (ugyanaz az automatikus folyamat, csak a hivatalos telepítő
-    // helyett a saját fájljaink kerülnek a játék mellé).
-    try {
-      await eotl.installZombieBuddy({ cfg, userDataDir, gameDir, log: onLog, onProgress });
-      installer = { ok: true, version: 'EOTL', name: 'endoftheliving zombiebuddy.zip' };
-    } catch (err) {
-      onLog('✗ End of The Living ZombieBuddy: ' + err.message);
+  try {
+    installer = await zbInstaller.runZombieBuddyInstaller({ userDataDir, onLog, onProgress });
+    if (!installer.ok) {
+      onLog('⚠ A ZombieBuddy telepítő nem járt sikerül – a launcher saját telepítése továbbra is működik.');
     }
-  } else {
-    try {
-      installer = await zbInstaller.runZombieBuddyInstaller({ userDataDir, onLog, onProgress });
-      if (!installer.ok) {
-        onLog('⚠ A ZombieBuddy telepítő nem járt sikerül – a launcher saját telepítése továbbra is működik.');
-      }
-    } catch (err) {
-      onLog('✗ ZombieBuddy telepítő: ' + err.message);
-    }
+  } catch (err) {
+    onLog('✗ ZombieBuddy telepítő: ' + err.message);
   }
 
   // Agent fájlok (ZombieBuddy.jar + zbNative.dll) a játék mappába – a
@@ -293,17 +280,6 @@ async function runSetup({
       onLog('✗ ' + err.message);
     }
   }
-  // A játék mappában lévő agentet eltároljuk a módjához (hivatalos / EOTL),
-  // hogy a másik mód indításakor a megfelelő kerülhessen vissza.
-  if (launch.agentStatus(gameDir).present) {
-    zbAgent.remember({
-      userDataDir,
-      gameDir,
-      kind: zbEotl ? 'eotl' : 'official',
-      log: onLog,
-    });
-  }
-
   const agent = launch.agentStatus(gameDir);
   if (!agent.present) {
     onLog('⚠ A ZombieBuddy agent fájljai (ZombieBuddy.jar + zbNative.dll) nincsenek a játék mappában.');

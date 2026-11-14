@@ -44,7 +44,6 @@ contextBridge.exposeInMainWorld('api', {
 
   // ---- End of The Living (többjátékos) saját kiegészítői ----
   getEotlStatus: () => ipcRenderer.invoke('eotl:status'),
-  installEotlZombieBuddy: () => ipcRenderer.invoke('eotl:zb'),
   applyVoxelModInfo: () => ipcRenderer.invoke('eotl:voxel'),
   openModsFolder: () => ipcRenderer.invoke('mods:openFolder'),
   createShortcut: () => ipcRenderer.invoke('shortcut:create'),

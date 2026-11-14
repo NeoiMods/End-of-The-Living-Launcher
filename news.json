@@ -1,7 +1,21 @@
 {
-  "version": "0.9.13",
+  "version": "0.9.16",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.16",
+      "version": "0.9.16",
+      "date": "2026-11-14",
+      "tag": "ZOMBIEBUDDY",
+      "title": "0.9.16 – A szerver is a hivatalos ZombieBuddy-t használja",
+      "text": "Az End of The Living szerverre is a normál (hivatalos) ZombieBuddy került, ezért a launcher már nem telepít külön EOTL ZombieBuddy csomagot, és indításkor sem váltogat agentet a két mód között. Ha nálad még a régi, szerveres változat van a játék mappájában, futtasd a MODOK TELEPÍTÉSE / FRISSÍTÉSE gombot – az felteszi a hivatalosat.",
+      "changes": [
+        "A szerveres mód is a hivatalos ZombieBuddy-t használja – az EOTL csomag kikerült.",
+        "A launcher már nem cserélgeti az agentet módváltásnál, így nincs mit félretenni.",
+        "Az Optimalizálás panelen eltűnt a „ZombieBuddy (EOTL)” kártya.",
+        "Régi EOTL agent esetén a MODOK TELEPÍTÉSE / FRISSÍTÉSE gomb felteszi a hivatalosat."
+      ]
+    },
     {
       "id": "0.9.13",
       "version": "0.9.13",

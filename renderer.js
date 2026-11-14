@@ -1877,20 +1877,7 @@ function syncOptCards() {
     setDelVisible('voxel', done);
   }
 
-  // ---- többjátékos (End of The Living) kártyák ----
-  const zbEotlState = $('#zbEotlState');
-  if (zbEotlState) {
-    const done = !!(eotlStatus && eotlStatus.zb);
-    zbEotlState.classList.toggle('go', true);
-    zbEotlState.textContent = done ? 'TELEPÍTVE' : 'TELEPÍTÉS';
-    const hintEl = $('#zbEotlHint');
-    if (hintEl) {
-      hintEl.textContent = done
-        ? 'Telepítve – a szerver saját ZombieBuddy agentje fut'
-        : 'Az End of The Living szerver saját ZombieBuddy csomagja';
-    }
-  }
-
+  // ---- többjátékos (End of The Living) kártya ----
   const voxelMpState = $('#voxelMpState');
   if (voxelMpState) {
     const v = (eotlStatus && eotlStatus.voxel) || {};
@@ -2008,14 +1995,6 @@ function runOptAction(action) {
         appendLog('✓ PZO Launcher kicsomagolva – a telepítő konzolban fut tovább.');
         await refreshPzoState();
       }
-      return res;
-    }, { reload: false });
-    return;
-  }
-  if (action === 'zb-eotl') {
-    runBusy(async () => {
-      const res = await bridge.installEotlZombieBuddy();
-      await refreshEotlState();
       return res;
     }, { reload: false });
     return;

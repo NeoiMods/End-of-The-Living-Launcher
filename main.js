@@ -18,7 +18,7 @@ const {
 const modinfo = require('./src/modinfo');
 const modlist = require('./src/modlist');
 const news = require('./src/news');
-const { launchGame, isGameRunning, agentStatus } = require('./src/launch');
+const { launchGame, isGameRunning } = require('./src/launch');
 const setup = require('./src/setup');
 const { runSetup } = setup;
 const { fetchCollection } = require('./src/collection');
@@ -37,7 +37,6 @@ const discord = require('./src/discord');
 const crash = require('./src/crash');
 const blackout = require('./src/blackout');
 const eotl = require('./src/eotl-mods');
-const zbAgent = require('./src/zb-agent');
 
 // A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
 // A GitHub projektben át lett állítva erre a repo-ra:
@@ -911,8 +910,8 @@ ipcMain.handle('mods:install', async () => {
           onLog: () => {},
         }),
       openSteamClient: () => subscribe.openSteamClient(cfg.collectionId),
-      // Szerveres telepítés: a saját (EOTL) ZombieBuddy csomag megy fel.
-      zbEotl: true,
+      // Szerveres telepítés: a Viewpoint NIGHTLY (rc4) magától felkerül.
+      serverInstall: true,
     });
 
     cfg = {
@@ -980,35 +979,9 @@ ipcMain.handle('zb:install', async () => {
 
 ipcMain.handle('eotl:status', () => {
   try {
-    const gameDir = resolveGamePath(cfg);
-    const agent = gameDir ? agentStatus(gameDir) : { present: false };
-    const st = eotl.status();
-    return { ok: true, zb: !!agent.present, voxel: st.voxel };
+    return { ok: true, voxel: eotl.status().voxel };
   } catch (err) {
-    return { ok: false, error: err && err.message ? err.message : String(err), zb: false, voxel: { installed: false, patched: false } };
-  }
-});
-
-ipcMain.handle('eotl:zb', async () => {
-  if (busy) return { ok: false, error: 'Már fut egy művelet.' };
-  busy = true;
-  try {
-    const gameDir = resolveGamePath(cfg);
-    const res = await eotl.installZombieBuddy({
-      cfg,
-      userDataDir: app.getPath('userData'),
-      gameDir,
-      log,
-      onProgress: (done, total) =>
-        progress({ label: 'End of The Living ZombieBuddy letöltése', done, total }),
-    });
-    progress(null);
-    return res;
-  } catch (err) {
-    progress(null);
-    return reportError(err);
-  } finally {
-    busy = false;
+    return { ok: false, error: err && err.message ? err.message : String(err), voxel: { installed: false, patched: false } };
   }
 });
 
@@ -1166,14 +1139,6 @@ ipcMain.handle('game:launch', async (event, mode) => {
     // Ha a NIGHTLY Viewpoint bent van, az alap Project Viewpoint nem maradhat
     // a gépen (a Steam visszatöltheti, ezért minden indításnál ellenőrizzük).
     mods.removeBaseViewpoint({ log });
-    // A módhoz tartozó ZombieBuddy agent kerül a játék mellé (a másikat
-    // eltároltuk, így a Blackout hivatalos változata sem sérül).
-    zbAgent.sync({
-      userDataDir: app.getPath('userData'),
-      gameDir,
-      mode: blackoutMode ? 'blackout' : 'eotl',
-      log,
-    });
     // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).
     await launchGame({ gameDir, cfg, onLog: log, zgc: blackoutMode });
     gameSeenRunning = true;

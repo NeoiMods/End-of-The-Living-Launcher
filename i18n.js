@@ -45,11 +45,6 @@
     // --- optimalizálás: egyjátékos / többjátékos ---
     'EGYJÁTÉKOS': 'SINGLE-PLAYER',
     'MULTIPLAYER': 'MULTIPLAYER',
-    'ZombieBuddy (EOTL)': 'ZombieBuddy (EOTL)',
-    'Az End of The Living szerver saját ZombieBuddy csomagja':
-      'The End of The Living server’s own ZombieBuddy pack',
-    'Telepítve – a szerver saját ZombieBuddy agentje fut':
-      'Installed – the server’s own ZombieBuddy agent is running',
     '3D models for Viewpoint': '3D models for Viewpoint',
     'A 3810302175 workshop mod – a saját mod.info-val':
       'The 3810302175 workshop mod – with our own mod.info',
