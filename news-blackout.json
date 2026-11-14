@@ -1,7 +1,20 @@
 {
-  "version": "0.9.25",
+  "version": "0.9.26",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.26",
+      "version": "0.9.26",
+      "date": "2026-11-14",
+      "tag": "JAVÍTÁS",
+      "title": "0.9.26 – A ZombieBuddy telepítő már nem fut le minden alkalommal",
+      "text": "A telepítő bezárja a Steamet, ezért mostantól csak akkor fut le, ha a ZombieBuddy agent tényleg nincs a gépen (sem a játék mappában, sem a Steam Workshopon). Ha az agent megvan, a launcher ezt írja a naplóba, és a Steamet békén hagyja. Kézi újratelepítéshez ott a ZombieBuddy gomb/kártya – az mindig lefuttatja a telepítőt.",
+      "changes": [
+        "A ZombieBuddy telepítő csak akkor fut le, ha az agent hiányzik – nem minden mod-telepítésnél.",
+        "Ha az agent megvan, a Steam nem záródik be.",
+        "Kézi újratelepítés: ZombieBuddy gomb/kártya (az mindig futtatja a telepítőt)."
+      ]
+    },
     {
       "id": "0.9.25",
       "version": "0.9.25",

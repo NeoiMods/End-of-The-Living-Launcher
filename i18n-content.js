@@ -16,7 +16,18 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                            // ---- 0.9.25 (játék indítás / Steam) ----
+                                // ---- 0.9.26 (ZombieBuddy csak ha kell) ----
+    "0.9.26 – A ZombieBuddy telepítő már nem fut le minden alkalommal":
+      "0.9.26 – The ZombieBuddy installer no longer runs every time",
+    "A telepítő bezárja a Steamet, ezért mostantól csak akkor fut le, ha a ZombieBuddy agent tényleg nincs a gépen (sem a játék mappában, sem a Steam Workshopon). Ha az agent megvan, a launcher ezt írja a naplóba, és a Steamet békén hagyja. Kézi újratelepítéshez ott a ZombieBuddy gomb/kártya – az mindig lefuttatja a telepítőt.":
+      "The installer closes Steam, so it now only runs when the ZombieBuddy agent is really missing (neither in the game folder nor in the Steam Workshop). When the agent is present the launcher says so in the log and leaves Steam alone. For a manual reinstall use the ZombieBuddy button/card – that always runs the installer.",
+    "A ZombieBuddy telepítő csak akkor fut le, ha az agent hiányzik – nem minden mod-telepítésnél.":
+      "The ZombieBuddy installer only runs when the agent is missing, not on every mod install.",
+    "Ha az agent megvan, a Steam nem záródik be.":
+      "When the agent is present, Steam is not closed.",
+    "Kézi újratelepítés: ZombieBuddy gomb/kártya (az mindig futtatja a telepítőt).":
+      "Manual reinstall: the ZombieBuddy button/card (it always runs the installer).",
+// ---- 0.9.25 (játék indítás / Steam) ----
     "0.9.25 – A játék nem indult el, mert zárt Steam mellett próbálta":
       "0.9.25 – The game did not start because Steam had been closed",
     "A ZombieBuddy telepítő miatt a launcher bezárja a Steamet – utána viszont a játékot zárt Steammel indította, ezért az azonnal kilépett, a launcher pedig azt írta, hogy „a játék bezárult”. Mostantól a telepítés végén a Steam visszaindul, a JÁTÉK INDÍTÁSA pedig ellenőrzi a Steamet: ha nem fut, elindítja és megvárja (max. 60 mp), csak utána indítja a játékot. A futásérzékelés is javult: a B42-nél a játékot a java.exe viszi, nem a ProjectZomboid64.exe, ezért a launcher eddig akkor is „bezárult”-ot írt, ha a játék ment.":

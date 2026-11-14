@@ -274,19 +274,9 @@ async function runSetup({
   }
 
   // ---- 5) ZombieBuddy telepítő ------------------------------------------
-  // Először a Master mappában lévő installer bat fut (minden mást arra bízunk),
-  // ha nincs bat, a hivatalos exe telepítőre esünk vissza – így nem marad ki.
-  let installer = null;
-  try {
-    installer = await zbInstaller.installZombieBuddy({ cfg, userDataDir, gameDir, onLog, onProgress });
-    if (!installer.ok) {
-      onLog('⚠ A ZombieBuddy installer nem járt sikerrel – a naplóban látszik, hol állt meg.');
-    }
-  } catch (err) {
-    onLog('✗ ZombieBuddy installer: ' + err.message);
-  }
-  // A ZombieBuddy agent lehet a játék mappájában (installer) vagy a Steam
-  // workshop tartalomban (Java agent mod) – mindkettő érvényes.
+  // A telepítő csak akkor fut le, ha a ZombieBuddy agent nincs a gépen. A
+  // telepítő ugyanis bezárja a Steamet, ezért nem futtatjuk minden alkalommal
+  // feleslegesen – kézi újratelepítés a ZombieBuddy kártyával/gombbal van.
   const agent = launch.agentStatus(gameDir);
   let zbWorkshop = [];
   try {
@@ -294,6 +284,28 @@ async function runSetup({
   } catch {
     zbWorkshop = [];
   }
+  const zbPresent = agent.present || zbWorkshop.length > 0;
+
+  let installer = null;
+  if (zbPresent) {
+    onLog(
+      '• ZombieBuddy agent már a gépen van – a telepítő nem fut le, a Steam nem záródik be ' +
+        '(kézi újratelepítés: ZombieBuddy gomb).'
+    );
+    installer = { ok: true, skipped: true, source: agent.present ? 'game' : 'workshop' };
+  } else {
+    try {
+      installer = await zbInstaller.installZombieBuddy({ cfg, userDataDir, gameDir, onLog, onProgress });
+      if (!installer.ok) {
+        onLog('⚠ A ZombieBuddy installer nem járt sikerrel – a naplóban látszik, hol állt meg.');
+      }
+    } catch (err) {
+      onLog('✗ ZombieBuddy installer: ' + err.message);
+    }
+  }
+
+  // A ZombieBuddy agent lehet a játék mappájában (installer) vagy a Steam
+  // workshop tartalomban (Java agent mod) – mindkettő érvényes.
   if (agent.present) {
     onLog(`✓ ZombieBuddy agent a helyén: ${agent.configured ? 'launcher JSON beállítva' : 'indításkor töltődik be'}.`);
   } else if (zbWorkshop.length) {
