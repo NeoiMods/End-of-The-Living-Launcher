@@ -1,6 +1,6 @@
 {
-  "version": "0.9.20",
-  "sha": "e8c7bff75c218ec8b479d398724549d6c559b8b8",
+  "version": "0.9.21",
+  "sha": "8fe5020dab719d27b267644d3065aded7d3234ff",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -729,13 +729,13 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 42094,
-      "sha256": "f46473618420859ad0945dd60fbd420e590ae6cbadf65e25495643f1c5c3186b"
+      "size": 45790,
+      "sha256": "35d21e67084bf360089cdbc4da36cb8c1623a6f893e569484eb5912475b55e49"
     },
     {
       "path": "i18n-logs.js",
-      "size": 33274,
-      "sha256": "87b41c80d55fd68cd300497319de86492b4c16e6f15bfebf68d015d42eaac45e"
+      "size": 37592,
+      "sha256": "7a7c6a28999d533f2a8187d7758701b5d78d00b9ab133c4b589597abe002a7cb"
     },
     {
       "path": "i18n.js",
@@ -749,13 +749,13 @@
     },
     {
       "path": "main.js",
-      "size": 43266,
-      "sha256": "ec9af724d6809a52cb31e3ed1aecf940eaa1cb8948e47d2fe3c0f2c9fe17d0d1"
+      "size": 43272,
+      "sha256": "8f732ee7fe9583aa668d697c6afe262ad478e6b2f1c9114567a71fc9ed4c42f3"
     },
     {
       "path": "news-blackout.json",
-      "size": 12515,
-      "sha256": "ef802557ca5eb683dfbd65b8c068b572ad114cedc10aacf9483439e99579eaf5"
+      "size": 14552,
+      "sha256": "dab6d331c67e120f493c1607f17a8135172d723d8214f1f759d61ad036c3ff84"
     },
     {
       "path": "news.json",
@@ -765,7 +765,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "b71a5570fa3f6db6ee446a97d73c87a63751eb3c1bb2987581e733a78719c230"
+      "sha256": "7d1eebe88b8ddfc611f34dc60685a7064fe80936de2e05bb57ba464790d7230f"
     },
     {
       "path": "preload.js",
@@ -789,8 +789,8 @@
     },
     {
       "path": "src/blackout.js",
-      "size": 14480,
-      "sha256": "8eda5323fbe57c429b0113e1f33ca99ecc54661b4c767d69736226f43a78edd3"
+      "size": 14523,
+      "sha256": "dfdfb5070302669db5e7e64ef759ee2a7db9ee17f90859103d29ef3764543324"
     },
     {
       "path": "src/collection.js",
@@ -854,8 +854,8 @@
     },
     {
       "path": "src/mods.js",
-      "size": 25834,
-      "sha256": "3d7e39632fefcfd95f5e802fc18811415b7d25c7d763e3b4717f6ffa29bf1b1a"
+      "size": 34163,
+      "sha256": "d225ce2f5f4de4bf15cc88df7b7a01b63363d2c43688f0a8b770c10bcf4e1e5d"
     },
     {
       "path": "src/news.js",
@@ -879,8 +879,8 @@
     },
     {
       "path": "src/setup.js",
-      "size": 17191,
-      "sha256": "4ffe12129533505fb8d5ed8fa58efd41ce6a57e88ddb2e84e99ed0651eeb2ddc"
+      "size": 17908,
+      "sha256": "3b80dea291ac7e20081ca8e155fc23a60bdb133317a059f0a18be7bc7b6f4e74"
     },
     {
       "path": "src/shortcut.js",
@@ -909,8 +909,8 @@
     },
     {
       "path": "src/zb-installer.js",
-      "size": 18516,
-      "sha256": "6e52885de55c774cb12661a55b44bb5d662df0dda4ce37f2570371f7e9b680fa"
+      "size": 21128,
+      "sha256": "9a92213a758816c0a63b12450bcff0811980229289e8f22ba6d86830fd6221b9"
     },
     {
       "path": "styles.css",
