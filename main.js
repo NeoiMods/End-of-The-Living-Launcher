@@ -48,6 +48,18 @@ let win = null;
 let cfg = null;
 let busy = false;
 let setupRunning = false;
+// Egy launcher-példány: két launcher-ablakból két játék indult (dupla indulás).
+const singleInstance = app.requestSingleInstanceLock();
+if (!singleInstance) app.quit();
+// Ha valaki újra elindítaná a launchert, a meglévő ablak jöjjön elő.
+app.on('second-instance', () => {
+  if (!win || win.isDestroyed()) return;
+  if (win.isMinimized()) win.restore();
+  if (!win.isVisible()) win.show();
+  win.focus();
+});
+// Egyszerre csak egy indítás futhat (dupla kattintás / ismételt Play).
+let launchInFlight = false;
 // Játék bezárásának figyelése a crash loghoz.
 let gameSeenRunning = false;
 // Összeomlás után a log beküldése kötelező: amíg nincs elküldve, a launcher
@@ -136,6 +148,8 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  // A második példány már kilépett: ne nyisson ablakot, ne indítson semmit.
+  if (!singleInstance) return;
   cfg = loadConfig(app.getPath('userData'));
   // A gyári (szerver beállítás) értékek mentése első indításkor.
   if (!cfg.installedModIds) cfg.installedModIds = [];
@@ -1112,9 +1126,17 @@ ipcMain.handle('blackout:config', async () => {
 
 ipcMain.handle('game:launch', async (event, mode) => {
   const blackoutMode = String(mode || '').toLowerCase() === 'blackout';
+  if (launchInFlight) return { ok: false, error: 'Már indul a játék – várd meg, míg elindul.' };
   try {
     const gameDir = resolveGamePath(cfg);
     if (!gameDir) throw new Error('Project Zomboid nem található. Beállítások → Játék mappája.');
+    // A játék betöltése nagy modpacknél percekig tart: ilyenkor nem indítunk
+    // második példányt (ez okozta a dupla indulást).
+    if (isGameRunning()) {
+      log('• A játék már fut – nem indítok második példányt.');
+      return { ok: true, alreadyRunning: true };
+    }
+    launchInFlight = true;
     const mem = system.getMemoryInfo(Number(cfg.jvmMaxMb) || 8192);
     if (!mem.enough) {
       log('⚠ ' + mem.message);
@@ -1141,6 +1163,12 @@ ipcMain.handle('game:launch', async (event, mode) => {
     // Ha a NIGHTLY Viewpoint bent van, az alap Project Viewpoint nem maradhat
     // a gépen (a Steam visszatöltheti, ezért minden indításnál ellenőrizzük).
     mods.removeBaseViewpoint({ log });
+    // Az előkészítés percekig tarthat: közben elindulhatott a játék (Steamből
+    // vagy máshonnan) – ilyenkor sem indítunk másodikat.
+    if (isGameRunning()) {
+      log('• A játék időközben elindult – nem indítok második példányt.');
+      return { ok: true, alreadyRunning: true };
+    }
     // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).
     // Csak ZGC (a felhasználói kérés): mindkét módban ZGC-vel indul a játék.
     await launchGame({ gameDir, cfg, onLog: log, zgc: true });
@@ -1150,7 +1178,8 @@ ipcMain.handle('game:launch', async (event, mode) => {
     setTimeout(() => {
       let running = false;
       try {
-        running = isGameRunning();
+        // Friss ellenőrzés: a gyorsítótár itt még a régi (indítás előtti) értéket adná.
+        running = isGameRunning(true);
       } catch {
         running = false;
       }
@@ -1164,6 +1193,8 @@ ipcMain.handle('game:launch', async (event, mode) => {
     return { ok: true };
   } catch (err) {
     return reportError(err);
+  } finally {
+    launchInFlight = false;
   }
 });
 

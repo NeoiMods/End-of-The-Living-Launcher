@@ -1,7 +1,21 @@
 {
-  "version": "0.9.29",
+  "version": "0.9.30",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.30",
+      "version": "0.9.30",
+      "date": "2026-11-14",
+      "tag": "LAUNCHER",
+      "title": "0.9.30 – A launcher nem indít második játékot",
+      "text": "Ha a játék már fut vagy éppen tölt, a Play gomb többé nem indít mellé egy második példányt – nagy modpacknél a betöltés percekig tart, és eddig közben egy újabb kattintás második játékot indított. A launcherből is csak egy példány futhat: ha véletlenül másodszor is elindítod, a már nyitott ablak jön elő. Az állapotellenőrzés mostantól a valóban futó JVM-et nézi, a beragadt indító exe nem „futó játék” többé.",
+      "changes": [
+        "A Play nem indít második példányt, ha a játék már fut vagy tölt (napló: „A játék már fut”).",
+        "A launcherből csak egy példány futhat – a második indítás a meglévő ablakot hozza elő.",
+        "Beragadt ProjectZomboid64.exe (JVM nélkül) nem számít futó játéknak, így nem blokkolja az indítást.",
+        "Az állapotellenőrzés ritkábban kérdezi a Windows-t, hogy töltés közben ne vegyen el erőt a játéktól."
+      ]
+    },
     {
       "id": "0.9.29",
       "version": "0.9.29",

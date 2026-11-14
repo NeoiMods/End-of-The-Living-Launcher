@@ -43,12 +43,13 @@ function isSteamRunning() {
 // A B42 játékot a java.exe viszi (a ProjectZomboid64.exe csak elindítja és
 // kilép), ezért a futást a JVM parancssora alapján is fel kell ismerni – enélkül
 // a launcher a játékot azonnal „bezárultnak” látja.
+// Sorformátum: név|indulás (ISO)|parancssor
 function gameProcessList() {
   try {
     const script =
       "$ErrorActionPreference='SilentlyContinue'; " +
       "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'java|ProjectZomboid' } | " +
-      "ForEach-Object { $_.Name + '|' + $_.CommandLine }";
+      "ForEach-Object { $_.Name + '|' + $_.CreationDate.ToString('o') + '|' + $_.CommandLine }";
     const out = require('child_process').execFileSync('powershell', ['-NoProfile', '-Command', script], {
       encoding: 'utf8',
       windowsHide: true,
@@ -64,33 +65,44 @@ function gameProcessList() {
   }
 }
 
-// A JVM-es ellenőrzés PowerShellt indít, ezért pár másodpercig gyorsítótárazzuk
-// (a felület sűrűn kérdezi az állapotot).
+// „név|indulás|parancssor” bontása (a parancssorban magában is lehet |).
+function splitProcessLine(line) {
+  const i = line.indexOf('|');
+  const j = i < 0 ? -1 : line.indexOf('|', i + 1);
+  if (i < 0 || j < 0) return { name: line, startedAt: 0, cmd: '' };
+  const at = Date.parse(line.slice(i + 1, j));
+  return { name: line.slice(0, i), startedAt: Number.isFinite(at) ? at : 0, cmd: line.slice(j + 1) };
+}
+
+// A JVM-es ellenőrzés PowerShellt indít (~0,3 mp), ezért gyorsítótárazzuk: a
+// felület 10-15 mp-enként kérdezi az állapotot, a játék betöltése közben pedig
+// nem akarunk fölösleges process-listázást a gépre rakni.
+const RUN_CACHE_MS = 12000;
 let gameRunCache = { at: 0, running: false };
 
-function isGameRunning() {
-  // Gyors út: az indító exe még a listában van.
-  try {
-    const out = require('child_process').execFileSync(
-      'tasklist',
-      ['/FI', 'IMAGENAME eq ProjectZomboid64.exe'],
-      { encoding: 'utf8', windowsHide: true }
-    );
-    if (/ProjectZomboid64\.exe/i.test(out)) {
-      gameRunCache = { at: Date.now(), running: true };
-      return true;
-    }
-  } catch {
-    // Marad a JVM-es ellenőrzés.
+// A B42 indító exe néhány másodperc alatt átadja a helyét a JVM-nek, de nagy
+// modpacknél ez akár percekig is eltarthat. Ha viszont az exe megmarad JVM
+// nélkül, az egy beragadt/halott indító: azt nem tekintjük futó játéknak,
+// különben a launcher soha nem engedné újraindítani a játékot.
+const EXE_STARTUP_GRACE_MS = 3 * 60 * 1000;
+
+// force: a gyorsítótár megkerülése (pl. közvetlenül indítás után).
+function isGameRunning(force = false) {
+  if (!force && Date.now() - gameRunCache.at < RUN_CACHE_MS) return gameRunCache.running;
+
+  const rows = gameProcessList().map(splitProcessLine);
+  let running = rows.some(
+    (p) => /^java/i.test(p.name) && /zombie|projectzomboid/i.test(p.cmd)
+  );
+
+  if (!running) {
+    // Nincs JVM, de indító exe van: csak a frissen indult (induló) exe él.
+    // Beragadt, régi exe mellett sem szabad örökre „futónak” látni a játékot.
+    running = rows
+      .filter((p) => /^ProjectZomboid64\.exe/i.test(p.name))
+      .some((p) => !p.startedAt || Date.now() - p.startedAt < EXE_STARTUP_GRACE_MS);
   }
 
-  if (Date.now() - gameRunCache.at < 4000) return gameRunCache.running;
-
-  const running = gameProcessList().some((line) => {
-    const [name, cmd = ''] = line.split('|');
-    if (!/^java/i.test(name)) return false;
-    return /zombie|projectzomboid/i.test(cmd);
-  });
   gameRunCache = { at: Date.now(), running };
   return running;
 }

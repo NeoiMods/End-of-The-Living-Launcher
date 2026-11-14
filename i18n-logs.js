@@ -6,6 +6,9 @@
   if (!i18n) return;
 
   i18n.addTemplates([
+    // ---- 0.9.30 (ne induljon kétszer) ----
+    "• A játék már fut – nem indítok második példányt.", "• The game is already running – I will not start a second instance.",
+    "• A játék időközben elindult – nem indítok második példányt.", "• The game started in the meantime – I will not start a second instance.",
     // ---- 0.9.29 (nightly csak kérésre) ----
     "• Viewpoint NIGHTLY nem települ magától – az Optimalizálás panelen tudod feltenni.", "• Viewpoint NIGHTLY is no longer installed automatically – install it from the Optimisations panel.",
     // ---- 0.9.27 (GC ütközés) ----

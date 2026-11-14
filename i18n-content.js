@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                            // ---- 0.9.29 (nightly csak kérésre) ----
+                                                // ---- 0.9.30 (ne induljon kétszer) ----
+    "0.9.30 – A launcher nem indít második játékot":
+      "0.9.30 – The launcher no longer starts a second game",
+    "Ha a játék már fut vagy éppen tölt, a Play gomb többé nem indít mellé egy második példányt – nagy modpacknél a betöltés percekig tart, és eddig közben egy újabb kattintás második játékot indított. A launcherből is csak egy példány futhat: ha véletlenül másodszor is elindítod, a már nyitott ablak jön elő. Az állapotellenőrzés mostantól a valóban futó JVM-et nézi, a beragadt indító exe nem „futó játék” többé.":
+      "If the game is already running or loading, the Play button no longer starts another instance next to it – with a large modpack loading takes minutes, and until now another click in the meantime started a second game. Only one launcher instance can run: starting it a second time brings up the window that is already open. The state check now looks at the JVM that is really running, so a stuck launcher exe no longer counts as a running game.",
+    "A Play nem indít második példányt, ha a játék már fut vagy tölt (napló: „A játék már fut”).":
+      "Play does not start a second instance when the game is already running or loading (log: “The game is already running”).",
+    "A launcherből csak egy példány futhat – a második indítás a meglévő ablakot hozza elő.":
+      "Only one launcher instance can run – starting it again focuses the existing window.",
+    "Beragadt ProjectZomboid64.exe (JVM nélkül) nem számít futó játéknak, így nem blokkolja az indítást.":
+      "A stuck ProjectZomboid64.exe (without a JVM) no longer counts as a running game, so it cannot block launching.",
+    "Az állapotellenőrzés ritkábban kérdezi a Windows-t, hogy töltés közben ne vegyen el erőt a játéktól.":
+      "The state check polls Windows less often, so it does not take power from the game while it loads.",
+// ---- 0.9.29 (nightly csak kérésre) ----
     "0.9.29 – A Viewpoint NIGHTLY alapból nem települ le":
       "0.9.29 – The Viewpoint NIGHTLY is no longer downloaded by default",
     "A nightly mostantól opt-in: a mod-telepítés és az egyjátékos modpack sem tölti le magától. Ha kell, az Optimalizálás panel „Viewpoint NIGHTLY” kártyájával tehetsz fel (a Master mappából, a legújabb rc-t). Ha egyszer már bent van, a launcher továbbra is kezeli: engedélyezi, és a kollekció alap Project Viewpointját kiveszi mellőle, hogy ne legyen két azonos ID-jű mod.":
