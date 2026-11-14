@@ -1,4 +1,4 @@
-# Blackout Protocol - aktiv modok (720 db), egy sor egy mod
+# Blackout Protocol - aktiv modok (714 db), egy sor egy mod
 ZombieBuddy
 ModLoadOrderSorter_b42
 ModManager
@@ -6,7 +6,6 @@ tsarslib
 StandardizedVehicleUpgrades3Core
 ATA_Petyarbuilt
 MoodleFramework
-RagsToSheets
 VanillaVehiclesAnimated
 amclub
 TchernoLib
@@ -30,7 +29,6 @@ AccessorySkillBonuses
 twistrecovery
 AdvancedDeathLog4219MP
 AftermathRadio
-ImmersiveAmmoCountB42
 AnimalHaulerB42
 ARMOR_WEARING_SKILL
 AuDmodBetterHeadSmashSoundsB42
@@ -116,14 +114,12 @@ SWMG
 HK_416
 OCsPacking
 LUHoneyBadgerB42
-HordeOptimizer
 HBVCEFb42
 ImmersiveTents
 TargetSquareOnLoad
 ImprovisedGasMaskFilterEasySwap
 IntegralSuppressorConversionB42
 ItemCondition_KingEJ
-JohnnyBandolierCapacity
 JumperCables
 KRCoreOS
 KRSolarOS
@@ -352,7 +348,6 @@ SurvivorBriefing
 SalvageWorks
 ReverseLights
 ProjectViewpointADS
-INVENTORY_TETRIS
 ForceWearLoadedBags
 vac_mod_b42_utils
 ItemRarityUI
@@ -372,7 +367,6 @@ ViewpointLivingProps
 ViewpointOfMarz
 ViewpointTrueBallistics
 ViewpointBodycam
-ViewpointPhysicsProps
 ViewpointClassicCamera
 ViewpointWorkingTVs
 ViewpointBarricade
@@ -459,7 +453,6 @@ B42Horticulture
 PropaneRefuel
 RadioVoices
 Railings3D
-RandomEvents
 GlassGreenhouse
 RealisticDash
 restore_utilities
@@ -700,23 +693,23 @@ VFExpansion1
 VFExpansion3
 VVA_cullseats
 TheyKnewContinued_AZBP
-Tempo_PerfKit
-modPerformanceProfiler42
 ProjectViewpointParkour
 HandsOnViewpointCamera
-Multi-CPU
 NeatUI_Mechanics
-ModernStatus
 HDsGasBurner
 PZVoxelStudioViewpoint
 HandsOnInteractionsVP
 CompanionDogsSwissShepherd
 DetailedModelsGloves
 BulkPallets
-LifestyleHobbies
-Lifestyle4220Compat
-LifestylePianoAddonb42
-OtrSR
 JullesPortableLadders
-
-
+ProjectALifeNPCs
+ProjectALifeJimmy
+CDALifePatch
+CDAJCompatPatch
+PZCustomIntros
+B42_FIX_KI5_Hood_Trunk_and_etc
+SuporteFuzis
+TarkovInventory
+MPOptimizer
+undying_optimizer

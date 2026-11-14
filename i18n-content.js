@@ -16,7 +16,26 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                    // ---- 0.9.23 (rc4 kiválasztás) ----
+                        // ---- 0.9.24 (új blackout config + ONFIRE) ----
+    "ON FIRE – ami most a legfontosabb (Blackout Protocol)":
+      "ON FIRE – what matters most right now (Blackout Protocol)",
+    "Új Blackout Protocol config csomag: 714 aktív mod, újrahangolt balance (zombik alacsony, városra összpontosítva; élelem 0.4 / fegyver 0.2 / gazdálkodás 0.4; víz és áram 7–14 nap között megy el; 1 órás napok, július 1-i indulás; ritkább helikopter/meta esemény; generátor 0.1 fogyasztás). A config csak az EGYJÁTÉKOS (single-player) módot érinti, és automatikusan bekerül a játékba, ahogy eddig: a MODOK TELEPÍTÉSE / FRISSÍTÉSE után a launcher bemásolja, és a „Blackout Protocol” profilt használja. 1) PROJECT VIEWPOINT – NIGHTLY 0.1.7 rc4: ez NEM a Workshop-ös alpha 0.1.6! A launcher a Master mappából teszi be a Zomboid\\mods mappába, és kell hozzá ZombieBuddy ≥ 2.3.0. A nightly a Project Viewpoint Discord „nightly-releases” csatornájából jön (role: select roles → nightly test). Teszt build: először csak a magot + ZombieBuddy-t tedd be, az addonokat utána, egyesével – ha fekete a kép, addon a bűnös. 2) PROJECT A-LIFE 1.5.2 (Workshop 3803984183, mod id ProjectALifeNPCs): NPC-k vezetnek autót, 148 frakció, outpostok, rádió, rablás, raid. Kell hozzá ZombieBuddy + Viewpoint x A-LIFE (3822854313). Ha lagol: A-Life sandbox → Performance level = Auto, Zombie path/sec 10. 3) A PRESETEK: ujj játéknál a „Neoi-Suggested” (angol) vagy „NeoiMods Ajánlott” (magyar) sandbox preset – a kettő tartalma azonos. 4) UNDYING OPTIMIZER: bent van a listában (a PZO utódja); a Tempo_PerfKit és a Multi-CPU kikerült, mert az utóbbi egy vanilla ProjectZomboid64.json-t hozna, és tönkretenné a ZGC-s indítót.":
+      "New Blackout Protocol config pack: 714 active mods, rebalanced sandbox (low zombie count focused on towns; food 0.4 / weapons 0.2 / farming 0.4; water and power gone between day 7 and 14; 1-hour days starting July 1; rarer helicopter/meta events; generator fuel use 0.1). The config only affects SINGLE-PLAYER, and it is copied into the game automatically as before: after INSTALL / UPDATE MODS the launcher copies it in and uses the “Blackout Protocol” profile. 1) PROJECT VIEWPOINT – NIGHTLY 0.1.7 rc4: this is NOT the Workshop alpha 0.1.6! The launcher installs it from the Master folder into Zomboid\\mods, and it needs ZombieBuddy ≥ 2.3.0. The nightly comes from the Project Viewpoint Discord “nightly-releases” channel (role: select roles → nightly test). Test build: install the core + ZombieBuddy first, then the addons one by one – if the screen is black, an addon is the culprit. 2) PROJECT A-LIFE 1.5.2 (Workshop 3803984183, mod id ProjectALifeNPCs): NPCs drive cars, 148 factions, outposts, radio, robbery, raids. Needs ZombieBuddy + Viewpoint x A-LIFE (3822854313). If it lags: A-Life sandbox → Performance level = Auto, Zombie path/sec 10. 3) THE PRESETS: for a new game pick the “Neoi-Suggested” (English) or “NeoiMods Ajánlott” (Hungarian) sandbox preset – identical content. 4) UNDYING OPTIMIZER is in the list (successor of PZO); Tempo_PerfKit and Multi-CPU were removed, because the latter ships a vanilla ProjectZomboid64.json and would break the ZGC launcher.",
+    "Új config csomag: 714 mod, újrahangolt sandbox balance – csak egyjátékos módban, automatikusan.":
+      "New config pack: 714 mods, rebalanced sandbox – single-player only, applied automatically.",
+    "Viewpoint NIGHTLY rc4: egyjátékos telepítésnél a launcher magától felrakja (Zomboid\\mods), ZombieBuddy ≥ 2.3.0 kell hozzá.":
+      "Viewpoint NIGHTLY rc4: installed automatically during a single-player install (Zomboid\\mods); needs ZombieBuddy ≥ 2.3.0.",
+    "A nightly a Project Viewpoint Discord „nightly-releases” csatornájából jön (role: select roles → nightly test).":
+      "The nightly comes from the Project Viewpoint Discord “nightly-releases” channel (role: select roles → nightly test).",
+    "A-LIFE 1.5.2: autót vezető NPC-k, 148 frakció, outpostok; lag esetén Performance level = Auto, Zombie path/sec 10.":
+      "A-LIFE 1.5.2: NPCs drive cars, 148 factions, outposts; if it lags set Performance level = Auto, Zombie path/sec 10.",
+    "Sandbox preset: „Neoi-Suggested” / „NeoiMods Ajánlott” (azonos tartalom).":
+      "Sandbox preset: “Neoi-Suggested” / “NeoiMods Ajánlott” (identical content).",
+    "Undying Optimizer bent; Tempo_PerfKit és Multi-CPU kikerült (a vanilla JSON tönkretenné a ZGC-s indítót).":
+      "Undying Optimizer included; Tempo_PerfKit and Multi-CPU removed (the vanilla JSON would break the ZGC launcher).",
+    "Az ONFIRE leírás kikerült a config csomagból – csak itt, a Blackout hírekben olvasható.":
+      "The ONFIRE description left the config pack – it is only shown here, in the Blackout news.",
+// ---- 0.9.23 (rc4 kiválasztás) ----
     "0.9.23 – A nightly mostantól a legújabb rc-t telepíti (rc4)":
       "0.9.23 – The nightly now installs the newest rc (rc4)",
     "A Master mappában két nightly zip van (rc2 és rc4), és a launcher a lista első találatát telepítette – ez az rc2 volt. Mostantól a verzió és az rc szám szerint a legújabb nyer, tehát a 42.22-re készült 0.1.7-rc4 kerül be. Aki eddig rc2-t kapott, annál a következő telepítés automatikusan rc4-re cseréli.":

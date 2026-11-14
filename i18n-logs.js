@@ -6,6 +6,8 @@
   if (!i18n) return;
 
   i18n.addTemplates([
+    // ---- 0.9.24 (blackout nightly) ----
+    "✗ Viewpoint NIGHTLY: {s}", "✗ Viewpoint NIGHTLY: {s}",
     // ---- 0.9.22 (Steam bezárás, helyi nightly) ----
     ["• A Steam fut – bezárom, mert a ZombieBuddy telepítő csak így fut végig…", "• Steam is running – closing it so the ZombieBuddy installer can finish…"],
     ["• A Steam még fut – kényszerített bezárás.", "• Steam is still running – forcing it to close."],
