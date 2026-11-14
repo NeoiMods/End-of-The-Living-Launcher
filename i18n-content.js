@@ -16,7 +16,22 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                    // ---- 0.9.27 (GC ütközés) ----
+                                        // ---- 0.9.28 (csak ZGC) ----
+    "0.9.28 – Csak a ZGC marad":
+      "0.9.28 – ZGC only",
+    "A játék launcher JSON-jában mostantól kizárólag a ZGC szerepel: a launcher minden indításnál kiszedi a G1-re vonatkozó kapcsolókat (a windows szekciókból is), beteszi a ZGC-t, majd a fájlt írásvédetté teszi – így a PZO/optimalizáló sem tudja visszaírni a G1-et. A ProjectZomboid64.bat-ból is kikerülnek a ZGC-vel ütköző G1 opciók. Mindez mindkét módban (egyjátékos és többjátékos) így működik.":
+      "The game launcher JSON now contains ZGC only: on every launch the launcher removes the G1 options (including from the Windows sections), adds ZGC and makes the file read-only, so the PZO/optimiser cannot write G1 back. G1 options that conflict with ZGC are removed from ProjectZomboid64.bat as well. This applies to both modes (single-player and multiplayer).",
+    "Csak ZGC: a ProjectZomboid64.json minden indításnál ZGC-re áll, G1 kapcsolók nélkül.":
+      "ZGC only: ProjectZomboid64.json is set to ZGC on every launch, without G1 flags.",
+    "A JSON írásvédett lesz a beállítás után, így a PZO nem írja vissza a G1-et.":
+      "The JSON is made read-only after the change, so PZO cannot write G1 back.",
+    "A windows szekciók vmArgs listái is tiszták (nincs bennük GC-választó).":
+      "The Windows vmArgs lists are clean too (no collector selection).",
+    "A ProjectZomboid64.bat-ból is kiszedi a G1-re hangolt opciókat.":
+      "G1-only options are removed from ProjectZomboid64.bat as well.",
+    "Többjátékos módban is ZGC-vel indul a játék.":
+      "Multiplayer mode launches with ZGC too.",
+// ---- 0.9.27 (GC ütközés) ----
     "0.9.27 – A játék elindul: kijavítva a dupla garbage collector":
       "0.9.27 – The game launches again: the duplicate garbage collector is fixed",
     "A játék azért nem indult el, mert a ProjectZomboid64.json egyszerre tartalmazott -XX:+UseZGC-t és a Windows-szekcióban -XX:+UseG1GC-t. A JVM ezt írta ki: „Error occurred during initialization of VM – Multiple garbage collectors selected”, és leállt, mielőtt bármit naplózott volna. A launcher mostantól minden indításnál kiveszi a GC-választó (és a G1-re hangolt) kapcsolókat minden listából – a fő listából és a windows szekciókból is –, és csak egyet tesz be. Ugyanezt teszi a ProjectZomboid64.bat-tal.":

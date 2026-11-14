@@ -156,8 +156,23 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
 
   data.vmArgs = nextVmArgs;
   try {
+    // Írás előtt levesszük az írásvédelmet (előző körből maradhat).
+    try {
+      fs.chmodSync(file, 0o644);
+    } catch {
+      // Ha nem megy, a writeFileSync úgyis jelzi.
+    }
     fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
-    return { changed: true, file, heapMb };
+    // Csak ZGC maradjon: a fájlt írásvédetté tesszük, így a PZO (vagy bármi más)
+    // nem tudja visszaírni a G1-et a következő indításig.
+    if (zgc) {
+      try {
+        fs.chmodSync(file, 0o444);
+      } catch {
+        // Best effort: ha nem megy, a következő indítás úgyis javít.
+      }
+    }
+    return { changed: true, file, heapMb, locked: zgc };
   } catch (err) {
     return {
       changed: false,
@@ -267,7 +282,10 @@ function buildArgs({ useAgent, heapMb }) {
   return jvmArgs;
 }
 
-async function launchGame({ gameDir, cfg, onLog, zgc = false }) {
+async function launchGame({ gameDir, cfg, onLog, zgc = true }) {
+  // Csak ZGC: a PZO/optimalizáló G1-re állítja a JSON-t, azt minden indításkor
+  // visszaállítjuk ZGC-re, és a fájlt írásvédetté tesszük, hogy ne írja át.
+  zgc = true;
   const exe = path.join(gameDir, GAME_EXE);
   if (!fs.existsSync(exe)) throw new Error(`Nem található: ${exe}`);
 

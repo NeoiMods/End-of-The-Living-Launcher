@@ -1,7 +1,22 @@
 {
-  "version": "0.9.27",
+  "version": "0.9.28",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.28",
+      "version": "0.9.28",
+      "date": "2026-11-14",
+      "tag": "TELJESÍTMÉNY",
+      "title": "0.9.28 – Csak a ZGC marad",
+      "text": "A játék launcher JSON-jában mostantól kizárólag a ZGC szerepel: a launcher minden indításnál kiszedi a G1-re vonatkozó kapcsolókat (a windows szekciókból is), beteszi a ZGC-t, majd a fájlt írásvédetté teszi – így a PZO/optimalizáló sem tudja visszaírni a G1-et. A ProjectZomboid64.bat-ból is kikerülnek a ZGC-vel ütköző G1 opciók. Mindez mindkét módban (egyjátékos és többjátékos) így működik.",
+      "changes": [
+        "Csak ZGC: a ProjectZomboid64.json minden indításnál ZGC-re áll, G1 kapcsolók nélkül.",
+        "A JSON írásvédett lesz a beállítás után, így a PZO nem írja vissza a G1-et.",
+        "A windows szekciók vmArgs listái is tiszták (nincs bennük GC-választó).",
+        "A ProjectZomboid64.bat-ból is kiszedi a G1-re hangolt opciókat.",
+        "Többjátékos módban is ZGC-vel indul a játék."
+      ]
+    },
     {
       "id": "0.9.27",
       "version": "0.9.27",

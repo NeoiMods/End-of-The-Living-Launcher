@@ -1142,7 +1142,8 @@ ipcMain.handle('game:launch', async (event, mode) => {
     // a gépen (a Steam visszatöltheti, ezért minden indításnál ellenőrizzük).
     mods.removeBaseViewpoint({ log });
     // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).
-    await launchGame({ gameDir, cfg, onLog: log, zgc: blackoutMode });
+    // Csak ZGC (a felhasználói kérés): mindkét módban ZGC-vel indul a játék.
+    await launchGame({ gameDir, cfg, onLog: log, zgc: true });
     // A tényleges futást a figyelő állapítja meg (a B42-nél a java.exe viszi a
     // játékot, nem az indító exe) – így nem lesz hamis „bezárult” üzenet.
     gameSeenRunning = false;
