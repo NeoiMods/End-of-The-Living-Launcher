@@ -1,5 +1,5 @@
 {
-  "version": "0.9.12",
+  "version": "0.9.13",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -728,8 +728,8 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 26974,
-      "sha256": "59563336c689f8ceccdbeb11252b7fe36cac84a64c060eae645be8f252941cc5"
+      "size": 29510,
+      "sha256": "02a5aee627ff5f4a214143eb6d2f4f9c08da970c1e5facc7bcebd92ac0059dd2"
     },
     {
       "path": "i18n-logs.js",
@@ -748,28 +748,33 @@
     },
     {
       "path": "main.js",
-      "size": 44277,
-      "sha256": "90114b793cf1ed4abda2302cd402a7d4752e88c3ddc6798a7560c23413003c46"
+      "size": 44289,
+      "sha256": "0599f47bd44a060d7eb7993fe608d28eadd4826e237b07da472e102f54bb4ac9"
+    },
+    {
+      "path": "news-blackout.json",
+      "size": 6059,
+      "sha256": "db4296e8f1c290d0418cd867e5975a765e5c6ae29aedca7ea89a9b2b22e92013"
     },
     {
       "path": "news.json",
-      "size": 16364,
-      "sha256": "9be172412f77368fbf327c3a3970ae2fde634a9128e4b6f959ec8470c7f7b848"
+      "size": 11858,
+      "sha256": "8c5139f329822f3b9c21a2998e9dea2854cdf1f2bbca6a03baa9e13bc857895d"
     },
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "552dc8833a5ea9f94e96d4880ee664b7a25c04c2495d1cf6e8ff2cd5d886bc81"
+      "sha256": "cf287042e5a0c2a8d0b3720888a1b767621bde540ffdeba355b69da773515faf"
     },
     {
       "path": "preload.js",
-      "size": 4113,
-      "sha256": "f56091e9572270868586baf053303cd9c832b023bed4909811b2e97fee778c8a"
+      "size": 4190,
+      "sha256": "069344c32ef7b1c83d1abf1009631850e6ce74d242ec9f558d2ca743c8ddcc23"
     },
     {
       "path": "renderer.js",
-      "size": 78552,
-      "sha256": "e4c9b19cd497307e287d40d199ecdc5471a7a104d72a53fcb401e4486b10ed74"
+      "size": 79359,
+      "sha256": "375c88c1f791d79ac8f290217b5a000a56f4f0131bd2ef9680bc8310c313fb7c"
     },
     {
       "path": "src/a2s.js",
@@ -853,8 +858,8 @@
     },
     {
       "path": "src/news.js",
-      "size": 3758,
-      "sha256": "ab77b6bdd985c0e987d2a3104e4efa44684c7a73d6b336ced95682a0a2dcbb18"
+      "size": 4104,
+      "sha256": "e11172c481cebbc5a9ce7d6e61d7128fc92e34dd099d38bb5bc81599da67ab28"
     },
     {
       "path": "src/packs.js",
@@ -893,8 +898,8 @@
     },
     {
       "path": "src/update.js",
-      "size": 30192,
-      "sha256": "9838b2ef15df28083197de5cbe771689be06b42b1da2050cd841a01170b4832b"
+      "size": 30238,
+      "sha256": "16772df44a9f483f35512d6e9d6e72760e4b08eee8cc508afb119f480b42dc18"
     },
     {
       "path": "src/workshop.js",
