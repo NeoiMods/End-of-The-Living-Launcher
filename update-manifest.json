@@ -1,6 +1,6 @@
 {
-  "version": "0.9.28",
-  "sha": "4a2030f965cb0193d69e943a32b3ff82399072ed",
+  "version": "0.9.29",
+  "sha": "842645cb051edd27832aef393c9b4e1bd18fb13d",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -739,13 +739,13 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 62092,
-      "sha256": "96a449ab6c0d5925c163ab27e577ac6bf853d4788c61e3d11467be56283a9999"
+      "size": 63978,
+      "sha256": "3499c9d8f60610544c020b2f2776fd503bc8d91cd55fb3d50cf8d0046decfb75"
     },
     {
       "path": "i18n-logs.js",
-      "size": 41137,
-      "sha256": "40911979f77fc2b34237495314f3c9072d9c3d16fb926ed4dc4b7cd4ef09db92"
+      "size": 41392,
+      "sha256": "da4746ded88cac330865b9ec2e12595c3670e5987c00d8142d34687024b14dd4"
     },
     {
       "path": "i18n.js",
@@ -764,8 +764,8 @@
     },
     {
       "path": "news-blackout.json",
-      "size": 24046,
-      "sha256": "f8526c3296172912f9dcbac29a50e5da58814ae1a0cb88dc84e265c4dee5e017"
+      "size": 25033,
+      "sha256": "d048b69329e82316032adddca20e4f07b222a6be7a480838a6c292329f6dd34e"
     },
     {
       "path": "news.json",
@@ -775,7 +775,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "ae80b3cd1895ff31ac46f768ef94744c57b04db61c0e9012b9cd9194517256c7"
+      "sha256": "f22c166c7684c94072638cac677082fad715f3a4832a1f94e936c0333b5fe778"
     },
     {
       "path": "preload.js",
@@ -799,8 +799,8 @@
     },
     {
       "path": "src/blackout.js",
-      "size": 14955,
-      "sha256": "566d70a67d3fa7467225d441045e9e8557b9e0deeb41338edfec4e3054fed884"
+      "size": 14777,
+      "sha256": "7e78f968b4ee3ce82bfcd9856b2565f9b5f580c0ee3c9b4adaae4ee7a5ec1b70"
     },
     {
       "path": "src/collection.js",
@@ -889,8 +889,8 @@
     },
     {
       "path": "src/setup.js",
-      "size": 18359,
-      "sha256": "9ececb6965265760cd83f2015d0539937ef84f9219f4edf0da46be72257f3a38"
+      "size": 18391,
+      "sha256": "4cada4f644b147d5cbd72bd16a3605cc8245937808a8ae915f71302140a99fc9"
     },
     {
       "path": "src/shortcut.js",
