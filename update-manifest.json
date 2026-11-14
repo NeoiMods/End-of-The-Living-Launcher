@@ -1,5 +1,5 @@
 {
-  "version": "0.9.11",
+  "version": "0.9.12",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -733,23 +733,23 @@
     },
     {
       "path": "i18n-logs.js",
-      "size": 31462,
-      "sha256": "cf9bf482fca529aa34225782e73faae56242b14ae1cef42fe8e5a2453ed63c3b"
+      "size": 32089,
+      "sha256": "224ac8eeb9374c322f33ccf74b074497bf49451c168e05a8ed3b27ebea0af093"
     },
     {
       "path": "i18n.js",
-      "size": 36555,
-      "sha256": "3b3ea0dbe88fe3b722607fe85f9a9a82572318c24980e5128e80c99e0636fac8"
+      "size": 36786,
+      "sha256": "821dc14b12884186e07ab7d4c56a28e7c314efad5be7c788af32bb425f110f6c"
     },
     {
       "path": "index.html",
-      "size": 28875,
-      "sha256": "1fcdd639cb0afe5d2831b13abe1d351cba66e362f662e5de54560972edbdee39"
+      "size": 28899,
+      "sha256": "352827ff15dea578f755681ddda38f5f0add93ba9e968c2bc1b5c52f154c9bb9"
     },
     {
       "path": "main.js",
-      "size": 44072,
-      "sha256": "8a41b65b770475cd65b6bf5f7087d5bc48aa97291e9951036ff73cb31663d5f0"
+      "size": 44277,
+      "sha256": "90114b793cf1ed4abda2302cd402a7d4752e88c3ddc6798a7560c23413003c46"
     },
     {
       "path": "news.json",
@@ -759,7 +759,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "b632340f7741b03da8f0152df128d5cfa2b362bf7dcc4b3a3f94f9c6f0b9fd01"
+      "sha256": "552dc8833a5ea9f94e96d4880ee664b7a25c04c2495d1cf6e8ff2cd5d886bc81"
     },
     {
       "path": "preload.js",
@@ -848,8 +848,8 @@
     },
     {
       "path": "src/mods.js",
-      "size": 21186,
-      "sha256": "86774cd795dbfcf5789a76380b592586be545cbcc393f67995a038604bf0068f"
+      "size": 23225,
+      "sha256": "19411a8c466d685cefb89c4b230bff0df30a9cb8f41b556776f8818d660a7bbf"
     },
     {
       "path": "src/news.js",
@@ -873,8 +873,8 @@
     },
     {
       "path": "src/setup.js",
-      "size": 16980,
-      "sha256": "7b4c696684a84576c64babe5240bc7d43c3358b2bf0d6f5d5ebd55086720d7d6"
+      "size": 17797,
+      "sha256": "7ac89cc3244dc336abf165c93a3dd569a6e1256d3ce6672d6ca30d3ef3e0c2be"
     },
     {
       "path": "src/shortcut.js",
