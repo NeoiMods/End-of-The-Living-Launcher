@@ -483,8 +483,46 @@ const NIGHTLY = {
   zipPrefix: 'Viewpoint/',
   folder: 'Viewpoint',
   modId: 'Viewpoint',
+  // A kollekcióban lévő alap Project Viewpoint workshop ID-ja. Ha a nightly
+  // (rc4) felkerül, ezt ki kell venni, mert két azonos ID-jű Viewpoint
+  // összeakad.
   workshopId: '3809306528',
 };
+
+// A nightly zip nevéből a verzió-jelölő (pl. rc4).
+function nightlyTag(name) {
+  const m = String(name || '').match(/rc\d+/i);
+  return m ? m[0].toLowerCase() : '';
+}
+
+// A kollekcióból kivett alap Viewpointot is töröljük a gépről, hogy ne
+// ütközzön a nightly-vel (a Steam később újra letöltheti, ezért indításkor is
+// lefut ez az ellenőrzés).
+function removeBaseViewpoint({ log = () => {} } = {}) {
+  if (!nightlyStatus().installed) return { ok: true, removed: [] };
+
+  let libs = [];
+  try {
+    const steam = findSteamPath();
+    libs = steam ? parseLibraryPaths(steam) : [];
+  } catch {
+    libs = [];
+  }
+
+  const removed = [];
+  for (const lib of libs) {
+    const dir = path.join(lib, 'steamapps', 'workshop', 'content', PZ_APP_ID, NIGHTLY.workshopId);
+    if (!fs.existsSync(dir)) continue;
+    try {
+      fs.rmSync(dir, { recursive: true, force: true });
+      removed.push(dir);
+      log(`• Alap Project Viewpoint eltávolítva (ütközik a NIGHTLY-vel): ${dir}`);
+    } catch (err) {
+      log(`! Az alap Project Viewpoint nem törölhető (${err.message}).`);
+    }
+  }
+  return { ok: true, removed };
+}
 
 function nightlyDir() {
   return path.join(zomboidDir(), 'Workshop', NIGHTLY.folder);
@@ -597,17 +635,34 @@ async function installNightly({ cfg, userDataDir, log = () => {}, onProgress = n
   const en = modlist.ensureEnabled(zomboidDir(), [NIGHTLY.modId]);
   if (en.changed) log(`✓ ${NIGHTLY.modId} engedélyezve a játék mod listájában.`);
 
-  const steamCopy = steamViewpointDir();
-  if (steamCopy) {
-    log(
-      '! A Steam Workshopön is megvan a Project Viewpoint – a nightly akkor él, ha leiratkozol róla ' +
-        '(különben két azonos ID-jű Viewpoint van a gépen).'
-    );
-  }
+  // A kollekció alap Viewpointja nem maradhat bent: két azonos ID-jű Viewpoint
+  // összeakad, ezért a nightly mellé tettük a törlést is.
+  removeBaseViewpoint({ log });
 
   const version = st.version ? ` ${st.version}` : '';
   log(`✓ ${NIGHTLY.label}${version} telepítve: Zomboid\\Workshop\\Viewpoint`);
   return { ok: true, id: 'nightly', name: asset.name, version: st.version, dir: target };
+}
+
+// Ha már a kért verzió van bent, nem tölti le újra.
+async function ensureNightly({ cfg, userDataDir, log = () => {}, onProgress = null }) {
+  let asset = null;
+  try {
+    asset = await findNightlyAsset(cfg);
+  } catch (err) {
+    log('! ' + err.message);
+    return { ok: false, error: err.message };
+  }
+
+  const want = nightlyTag(asset.name);
+  const st = nightlyStatus();
+  if (st.installed && want && String(st.version).toLowerCase().includes(want)) {
+    log(`• ${NIGHTLY.label} már naprakész (${st.version}).`);
+    removeBaseViewpoint({ log });
+    return { ok: true, skipped: true, version: st.version };
+  }
+
+  return installNightly({ cfg, userDataDir, log, onProgress });
 }
 
 function removeNightly({ log = () => {} }) {
@@ -627,7 +682,11 @@ module.exports = {
   remove,
   status,
   installNightly,
+  ensureNightly,
   removeNightly,
+  removeBaseViewpoint,
+  NIGHTLY_WORKSHOP_ID: NIGHTLY.workshopId,
+  nightlyTag,
   nightlyStatus,
   nightlyDir,
   NIGHTLY_MOD_ID: NIGHTLY.modId,

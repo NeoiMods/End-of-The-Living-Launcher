@@ -1163,6 +1163,9 @@ ipcMain.handle('game:launch', async (event, mode) => {
     }
     // A játék nyelve minden indításnál a launcher nyelvét követi.
     if (blackoutMode) blackout.applyLanguageVariant(zomboidDir(), cfg.uiLang);
+    // Ha a NIGHTLY Viewpoint bent van, az alap Project Viewpoint nem maradhat
+    // a gépen (a Steam visszatöltheti, ezért minden indításnál ellenőrizzük).
+    mods.removeBaseViewpoint({ log });
     // A módhoz tartozó ZombieBuddy agent kerül a játék mellé (a másikat
     // eltároltuk, így a Blackout hivatalos változata sem sérül).
     zbAgent.sync({

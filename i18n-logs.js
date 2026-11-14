@@ -249,6 +249,13 @@
       'Enabled: {n} · Installed: {n} (workshop {n}, local {n}) · Enabled and present: {n} · Missing: {n} · Disabled: {n}'],
     ['Hiba', 'Error'],
 
+    // --- Viewpoint NIGHTLY (rc4) ---
+    ['• Viewpoint NIGHTLY már naprakész ({s}).', '• Viewpoint NIGHTLY is already up to date ({s}).'],
+    ['• Alap Project Viewpoint eltávolítva (ütközik a NIGHTLY-vel): {s}', '• Base Project Viewpoint removed (it clashes with NIGHTLY): {s}'],
+    ['! Az alap Project Viewpoint nem törölhető ({s}).', '! The base Project Viewpoint cannot be removed ({s}).'],
+    ['– {s} (alap Project Viewpoint): kihagyva, helyette a NIGHTLY fut.', '– {s} (base Project Viewpoint): skipped, NIGHTLY runs instead.'],
+    ['✗ Viewpoint NIGHTLY: {s}', '✗ Viewpoint NIGHTLY: {s}'],
+
     // --- ZombieBuddy agent váltás (hivatalos / EOTL) ---
     ['✓ ZombieBuddy: az End of The Living saját agentje van a játék mellett.', '✓ ZombieBuddy: the End of The Living agent is installed next to the game.'],
     ['✓ ZombieBuddy: a hivatalos agent visszaállítva (Blackout Protocol).', '✓ ZombieBuddy: the official agent is restored (Blackout Protocol).'],

@@ -195,6 +195,8 @@
     'Maximum FPS egyszerűbb textúrákkal – a másik ETO-t lecseréli': 'Maximum FPS with simpler textures – replaces the other ETO',
     'Viewpoint NIGHTLY': 'Viewpoint NIGHTLY',
     'A gyűjtemény régi Viewpointja helyett – éjszakai build a Master mappából': 'Instead of the collection’s old Viewpoint – nightly build from the Master folder',
+    'A gyűjtemény régi Viewpointja helyett – rc4 build a Master mappából (az alap Viewpointot kiveszi)':
+      'Instead of the collection’s old Viewpoint – rc4 build from the Master folder (removes the base Viewpoint)',
     'RAM / JVM heap': 'RAM / JVM heap',
     'Memória beállítása a Beállításokban': 'Set memory in Settings',
     'Gyorsítótár tisztítása': 'Clear cache',

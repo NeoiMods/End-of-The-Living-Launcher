@@ -96,6 +96,26 @@ async function runSetup({
   if (added.length) {
     onLog(`+ kollekción kívüli elem: ${added.map((it) => it.title).join(', ')}.`);
   }
+
+  // Viewpoint NIGHTLY (rc4): a szerveres telepítés magától felrakja. Ha bent
+  // van, a kollekció alap Project Viewpointja kimarad, mert két azonos ID-jű
+  // Viewpoint összeakadna – és a már letöltött példányt is töröljük.
+  if (zbEotl) {
+    try {
+      await mods.ensureNightly({ cfg, userDataDir, log: onLog, onProgress });
+    } catch (err) {
+      onLog('✗ Viewpoint NIGHTLY: ' + err.message);
+    }
+  }
+  if (mods.nightlyStatus().installed) {
+    const baseId = String(mods.NIGHTLY_WORKSHOP_ID);
+    const before = col.items.length;
+    col.items = col.items.filter((it) => String(it.id) !== baseId);
+    mods.removeBaseViewpoint({ log: onLog });
+    if (col.items.length !== before) {
+      onLog(`– ${baseId} (alap Project Viewpoint): kihagyva, helyette a NIGHTLY fut.`);
+    }
+  }
   for (const [id, note] of skipDownloadIds) {
     if (col.items.some((it) => String(it.id) === id)) onLog(`– ${id}: ${note}.`);
   }
