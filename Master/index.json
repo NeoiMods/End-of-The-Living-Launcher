@@ -13,6 +13,11 @@
       "sha": "a196d2cb65e22f9b0f994a6bfbea38c1f03041d4"
     },
     {
+      "name": "Blackout Protocol.zip",
+      "size": 634045,
+      "sha": "5e88e3906161cae88014361fd3cdf67ab5a965f0"
+    },
+    {
       "name": "EOTL_VanillaHU.zip",
       "size": 134084,
       "sha": "16a6a5b44917226eaf7142fe5ee007cefd5b8c3f"
@@ -51,11 +56,6 @@
       "name": "SurvivorPDA_HU.zip",
       "size": 438164,
       "sha": "7bf6f2e9f37b34a9b140750a819e0238139e41dc"
-    },
-    {
-      "name": "Viewpoint-nightly-0.1.7-rc2.zip",
-      "size": 36306531,
-      "sha": "2bf9cc68782667477d55cd01d276e9c2d7217519"
     },
     {
       "name": "Viewpoint-nightly-0.1.7-rc4.zip",
