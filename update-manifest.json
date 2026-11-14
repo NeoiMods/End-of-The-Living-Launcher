@@ -1,5 +1,5 @@
 {
-  "version": "0.9.13",
+  "version": "0.9.14",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -728,8 +728,8 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 29510,
-      "sha256": "02a5aee627ff5f4a214143eb6d2f4f9c08da970c1e5facc7bcebd92ac0059dd2"
+      "size": 31377,
+      "sha256": "f07b4a6dd5fa8d4799642561b27f54d8a75c46bb5702bdc87129dc7c8a16363f"
     },
     {
       "path": "i18n-logs.js",
@@ -753,8 +753,8 @@
     },
     {
       "path": "news-blackout.json",
-      "size": 6059,
-      "sha256": "db4296e8f1c290d0418cd867e5975a765e5c6ae29aedca7ea89a9b2b22e92013"
+      "size": 7159,
+      "sha256": "d0e4c11b177f13096936fe444407da934f4ab1c591580aed9a4f6fffb87a6835"
     },
     {
       "path": "news.json",
@@ -764,7 +764,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "cf287042e5a0c2a8d0b3720888a1b767621bde540ffdeba355b69da773515faf"
+      "sha256": "895833389f6cf15ec876a5fe832ed661b5fe67e63ef8eed5610f5ecbad7db754"
     },
     {
       "path": "preload.js",
