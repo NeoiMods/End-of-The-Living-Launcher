@@ -6,6 +6,17 @@
   if (!i18n) return;
 
   i18n.addTemplates([
+    ['— ZombieBuddy installer futtatása —', '— Running the ZombieBuddy installer —'],
+    ['✓ ZombieBuddy installer lefutott.', '✓ ZombieBuddy installer finished.'],
+    ['A ZombieBuddy installer {n} kóddal zárult.', 'The ZombieBuddy installer exited with code {n}.'],
+    ['A ZombieBuddy installer nem indult el: {s}', 'The ZombieBuddy installer could not start: {s}'],
+    ['Nincs ZombieBuddy installer bat a {s} mappában – tedd fel oda (pl. ZombieBuddy-installer.bat).', 'There is no ZombieBuddy installer bat in {s} – put one there (e.g. ZombieBuddy-installer.bat).'],
+    ['• ZombieBuddy installer a {s} mappából: {s}', '• ZombieBuddy installer from {s}: {s}'],
+    ['ZombieBuddy installer keresése…', 'Looking for the ZombieBuddy installer…'],
+    ['ZombieBuddy installer letöltése…', 'Downloading the ZombieBuddy installer…'],
+    ['ZombieBuddy installer fut…', 'ZombieBuddy installer running…'],
+    ['⚠ A ZombieBuddy installer nem járt sikerrel – a naplóban látszik, hol állt meg.', '⚠ The ZombieBuddy installer did not succeed – the log shows where it stopped.'],
+    ['ZombieBuddy installer: {s}', 'ZombieBuddy installer: {s}'],
     ['! {s}: nem sikerült eltávolítani a helyi másolatot ({s}).', '! {s}: could not remove the local copy ({s}).'],
     ['! {s}: a Java mod JAR nem található – ezt a ZombieBuddy kérdezi majd meg.', '! {s}: the Java mod JAR was not found – ZombieBuddy will ask about it.'],
     ['! {s}: nem sikerült olvasni a JAR-t ({s}).', '! {s}: could not read the JAR ({s}).'],
@@ -16,7 +27,7 @@
     ['Letöltve: {n}/{n}', 'Downloaded: {n}/{n}'],
     ['eltávolítva a másik változat: Zomboid\\mods\\', 'the other variant was removed: Zomboid\\mods\\'],
     ['kicsomagolás: {s}', 'unpacking: {s}'],
-    ['kicsomagolás: Zomboid\\Workshop\\Viewpoint', 'unpacking: Zomboid\\Workshop\\Viewpoint'],
+    ['kicsomagolás: Zomboid\\mods\\Viewpoint', 'unpacking: Zomboid\\mods\\Viewpoint'],
     ['kicsomagolás…', 'unpacking…'],
     ['részek összefűzése…', 'joining parts…'],
     ['telepítő indítása: {s}', 'starting the installer: {s}'],

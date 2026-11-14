@@ -6,6 +6,12 @@ const path = require('path');
 const { downloadFile } = require('./download');
 const gh = require('./gh');
 
+// A pzo-t lustán töltjük be: a paths.js → zb-installer → pzo → paths kör miatt
+// a modul szintű require itt hiányos exportsot kaphatna.
+function pzoModule() {
+  return require('./pzo');
+}
+
 // A hivatalos ZombieBuddy telepítő (Go konzolos program) automatizálása.
 // A telepítő stdin-ről olvassa a válaszokat, kérdésenként; az alábbi prompt
 // szövegek a forráskódból (installer/installer.go) származnak.
@@ -482,10 +488,78 @@ async function runZombieBuddyInstaller({ userDataDir, onLog = () => {}, onProgre
   return { ...res, version, name: path.basename(exePath) };
 }
 
+// --------------------------------------------------- installer bat (Master)
+// A launcher nem telepít agentet maga: a Master mappában lévő ZombieBuddy
+// installer bat-ot futtatja, minden mást arra bíz.
+
+const BAT_PATTERN = /zombiebuddy[^/]*\.bat$/i;
+
+async function findMasterBat({ cfg = {}, userDataDir, onLog = () => {} }) {
+  const pzo = pzoModule();
+  const repo = pzo.repoOf(cfg);
+  const folder = pzo.folderOf(cfg);
+  const files = await pzo.listFiles(cfg, repo, folder, userDataDir);
+  const bats = files.filter((f) => BAT_PATTERN.test(String(f.name || '')));
+  if (!bats.length) return null;
+  bats.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  const asset = bats[bats.length - 1];
+  onLog(`• ZombieBuddy installer a ${folder}/ mappából: ${asset.name}`);
+  return { repo, folder, asset };
+}
+
+function logOutput(text, onLog) {
+  for (const line of String(text).replace(/\r/g, '').split('\n')) {
+    const clean = line.trim();
+    if (clean) onLog('  ' + stripAnsi(clean));
+  }
+}
+
+// A bat futtatása a játék mappájában (oda telepít), a kimenet a naplóba megy.
+function runBat(batPath, cwd, onLog) {
+  return new Promise((resolve) => {
+    onLog('— ZombieBuddy installer futtatása —');
+    const child = spawn('cmd.exe', ['/c', 'call', batPath], {
+      cwd,
+      windowsHide: true,
+    });
+    child.stdout.on('data', (d) => logOutput(d.toString('utf8'), onLog));
+    child.stderr.on('data', (d) => logOutput(d.toString('utf8'), onLog));
+    child.on('error', (err) => resolve({ ok: false, code: -1, message: 'A telepítő nem indult el: ' + err.message }));
+    child.on('close', (code) => {
+      if (code === 0) resolve({ ok: true, code, message: 'ZombieBuddy installer lefutott.' });
+      else resolve({ ok: false, code, message: `A ZombieBuddy installer ${code} kóddal zárult.` });
+    });
+  });
+}
+
+async function runMasterBat({ cfg = {}, userDataDir, gameDir, onLog = () => {}, onProgress = () => {} }) {
+  onProgress({ label: 'ZombieBuddy installer keresése…' });
+  const pzo = pzoModule();
+  const found = await findMasterBat({ cfg, userDataDir, onLog });
+  if (!found) {
+    const folder = pzo.folderOf(cfg);
+    throw new Error(`Nincs ZombieBuddy installer bat a ${folder}/ mappában – tedd fel oda (pl. ZombieBuddy-installer.bat).`);
+  }
+
+  const dir = installerDir(userDataDir);
+  fs.mkdirSync(dir, { recursive: true });
+  const batPath = path.join(dir, path.basename(found.asset.name));
+  onProgress({ label: 'ZombieBuddy installer letöltése…' });
+  await pzo.downloadAsset(found.asset, batPath, cfg, onLog, onProgress);
+
+  onProgress({ label: 'ZombieBuddy installer fut…' });
+  const res = await runBat(batPath, gameDir || dir, onLog);
+  if (res.ok) onLog('✓ ' + res.message);
+  else onLog('✗ ' + res.message);
+  return { ...res, name: path.basename(batPath), version: 'bat' };
+}
+
 module.exports = {
   ensureInstaller,
   findLocalInstaller,
   runInstaller,
   runZombieBuddyInstaller,
+  findMasterBat,
+  runMasterBat,
   ANSWERS,
 };

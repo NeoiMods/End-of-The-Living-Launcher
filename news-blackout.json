@@ -1,7 +1,22 @@
 {
-  "version": "0.9.19",
+  "version": "0.9.20",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.20",
+      "version": "0.9.20",
+      "date": "2026-11-14",
+      "tag": "ZOMBIEBUDDY",
+      "title": "0.9.20 – A ZombieBuddy-t mostantól a Master mappában lévő installer bat telepíti",
+      "text": "A launcher már nem telepít ZombieBuddy agentet magától (se exe-telepítőt, se agent fájlmásolást a modokból): a Master mappában lévő ZombieBuddy installer bat-ot futtatja le a játék mappájában, a kimenetét pedig a naplóba írja. Ha nincs ilyen bat a Master mappában, a launcher ezt jelzi a naplóban, és nem nyúl semmihez. A MODOK TELEPÍTÉSE / FRISSÍTÉSE és a ZombieBuddy kártya is ugyanezt a bat-ot futtatja.",
+      "changes": [
+        "ZombieBuddy: csak a Master mappában lévő installer bat fut le, a launcher nem telepít agentet maga.",
+        "Megszűnt az exe-telepítő automatizálása és a mod mappákból való agent másolgatás.",
+        "A bat a játék mappájában fut, a kimenete soronként a naplóba kerül.",
+        "Ha nincs bat a Master mappában, a launcher jelzi („Nincs ZombieBuddy installer bat a Master/ mappában”), és nem módosít semmit.",
+        "Nem nulla kilépési kódnál a napló kiírja a kódot, a telepítés többi része ettől még lefut."
+      ]
+    },
     {
       "id": "0.9.19",
       "version": "0.9.19",

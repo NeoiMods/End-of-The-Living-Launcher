@@ -270,25 +270,16 @@ async function runSetup({
   }
 
   // ---- 5) ZombieBuddy telepítő ------------------------------------------
-  // Mindkét mód a hivatalos ZombieBuddy-t használja (a szerverre is az került).
+  // A launcher csak a Master mappában lévő installer bat-ot futtatja, minden
+  // mást (agent fájlok, mod lista) arra bíz – nem nyúl semmihez maga.
   let installer = null;
   try {
-    installer = await zbInstaller.runZombieBuddyInstaller({ userDataDir, onLog, onProgress });
+    installer = await zbInstaller.runMasterBat({ cfg, userDataDir, gameDir, onLog, onProgress });
     if (!installer.ok) {
-      onLog('⚠ A ZombieBuddy telepítő nem járt sikerül – a launcher saját telepítése továbbra is működik.');
+      onLog('⚠ A ZombieBuddy installer nem járt sikerrel – a naplóban látszik, hol állt meg.');
     }
   } catch (err) {
-    onLog('✗ ZombieBuddy telepítő: ' + err.message);
-  }
-
-  // Agent fájlok (ZombieBuddy.jar + zbNative.dll) a játék mappába – a
-  // telepítő mellé második biztosítékként (idempotens, méret alapján).
-  for (const { mod, source } of discovered) {
-    try {
-      mods.copyAgentLibs(mod.modDir, source, gameDir, onLog);
-    } catch (err) {
-      onLog('✗ ' + err.message);
-    }
+    onLog('✗ ZombieBuddy installer: ' + err.message);
   }
   const agent = launch.agentStatus(gameDir);
   if (!agent.present) {

@@ -16,7 +16,22 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-    // ---- 0.9.19 (frissítő null javítás) ----
+        // ---- 0.9.20 (ZombieBuddy bat) ----
+    "0.9.20 – A ZombieBuddy-t mostantól a Master mappában lévő installer bat telepíti":
+      "0.9.20 – ZombieBuddy is installed by the installer bat in the Master folder",
+    "A launcher már nem telepít ZombieBuddy agentet magától (se exe-telepítőt, se agent fájlmásolást a modokból): a Master mappában lévő ZombieBuddy installer bat-ot futtatja le a játék mappájában, a kimenetét pedig a naplóba írja. Ha nincs ilyen bat a Master mappában, a launcher ezt jelzi a naplóban, és nem nyúl semmihez. A MODOK TELEPÍTÉSE / FRISSÍTÉSE és a ZombieBuddy kártya is ugyanezt a bat-ot futtatja.":
+      "The launcher no longer installs the ZombieBuddy agent itself (no automated exe installer, no copying agent files out of mod folders): it runs the ZombieBuddy installer bat from the Master folder inside the game folder and writes its output to the log. If there is no such bat in Master, the launcher says so in the log and touches nothing. Both INSTALL / UPDATE MODS and the ZombieBuddy card run that same bat.",
+    "ZombieBuddy: csak a Master mappában lévő installer bat fut le, a launcher nem telepít agentet maga.":
+      "ZombieBuddy: only the installer bat in the Master folder runs; the launcher no longer installs the agent itself.",
+    "Megszűnt az exe-telepítő automatizálása és a mod mappákból való agent másolgatás.":
+      "The automated exe installer and the agent copying from mod folders are gone.",
+    "A bat a játék mappájában fut, a kimenete soronként a naplóba kerül.":
+      "The bat runs inside the game folder and its output goes to the log line by line.",
+    "Ha nincs bat a Master mappában, a launcher jelzi („Nincs ZombieBuddy installer bat a Master/ mappában”), és nem módosít semmit.":
+      "If Master has no bat, the launcher says so (“No ZombieBuddy installer bat in the Master/ folder”) and changes nothing.",
+    "Nem nulla kilépési kódnál a napló kiírja a kódot, a telepítés többi része ettől még lefut.":
+      "A non-zero exit code is logged; the rest of the install still runs.",
+// ---- 0.9.19 (frissítő null javítás) ----
     "0.9.19 – Javítva a „Cannot read properties of null”, ami megakasztotta a frissítést":
       "0.9.19 – Fixed the “Cannot read properties of null” that stalled the update",
     "Ha a GitHub API kiesett vagy rate-limitelt (403), a launcher a repóban tárolt frissítés-indexből dolgozik – abban viszont nem volt commit-azonosító. Ezért a frissítés naplózása „Cannot read properties of null” hibával elszállt, és a frissítés el sem indult. Mostantól a frissítés-index tartalmazza a commit sha-t, a kód pedig ellenőrzi, hogy egyáltalán van-e, így az API kiesése sem akasztja meg a frissítést. Ez a javítás a már telepített régi launcherökön is működik, mert az index adatként érkezik, nem a program része.":
