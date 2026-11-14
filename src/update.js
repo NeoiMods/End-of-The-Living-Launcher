@@ -860,7 +860,7 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
       log('• Nincs cserélendő launcher-fájl – a verzió megjelölve.');
       return {
         ok: true,
-        newVersion: remoteSha.slice(0, 7),
+        newVersion: remoteSha ? remoteSha.slice(0, 7) : '',
         remoteSha,
         changed: 0,
         failed,
@@ -872,7 +872,7 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
 
     return {
       ok: true,
-      newVersion: remoteSha.slice(0, 7),
+      newVersion: remoteSha ? remoteSha.slice(0, 7) : '',
       remoteSha,
       changed: changed.length,
       failed,
@@ -911,7 +911,9 @@ async function autoUpdateOnLaunch({ cfg = {}, userDataDir, appRoot, log = () => 
     return { ok: true, updated: false, reason: res.reason };
   }
 
-  log(`✓ Új verzió a GitHubon: ${res.remoteSha.slice(0, 7)} – ${res.remote.message || 'frissítés'}`);
+  const shortSha = res.remoteSha ? res.remoteSha.slice(0, 7) : '?',
+    message = (res.remote && res.remote.message) || 'frissítés';
+  log(`✓ Új verzió a GitHubon: ${shortSha} – ${message}`);
   const applied = await applyUpdate({ cfg, userDataDir, appRoot, res, log, progress });
   if (!applied.ok) {
     log('✗ Frissítés sikertelen: ' + applied.error);

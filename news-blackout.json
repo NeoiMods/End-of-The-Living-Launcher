@@ -1,7 +1,21 @@
 {
-  "version": "0.9.18",
+  "version": "0.9.19",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.19",
+      "version": "0.9.19",
+      "date": "2026-11-14",
+      "tag": "FRISSÍTŐ",
+      "title": "0.9.19 – Javítva a „Cannot read properties of null”, ami megakasztotta a frissítést",
+      "text": "Ha a GitHub API kiesett vagy rate-limitelt (403), a launcher a repóban tárolt frissítés-indexből dolgozik – abban viszont nem volt commit-azonosító. Ezért a frissítés naplózása „Cannot read properties of null” hibával elszállt, és a frissítés el sem indult. Mostantól a frissítés-index tartalmazza a commit sha-t, a kód pedig ellenőrzi, hogy egyáltalán van-e, így az API kiesése sem akasztja meg a frissítést. Ez a javítás a már telepített régi launcherökön is működik, mert az index adatként érkezik, nem a program része.",
+      "changes": [
+        "Az update-manifest.json mostantól tartalmazza a commit sha-t (eddig nem volt benne).",
+        "A „Cannot read properties of null” hiba megszűnt: a naplózás ellenőrzi, van-e sha.",
+        "GitHub API kiesés vagy rate-limit esetén is elindul a frissítés, fájlonkénti hash-ellenőrzéssel.",
+        "A javítás a már telepített régi launcherökön is működik, mert az index adatként jön."
+      ]
+    },
     {
       "id": "0.9.18",
       "version": "0.9.18",

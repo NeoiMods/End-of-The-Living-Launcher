@@ -29,6 +29,15 @@ function version() {
   }
 }
 
+// A build alapjául szolgáló commit (a manifest a HEAD tartalmából készül).
+function headSha() {
+  try {
+    return git(['rev-parse', 'HEAD']).trim();
+  } catch {
+    return null;
+  }
+}
+
 function walk(dir, out = []) {
   let entries = [];
   try {
@@ -81,8 +90,11 @@ function buildUpdateManifest() {
   }
   // Se commit-azonosító, se időbélyeg: így a fájl csak akkor változik, ha a
   // launcher tartalma változott (nem generál felesleges commitot minden build).
+  // A `sha` viszont kell: ha a GitHub API kiesik, az updater ebből tudja, melyik
+  // commitról beszél (enélkül a régi verziók null-lal szálltak el).
   const manifest = {
     version: version(),
+    sha: headSha(),
     files,
   };
   fs.writeFileSync(path.join(ROOT, 'update-manifest.json'), JSON.stringify(manifest, null, 2) + '\n', 'utf8');

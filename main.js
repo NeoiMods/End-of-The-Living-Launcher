@@ -432,7 +432,7 @@ ipcMain.handle('update:apply', async () => {
     if (!res.ok) return { ok: false, error: res.reason };
     if (!res.update) return { ok: false, error: 'Már naprakész – nincs új verzió.' };
 
-    log(`Frissítés telepítése: ${res.remoteSha.slice(0, 7)}…`);
+    log(`Frissítés telepítése: ${res.remoteSha ? res.remoteSha.slice(0, 7) : '?'}…`);
     const applied = await update.applyUpdate({
       cfg,
       userDataDir,

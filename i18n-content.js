@@ -16,6 +16,19 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
+    // ---- 0.9.19 (frissítő null javítás) ----
+    "0.9.19 – Javítva a „Cannot read properties of null”, ami megakasztotta a frissítést":
+      "0.9.19 – Fixed the “Cannot read properties of null” that stalled the update",
+    "Ha a GitHub API kiesett vagy rate-limitelt (403), a launcher a repóban tárolt frissítés-indexből dolgozik – abban viszont nem volt commit-azonosító. Ezért a frissítés naplózása „Cannot read properties of null” hibával elszállt, és a frissítés el sem indult. Mostantól a frissítés-index tartalmazza a commit sha-t, a kód pedig ellenőrzi, hogy egyáltalán van-e, így az API kiesése sem akasztja meg a frissítést. Ez a javítás a már telepített régi launcherökön is működik, mert az index adatként érkezik, nem a program része.":
+      "When the GitHub API went down or hit a rate limit (403), the launcher used the update index stored in the repo – but that index had no commit id. Logging the update then threw “Cannot read properties of null” and the update never started. The index now carries the commit sha, and the code checks whether there is one at all, so an API outage cannot block the update anymore. This fix also works on already-installed older launchers, because the index is data, not part of the program.",
+    "Az update-manifest.json mostantól tartalmazza a commit sha-t (eddig nem volt benne).":
+      "update-manifest.json now carries the commit sha (it had none before).",
+    "A „Cannot read properties of null” hiba megszűnt: a naplózás ellenőrzi, van-e sha.":
+      "The “Cannot read properties of null” error is gone: the logging checks whether a sha exists.",
+    "GitHub API kiesés vagy rate-limit esetén is elindul a frissítés, fájlonkénti hash-ellenőrzéssel.":
+      "Updates start even when the GitHub API is down or rate-limited, with per-file hash checks.",
+    "A javítás a már telepített régi launcherökön is működik, mert az index adatként jön.":
+      "The fix also works on already-installed older launchers, because the index arrives as data.",
 // ---- 0.9.18 (frissítő javítás) ----
     "FRISSÍTŐ":
       "UPDATER",
