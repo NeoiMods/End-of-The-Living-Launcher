@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                // ---- 0.9.26 (ZombieBuddy csak ha kell) ----
+                                    // ---- 0.9.27 (GC ütközés) ----
+    "0.9.27 – A játék elindul: kijavítva a dupla garbage collector":
+      "0.9.27 – The game launches again: the duplicate garbage collector is fixed",
+    "A játék azért nem indult el, mert a ProjectZomboid64.json egyszerre tartalmazott -XX:+UseZGC-t és a Windows-szekcióban -XX:+UseG1GC-t. A JVM ezt írta ki: „Error occurred during initialization of VM – Multiple garbage collectors selected”, és leállt, mielőtt bármit naplózott volna. A launcher mostantól minden indításnál kiveszi a GC-választó (és a G1-re hangolt) kapcsolókat minden listából – a fő listából és a windows szekciókból is –, és csak egyet tesz be. Ugyanezt teszi a ProjectZomboid64.bat-tal.":
+      "The game did not start because ProjectZomboid64.json contained both -XX:+UseZGC and, in the Windows section, -XX:+UseG1GC. The JVM printed “Error occurred during initialization of VM – Multiple garbage collectors selected” and stopped before logging anything. The launcher now strips garbage-collector selection (and G1-only) options from every list – the main one and the Windows sections – on each launch and adds exactly one. It does the same for ProjectZomboid64.bat.",
+    "Javítva: a ProjectZomboid64.json-ból kikerülnek a duplikált/ütköző GC kapcsolók (ZGC + G1GC).":
+      "Fixed: duplicate/conflicting GC flags (ZGC + G1GC) are removed from ProjectZomboid64.json.",
+    "A windowshoz tartozó vmArgs listákból is tisztítja a GC-kapcsolókat és a G1-re hangolt opciókat.":
+      "The Windows-specific vmArgs lists are cleaned of GC flags and G1-only options too.",
+    "A ProjectZomboid64.bat-ból is kiveszi a ZGC-vel ütköző G1 kapcsolókat.":
+      "G1 options that conflict with ZGC are also removed from ProjectZomboid64.bat.",
+    "Indítás előtt ellenőrzi, hogy nem maradt-e két GC-választó, és a naplóban jelzi, ha a fájl nem írható.":
+      "Before launching it verifies that only one GC remains and reports in the log when the file is not writable.",
+// ---- 0.9.26 (ZombieBuddy csak ha kell) ----
     "0.9.26 – A ZombieBuddy telepítő már nem fut le minden alkalommal":
       "0.9.26 – The ZombieBuddy installer no longer runs every time",
     "A telepítő bezárja a Steamet, ezért mostantól csak akkor fut le, ha a ZombieBuddy agent tényleg nincs a gépen (sem a játék mappában, sem a Steam Workshopon). Ha az agent megvan, a launcher ezt írja a naplóba, és a Steamet békén hagyja. Kézi újratelepítéshez ott a ZombieBuddy gomb/kártya – az mindig lefuttatja a telepítőt.":

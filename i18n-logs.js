@@ -6,6 +6,8 @@
   if (!i18n) return;
 
   i18n.addTemplates([
+    // ---- 0.9.27 (GC ütközés) ----
+    "⚠ A ProjectZomboid64.json több garbage collector-t tartalmaz ({s}) – a játék nem indulna el. Írható fájl esetén a launcher kijavítja; ha nem, indítsd rendszergazdaként.", "⚠ ProjectZomboid64.json contains multiple garbage collectors ({s}) – the game would not start. The launcher fixes it when the file is writable; otherwise run as administrator.",
     // ---- 0.9.26 (ZombieBuddy csak ha kell) ----
     "• ZombieBuddy agent már a gépen van – a telepítő nem fut le, a Steam nem záródik be (kézi újratelepítés: ZombieBuddy gomb).", "• The ZombieBuddy agent is already present – the installer does not run, so Steam is not closed (manual reinstall: the ZombieBuddy button).",
     // ---- 0.9.25 (Steam + játék indítás) ----

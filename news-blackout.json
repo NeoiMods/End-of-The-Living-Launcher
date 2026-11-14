@@ -1,7 +1,21 @@
 {
-  "version": "0.9.26",
+  "version": "0.9.27",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.27",
+      "version": "0.9.27",
+      "date": "2026-11-14",
+      "tag": "JAVÍTÁS",
+      "title": "0.9.27 – A játék elindul: kijavítva a dupla garbage collector",
+      "text": "A játék azért nem indult el, mert a ProjectZomboid64.json egyszerre tartalmazott -XX:+UseZGC-t és a Windows-szekcióban -XX:+UseG1GC-t. A JVM ezt írta ki: „Error occurred during initialization of VM – Multiple garbage collectors selected”, és leállt, mielőtt bármit naplózott volna. A launcher mostantól minden indításnál kiveszi a GC-választó (és a G1-re hangolt) kapcsolókat minden listából – a fő listából és a windows szekciókból is –, és csak egyet tesz be. Ugyanezt teszi a ProjectZomboid64.bat-tal.",
+      "changes": [
+        "Javítva: a ProjectZomboid64.json-ból kikerülnek a duplikált/ütköző GC kapcsolók (ZGC + G1GC).",
+        "A windowshoz tartozó vmArgs listákból is tisztítja a GC-kapcsolókat és a G1-re hangolt opciókat.",
+        "A ProjectZomboid64.bat-ból is kiveszi a ZGC-vel ütköző G1 kapcsolókat.",
+        "Indítás előtt ellenőrzi, hogy nem maradt-e két GC-választó, és a naplóban jelzi, ha a fájl nem írható."
+      ]
+    },
     {
       "id": "0.9.26",
       "version": "0.9.26",

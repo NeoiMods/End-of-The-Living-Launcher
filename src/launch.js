@@ -115,16 +115,41 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
   }
 
   const wanted = [`-Xms${heapMb}m`, `-Xmx${heapMb}m`].concat(zgc ? ['-XX:+UseZGC'] : []);
+
+  // A játék a fő vmArgs-hoz hozzáfűzi a Windows-verzióhoz tartozó vmArgs-ot is.
+  // Ha ott másik GC marad (pl. -XX:+UseG1GC), a JVM ezt írja ki és nem indul:
+  // „Multiple garbage collectors selected”. Ezért MINDEN listából kivesszük a
+  // GC-választó kapcsolókat, és csak a fő listába tesszük be a kívántat.
+  const GC_FLAG = /^-XX:\+Use(G1GC|ParallelGC|SerialGC|ConcMarkSweepGC|ShenandoahGC|ZGC|EpsilonGC)/i;
+  const G1_ONLY = /^-XX:(InitiatingHeapOccupancyPercent|G1ReservePercent|G1HeapRegionSize|G1NewSizePercent|G1MaxNewSizePercent|MaxGCPauseMillis|ParallelGCThreads|ConcGCThreads|GCTimeRatio)=/i;
+  const G1_TUNING = /^-XX:\+(UseStringDeduplication|UseG1GC)/i;
+  const stripGc = (a) =>
+    typeof a === 'string' && !GC_FLAG.test(a) && !G1_ONLY.test(a) && !G1_TUNING.test(a);
+
   const vmArgs = Array.isArray(data.vmArgs) ? data.vmArgs : [];
-  const filtered = vmArgs.filter(
-    (a) =>
-      typeof a === 'string' &&
-      !/^-Xm[sx]/i.test(a) &&
-      !(zgc && /^-XX:\+Use(G1GC|ParallelGC|SerialGC|ConcMarkSweepGC|ShenandoahGC)/i.test(a))
-  );
+  const filtered = vmArgs.filter((a) => typeof a === 'string' && !/^-Xm[sx]/i.test(a) && stripGc(a));
   const nextVmArgs = [...filtered, ...wanted];
 
+  // A windows alatti listákból is kivesszük a GC-kapcsolókat (és a heapet).
+  let nestedChanged = false;
+  const fixNested = (obj) => {
+    if (!obj || typeof obj !== 'object') return;
+    for (const [key, val] of Object.entries(obj)) {
+      if (key === 'vmArgs' && Array.isArray(val)) {
+        const cleaned = val.filter((a) => typeof a === 'string' && !/^-Xm[sx]/i.test(a) && stripGc(a));
+        if (cleaned.length !== val.length) {
+          obj[key] = cleaned;
+          nestedChanged = true;
+        }
+      } else if (val && typeof val === 'object') {
+        fixNested(val);
+      }
+    }
+  };
+  fixNested(data.windows);
+
   const same =
+    !nestedChanged &&
     filtered.length === vmArgs.length &&
     wanted.every((w) => vmArgs.some((a) => typeof a === 'string' && a.toLowerCase() === w.toLowerCase()));
   if (same) return { changed: false, file, heapMb };
@@ -173,6 +198,12 @@ function applyHeapToLauncherBat(gameDir, heapMb, { zgc = false } = {}) {
   if (zgc) {
     // Egyszerre csak egy GC lehet bekapcsolva: a régit kivesszük.
     next = next.replace(/-XX:\+Use(G1GC|ParallelGC|SerialGC|ConcMarkSweepGC|ShenandoahGC)/g, '');
+    // G1-re hangolt kapcsolók ZGC mellé nem valók – kiszedjük őket is.
+    next = next.replace(
+      /-XX:(InitiatingHeapOccupancyPercent|G1ReservePercent|G1HeapRegionSize|MaxGCPauseMillis|ParallelGCThreads|ConcGCThreads)=\S+/g,
+      ''
+    );
+    next = next.replace(/-XX:\+UseStringDeduplication/g, '');
     if (!/-XX:\+UseZGC/.test(next)) next = next.replace(/-Xmx\d+[mMgG]?/g, (m) => `${m} -XX:+UseZGC`);
     next = next.replace(/[ \t]{2,}/g, ' ');
   }
@@ -189,6 +220,25 @@ function applyHeapToLauncherBat(gameDir, heapMb, { zgc = false } = {}) {
       file,
       reason: `Nem sikerült beírni a memóriát a ${LAUNCHER_BAT} fájlba (${err.message}).`,
     };
+  }
+}
+
+// A launcher JSON összes GC-választó kapcsolója (fő lista + windows szekciók).
+function launcherGcFlags(gameDir) {
+  try {
+    const data = JSON.parse(fs.readFileSync(path.join(gameDir, LAUNCHER_JSON), 'utf8'));
+    const lists = [Array.isArray(data.vmArgs) ? data.vmArgs : []];
+    const walk = (obj) => {
+      if (!obj || typeof obj !== 'object') return;
+      for (const [key, val] of Object.entries(obj)) {
+        if (key === 'vmArgs' && Array.isArray(val)) lists.push(val);
+        else if (val && typeof val === 'object') walk(val);
+      }
+    };
+    walk(data.windows);
+    return lists.flat().filter((a) => typeof a === 'string' && /^-XX:\+Use\w+GC/i.test(a));
+  } catch {
+    return [];
   }
 }
 
@@ -228,6 +278,16 @@ async function launchGame({ gameDir, cfg, onLog, zgc = false }) {
   const heap = applyHeapToLauncherJson(gameDir, heapMb, { zgc });
   if (heap.changed) onLog(`Memória beállítva a játék launcherében: -Xms${heapMb}m -Xmx${heapMb}m${zgc ? ' -XX:+UseZGC' : ''}`);
   else if (heap.reason) onLog('! ' + heap.reason);
+
+  // Ha a JSON-ban két GC-választó maradt, a JVM el sem indul („Multiple garbage
+  // collectors selected”) – ezt minden indítás előtt ellenőrizzük.
+  const gc = launcherGcFlags(gameDir);
+  if (gc.length > 1) {
+    onLog(
+      `⚠ A ProjectZomboid64.json több garbage collector-t tartalmaz (${gc.join(', ')}) – ` +
+        'a játék nem indulna el. Írdható fájl esetén a launcher kijavítja; ha nem, indítsd rendszergazdaként.'
+    );
+  }
 
   // A B42 a .bat-ot indítja, nem a JSON-t: ott is be kell állítani a JVM-et.
   const bat = applyHeapToLauncherBat(gameDir, heapMb, { zgc });
@@ -269,6 +329,7 @@ module.exports = {
   agentStatus,
   applyHeapToLauncherJson,
   applyHeapToLauncherBat,
+  launcherGcFlags,
   readHeapFromLauncherJson,
   buildArgs,
   isSteamRunning,
