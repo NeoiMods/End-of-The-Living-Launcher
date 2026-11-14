@@ -1,5 +1,5 @@
 {
-  "version": "0.9.15",
+  "version": "0.9.16",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -728,8 +728,8 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 31377,
-      "sha256": "f07b4a6dd5fa8d4799642561b27f54d8a75c46bb5702bdc87129dc7c8a16363f"
+      "size": 33006,
+      "sha256": "57d630370edf9bebd686c7f68ecd3aaa4cc757167ac4e237a45a3c21acd26bd6"
     },
     {
       "path": "i18n-logs.js",
@@ -738,18 +738,18 @@
     },
     {
       "path": "i18n.js",
-      "size": 37001,
-      "sha256": "b7cad84cfe8b73c74fa520cceff4ffbbd49c5165422dff948482e2b390063bc6"
+      "size": 36692,
+      "sha256": "4287819d850cc1392e347527e25ccb2a54aa3a00315b7384df1326fe4d731a6f"
     },
     {
       "path": "index.html",
-      "size": 28899,
-      "sha256": "352827ff15dea578f755681ddda38f5f0add93ba9e968c2bc1b5c52f154c9bb9"
+      "size": 28503,
+      "sha256": "7ee18d5a887d6d7534c9aa4c76560580d9e52fb294c4ec6d7ca7163c40d9c909"
     },
     {
       "path": "main.js",
-      "size": 44289,
-      "sha256": "0599f47bd44a060d7eb7993fe608d28eadd4826e237b07da472e102f54bb4ac9"
+      "size": 43207,
+      "sha256": "652cd974d0bbe74d96b0698f61559d231c00f6bb562f70e0cd585a6fa964866a"
     },
     {
       "path": "news-blackout.json",
@@ -758,23 +758,23 @@
     },
     {
       "path": "news.json",
-      "size": 11858,
-      "sha256": "8c5139f329822f3b9c21a2998e9dea2854cdf1f2bbca6a03baa9e13bc857895d"
+      "size": 12842,
+      "sha256": "344a0ae3c193dda90858260e65bef51824760457e6f9c818a459932036b13206"
     },
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "b30a7cb6e152b85828e89433ab512118e0ec2f594f46293a79bae9c18aeb5320"
+      "sha256": "5b093643d8e66aa7f0a0a2d9982fd00c87e8369c3159b65cf64acd9ab590ffc4"
     },
     {
       "path": "preload.js",
-      "size": 4190,
-      "sha256": "069344c32ef7b1c83d1abf1009631850e6ce74d242ec9f558d2ca743c8ddcc23"
+      "size": 4127,
+      "sha256": "a3db9487a433db11a5363cb2985c0196cafee7eee5801f832971f4e0ad8b73d4"
     },
     {
       "path": "renderer.js",
-      "size": 80726,
-      "sha256": "906f0ca25942dbe62f7e4919740446837f1d516a380865af191c1cc0e22499fb"
+      "size": 80057,
+      "sha256": "d01d207a377e6fb253b8d30024b6f07c1fc48339561dd87f412153d6960cc7f4"
     },
     {
       "path": "src/a2s.js",
@@ -818,8 +818,8 @@
     },
     {
       "path": "src/eotl-mods.js",
-      "size": 8586,
-      "sha256": "b1bbca913a0d7090a45d31dc1aeed420a6f6bb9a324c6934d1d5a95396b82927"
+      "size": 5696,
+      "sha256": "6b2dc5d74334e6a53671edbb8851ef95d20feafbc1e558ae0f09357716a87caf"
     },
     {
       "path": "src/events.js",
@@ -878,8 +878,8 @@
     },
     {
       "path": "src/setup.js",
-      "size": 17797,
-      "sha256": "7ac89cc3244dc336abf165c93a3dd569a6e1256d3ce6672d6ca30d3ef3e0c2be"
+      "size": 16930,
+      "sha256": "e757606f48eb25954cbc1655b7bfbf73500cc79922c00aced1bab540fe82c5ee"
     },
     {
       "path": "src/shortcut.js",
@@ -905,11 +905,6 @@
       "path": "src/workshop.js",
       "size": 5607,
       "sha256": "e3f3b3b2a73ae47d7ca09d8771fd3868b4d34c60bb96898b59cf89066e6b4a9a"
-    },
-    {
-      "path": "src/zb-agent.js",
-      "size": 4550,
-      "sha256": "71cc74663a2c4c60a167d5ec545a467bd23a542d4632d5c6174ce14eb7e51b07"
     },
     {
       "path": "src/zb-installer.js",
