@@ -1,5 +1,5 @@
 {
-  "version": "0.9.16",
+  "version": "0.9.17",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -728,8 +728,8 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 33006,
-      "sha256": "57d630370edf9bebd686c7f68ecd3aaa4cc757167ac4e237a45a3c21acd26bd6"
+      "size": 35538,
+      "sha256": "c1a591274e211cdbd09d6143f89ade22bf90a4595bfb434e69981e7e3db5cbc6"
     },
     {
       "path": "i18n-logs.js",
@@ -753,8 +753,8 @@
     },
     {
       "path": "news-blackout.json",
-      "size": 7184,
-      "sha256": "1ce632cd548ff4f44c500b5cd6669303b275f30a5f1cafa35a6e546c6e466717"
+      "size": 8608,
+      "sha256": "bc814eebcc88d5a579ff3864dbd2b4e4a24b8e23d3ea1b2f82eaa9da20d73732"
     },
     {
       "path": "news.json",
@@ -764,7 +764,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "5b093643d8e66aa7f0a0a2d9982fd00c87e8369c3159b65cf64acd9ab590ffc4"
+      "sha256": "bc6edab7b17eb01c22089c6f56c7efac0b88f11a2e4f7d4ec5ff5dc2f74de7e9"
     },
     {
       "path": "preload.js",
@@ -773,8 +773,8 @@
     },
     {
       "path": "renderer.js",
-      "size": 80057,
-      "sha256": "d01d207a377e6fb253b8d30024b6f07c1fc48339561dd87f412153d6960cc7f4"
+      "size": 80053,
+      "sha256": "98a9764668b477a8937218855bd596723c63086f1926e476db010c10aac87ff7"
     },
     {
       "path": "src/a2s.js",
@@ -788,8 +788,8 @@
     },
     {
       "path": "src/blackout.js",
-      "size": 13939,
-      "sha256": "ef4a272c770a0c098cda4b6fb54bad9192156d79651dfeaa02a881bcf545e43f"
+      "size": 14480,
+      "sha256": "8eda5323fbe57c429b0113e1f33ca99ecc54661b4c767d69736226f43a78edd3"
     },
     {
       "path": "src/collection.js",
@@ -853,8 +853,8 @@
     },
     {
       "path": "src/mods.js",
-      "size": 23225,
-      "sha256": "19411a8c466d685cefb89c4b230bff0df30a9cb8f41b556776f8818d660a7bbf"
+      "size": 25834,
+      "sha256": "3d7e39632fefcfd95f5e802fc18811415b7d25c7d763e3b4717f6ffa29bf1b1a"
     },
     {
       "path": "src/news.js",
@@ -878,8 +878,8 @@
     },
     {
       "path": "src/setup.js",
-      "size": 16930,
-      "sha256": "e757606f48eb25954cbc1655b7bfbf73500cc79922c00aced1bab540fe82c5ee"
+      "size": 17477,
+      "sha256": "07a100838b8ddf56a026ea74c3641ca32deb18fc771fe7a19a629856b0eafbaa"
     },
     {
       "path": "src/shortcut.js",
