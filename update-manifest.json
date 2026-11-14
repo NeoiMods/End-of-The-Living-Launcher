@@ -1,5 +1,5 @@
 {
-  "version": "0.9.14",
+  "version": "0.9.15",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -738,8 +738,8 @@
     },
     {
       "path": "i18n.js",
-      "size": 36786,
-      "sha256": "821dc14b12884186e07ab7d4c56a28e7c314efad5be7c788af32bb425f110f6c"
+      "size": 37001,
+      "sha256": "b7cad84cfe8b73c74fa520cceff4ffbbd49c5165422dff948482e2b390063bc6"
     },
     {
       "path": "index.html",
@@ -753,8 +753,8 @@
     },
     {
       "path": "news-blackout.json",
-      "size": 7159,
-      "sha256": "d0e4c11b177f13096936fe444407da934f4ab1c591580aed9a4f6fffb87a6835"
+      "size": 7184,
+      "sha256": "1ce632cd548ff4f44c500b5cd6669303b275f30a5f1cafa35a6e546c6e466717"
     },
     {
       "path": "news.json",
@@ -764,7 +764,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "895833389f6cf15ec876a5fe832ed661b5fe67e63ef8eed5610f5ecbad7db754"
+      "sha256": "b30a7cb6e152b85828e89433ab512118e0ec2f594f46293a79bae9c18aeb5320"
     },
     {
       "path": "preload.js",
@@ -773,8 +773,8 @@
     },
     {
       "path": "renderer.js",
-      "size": 79359,
-      "sha256": "375c88c1f791d79ac8f290217b5a000a56f4f0131bd2ef9680bc8310c313fb7c"
+      "size": 80726,
+      "sha256": "906f0ca25942dbe62f7e4919740446837f1d516a380865af191c1cc0e22499fb"
     },
     {
       "path": "src/a2s.js",
@@ -858,8 +858,8 @@
     },
     {
       "path": "src/news.js",
-      "size": 4104,
-      "sha256": "e11172c481cebbc5a9ce7d6e61d7128fc92e34dd099d38bb5bc81599da67ab28"
+      "size": 4293,
+      "sha256": "adf2e17f5476a5e7e680949919e3b730d10e076dd35339b308ecbc77f6752253"
     },
     {
       "path": "src/packs.js",
@@ -918,8 +918,8 @@
     },
     {
       "path": "styles.css",
-      "size": 62892,
-      "sha256": "a715b3cd1937d15f00771ec9d75ab5d44da0ca33c7ecf87085c940eefc1f0ae4"
+      "size": 63293,
+      "sha256": "bda7372e76f6b522e749bbf3d99a4223b51b8bd9108765d5fe6f9c06d25293d4"
     },
     {
       "path": "themes/README.md",
