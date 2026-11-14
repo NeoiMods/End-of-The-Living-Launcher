@@ -113,6 +113,7 @@ async function runSetup({
     if (col.items.length !== before) {
       onLog(`– ${baseId} (alap Project Viewpoint): kihagyva, helyette a NIGHTLY fut.`);
     }
+    mods.logNightlyCompat({ log: onLog });
   }
   for (const [id, note] of skipDownloadIds) {
     if (col.items.some((it) => String(it.id) === id)) onLog(`– ${id}: ${note}.`);
@@ -267,25 +268,41 @@ async function runSetup({
     mods.removeBaseViewpoint({ log: onLog });
     const nightlyEnabled = modlist.ensureEnabled(zomboidDir, [mods.NIGHTLY_MOD_ID]);
     if (nightlyEnabled.changed) onLog(`✓ ${mods.NIGHTLY_MOD_ID} (NIGHTLY) engedélyezve.`);
+    // A nightly csak adott játékbuilden és ZombieBuddy agenttel töltődik be –
+    // ha ez nem teljesül, a napló mondja meg, nem a semmi.
+    mods.logNightlyCompat({ log: onLog });
   }
 
   // ---- 5) ZombieBuddy telepítő ------------------------------------------
-  // A launcher csak a Master mappában lévő installer bat-ot futtatja, minden
-  // mást (agent fájlok, mod lista) arra bíz – nem nyúl semmihez maga.
+  // Először a Master mappában lévő installer bat fut (minden mást arra bízunk),
+  // ha nincs bat, a hivatalos exe telepítőre esünk vissza – így nem marad ki.
   let installer = null;
   try {
-    installer = await zbInstaller.runMasterBat({ cfg, userDataDir, gameDir, onLog, onProgress });
+    installer = await zbInstaller.installZombieBuddy({ cfg, userDataDir, gameDir, onLog, onProgress });
     if (!installer.ok) {
       onLog('⚠ A ZombieBuddy installer nem járt sikerrel – a naplóban látszik, hol állt meg.');
     }
   } catch (err) {
     onLog('✗ ZombieBuddy installer: ' + err.message);
   }
+  // A ZombieBuddy agent lehet a játék mappájában (installer) vagy a Steam
+  // workshop tartalomban (Java agent mod) – mindkettő érvényes.
   const agent = launch.agentStatus(gameDir);
-  if (!agent.present) {
-    onLog('⚠ A ZombieBuddy agent fájljai (ZombieBuddy.jar + zbNative.dll) nincsenek a játék mappában.');
-  } else {
+  let zbWorkshop = [];
+  try {
+    zbWorkshop = mods.zombieBuddyDirs();
+  } catch {
+    zbWorkshop = [];
+  }
+  if (agent.present) {
     onLog(`✓ ZombieBuddy agent a helyén: ${agent.configured ? 'launcher JSON beállítva' : 'indításkor töltődik be'}.`);
+  } else if (zbWorkshop.length) {
+    onLog('✓ ZombieBuddy agent a Steam Workshopról töltődik be (Java agent).');
+  } else {
+    onLog(
+      '⚠ ZombieBuddy agent nincs a gépen (sem a játék mappában, sem a Workshopon) – ' +
+        'a Viewpoint NIGHTLY és a hozzá épülő modok nem fognak betöltődni.'
+    );
   }
 
   // ---- 6) Java modok előre jóváhagyása ----------------------------------

@@ -16,7 +16,28 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-        // ---- 0.9.20 (ZombieBuddy bat) ----
+            // ---- 0.9.21 (nightly + installer javítás) ----
+    "0.9.21 – A nightly és a ZombieBuddy telepítés javítva":
+      "0.9.21 – Fixed the nightly and ZombieBuddy installation",
+    "A Viewpoint NIGHTLY eddig csendben nem töltődött be: a játék a régi workshop Viewpointot (0.1.6.2) látta helyette. Mostantól a nightly a meglévő workshop példány helyére kerül (nincs két azonos ID-jű Viewpoint), telepítés előtt ideiglenes mappába csomagolunk és csak ellenőrzés után cserélünk, a napló pedig kiírja, ha a játékbuild (42.22) vagy a ZombieBuddy agent hiánya miatt a mod nem tud betöltődni. A ZombieBuddy telepítés sem maradhat ki: ha nincs installer bat a Master mappában, a hivatalos exe telepítő fut le, ha van bat, akkor a játék mappájába másolva futtatjuk – így a saját mappájához képest másoló installer is jó helyre telepít, és a bat végén lévő pause sem akasztja meg a launchert.":
+      "The Viewpoint NIGHTLY silently did not load: the game kept seeing the old Workshop Viewpoint (0.1.6.2) instead. The nightly is now installed into the existing Workshop item folder (so there are no two mods with the same ID), it is unpacked into a temporary folder and only swapped in after a check, and the log now says when the game build (42.22) or a missing ZombieBuddy agent prevents it from loading. The ZombieBuddy step no longer silently does nothing either: if there is no installer bat in the Master folder, the official exe installer runs; if there is a bat, it is copied into the game folder and run there, so installers that copy relative to their own folder land in the right place, and a trailing pause cannot hang the launcher.",
+    "NIGHTLY: a meglévő workshop Viewpoint mappájába települ (nincs duplikált mod ID), a régi helyi másolat törlődik.":
+      "NIGHTLY: installs into the existing Workshop Viewpoint folder (no duplicate mod ID); the old local copy is removed.",
+    "NIGHTLY: ideiglenes mappába csomagolás + ellenőrzés, csak utána csere – félkész kicsomagolás nem viszi el a működő modot.":
+      "NIGHTLY: unpacked into a temporary folder and verified before swapping – a half-finished extraction cannot destroy a working mod.",
+    "NIGHTLY: a launcher kiírja, ha a játékbuild kívül esik a 42.22-es ablakon, vagy hiányzik a ZombieBuddy agent (≥2.3.0).":
+      "NIGHTLY: the launcher reports when the game build is outside the 42.22 window or the ZombieBuddy agent (≥2.3.0) is missing.",
+    "Az alap workshop Viewpointot már nem töröljük – a Steam visszatöltötte, és két azonos ID-jű Viewpoint keletkezett.":
+      "The base Workshop Viewpoint is no longer deleted – Steam restored it, leaving two mods with the same ID.",
+    "ZombieBuddy: bármelyik .bat szóba jön a Master mappából (a ZombieBuddy nevűt választja), ha nincs bat, az exe telepítő fut.":
+      "ZombieBuddy: any .bat in the Master folder is accepted (the ZombieBuddy one is preferred); with no bat the exe installer runs.",
+    "ZombieBuddy: a bat a játék mappájába kerül és ott fut, így a %~dp0 is oda mutat.":
+      "ZombieBuddy: the bat is copied into the game folder and runs there, so %~dp0 points at the game folder.",
+    "ZombieBuddy: a bat stdin nélkül fut (a pause nem akasztja meg) és 20 perc után leáll.":
+      "ZombieBuddy: the bat runs without stdin (a pause no longer hangs it) and is stopped after 20 minutes.",
+    "A napló jelzi, ha a ZombieBuddy agent a Steam Workshopról töltődik be, illetve ha egyáltalán nincs a gépen.":
+      "The log reports when the ZombieBuddy agent loads from the Steam Workshop, and when it is missing entirely.",
+// ---- 0.9.20 (ZombieBuddy bat) ----
     "0.9.20 – A ZombieBuddy-t mostantól a Master mappában lévő installer bat telepíti":
       "0.9.20 – ZombieBuddy is installed by the installer bat in the Master folder",
     "A launcher már nem telepít ZombieBuddy agentet magától (se exe-telepítőt, se agent fájlmásolást a modokból): a Master mappában lévő ZombieBuddy installer bat-ot futtatja le a játék mappájában, a kimenetét pedig a naplóba írja. Ha nincs ilyen bat a Master mappában, a launcher ezt jelzi a naplóban, és nem nyúl semmihez. A MODOK TELEPÍTÉSE / FRISSÍTÉSE és a ZombieBuddy kártya is ugyanezt a bat-ot futtatja.":

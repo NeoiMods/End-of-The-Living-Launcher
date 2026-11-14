@@ -1,7 +1,25 @@
 {
-  "version": "0.9.20",
+  "version": "0.9.21",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.21",
+      "version": "0.9.21",
+      "date": "2026-11-14",
+      "tag": "VIEWPOINT + ZOMBIEBUDDY",
+      "title": "0.9.21 – A nightly és a ZombieBuddy telepítés javítva",
+      "text": "A Viewpoint NIGHTLY eddig csendben nem töltődött be: a játék a régi workshop Viewpointot (0.1.6.2) látta helyette. Mostantól a nightly a meglévő workshop példány helyére kerül (nincs két azonos ID-jű Viewpoint), telepítés előtt ideiglenes mappába csomagolunk és csak ellenőrzés után cserélünk, a napló pedig kiírja, ha a játékbuild (42.22) vagy a ZombieBuddy agent hiánya miatt a mod nem tud betöltődni. A ZombieBuddy telepítés sem maradhat ki: ha nincs installer bat a Master mappában, a hivatalos exe telepítő fut le, ha van bat, akkor a játék mappájába másolva futtatjuk – így a saját mappájához képest másoló installer is jó helyre telepít, és a bat végén lévő pause sem akasztja meg a launchert.",
+      "changes": [
+        "NIGHTLY: a meglévő workshop Viewpoint mappájába települ (nincs duplikált mod ID), a régi helyi másolat törlődik.",
+        "NIGHTLY: ideiglenes mappába csomagolás + ellenőrzés, csak utána csere – félkész kicsomagolás nem viszi el a működő modot.",
+        "NIGHTLY: a launcher kiírja, ha a játékbuild kívül esik a 42.22-es ablakon, vagy hiányzik a ZombieBuddy agent (≥2.3.0).",
+        "Az alap workshop Viewpointot már nem töröljük – a Steam visszatöltötte, és két azonos ID-jű Viewpoint keletkezett.",
+        "ZombieBuddy: bármelyik .bat szóba jön a Master mappából (a ZombieBuddy nevűt választja), ha nincs bat, az exe telepítő fut.",
+        "ZombieBuddy: a bat a játék mappájába kerül és ott fut, így a %~dp0 is oda mutat.",
+        "ZombieBuddy: a bat stdin nélkül fut (a pause nem akasztja meg) és 20 perc után leáll.",
+        "A napló jelzi, ha a ZombieBuddy agent a Steam Workshopról töltődik be, illetve ha egyáltalán nincs a gépen."
+      ]
+    },
     {
       "id": "0.9.20",
       "version": "0.9.20",

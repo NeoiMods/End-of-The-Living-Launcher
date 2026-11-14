@@ -510,24 +510,21 @@ function removeBaseViewpoint({ log = () => {} } = {}) {
 
   const disabled = disableBaseViewpointMods({ log });
 
-  let libs = [];
-  try {
-    const steam = findSteamPath();
-    libs = steam ? parseLibraryPaths(steam) : [];
-  } catch {
-    libs = [];
-  }
-
+  // A workshop mappát NEM töröljük: a nightly oda kerül (lásd installNightly),
+  // és a Steam a törölt tartalmat visszatöltené – így két azonos ID-jű
+  // Viewpoint maradna, amiből a játék a régit (0.1.6.x) választja.
   const removed = [];
-  for (const lib of libs) {
-    const dir = path.join(lib, 'steamapps', 'workshop', 'content', PZ_APP_ID, NIGHTLY.workshopId);
-    if (!fs.existsSync(dir)) continue;
-    try {
-      fs.rmSync(dir, { recursive: true, force: true });
-      removed.push(dir);
-      log(`• Alap Project Viewpoint eltávolítva (ütközik a NIGHTLY-vel): ${dir}`);
-    } catch (err) {
-      log(`! Az alap Project Viewpoint nem törölhető (${err.message}).`);
+  const st = nightlyStatus();
+  if (st.where === 'workshop') {
+    const local = nightlyLocalDir();
+    if (fs.existsSync(local)) {
+      try {
+        fs.rmSync(local, { recursive: true, force: true });
+        removed.push(local);
+        log('• A korábbi helyi Viewpoint másolat törölve – a NIGHTLY a Workshop mappában fut.');
+      } catch (err) {
+        log(`! A helyi Viewpoint másolat nem törölhető (${err.message}).`);
+      }
     }
   }
   return { ok: true, removed, disabled: disabled.disabled || [] };
@@ -564,15 +561,49 @@ function disableBaseViewpointMods({ log = () => {} } = {}) {
   return { ok: true, disabled: res.removed };
 }
 
-// A nightly a játék saját mod mappájába kerül (Zomboid\\mods\\Viewpoint):
-// a régi Zomboid\\Workshop alatti helyet a játék nem tölti be.
-function nightlyDir() {
+// A nightly helye. Ha a régi Project Viewpoint (Workshop 3809306528) fent van,
+// a nightly annak a mappájába kerül – így nincs két azonos ID-jű Viewpoint, és
+// a Steam sem tölti vissza a régit alánk. Ha nincs workshop példány, a játék
+// saját mod mappájába (Zomboid\\mods\\Viewpoint) telepítünk.
+function nightlyLocalDir() {
   return path.join(zomboidDir(), 'mods', NIGHTLY.folder);
+}
+
+function nightlyWorkshopDir() {
+  const base = steamViewpointDir();
+  return base ? path.join(base, 'mods', NIGHTLY.folder) : null;
 }
 
 // A régi (hibás) hely, amit telepítéskor/törléskor takarítunk.
 function nightlyLegacyDir() {
   return path.join(zomboidDir(), 'Workshop', NIGHTLY.folder);
+}
+
+// mod.info keresése egy mod mappában (közvetlenül vagy verzió-almappában).
+function findModInfo(dir) {
+  if (!dir) return null;
+  const direct = path.join(dir, 'mod.info');
+  if (fs.existsSync(direct)) return direct;
+  let names = [];
+  try {
+    names = fs
+      .readdirSync(dir, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name);
+  } catch {
+    return null;
+  }
+  for (const sub of ['42', 'common', '41', ...names]) {
+    const p = path.join(dir, sub, 'mod.info');
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
+function nightlyDir() {
+  const st = nightlyStatus();
+  if (st.dir) return st.dir;
+  return nightlyWorkshopDir() || nightlyLocalDir();
 }
 
 function readModVersion(modInfoPath) {
@@ -584,26 +615,35 @@ function readModVersion(modInfoPath) {
   }
 }
 
-// A kicsomagolt nightly mod mappája + verziója (Zomboid\mods\Viewpoint\42).
-function nightlyStatus() {
-  const base = nightlyDir();
-  const direct = path.join(base, 'mod.info');
-  if (fs.existsSync(direct)) return { installed: true, dir: base, version: readModVersion(direct) };
+// A telepített nightly jelölője a mod mappájában (a Steam az alap Viewpointot
+// is a ugyanoda teszi, e nélkül nem tudnánk megkülönböztetni őket).
+const NIGHTLY_MARKER = '.eotl-nightly';
 
-  let names = [];
-  try {
-    names = fs
-      .readdirSync(base, { withFileTypes: true })
-      .filter((e) => e.isDirectory())
-      .map((e) => e.name);
-  } catch {
-    return { installed: false, dir: null, version: '' };
+// A nightly verziója rc/alpha/beta jelölést tartalmaz (0.1.7-rc4).
+function isNightlyVersion(version) {
+  return /rc\d+|nightly|alpha|beta/i.test(String(version || ''));
+}
+
+// A kicsomagolt nightly mod mappája + verziója (a mod.info a common/ mappában
+// van: Viewpoint/common/mod.info). A workshop példányt nézzük előbb, mert ha
+// az él, az a mérvadó. Az alap Viewpoint (0.1.6.2) nem nightly.
+function nightlyStatus() {
+  const candidates = [
+    { dir: nightlyWorkshopDir(), where: 'workshop' },
+    { dir: nightlyLocalDir(), where: 'mods' },
+  ];
+  let base = null;
+  for (const c of candidates) {
+    const info = findModInfo(c.dir);
+    if (!info) continue;
+    const version = readModVersion(info);
+    const marker = fs.existsSync(path.join(c.dir, NIGHTLY_MARKER));
+    if (marker || isNightlyVersion(version)) {
+      return { installed: true, dir: c.dir, where: c.where, infoPath: info, version, marker };
+    }
+    if (!base) base = { dir: c.dir, where: c.where, infoPath: info, version };
   }
-  for (const sub of ['42', 'common', '41', ...names]) {
-    const p = path.join(base, sub, 'mod.info');
-    if (fs.existsSync(p)) return { installed: true, dir: base, version: readModVersion(p) };
-  }
-  return { installed: false, dir: null, version: '' };
+  return { installed: false, dir: null, where: null, infoPath: null, version: '', base };
 }
 
 // A Steam-en letöltött (régi) Project Viewpoint mappája, ha megvan.
@@ -664,37 +704,236 @@ async function installNightly({ cfg, userDataDir, log = () => {}, onProgress = n
   log(`→ ${asset.name} letöltése (${sizeMb})…`);
   await pzo.downloadAsset(asset, zipFile, cfg, log, onProgress);
 
-  const modsRoot = path.join(zomboidDir(), 'mods');
-  fs.mkdirSync(modsRoot, { recursive: true });
-  // Takarítás: a régi hely (Zomboid\Workshop\Viewpoint) és egy korábbi félkész
-  // telepítés. A nightly a játék mod mappájába kerül, mert csak onnan tölt be.
-  for (const stale of [nightlyLegacyDir(), nightlyDir()]) {
-    fs.rmSync(stale, { recursive: true, force: true });
-  }
+  // Előbb ideiglenes mappába csomagolunk, és csak ellenőrzés után cseréljük le a
+  // bent lévő Viewpointot – így egy félkész kicsomagolás nem viszi el a működő modot.
+  const staging = path.join(userDataDir, 'packs', '_nightly');
+  fs.rmSync(staging, { recursive: true, force: true });
+  fs.mkdirSync(staging, { recursive: true });
 
-  log('  kicsomagolás: Zomboid\\mods\\Viewpoint');
-  await extractFolder(zipFile, NIGHTLY.modsPrefix, modsRoot);
+  log('  kicsomagolás…');
+  try {
+    await extractFolder(zipFile, NIGHTLY.modsPrefix, staging);
+  } catch (err) {
+    fs.rmSync(staging, { recursive: true, force: true });
+    throw err;
+  }
   fs.rmSync(zipFile, { force: true });
 
-  const st = nightlyStatus();
-  if (!st.installed) {
-    fs.rmSync(nightlyDir(), { recursive: true, force: true });
+  const staged = path.join(staging, NIGHTLY.folder);
+  if (!findModInfo(staged)) {
+    fs.rmSync(staging, { recursive: true, force: true });
     throw new Error(
       `${NIGHTLY.label}: a zipben nincs Viewpoint\\Contents\\mods\\Viewpoint – a mod nem tölthető be.`
     );
   }
 
+  // Hova kerüljön: a workshop példány mappájába, ha van (így nincs duplikált
+  // ID), különben a játék saját mod mappájába. Ha a workshop mappa nem írható
+  // (Program Files + jogosultságok), a játék mod mappájára esünk vissza.
+  const workshopDir = nightlyWorkshopDir();
+  const candidates = [workshopDir, nightlyLocalDir()].filter(Boolean);
+  let placed = false;
+  for (const dest of candidates) {
+    try {
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.rmSync(dest, { recursive: true, force: true });
+      try {
+        fs.renameSync(staged, dest);
+      } catch {
+        try {
+          fs.cpSync(staged, dest, { recursive: true });
+        } catch (err) {
+          fs.rmSync(dest, { recursive: true, force: true });
+          throw err;
+        }
+      }
+      placed = true;
+      break;
+    } catch (err) {
+      log(`! ${dest} nem írható (${err.message}) – a másik helyet próbálom.`);
+    }
+  }
+  fs.rmSync(staging, { recursive: true, force: true });
+  if (!placed) {
+    throw new Error(`${NIGHTLY.label}: a mod mappájába nem sikerült írni – zárd be a játékot és a Steamet.`);
+  }
+
+  // A másik helyen maradt példány két azonos ID-jű Viewpointot jelentene.
+  const active = nightlyStatus();
+  for (const other of candidates) {
+    if (active.dir && path.resolve(other) !== path.resolve(active.dir) && findModInfo(other)) {
+      try {
+        fs.rmSync(other, { recursive: true, force: true });
+        log(`• A másik helyen maradt Viewpoint példány törölve: ${other}`);
+      } catch (err) {
+        log(`! A másik Viewpoint példány nem törölhető (${err.message}).`);
+      }
+    }
+  }
+  fs.rmSync(nightlyLegacyDir(), { recursive: true, force: true });
+
+  const st = nightlyStatus();
+  if (!st.installed) {
+    throw new Error(`${NIGHTLY.label}: a telepítés nem sikerült, a mod.info nem található a helyén.`);
+  }
+  try {
+    fs.writeFileSync(path.join(st.dir, NIGHTLY_MARKER), 'nightly ' + new Date().toISOString() + '\n');
+  } catch {
+    // A jelölő best effort: a mod.info verziója is elég a felismeréshez.
+  }
+
   const en = modlist.ensureEnabled(zomboidDir(), [NIGHTLY.modId]);
   if (en.changed) log(`✓ ${NIGHTLY.modId} engedélyezve a játék mod listájában.`);
 
-  // A kollekció alap Viewpointja nem maradhat bent: két azonos ID-jű Viewpoint
-  // összeakad, ezért a nightly mellé tettük a törlést is. Ha a mappa nem
-  // törölhető (Steam zárja), a mod ID-jai akkor is kikerülnek a listából.
   removeBaseViewpoint({ log });
+  logNightlyCompat({ log });
 
   const version = st.version ? ` ${st.version}` : '';
-  log(`✓ ${NIGHTLY.label}${version} telepítve: Zomboid\\mods\\Viewpoint`);
-  return { ok: true, id: 'nightly', name: asset.name, version: st.version, dir: nightlyDir() };
+  const where =
+    st.where === 'workshop' ? 'Workshop\\3809306528\\mods\\Viewpoint' : 'Zomboid\\mods\\Viewpoint';
+  log(`✓ ${NIGHTLY.label}${version} telepítve: ${where}`);
+  return { ok: true, id: 'nightly', name: asset.name, version: st.version, dir: st.dir };
+}
+
+// -------------------------------------------------- nightly kompatibilitás
+// A nightly mod.info-ja megmondja, melyik játékbuilden hajlandó betöltődni
+// (versionMin/versionMax), és hogy Java agentet (ZombieBuddy) kér. Ha ezek nem
+// teljesülnek, a játék csendben eldobja a modot – ezért ide írjuk ki.
+
+function parseVersion(value) {
+  return String(value || '')
+    .split(/[^0-9]+/)
+    .filter(Boolean)
+    .map((n) => parseInt(n, 10))
+    .filter((n) => !Number.isNaN(n));
+}
+
+function compareVersionParts(a, b, length) {
+  for (let i = 0; i < length; i++) {
+    const d = (a[i] || 0) - (b[i] || 0);
+    if (d !== 0) return d > 0 ? 1 : -1;
+  }
+  return 0;
+}
+
+// A játékbuild a Zomboid\version.txt első mezője (pl. "42.22.2").
+function gameBuild() {
+  try {
+    const txt = fs.readFileSync(path.join(zomboidDir(), 'version.txt'), 'utf8');
+    const m = txt.match(/^\s*(\d+(?:\.\d+)*)/);
+    return m ? m[1] : '';
+  } catch {
+    return '';
+  }
+}
+
+// A ZombieBuddy agent mappái a Steam workshop tartalomban (Java agent mod).
+function zombieBuddyDirs() {
+  let libs = [];
+  try {
+    const steam = findSteamPath();
+    libs = steam ? parseLibraryPaths(steam) : [];
+  } catch {
+    libs = [];
+  }
+  const found = [];
+  for (const lib of libs) {
+    const content = path.join(lib, 'steamapps', 'workshop', 'content', PZ_APP_ID);
+    let ids = [];
+    try {
+      ids = fs
+        .readdirSync(content, { withFileTypes: true })
+        .filter((e) => e.isDirectory())
+        .map((e) => e.name);
+    } catch {
+      continue;
+    }
+    for (const id of ids) {
+      const dir = path.join(content, id, 'mods', 'ZombieBuddy');
+      if (fs.existsSync(dir)) found.push(dir);
+    }
+  }
+  return found;
+}
+
+// A mod.info követelményeinek (build-ablak, ZombieBuddy agent) tisztán
+// számolható ellenőrzése – így tesztelhető is.
+function checkNightlyRequirements({ info = '', game = '', agentPresent = true } = {}) {
+  const pick = (key) => {
+    const m = String(info).match(new RegExp(`^\\s*${key}\\s*=\\s*(.+)$`, 'im'));
+    return m ? m[1].trim() : '';
+  };
+
+  const min = pick('versionMin');
+  const max = pick('versionMax');
+  const g = parseVersion(game);
+  const problems = [];
+
+  if (g.length) {
+    const minParts = parseVersion(min);
+    const maxParts = parseVersion(max);
+    if (minParts.length && compareVersionParts(g, minParts, minParts.length) < 0) {
+      problems.push(`a játék buildje ${game}, a NIGHTLY minimum ${min} – a játék eldobja a modot.`);
+    }
+    if (maxParts.length && compareVersionParts(g, maxParts, maxParts.length) > 0) {
+      problems.push(`a játék buildje ${game}, a NIGHTLY legfeljebb ${max} – a játék eldobja a modot.`);
+    }
+  }
+
+  const needsAgent = /^\s*require\s*=\s*\\?ZombieBuddy/mi.test(String(info));
+  const agentMin = pick('ZBVersionMin');
+  if (needsAgent && !agentPresent) {
+    problems.push(
+      `a NIGHTLY Java agentet kér (ZombieBuddy${agentMin ? ' ≥ ' + agentMin : ''}), de a ZombieBuddy nincs a gépen – ` +
+        'a Steam Workshop 3619862853 vagy a Master mappából futtatott installer kell hozzá.'
+    );
+  }
+
+  return { ok: problems.length === 0, min, max, needsAgent, agentMin, problems };
+}
+
+// A telepített nightly és a játék build / ZombieBuddy agent összevetése.
+function nightlyCompat() {
+  const st = nightlyStatus();
+  if (!st.installed) return { installed: false, ok: false, problems: [] };
+
+  let raw = '';
+  try {
+    raw = fs.readFileSync(st.infoPath, 'utf8');
+  } catch {
+    raw = '';
+  }
+
+  const game = gameBuild();
+  const needsAgent = /^\s*require\s*=\s*\\?ZombieBuddy/mi.test(raw);
+  const agentDirs = needsAgent ? zombieBuddyDirs() : [];
+  const res = checkNightlyRequirements({ info: raw, game, agentPresent: agentDirs.length > 0 });
+
+  return {
+    installed: true,
+    ok: res.ok,
+    gameVersion: game,
+    min: res.min,
+    max: res.max,
+    needsAgent: res.needsAgent,
+    agentMin: res.agentMin,
+    agentPresent: agentDirs.length > 0,
+    problems: res.problems,
+  };
+}
+
+function logNightlyCompat({ log = () => {} } = {}) {
+  const c = nightlyCompat();
+  if (!c.installed) return c;
+  if (c.ok) {
+    log(
+      `✓ ${NIGHTLY.label} kompatibilis (játék ${c.gameVersion || '?'}, igény ${c.min || '?'}–${c.max || '?'}` +
+        `${c.needsAgent ? ', ZombieBuddy agent megvan' : ''}).`
+    );
+  } else {
+    for (const p of c.problems) log('⚠ ' + p);
+  }
+  return c;
 }
 
 // Ha már a kért verzió van bent, nem tölti le újra.
@@ -712,6 +951,7 @@ async function ensureNightly({ cfg, userDataDir, log = () => {}, onProgress = nu
   if (st.installed && want && String(st.version).toLowerCase().includes(want)) {
     log(`• ${NIGHTLY.label} már naprakész (${st.version}).`);
     removeBaseViewpoint({ log });
+    logNightlyCompat({ log });
     return { ok: true, skipped: true, version: st.version };
   }
 
@@ -742,6 +982,13 @@ module.exports = {
   nightlyTag,
   nightlyStatus,
   nightlyDir,
+  nightlyLocalDir,
+  nightlyWorkshopDir,
+  nightlyCompat,
+  logNightlyCompat,
+  checkNightlyRequirements,
+  zombieBuddyDirs,
+  gameBuild,
   nightlyLegacyDir,
   disableBaseViewpointMods,
   NIGHTLY_MOD_ID: NIGHTLY.modId,

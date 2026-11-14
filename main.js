@@ -954,7 +954,7 @@ ipcMain.handle('zb:install', async () => {
   if (busy) return { ok: false, error: 'Már fut egy művelet.' };
   busy = true;
   try {
-    const res = await zbInstaller.runMasterBat({
+    const res = await zbInstaller.installZombieBuddy({
       cfg,
       userDataDir: app.getPath('userData'),
       gameDir: resolveGamePath(cfg),

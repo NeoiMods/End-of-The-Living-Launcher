@@ -360,6 +360,7 @@ function applyConfig({ onLog = () => {}, onProgress = () => {}, lang = 'hu' } = 
     mods.removeBaseViewpoint({ log: onLog });
     const nightlyEnabled = modlist.ensureEnabled(zomboidDir, [mods.NIGHTLY_MOD_ID]);
     if (nightlyEnabled.changed) onLog(`✓ ${mods.NIGHTLY_MOD_ID} (NIGHTLY) engedélyezve.`);
+    mods.logNightlyCompat({ log: onLog });
   }
 
   onLog(

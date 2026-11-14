@@ -490,20 +490,26 @@ async function runZombieBuddyInstaller({ userDataDir, onLog = () => {}, onProgre
 
 // --------------------------------------------------- installer bat (Master)
 // A launcher nem telepít agentet maga: a Master mappában lévő ZombieBuddy
-// installer bat-ot futtatja, minden mást arra bíz.
+// installer bat-ot futtatja a játék mappájában, minden mást arra bíz. Ha nincs
+// bat, a hivatalos exe telepítőre esik vissza (az nem maradhat ki).
 
-const BAT_PATTERN = /zombiebuddy[^/]*\.bat$/i;
+// Bármelyik .bat szóba jön a Master mappából; a ZombieBuddy nevűt előnyben.
+const BAT_ANY = /\.bat$/i;
+const BAT_PREFERRED = /zombiebuddy/i;
 
 async function findMasterBat({ cfg = {}, userDataDir, onLog = () => {} }) {
   const pzo = pzoModule();
   const repo = pzo.repoOf(cfg);
   const folder = pzo.folderOf(cfg);
   const files = await pzo.listFiles(cfg, repo, folder, userDataDir);
-  const bats = files.filter((f) => BAT_PATTERN.test(String(f.name || '')));
+  const bats = files.filter((f) => BAT_ANY.test(String(f.name || '')));
   if (!bats.length) return null;
-  bats.sort((a, b) => String(a.name).localeCompare(String(b.name)));
-  const asset = bats[bats.length - 1];
-  onLog(`• ZombieBuddy installer a ${folder}/ mappából: ${asset.name}`);
+  const preferred = bats.filter((b) => BAT_PREFERRED.test(String(b.name || '')));
+  const pool = (preferred.length ? preferred : bats).sort((a, b) =>
+    String(a.name).localeCompare(String(b.name))
+  );
+  const asset = pool[pool.length - 1];
+  onLog(`• installer a ${folder}/ mappából: ${asset.name}`);
   return { repo, folder, asset };
 }
 
@@ -514,20 +520,46 @@ function logOutput(text, onLog) {
   }
 }
 
-// A bat futtatása a játék mappájában (oda telepít), a kimenet a naplóba megy.
+// A bat futtatása. A batot a játék mappájába tesszük, és ott is futtatjuk: a
+// legtöbb installer a saját mappájához képest (%~dp0) másol, különben a
+// letöltési mappába telepítene. Az stdin le van zárva (a `pause` nem akasztja
+// meg a launchert), és van időkorlát is.
+const BAT_TIMEOUT = 20 * 60 * 1000;
+
 function runBat(batPath, cwd, onLog) {
   return new Promise((resolve) => {
-    onLog('— ZombieBuddy installer futtatása —');
+    onLog('— installer futtatása —');
     const child = spawn('cmd.exe', ['/c', 'call', batPath], {
       cwd,
       windowsHide: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
     });
+    let timer = null;
+    const finish = (res) => {
+      if (timer) clearTimeout(timer);
+      timer = null;
+      resolve(res);
+    };
+    timer = setTimeout(() => {
+      onLog('! Az installer 20 perc után sem fejezte be – leállítom.');
+      try {
+        require('child_process').execFileSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], {
+          windowsHide: true,
+        });
+      } catch {
+        // Ha nem sikerül, a close esemény úgyis lefut.
+      }
+      finish({ ok: false, code: -2, message: 'Az installer túl sokáig futott, leállítottam.' });
+    }, BAT_TIMEOUT);
+
     child.stdout.on('data', (d) => logOutput(d.toString('utf8'), onLog));
     child.stderr.on('data', (d) => logOutput(d.toString('utf8'), onLog));
-    child.on('error', (err) => resolve({ ok: false, code: -1, message: 'A telepítő nem indult el: ' + err.message }));
+    child.on('error', (err) =>
+      finish({ ok: false, code: -1, message: 'Az installer nem indult el: ' + err.message })
+    );
     child.on('close', (code) => {
-      if (code === 0) resolve({ ok: true, code, message: 'ZombieBuddy installer lefutott.' });
-      else resolve({ ok: false, code, message: `A ZombieBuddy installer ${code} kóddal zárult.` });
+      if (code === 0) finish({ ok: true, code, message: 'Az installer lefutott.' });
+      else finish({ ok: false, code, message: `Az installer ${code} kóddal zárult.` });
     });
   });
 }
@@ -538,20 +570,52 @@ async function runMasterBat({ cfg = {}, userDataDir, gameDir, onLog = () => {}, 
   const found = await findMasterBat({ cfg, userDataDir, onLog });
   if (!found) {
     const folder = pzo.folderOf(cfg);
-    throw new Error(`Nincs ZombieBuddy installer bat a ${folder}/ mappában – tedd fel oda (pl. ZombieBuddy-installer.bat).`);
+    throw new Error(`Nincs installer bat a ${folder}/ mappában (pl. ZombieBuddy-installer.bat).`);
   }
 
   const dir = installerDir(userDataDir);
   fs.mkdirSync(dir, { recursive: true });
-  const batPath = path.join(dir, path.basename(found.asset.name));
+  const download = path.join(dir, path.basename(found.asset.name));
   onProgress({ label: 'ZombieBuddy installer letöltése…' });
-  await pzo.downloadAsset(found.asset, batPath, cfg, onLog, onProgress);
+  await pzo.downloadAsset(found.asset, download, cfg, onLog, onProgress);
+
+  // A bat a játék mappájában fut, hogy a %~dp0 is oda mutasson (és a végeredmény
+  // a játék mellé kerüljön). Ha a játék mappa nem írható, marad a letöltési hely.
+  let workDir = dir;
+  let batPath = download;
+  if (gameDir) {
+    try {
+      fs.mkdirSync(gameDir, { recursive: true });
+      batPath = path.join(gameDir, path.basename(found.asset.name));
+      if (path.resolve(batPath) !== path.resolve(download)) fs.copyFileSync(download, batPath);
+      workDir = gameDir;
+    } catch (err) {
+      onLog(`! A bat nem másolható a játék mappába (${err.message}) – a letöltési helyről futtatom.`);
+      batPath = download;
+      workDir = dir;
+    }
+  }
 
   onProgress({ label: 'ZombieBuddy installer fut…' });
-  const res = await runBat(batPath, gameDir || dir, onLog);
+  const res = await runBat(batPath, workDir, onLog);
   if (res.ok) onLog('✓ ' + res.message);
   else onLog('✗ ' + res.message);
-  return { ...res, name: path.basename(batPath), version: 'bat' };
+  return { ...res, name: path.basename(batPath), version: 'bat', source: 'bat' };
+}
+
+// ZombieBuddy telepítés: bat, ha van a Master mappában, különben az exe.
+async function installZombieBuddy({ cfg = {}, userDataDir, gameDir, onLog = () => {}, onProgress = () => {} }) {
+  let found = null;
+  try {
+    found = await findMasterBat({ cfg, userDataDir, onLog });
+  } catch (err) {
+    onLog('! A Master mappa nem olvasható (' + err.message + ') – az exe telepítőt próbálom.');
+  }
+  if (found) return { ...(await runMasterBat({ cfg, userDataDir, gameDir, onLog, onProgress })), source: 'bat' };
+
+  onLog('• Nincs bat a Master mappában – a hivatalos exe telepítőt futtatom.');
+  const res = await runZombieBuddyInstaller({ userDataDir, onLog, onProgress });
+  return { ...res, source: 'exe' };
 }
 
 module.exports = {
@@ -561,5 +625,6 @@ module.exports = {
   runZombieBuddyInstaller,
   findMasterBat,
   runMasterBat,
+  installZombieBuddy,
   ANSWERS,
 };
