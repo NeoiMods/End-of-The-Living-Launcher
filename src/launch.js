@@ -6,6 +6,12 @@ const steam = require('./steam');
 
 const GAME_EXE = 'ProjectZomboid64.exe';
 const AGENT_LIB = 'zbNative';
+// A PZO motor (PZ Optimizer) saját belépője és natív agentje. Enélkül a JSON-ban
+// a motor nem tölt be, hiába van bent a PZOptimEngine.jar.
+const PZO_MAIN_CLASS = 'com/pzoptimizer/PZOEntrypoint';
+const PZO_ENGINE_JAR = 'PZOptimEngine.jar';
+const PZO_NATIVE_DLL = 'pzo_native64.dll';
+const PZO_AGENT_LIB = 'pzo_native64';
 const AGENT_JAR = 'ZombieBuddy.jar';
 const AGENT_DLL = 'zbNative.dll';
 const LAUNCHER_JSON = 'ProjectZomboid64.json';
@@ -140,7 +146,54 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
 
   const vmArgs = Array.isArray(data.vmArgs) ? data.vmArgs : [];
   const filtered = vmArgs.filter((a) => typeof a === 'string' && !/^-Xm[sx]/i.test(a) && stripGc(a));
-  const nextVmArgs = [...filtered, ...wanted];
+  let nextVmArgs = [...filtered, ...wanted];
+
+  // A PZO motor csak akkor tölt be, ha a launcher JSON-ben benne van a saját
+  // mainClass-a, a classpath-ja és a natív agentje. A ZombieBuddy agentje
+  // ugyanígy kell. Ezeket minden indításnál ellenőrizzük és pótoljuk, mert a
+  // telepítők (PZO / ZombieBuddy) néha felülírják a fájlt.
+  const added = [];
+  const hasFile = (name) => {
+    try {
+      return fs.existsSync(path.join(gameDir, name));
+    } catch {
+      return false;
+    }
+  };
+  const hasArg = (list, re) => list.some((a) => typeof a === 'string' && re.test(a));
+
+  const pzoJar = hasFile(PZO_ENGINE_JAR);
+  const pzoNative = hasFile(PZO_NATIVE_DLL);
+  const zbJar = hasFile(AGENT_JAR);
+  const zbNative = hasFile(AGENT_DLL);
+
+  if (pzoJar) {
+    if (String(data.mainClass || '') !== PZO_MAIN_CLASS) {
+      data.mainClass = PZO_MAIN_CLASS;
+      added.push('mainClass');
+    }
+
+    const desiredCp = ['.', PZO_ENGINE_JAR]
+      .concat(zbJar ? [AGENT_JAR] : [])
+      .concat(['projectzomboid.jar']);
+    const cp = Array.isArray(data.classpath) ? data.classpath.filter((x) => typeof x === 'string') : [];
+    const extras = cp.filter((x) => !desiredCp.includes(x));
+    const nextCp = [...desiredCp, ...extras];
+    if (nextCp.join('\n') !== cp.join('\n')) {
+      data.classpath = nextCp;
+      added.push('classpath');
+    }
+
+    if (pzoNative && !hasArg(nextVmArgs, /^-agentlib:pzo_native64$/i)) {
+      nextVmArgs.push('-agentlib:' + PZO_AGENT_LIB);
+      added.push('-agentlib:' + PZO_AGENT_LIB);
+    }
+  }
+
+  if (zbJar && zbNative && !hasArg(nextVmArgs, /^-agentlib:zbNative$/i)) {
+    nextVmArgs.push('-agentlib:' + AGENT_LIB);
+    added.push('-agentlib:' + AGENT_LIB);
+  }
 
   // A windows alatti listákból is kivesszük a GC-kapcsolókat (és a heapet).
   let nestedChanged = false;
@@ -160,11 +213,13 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
   };
   fixNested(data.windows);
 
+  const sameVm = nextVmArgs.length === vmArgs.length && nextVmArgs.every((a, i) => a === vmArgs[i]);
   const same =
     !nestedChanged &&
-    filtered.length === vmArgs.length &&
+    added.length === 0 &&
+    sameVm &&
     wanted.every((w) => vmArgs.some((a) => typeof a === 'string' && a.toLowerCase() === w.toLowerCase()));
-  if (same) return { changed: false, file, heapMb };
+  if (same) return { changed: false, file, heapMb, added };
 
   data.vmArgs = nextVmArgs;
   try {
@@ -184,7 +239,7 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
         // Best effort: ha nem megy, a következő indítás úgyis javít.
       }
     }
-    return { changed: true, file, heapMb, locked: zgc };
+    return { changed: true, file, heapMb, locked: zgc, added };
   } catch (err) {
     return {
       changed: false,
@@ -302,12 +357,18 @@ async function launchGame({ gameDir, cfg, onLog, zgc = true }) {
   if (!fs.existsSync(exe)) throw new Error(`Nem található: ${exe}`);
 
   const heapMb = Number((cfg && cfg.jvmMaxMb) || 8192) || 8192;
-  const st = agentStatus(gameDir);
-  const useAgent = st.present && !st.configured;
 
   const heap = applyHeapToLauncherJson(gameDir, heapMb, { zgc });
   if (heap.changed) onLog(`Memória beállítva a játék launcherében: -Xms${heapMb}m -Xmx${heapMb}m${zgc ? ' -XX:+UseZGC' : ''}`);
   else if (heap.reason) onLog('! ' + heap.reason);
+  if (heap.added && heap.added.length) {
+    onLog('• Launcher JSON kiegészítve: PZO motor (mainClass + classpath + pzo_native64) és ZombieBuddy agent bent van.');
+  }
+
+  // Az agent-állapotot a JSON írása UTÁN nézzük: ha most írtuk bele, akkor már
+  // nem kell parancssorból is átadni (két agentlib ugyanarra a JVM-re hiba).
+  const st = agentStatus(gameDir);
+  const useAgent = st.present && !st.configured;
 
   // Ha a JSON-ban két GC-választó maradt, a JVM el sem indul („Multiple garbage
   // collectors selected”) – ezt minden indítás előtt ellenőrizzük.

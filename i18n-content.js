@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                    // ---- 0.9.31 (a Viewpoint nem törlődik) ----
+                                                        // ---- 0.9.32 (PZO motor a JSON-ban) ----
+    "0.9.32 – A launcher a JSON-ba írja a PZO motort és a ZombieBuddy agentet":
+      "0.9.32 – The launcher writes the PZO engine and the ZombieBuddy agent into the JSON",
+    "A játék a ProjectZomboid64.json-ból indul, és ha abból kimarad a PZO motor (mainClass, classpath) vagy valamelyik agent, a motor nem tölt be. A telepítők (PZO, ZombieBuddy) néha felülírják a fájlt, ezért a launcher mostantól minden indítás előtt ellenőrzi és pótolja: mainClass = com/pzoptimizer/PZOEntrypoint, classpath (PZO + ZombieBuddy + játék jar), -agentlib:pzo_native64 és -agentlib:zbNative. A fájl továbbra is csak ZGC-t tartalmaz és írásvédett marad, hogy a PZO ne írja vissza a G1-et.":
+      "The game starts from ProjectZomboid64.json, and if the PZO engine (mainClass, classpath) or one of the agents is missing from it, the engine does not load. The installers (PZO, ZombieBuddy) sometimes overwrite the file, so the launcher now checks and completes it before every launch: mainClass = com/pzoptimizer/PZOEntrypoint, the classpath (PZO + ZombieBuddy + game jars), -agentlib:pzo_native64 and -agentlib:zbNative. The file still contains only ZGC and stays read-only so the PZO cannot write G1 back.",
+    "A launcher indítás előtt pótolja a PZO motort a ProjectZomboid64.json-ban (mainClass + classpath).":
+      "Before launching, the launcher completes the PZO engine in ProjectZomboid64.json (mainClass + classpath).",
+    "Mindkét agent bekerül a JSON-ba: -agentlib:pzo_native64 és -agentlib:zbNative.":
+      "Both agents go into the JSON: -agentlib:pzo_native64 and -agentlib:zbNative.",
+    "A ZGC és a heap marad, a fájl továbbra is írásvédett (nincs több G1-visszaírás).":
+      "ZGC and the heap stay, and the file stays read-only (no more G1 write-back).",
+    "Ha a JSON már rendben van, nem írja újra a fájlt (nincs fölösleges írás/lexár).":
+      "If the JSON is already correct, the file is not rewritten (no pointless writes/re-locks).",
+// ---- 0.9.31 (a Viewpoint nem törlődik) ----
     "0.9.31 – A launcher nem törli többé a Viewpointot (újra 714 mod)":
       "0.9.31 – The launcher no longer deletes the Viewpoint (714 mods again)",
     "A NIGHTLY bevezetésekor a launcher kivette a gépről az alap Project Viewpoint workshop mappáját, hogy ne legyen két azonos ID-jű Viewpoint. Ez viszont az egész Viewpoint-ökoszisztémát magával vitte: a rá épülő kiegészítők (require=Viewpoint) csendben kimaradtak, ezért töltött be a játék csak 659 modot a 714 helyett. A launcher mostantól nem töröl és nem kapcsol ki semmit a workshopból. A hiányzó Viewpoint visszakerült a helyére (a lista ismét 714 mod), és ha valaha üres/kitörölt workshop mappa lenne, a modpack-telepítés újra letölti a SteamCMD-vel.":
