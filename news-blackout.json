@@ -1,7 +1,23 @@
 {
-  "version": "0.9.21",
+  "version": "0.9.22",
   "updatedAt": "2026-11-14",
   "items": [
+    {
+      "id": "0.9.22",
+      "version": "0.9.22",
+      "date": "2026-11-14",
+      "tag": "VIEWPOINT + ZOMBIEBUDDY",
+      "title": "0.9.22 – ZombieBuddy telepítő újra, Steam bezárással; a nightly a mods mappában marad",
+      "text": "A ZombieBuddy telepítő ismét lefut: a launcher bezárja a Steamet, ha fut (előbb szabályosan, ha kell, kényszerítve) – enélkül a telepítő nem megy végig –, és a telepítő saját ablakában fut, hogy végig lehessen követni. A Viewpoint NIGHTLY továbbra is kizárólag a Zomboid\\mods mappába települ, a workshop mappába nem írunk: a bent maradt workshop Viewpoint példányt vesszük ki, hogy ne legyen két azonos ID-jű mod. A ZombieBuddy kártya az endoftheliving oldalon is elérhető, tehát onnan is telepíthető.",
+      "changes": [
+        "ZombieBuddy: a launcher bezárja a Steamet, ha fut, és megvárja, míg eltűnik (szükség esetén kényszerített bezárás).",
+        "ZombieBuddy: a telepítő (exe vagy bat) látható ablakban fut, hogy biztosan végigmenjen.",
+        "ZombieBuddy: ha nincs bat a Master mappában, a hivatalos exe telepítő fut le.",
+        "ZombieBuddy kártya az endoftheliving (többjátékos) oldalon is megjelenik – onnan is telepíthető.",
+        "NIGHTLY: kizárólag a Zomboid\\mods\\Viewpoint mappába települ, a workshop mappába nem írunk.",
+        "NIGHTLY: a workshopon maradt Viewpoint példány kikerül, hogy ne legyen két azonos ID-jű mod."
+      ]
+    },
     {
       "id": "0.9.21",
       "version": "0.9.21",

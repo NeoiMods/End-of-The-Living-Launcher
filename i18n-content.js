@@ -16,7 +16,24 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-            // ---- 0.9.21 (nightly + installer javítás) ----
+                // ---- 0.9.22 (Steam bezárás + helyi nightly) ----
+    "0.9.22 – ZombieBuddy telepítő újra, Steam bezárással; a nightly a mods mappában marad":
+      "0.9.22 – ZombieBuddy installer back, with Steam shutdown; the nightly stays in the mods folder",
+    "A ZombieBuddy telepítő ismét lefut: a launcher bezárja a Steamet, ha fut (előbb szabályosan, ha kell, kényszerítve) – enélkül a telepítő nem megy végig –, és a telepítő saját ablakában fut, hogy végig lehessen követni. A Viewpoint NIGHTLY továbbra is kizárólag a Zomboid\\mods mappába települ, a workshop mappába nem írunk: a bent maradt workshop Viewpoint példányt vesszük ki, hogy ne legyen két azonos ID-jű mod. A ZombieBuddy kártya az endoftheliving oldalon is elérhető, tehát onnan is telepíthető.":
+      "The ZombieBuddy installer runs again: the launcher closes Steam if it is running (gracefully first, forcefully if needed) – without that the installer never finishes – and the installer runs in its own window so you can follow it. The Viewpoint NIGHTLY is still installed only into Zomboid\\mods; nothing is written into the Workshop folder, and the leftover Workshop Viewpoint copy is removed so there are no two mods with the same ID. The ZombieBuddy card is also available on the endoftheliving page, so it can be installed from there too.",
+    "ZombieBuddy: a launcher bezárja a Steamet, ha fut, és megvárja, míg eltűnik (szükség esetén kényszerített bezárás).":
+      "ZombieBuddy: the launcher closes Steam if it is running and waits for it to disappear (force-closing if needed).",
+    "ZombieBuddy: a telepítő (exe vagy bat) látható ablakban fut, hogy biztosan végigmenjen.":
+      "ZombieBuddy: the installer (exe or bat) runs in a visible window so it can finish properly.",
+    "ZombieBuddy: ha nincs bat a Master mappában, a hivatalos exe telepítő fut le.":
+      "ZombieBuddy: with no bat in the Master folder, the official exe installer runs.",
+    "ZombieBuddy kártya az endoftheliving (többjátékos) oldalon is megjelenik – onnan is telepíthető.":
+      "The ZombieBuddy card also shows on the endoftheliving (multiplayer) page, so it can be installed from there.",
+    "NIGHTLY: kizárólag a Zomboid\\mods\\Viewpoint mappába települ, a workshop mappába nem írunk.":
+      "NIGHTLY: installs only into Zomboid\\mods\\Viewpoint; nothing is written into the Workshop folder.",
+    "NIGHTLY: a workshopon maradt Viewpoint példány kikerül, hogy ne legyen két azonos ID-jű mod.":
+      "NIGHTLY: the Workshop Viewpoint copy is removed so there are no two mods with the same ID.",
+// ---- 0.9.21 (nightly + installer javítás) ----
     "0.9.21 – A nightly és a ZombieBuddy telepítés javítva":
       "0.9.21 – Fixed the nightly and ZombieBuddy installation",
     "A Viewpoint NIGHTLY eddig csendben nem töltődött be: a játék a régi workshop Viewpointot (0.1.6.2) látta helyette. Mostantól a nightly a meglévő workshop példány helyére kerül (nincs két azonos ID-jű Viewpoint), telepítés előtt ideiglenes mappába csomagolunk és csak ellenőrzés után cserélünk, a napló pedig kiírja, ha a játékbuild (42.22) vagy a ZombieBuddy agent hiánya miatt a mod nem tud betöltődni. A ZombieBuddy telepítés sem maradhat ki: ha nincs installer bat a Master mappában, a hivatalos exe telepítő fut le, ha van bat, akkor a játék mappájába másolva futtatjuk – így a saját mappájához képest másoló installer is jó helyre telepít, és a bat végén lévő pause sem akasztja meg a launchert.":

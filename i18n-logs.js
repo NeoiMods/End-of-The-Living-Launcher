@@ -6,6 +6,17 @@
   if (!i18n) return;
 
   i18n.addTemplates([
+    // ---- 0.9.22 (Steam bezárás, helyi nightly) ----
+    ["• A Steam fut – bezárom, mert a ZombieBuddy telepítő csak így fut végig…", "• Steam is running – closing it so the ZombieBuddy installer can finish…"],
+    ["• A Steam még fut – kényszerített bezárás.", "• Steam is still running – forcing it to close."],
+    ["✓ A Steam bezárva.", "✓ Steam closed."],
+    ["! A Steam nem záródott be – a ZombieBuddy telepítő elakadhat.", "! Steam did not close – the ZombieBuddy installer may get stuck."],
+    ["! A Steam bezárása nem sikerült: {s}", "! Could not close Steam: {s}"],
+    ["⚠ A telepítő a Steam bezárását kéri – bezárom.", "⚠ The installer asks for Steam to be closed – closing it."],
+    ["✓ A Steam bezárva – folytatás…", "✓ Steam closed – continuing…"],
+    ["• A workshop Viewpoint példány eltávolítva – a NIGHTLY a Zomboid\\\\mods mappában fut.", "• The Workshop Viewpoint copy was removed – the NIGHTLY runs from Zomboid\\\\mods."],
+    ["! A workshop Viewpoint nem törölhető ({s}) – zárd be a Steamet.", "! The Workshop Viewpoint cannot be removed ({s}) – close Steam."],
+    ["Viewpoint NIGHTLY: a Zomboid\\\\mods mappájába nem sikerült írni ({s}).", "Viewpoint NIGHTLY: could not write into Zomboid\\\\mods ({s})."],
     // ---- 0.9.21 (nightly telepítés) ----
     ["! {s} nem írható ({s}) – a másik helyet próbálom.", "! {s} is not writable ({s}) – trying the other location."],
     ["• A másik helyen maradt Viewpoint példány törölve: {s}", "• The leftover Viewpoint copy in the other location was removed: {s}"],

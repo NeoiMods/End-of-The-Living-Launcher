@@ -510,21 +510,19 @@ function removeBaseViewpoint({ log = () => {} } = {}) {
 
   const disabled = disableBaseViewpointMods({ log });
 
-  // A workshop mappát NEM töröljük: a nightly oda kerül (lásd installNightly),
-  // és a Steam a törölt tartalmat visszatöltené – így két azonos ID-jű
-  // Viewpoint maradna, amiből a játék a régit (0.1.6.x) választja.
+  // A nightly a Zomboid\\mods mappában fut, ezért a workshop példány nem
+  // maradhat bent (két azonos ID-jű Viewpoint közül a játék a régit venné).
+  // Bele nem írunk, csak a duplikált mappát vesszük ki – a Steam visszatöltheti,
+  // ezért induláskor is lefut ez az ellenőrzés.
   const removed = [];
-  const st = nightlyStatus();
-  if (st.where === 'workshop') {
-    const local = nightlyLocalDir();
-    if (fs.existsSync(local)) {
-      try {
-        fs.rmSync(local, { recursive: true, force: true });
-        removed.push(local);
-        log('• A korábbi helyi Viewpoint másolat törölve – a NIGHTLY a Workshop mappában fut.');
-      } catch (err) {
-        log(`! A helyi Viewpoint másolat nem törölhető (${err.message}).`);
-      }
+  const ws = nightlyWorkshopDir();
+  if (ws && fs.existsSync(ws)) {
+    try {
+      fs.rmSync(ws, { recursive: true, force: true });
+      removed.push(ws);
+      log('• A workshop Viewpoint példány eltávolítva – a NIGHTLY a Zomboid\\mods mappában fut.');
+    } catch (err) {
+      log(`! A workshop Viewpoint nem törölhető (${err.message}) – zárd be a Steamet.`);
     }
   }
   return { ok: true, removed, disabled: disabled.disabled || [] };
@@ -603,7 +601,7 @@ function findModInfo(dir) {
 function nightlyDir() {
   const st = nightlyStatus();
   if (st.dir) return st.dir;
-  return nightlyWorkshopDir() || nightlyLocalDir();
+  return nightlyLocalDir();
 }
 
 function readModVersion(modInfoPath) {
@@ -629,8 +627,8 @@ function isNightlyVersion(version) {
 // az él, az a mérvadó. Az alap Viewpoint (0.1.6.2) nem nightly.
 function nightlyStatus() {
   const candidates = [
-    { dir: nightlyWorkshopDir(), where: 'workshop' },
     { dir: nightlyLocalDir(), where: 'mods' },
+    { dir: nightlyWorkshopDir(), where: 'workshop' },
   ];
   let base = null;
   for (const c of candidates) {
@@ -727,49 +725,23 @@ async function installNightly({ cfg, userDataDir, log = () => {}, onProgress = n
     );
   }
 
-  // Hova kerüljön: a workshop példány mappájába, ha van (így nincs duplikált
-  // ID), különben a játék saját mod mappájába. Ha a workshop mappa nem írható
-  // (Program Files + jogosultságok), a játék mod mappájára esünk vissza.
-  const workshopDir = nightlyWorkshopDir();
-  const candidates = [workshopDir, nightlyLocalDir()].filter(Boolean);
-  let placed = false;
-  for (const dest of candidates) {
+  // A nightly KIZÁRÓLAG a játék saját mod mappájába kerül
+  // (Zomboid\\mods\\Viewpoint) – a workshop mappába nem írunk.
+  const target = nightlyLocalDir();
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.rmSync(target, { recursive: true, force: true });
+  try {
+    fs.renameSync(staged, target);
+  } catch {
     try {
-      fs.mkdirSync(path.dirname(dest), { recursive: true });
-      fs.rmSync(dest, { recursive: true, force: true });
-      try {
-        fs.renameSync(staged, dest);
-      } catch {
-        try {
-          fs.cpSync(staged, dest, { recursive: true });
-        } catch (err) {
-          fs.rmSync(dest, { recursive: true, force: true });
-          throw err;
-        }
-      }
-      placed = true;
-      break;
+      fs.cpSync(staged, target, { recursive: true });
     } catch (err) {
-      log(`! ${dest} nem írható (${err.message}) – a másik helyet próbálom.`);
+      fs.rmSync(target, { recursive: true, force: true });
+      fs.rmSync(staging, { recursive: true, force: true });
+      throw new Error(`${NIGHTLY.label}: a Zomboid\\mods mappájába nem sikerült írni (${err.message}).`);
     }
   }
   fs.rmSync(staging, { recursive: true, force: true });
-  if (!placed) {
-    throw new Error(`${NIGHTLY.label}: a mod mappájába nem sikerült írni – zárd be a játékot és a Steamet.`);
-  }
-
-  // A másik helyen maradt példány két azonos ID-jű Viewpointot jelentene.
-  const active = nightlyStatus();
-  for (const other of candidates) {
-    if (active.dir && path.resolve(other) !== path.resolve(active.dir) && findModInfo(other)) {
-      try {
-        fs.rmSync(other, { recursive: true, force: true });
-        log(`• A másik helyen maradt Viewpoint példány törölve: ${other}`);
-      } catch (err) {
-        log(`! A másik Viewpoint példány nem törölhető (${err.message}).`);
-      }
-    }
-  }
   fs.rmSync(nightlyLegacyDir(), { recursive: true, force: true });
 
   const st = nightlyStatus();
@@ -789,9 +761,7 @@ async function installNightly({ cfg, userDataDir, log = () => {}, onProgress = n
   logNightlyCompat({ log });
 
   const version = st.version ? ` ${st.version}` : '';
-  const where =
-    st.where === 'workshop' ? 'Workshop\\3809306528\\mods\\Viewpoint' : 'Zomboid\\mods\\Viewpoint';
-  log(`✓ ${NIGHTLY.label}${version} telepítve: ${where}`);
+  log(`✓ ${NIGHTLY.label}${version} telepítve: Zomboid\\mods\\Viewpoint`);
   return { ok: true, id: 'nightly', name: asset.name, version: st.version, dir: st.dir };
 }
 

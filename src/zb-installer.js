@@ -263,6 +263,36 @@ function earliest(buf, patterns) {
   return best;
 }
 
+// A ZombieBuddy telepítő megköveteli, hogy a Steam ne fusson – bezárjuk
+// (először szabályosan, aztán kényszerítve), majd megvárjuk, hogy eltűnjön.
+function killSteam(force, onLog = () => {}) {
+  try {
+    const args = ['/IM', 'steam.exe'];
+    if (force) args.unshift('/F');
+    execFileSync('taskkill', args, { windowsHide: true, timeout: 20000 });
+    return true;
+  } catch (err) {
+    // Ha nem fut, a taskkill hibakóddal tér vissza – az nem baj.
+    if (!isSteamRunning()) return true;
+    onLog('! A Steam bezárása nem sikerült: ' + (err.message || '').split('\n')[0]);
+    return false;
+  }
+}
+
+async function closeSteam({ onLog = () => {}, waitMs = 30000 } = {}) {
+  if (!isSteamRunning()) return { running: false, closed: true };
+  onLog('• A Steam fut – bezárom, mert a ZombieBuddy telepítő csak így fut végig…');
+  killSteam(false, onLog);
+  let closed = await steamClosed(Math.min(waitMs, 20000));
+  if (!closed) {
+    onLog('• A Steam még fut – kényszerített bezárás.');
+    killSteam(true, onLog);
+    closed = await steamClosed(15000);
+  }
+  onLog(closed ? '✓ A Steam bezárva.' : '! A Steam nem záródott be – a ZombieBuddy telepítő elakadhat.');
+  return { running: true, closed };
+}
+
 function steamClosed(timeoutMs = 5 * 60 * 1000) {
   return new Promise((resolve) => {
     const started = Date.now();
@@ -285,12 +315,13 @@ async function runInstaller({ exePath, onLog = () => {}, spawnCmd = null }) {
     const child = spawnCmd
       ? spawn(spawnCmd.command, spawnCmd.args || [], {
           cwd: spawnCmd.cwd || path.dirname(exePath),
-          windowsHide: true,
+          windowsHide: false,
           stdio: ['pipe', 'pipe', 'pipe'],
         })
       : spawn(exePath, [], {
           cwd: path.dirname(exePath),
-          windowsHide: true,
+          // Látható ablak: a telepítő így biztosan végigfut, a szem előtt.
+          windowsHide: false,
           stdio: ['pipe', 'pipe', 'pipe'],
         });
 
@@ -368,9 +399,9 @@ async function runInstaller({ exePath, onLog = () => {}, spawnCmd = null }) {
       } else if (kind === 'exit') {
         send('\n');
       } else if (kind === 'steamclose') {
-        onLog('⚠ A telepítő a Steam bezárását kéri. Zárd be a Steamet (tálca → Kilépés), a launcher nem teszi meg automatikusan.');
-        steamClosed().then((closed) => {
-          if (closed) {
+        onLog('⚠ A telepítő a Steam bezárását kéri – bezárom.');
+        closeSteam({ onLog }).then((res) => {
+          if (res.closed) {
             onLog('✓ A Steam bezárva – folytatás…');
             send('\n');
           } else {
@@ -531,7 +562,8 @@ function runBat(batPath, cwd, onLog) {
     onLog('— installer futtatása —');
     const child = spawn('cmd.exe', ['/c', 'call', batPath], {
       cwd,
-      windowsHide: true,
+      // Látható ablak, hogy az installer végigfutjon a szem előtt.
+      windowsHide: false,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let timer = null;
@@ -605,6 +637,13 @@ async function runMasterBat({ cfg = {}, userDataDir, gameDir, onLog = () => {}, 
 
 // ZombieBuddy telepítés: bat, ha van a Master mappában, különben az exe.
 async function installZombieBuddy({ cfg = {}, userDataDir, gameDir, onLog = () => {}, onProgress = () => {} }) {
+  // A telepítő (exe és bat is) csak bezárt Steammel megy végig.
+  try {
+    await closeSteam({ onLog });
+  } catch (err) {
+    onLog('! A Steam bezárása nem sikerült: ' + err.message);
+  }
+
   let found = null;
   try {
     found = await findMasterBat({ cfg, userDataDir, onLog });
@@ -626,5 +665,7 @@ module.exports = {
   findMasterBat,
   runMasterBat,
   installZombieBuddy,
+  closeSteam,
+  isSteamRunning,
   ANSWERS,
 };
