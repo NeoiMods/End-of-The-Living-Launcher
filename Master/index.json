@@ -3,24 +3,9 @@
   "source": "git",
   "files": [
     {
-      "name": "6282_3D.zip.part001",
-      "size": 94371840,
-      "sha": "9f5af9e8d2e51e35839299a3307f6961726346db"
-    },
-    {
-      "name": "6282_3D.zip.part002",
-      "size": 89744206,
-      "sha": "a196d2cb65e22f9b0f994a6bfbea38c1f03041d4"
-    },
-    {
       "name": "Blackout Protocol.zip",
       "size": 616139,
       "sha": "dba3deef8f5c7f23e00fac26f00e830a480f3450"
-    },
-    {
-      "name": "EOTL_VanillaHU.zip",
-      "size": 134084,
-      "sha": "16a6a5b44917226eaf7142fe5ee007cefd5b8c3f"
     },
     {
       "name": "ETO.zip.part001",
@@ -38,24 +23,9 @@
       "sha": "579267ce7f622890bca8a1a5cf9ae6159b989f06"
     },
     {
-      "name": "mod.info",
-      "size": 258,
-      "sha": "86f50d7366e7dda96a4a599d9f4309e203be21c8"
-    },
-    {
-      "name": "ProjectALife_HU.zip",
-      "size": 3937946,
-      "sha": "c7d14d3edef0e72849e6274aaf36c2af338263bb"
-    },
-    {
       "name": "PZO-Launcher-main.zip",
       "size": 4663831,
       "sha": "e60a80742bd4361d9d8c86f0ecdc2a6a85dad88b"
-    },
-    {
-      "name": "SurvivorPDA_HU.zip",
-      "size": 438164,
-      "sha": "7bf6f2e9f37b34a9b140750a819e0238139e41dc"
     },
     {
       "name": "Viewpoint-nightly-0.1.7-rc4.zip",
