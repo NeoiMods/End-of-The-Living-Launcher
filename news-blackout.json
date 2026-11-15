@@ -1,7 +1,21 @@
 {
-  "version": "0.9.44",
+  "version": "0.9.45",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.45",
+      "version": "0.9.45",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.45 – Nem fagy a felület, és nem ugrál a modszám",
+      "text": "A launcher 15 másodpercenként ellenőrizte, fut-e a játék – ehhez egy PowerShell-folyamatot indított, ami a főfolyamatot blokkolta, ezért a felület időnként beragadt. Mostantól ez háttérben fut, gyorsítótárral: a státuszkérés ~0,8 másodperc helyett ~0,13 másodperc, a felület nem fagy meg. A kollekció darabszáma sem ugrál már (753, aztán 752): az ismétlődő tételeket kiszűrjük, és ha a Steam kollekcióban tényleg változás történt, azt a napló kiírja.",
+      "changes": [
+        "A futó játék ellenőrzése nem blokkolja többé a felületet – háttérben, gyorsítótárral fut.",
+        "A Steam futás-ellenőrzés 20 mp-es gyorsítótárral dolgozik (kevesebb folyamatlistázás).",
+        "A kollekció duplikált tételeit kiszűrjük, így a „hány mod van a kollekcióban” szám stabil.",
+        "Ha a Steam kollekció darabszáma megváltozik, a napló kiírja (pl. 753 → 752)."
+      ]
+    },
     {
       "id": "0.9.44",
       "version": "0.9.44",

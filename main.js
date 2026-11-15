@@ -601,7 +601,7 @@ ipcMain.handle('optmods:install', async (e, id) => {
 
 ipcMain.handle('optmods:remove', async (e, id) => {
   if (busy) return { ok: false, error: 'Már fut egy művelet.' };
-  if (isGameRunning()) return { ok: false, error: 'A játék fut – zárd be, és utána törölhető.' };
+  if (isGameRunning(true)) return { ok: false, error: 'A játék fut – zárd be, és utána törölhető.' };
   busy = true;
   try {
     if (id === 'nightly') return mods.removeNightly({ log });
@@ -714,7 +714,7 @@ function collectModRows() {
 // visszaírja a saját listáját.
 ipcMain.handle('mods:cleanMissing', () => {
   try {
-    if (isGameRunning()) {
+    if (isGameRunning(true)) {
       return { ok: false, error: 'A játék fut – zárd be, különben kilépéskor visszaírja a listát.' };
     }
 
@@ -845,6 +845,17 @@ ipcMain.handle('hu:remove', async () => {
 // ---- kollekció ----------------------------------------------------------
 
 // mode: 'blackout' esetén az egyjátékos modpack kollekcióját tölti le, mert
+// Ha a Steam kollekció darabszáma megváltozott (valaki kivett/hozzáadott egy
+// modot), azt a napló kiírja – különben úgy tűnik, mintha a launcher számolna
+// hol 753-at, hol 752-t.
+function logCollectionCountChange(label, prev, next) {
+  const a = prev && Array.isArray(prev.items) ? prev.items.length : 0;
+  const b = next && Array.isArray(next.items) ? next.items.length : 0;
+  if (a && b && a !== b) {
+    log(`ℹ ${label} száma megváltozott: ${a} → ${b} mod (a Steam kollekció módosult)`);
+  }
+}
+
 // az ellenőrző listának a valós Blackout számokat kell mutatnia.
 ipcMain.handle('collection:refresh', async (e, mode) => {
   const blackoutMode = String(mode || '').toLowerCase() === 'blackout';
@@ -853,6 +864,7 @@ ipcMain.handle('collection:refresh', async (e, mode) => {
     progress({ label: blackoutMode ? 'Blackout kollekció lekérése…' : 'Steam Workshop kollekció lekérése…' });
     const col = await fetchCollection(id);
     if (blackoutMode) {
+      logCollectionCountChange('A Blackout kollekció', cfg.blackout && cfg.blackout.collection, col);
       cfg = {
         ...cfg,
         blackout: {
@@ -866,6 +878,7 @@ ipcMain.handle('collection:refresh', async (e, mode) => {
       progress(null);
       return { ok: true, blackout: true, collection: cfg.blackout.collection };
     }
+    logCollectionCountChange('A kollekció', cfg.collection, col);
     cfg = { ...cfg, collection: { ...col, fetchedAt: Date.now() } };
     save();
     log(`✓ Kollekció frissítve: ${col.title} – ${col.items.length} mod.`);
@@ -1052,7 +1065,7 @@ ipcMain.handle('eotl:status', () => {
 
 ipcMain.handle('eotl:voxel', async () => {
   if (busy) return { ok: false, error: 'Már fut egy művelet.' };
-  if (isGameRunning()) return { ok: false, error: 'A játék fut – zárd be, és utána cserélhető.' };
+  if (isGameRunning(true)) return { ok: false, error: 'A játék fut – zárd be, és utána cserélhető.' };
   busy = true;
   try {
     const res = await eotl.applyVoxelModInfo({
@@ -1197,7 +1210,7 @@ ipcMain.handle('game:launch', async (event, mode) => {
     if (!gameDir) throw new Error('Project Zomboid nem található. Beállítások → Játék mappája.');
     // A játék betöltése nagy modpacknél percekig tart: ilyenkor nem indítunk
     // második példányt (ez okozta a dupla indulást).
-    if (isGameRunning()) {
+    if (isGameRunning(true)) {
       log(alreadyRunningMessage());
       return { ok: true, alreadyRunning: true };
     }
@@ -1256,7 +1269,7 @@ ipcMain.handle('game:launch', async (event, mode) => {
     mods.removeBaseViewpoint({ log });
     // Az előkészítés percekig tarthat: közben elindulhatott a játék (Steamből
     // vagy máshonnan) – ilyenkor sem indítunk másodikat.
-    if (isGameRunning()) {
+    if (isGameRunning(true)) {
       log(alreadyRunningMessage(true));
       return { ok: true, alreadyRunning: true };
     }

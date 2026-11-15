@@ -225,7 +225,16 @@ function getEnvironment(cfg, options = {}) {
 
   const steam = findSteamPath();
   const libs = steam ? parseLibraryPaths(steam) : [];
-  const items = cfg && cfg.collection && Array.isArray(cfg.collection.items) ? cfg.collection.items : [];
+  const rawItems = cfg && cfg.collection && Array.isArray(cfg.collection.items) ? cfg.collection.items : [];
+  // Duplikált id-k kiszűrése: a korábban elmentett listában is lehet ismétlődés,
+  // és akkor a „753 mod a kollekcióban” mellé 752 letöltött jött ki.
+  const seenIds = new Set();
+  const items = rawItems.filter((it) => {
+    const id = String((it && it.id) || '');
+    if (!id || seenIds.has(id)) return false;
+    seenIds.add(id);
+    return true;
+  });
   const downloaded = items.length ? workshop.classify(libs, items).present.size : 0;
 
   return {

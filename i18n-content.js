@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                                        // ---- 0.9.44 (verzió-alapú frissítés) ----
+                                                                                                            // ---- 0.9.45 (ne fagyjon a felület) ----
+    "0.9.45 – Nem fagy a felület, és nem ugrál a modszám":
+      "0.9.45 – The interface no longer freezes, and the mod count is stable",
+    "A launcher 15 másodpercenként ellenőrizte, fut-e a játék – ehhez egy PowerShell-folyamatot indított, ami a főfolyamatot blokkolta, ezért a felület időnként beragadt. Mostantól ez háttérben fut, gyorsítótárral: a státuszkérés ~0,8 másodperc helyett ~0,13 másodperc, a felület nem fagy meg. A kollekció darabszáma sem ugrál már (753, aztán 752): az ismétlődő tételeket kiszűrjük, és ha a Steam kollekcióban tényleg változás történt, azt a napló kiírja.":
+      "The launcher checked every 15 seconds whether the game is running – by starting a PowerShell process that blocked the main thread, which made the interface freeze at times. It now runs in the background with a cache: a status request takes ~0.13 seconds instead of ~0.8, and the interface no longer freezes. The collection count no longer jumps either (753, then 752): duplicate entries are filtered out, and a real change in the Steam collection is written to the log.",
+    "A futó játék ellenőrzése nem blokkolja többé a felületet – háttérben, gyorsítótárral fut.":
+      "Checking whether the game is running no longer blocks the interface – it runs in the background, with a cache.",
+    "A Steam futás-ellenőrzés 20 mp-es gyorsítótárral dolgozik (kevesebb folyamatlistázás).":
+      "The Steam running check uses a 20-second cache (fewer process listings).",
+    "A kollekció duplikált tételeit kiszűrjük, így a „hány mod van a kollekcióban” szám stabil.":
+      "Duplicate collection entries are filtered out, so the “how many mods are in the collection” number is stable.",
+    "Ha a Steam kollekció darabszáma megváltozik, a napló kiírja (pl. 753 → 752).":
+      "When the Steam collection count changes, the log says so (e.g. 753 → 752).",
+// ---- 0.9.44 (verzió-alapú frissítés) ----
     "0.9.44 – Nem kínálja fel újra ugyanazt a verziót":
       "0.9.44 – The same version is no longer offered again",
     "A launcher a commit sha alapján döntötte el, van-e új verzió. Mivel minden commit új sha-t ad, ugyanazt a verziót kínálta fel újra és újra („0.9.43 → 0.9.43”), a frissítés pedig nem cserélt semmit. Mostantól a package.json verziója dönt: ha a repóban lévő verzió nem nagyobb a telepítettnél, a launcher naprakésznek tekinti magát, akkor is, ha közben más commitok születtek. A felugró ablakból kikerült a nyers commit-üzenet is, ami angol felületen magyarul lógott ki.":

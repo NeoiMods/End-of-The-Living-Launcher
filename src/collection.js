@@ -17,6 +17,26 @@ function decodeEntities(s) {
     .replace(/&amp;/g, '&');
 }
 
+// Egy tétel csak egyszer számít. A Steam HTML néha ugyanazt az id-t is kiadja
+// (lista + rejtett sablon), ilyenkor a kollekció darabszáma és a letöltött modok
+// száma eltért – ez volt a „753, aztán 752” ugrálás.
+function dedupeItems(items) {
+  const seen = new Set();
+  const out = [];
+  let duplicates = 0;
+  for (const it of items || []) {
+    const id = String((it && it.id) || '');
+    if (!id) continue;
+    if (seen.has(id)) {
+      duplicates++;
+      continue;
+    }
+    seen.add(id);
+    out.push({ ...it, id });
+  }
+  return { items: out, duplicates };
+}
+
 // Parses the collection page HTML into { id, appId, title, childCount, items: [{id, title}] }.
 // Every child item is rendered as <div id="sharedfile_<id>" class="collectionItem">.
 function parseCollectionHtml(html, collectionId) {
@@ -41,7 +61,8 @@ function parseCollectionHtml(html, collectionId) {
     items.push({ id, title: tm ? decodeEntities(tm[1].trim()) : id });
   }
 
-  return { id: String(collectionId), appId, title, childCount, items };
+  const unique = dedupeItems(items);
+  return { id: String(collectionId), appId, title, childCount, items: unique.items, duplicates: unique.duplicates };
 }
 
 // ---------------------------------------------------------------- API tartalék
@@ -118,12 +139,14 @@ async function fetchCollectionViaApi(collectionId) {
   const ids = (detail.children || []).map((c) => String(c.publishedfileid || '')).filter(Boolean);
   if (!ids.length) throw new Error('A kollekció üresnek tűnik a Steam API szerint.');
   const titles = await fetchTitles(ids);
+  const unique = dedupeItems(ids.map((id) => ({ id, title: titles[id] || id })));
   return {
     id: String(collectionId),
     appId: '108600',
     title: 'Steam Workshop kollekció',
-    childCount: ids.length,
-    items: ids.map((id) => ({ id, title: titles[id] || id })),
+    childCount: unique.items.length,
+    items: unique.items,
+    duplicates: unique.duplicates,
     viaApi: true,
   };
 }

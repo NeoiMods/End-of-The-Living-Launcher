@@ -391,7 +391,10 @@
     ['alapvonal rögzítve', 'baseline recorded'],
     ['nincs launcher-változás', 'no launcher change'],
 
-    // ---- 0.9.44 (verzió-alapú frissítés) ----
+        // ---- 0.9.45 (stabil modszám) ----
+    ["ℹ {s} száma megváltozott: {n} → {n} mod (a Steam kollekció módosult)", "ℹ {s} count changed: {n} → {n} mods (the Steam collection was modified)"],
+
+// ---- 0.9.44 (verzió-alapú frissítés) ----
     ["naprakész (a verzió nem újabb)", "up to date (the version is not newer)"],
 
     // ---- 0.9.43 (agent DLL) ----

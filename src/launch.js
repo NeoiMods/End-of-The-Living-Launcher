@@ -33,16 +33,24 @@ function agentStatus(gameDir) {
   return { jar, dll, present: jar && dll, configured };
 }
 
-function isSteamRunning() {
+// A tasklist ~100 ms-ot blokkol, ezért rövid ideig cache-eljük: a felület
+// 15 mp-enként kér állapotot, és nem fagyhat le egy folyamatlistázástól.
+const STEAM_CACHE_MS = 20000;
+let steamRunCache = { at: 0, running: false };
+
+function isSteamRunning(force = false) {
+  if (!force && Date.now() - steamRunCache.at < STEAM_CACHE_MS) return steamRunCache.running;
   try {
     const out = require('child_process').execFileSync(
       'tasklist',
       ['/FI', 'IMAGENAME eq steam.exe'],
-      { encoding: 'utf8', windowsHide: true }
+      { encoding: 'utf8', windowsHide: true, timeout: 12000 }
     );
-    return /steam\.exe/i.test(out);
+    const running = /steam\.exe/i.test(out);
+    steamRunCache = { at: Date.now(), running };
+    return running;
   } catch {
-    return false;
+    return steamRunCache.running;
   }
 }
 
@@ -50,29 +58,47 @@ function isSteamRunning() {
 // kilép), ezért a futást a JVM parancssora alapján is fel kell ismerni – enélkül
 // a launcher a játékot azonnal „bezárultnak” látja.
 // Sorformátum: név|indulás (ISO)|parancssor
+// A 42.22.2 Windowson magában a ProjectZomboid64.exe-ben viszi a JVM-et (nincs
+// külön java.exe), ezért a futást az ablak megléte is jelzi: egy élő játéknak
+// van „Project Zomboid” ablaka, a beragadt/kilépett példánynak nincs.
+const PROCESS_SCAN =
+  "$ErrorActionPreference='SilentlyContinue'; " +
+  "$t=@{}; Get-Process | ForEach-Object { if ($_.MainWindowTitle) { $t[[int]$_.Id]=1 } }; " +
+  "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'java|ProjectZomboid' } | " +
+  "ForEach-Object { $_.Name + '|' + $_.CreationDate.ToString('o') + '|' + $(if ($t[[int]$_.ProcessId]) { '1' } else { '0' }) + '|' + $_.CommandLine }";
+
+function parseProcessOutput(out) {
+  return String(out || '')
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+}
+
 function gameProcessList() {
   try {
-    // A 42.22.2 Windowson magában a ProjectZomboid64.exe-ben viszi a JVM-et (nincs
-    // külön java.exe), ezért a futást az ablak megléte is jelzi: egy élő játéknak
-    // van „Project Zomboid” ablaka, a beragadt/kilépett példánynak nincs.
-    const script =
-      "$ErrorActionPreference='SilentlyContinue'; " +
-      "$t=@{}; Get-Process | ForEach-Object { if ($_.MainWindowTitle) { $t[[int]$_.Id]=1 } }; " +
-      "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'java|ProjectZomboid' } | " +
-      "ForEach-Object { $_.Name + '|' + $_.CreationDate.ToString('o') + '|' + $(if ($t[[int]$_.ProcessId]) { '1' } else { '0' }) + '|' + $_.CommandLine }";
-    const out = require('child_process').execFileSync('powershell', ['-NoProfile', '-Command', script], {
+    const out = require('child_process').execFileSync('powershell', ['-NoProfile', '-Command', PROCESS_SCAN], {
       encoding: 'utf8',
       windowsHide: true,
       timeout: 12000,
       maxBuffer: 1024 * 1024,
     });
-    return String(out)
-      .split(/\r?\n/)
-      .map((l) => l.trim())
-      .filter(Boolean);
+    return parseProcessOutput(out);
   } catch {
     return [];
   }
+}
+
+// Ugyanaz a lekérdezés, de NEM blokkolja a főfolyamot (a felület 15 mp-enként
+// kér állapotot – egy 0,5 mp-es PowerShell ott érezhető fagyás volt).
+function gameProcessListAsync() {
+  return new Promise((resolve) => {
+    require('child_process').execFile(
+      'powershell',
+      ['-NoProfile', '-Command', PROCESS_SCAN],
+      { encoding: 'utf8', windowsHide: true, timeout: 12000, maxBuffer: 1024 * 1024 },
+      (err, stdout) => resolve(err ? [] : parseProcessOutput(stdout))
+    );
+  });
 }
 
 // „név|indulás|van ablak (0/1)|parancssor” bontása (a parancssorban magában is
@@ -92,7 +118,7 @@ function splitProcessLine(line) {
 // A JVM-es ellenőrzés PowerShellt indít (~0,3 mp), ezért gyorsítótárazzuk: a
 // felület 10-15 mp-enként kérdezi az állapotot, a játék betöltése közben pedig
 // nem akarunk fölösleges process-listázást a gépre rakni.
-const RUN_CACHE_MS = 12000;
+const RUN_CACHE_MS = 20000;
 let gameRunCache = { at: 0, running: false };
 
 // A B42 indító exe néhány másodperc alatt átadja a helyét a JVM-nek, de nagy
@@ -101,11 +127,8 @@ let gameRunCache = { at: 0, running: false };
 // különben a launcher soha nem engedné újraindítani a játékot.
 const EXE_STARTUP_GRACE_MS = 3 * 60 * 1000;
 
-// force: a gyorsítótár megkerülése (pl. közvetlenül indítás után).
-function isGameRunning(force = false) {
-  if (!force && Date.now() - gameRunCache.at < RUN_CACHE_MS) return gameRunCache.running;
-
-  const rows = gameProcessList().map(splitProcessLine);
+// A döntés a folyamatlistából (közös a szinkron és a háttér-frissítéshez).
+function decideRunning(rows) {
   let running = rows.some(
     (p) => /^java/i.test(p.name) && /zombie|projectzomboid/i.test(p.cmd)
   );
@@ -122,7 +145,36 @@ function isGameRunning(force = false) {
         (p) => p.hasWindow || !p.startedAt || Date.now() - p.startedAt < EXE_STARTUP_GRACE_MS
       );
   }
+  return running;
+}
 
+// Háttér-frissítés: nem blokkolja a főfolyamot, a végeredmény a gyorsítótárba kerül.
+let runRefreshBusy = false;
+function refreshRunningAsync() {
+  if (runRefreshBusy) return;
+  runRefreshBusy = true;
+  gameProcessListAsync()
+    .then((lines) => {
+      const running = decideRunning(lines.map(splitProcessLine));
+      gameRunCache = { at: Date.now(), running };
+    })
+    .catch(() => {})
+    .finally(() => {
+      runRefreshBusy = false;
+    });
+}
+
+// force: azonnali, blokkoló ellenőrzés (indítás / törlés előtt ez kell).
+// force nélkül: a gyorsítótárat adja vissza, és háttérben frissít – így a
+// 15 mp-enkénti státuszkérés nem fagyasztja le a felületet.
+function isGameRunning(force = false) {
+  if (!force) {
+    if (Date.now() - gameRunCache.at >= RUN_CACHE_MS) refreshRunningAsync();
+    return gameRunCache.running;
+  }
+
+  const rows = gameProcessList().map(splitProcessLine);
+  const running = decideRunning(rows);
   gameRunCache = { at: Date.now(), running };
   return running;
 }
