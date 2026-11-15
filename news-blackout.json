@@ -1,7 +1,20 @@
 {
-  "version": "0.9.37",
+  "version": "0.9.38",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.38",
+      "version": "0.9.38",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.38 – Nincs több dupla játékindítás",
+      "text": "A 42.22.2 Windowson már nem külön java.exe viszi a játékot, hanem maga a ProjectZomboid64.exe. A launcher eddig csak a java.exe-t és a legfeljebb 3 perces indító exe-t látta futó játéknak, ezért hosszabb játék után „nem fut” állapotot mutatott, és a következő indítás második példányt nyitott. Mostantól a futó játékot a saját ablaka alapján ismeri fel, így a már futó játékhoz nem indít másodikat.",
+      "changes": [
+        "A futás-észlelés a játék ablakát is figyeli, nem csak a java.exe-t.",
+        "A beragadt, ablak nélküli indító exe továbbra sem számít futó játéknak – így a játék újraindítható marad.",
+        "A „A játék elindult” visszajelzés is helyesen jelenik meg hosszú betöltés után."
+      ]
+    },
     {
       "id": "0.9.37",
       "version": "0.9.37",

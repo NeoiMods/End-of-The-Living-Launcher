@@ -16,7 +16,18 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                            // ---- 0.9.37 (teljes angol fordítás) ----
+                                                                                // ---- 0.9.38 (dupla indítás javítása) ----
+    "0.9.38 – Nincs több dupla játékindítás":
+      "0.9.38 – No more double game launch",
+    "A 42.22.2 Windowson már nem külön java.exe viszi a játékot, hanem maga a ProjectZomboid64.exe. A launcher eddig csak a java.exe-t és a legfeljebb 3 perces indító exe-t látta futó játéknak, ezért hosszabb játék után „nem fut” állapotot mutatott, és a következő indítás második példányt nyitott. Mostantól a futó játékot a saját ablaka alapján ismeri fel, így a már futó játékhoz nem indít másodikat.":
+      "On 42.22.2 for Windows the game no longer runs in a separate java.exe – the ProjectZomboid64.exe hosts it. The launcher only treated java.exe and an exe younger than 3 minutes as a running game, so after a longer session it reported “not running” and the next launch opened a second instance. It now recognises the running game by its own window, so it will not start a second one next to a game that is already running.",
+    "A futás-észlelés a játék ablakát is figyeli, nem csak a java.exe-t.":
+      "Running-game detection now watches the game window as well, not just java.exe.",
+    "A beragadt, ablak nélküli indító exe továbbra sem számít futó játéknak – így a játék újraindítható marad.":
+      "A stuck launcher exe without a window still does not count as a running game, so the game can be restarted.",
+    "A „A játék elindult” visszajelzés is helyesen jelenik meg hosszú betöltés után.":
+      "The “The game has started” feedback now appears correctly after a long load as well.",
+// ---- 0.9.37 (teljes angol fordítás) ----
     "0.9.37 – Teljes angol fordítás":
       "0.9.37 – Full English translation",
     "Ha angolra váltod a launchert, mostantól a felület és a napló is végig angolul jelenik meg. Pótoltuk azokat a szövegeket, amik eddig magyarul maradtak: a szerver állapotsort, a modlista címkéit (BE/KI, HELYI, NINCS), a frissítés- és hibasorokat, a beállítás- és preset-kérdéseket, valamint a teljes naplót a fő folyamattól a modulokig. Az esemény dátuma is a választott nyelv szerint formázódik.":

@@ -52,10 +52,14 @@ function isSteamRunning() {
 // Sorformátum: név|indulás (ISO)|parancssor
 function gameProcessList() {
   try {
+    // A 42.22.2 Windowson magában a ProjectZomboid64.exe-ben viszi a JVM-et (nincs
+    // külön java.exe), ezért a futást az ablak megléte is jelzi: egy élő játéknak
+    // van „Project Zomboid” ablaka, a beragadt/kilépett példánynak nincs.
     const script =
       "$ErrorActionPreference='SilentlyContinue'; " +
+      "$t=@{}; Get-Process | ForEach-Object { if ($_.MainWindowTitle) { $t[[int]$_.Id]=1 } }; " +
       "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'java|ProjectZomboid' } | " +
-      "ForEach-Object { $_.Name + '|' + $_.CreationDate.ToString('o') + '|' + $_.CommandLine }";
+      "ForEach-Object { $_.Name + '|' + $_.CreationDate.ToString('o') + '|' + $(if ($t[[int]$_.ProcessId]) { '1' } else { '0' }) + '|' + $_.CommandLine }";
     const out = require('child_process').execFileSync('powershell', ['-NoProfile', '-Command', script], {
       encoding: 'utf8',
       windowsHide: true,
@@ -71,13 +75,18 @@ function gameProcessList() {
   }
 }
 
-// „név|indulás|parancssor” bontása (a parancssorban magában is lehet |).
+// „név|indulás|van ablak (0/1)|parancssor” bontása (a parancssorban magában is
+// lehet |, ezért csak az első három elválasztónál vágunk).
 function splitProcessLine(line) {
-  const i = line.indexOf('|');
-  const j = i < 0 ? -1 : line.indexOf('|', i + 1);
-  if (i < 0 || j < 0) return { name: line, startedAt: 0, cmd: '' };
-  const at = Date.parse(line.slice(i + 1, j));
-  return { name: line.slice(0, i), startedAt: Number.isFinite(at) ? at : 0, cmd: line.slice(j + 1) };
+  const parts = line.split('|');
+  if (parts.length < 4) return { name: line, startedAt: 0, hasWindow: false, cmd: '' };
+  const at = Date.parse(parts[1]);
+  return {
+    name: parts[0],
+    startedAt: Number.isFinite(at) ? at : 0,
+    hasWindow: parts[2] === '1',
+    cmd: parts.slice(3).join('|'),
+  };
 }
 
 // A JVM-es ellenőrzés PowerShellt indít (~0,3 mp), ezért gyorsítótárazzuk: a
@@ -102,11 +111,16 @@ function isGameRunning(force = false) {
   );
 
   if (!running) {
-    // Nincs JVM, de indító exe van: csak a frissen indult (induló) exe él.
-    // Beragadt, régi exe mellett sem szabad örökre „futónak” látni a játékot.
+    // Nincs JVM, de indító/futtató exe van. Két eset futó játék:
+    //  • van ablaka (42.22.2 óta az exe viszi a JVM-et, ez a valódi játék), vagy
+    //  • most indult (a betöltés alatt még nincs ablak).
+    // A beragadt, ablak nélküli régi exe nem számít futónak, különben soha nem
+    // lehetne újraindítani a játékot.
     running = rows
       .filter((p) => /^ProjectZomboid64\.exe/i.test(p.name))
-      .some((p) => !p.startedAt || Date.now() - p.startedAt < EXE_STARTUP_GRACE_MS);
+      .some(
+        (p) => p.hasWindow || !p.startedAt || Date.now() - p.startedAt < EXE_STARTUP_GRACE_MS
+      );
   }
 
   gameRunCache = { at: Date.now(), running };
@@ -493,5 +507,6 @@ module.exports = {
   buildArgs,
   isSteamRunning,
   isGameRunning,
+  splitProcessLine,
   launchGame,
 };
