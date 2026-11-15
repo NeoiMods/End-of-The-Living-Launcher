@@ -391,6 +391,10 @@
     ['alapvonal rögzítve', 'baseline recorded'],
     ['nincs launcher-változás', 'no launcher change'],
 
+    // ---- 0.9.39 (blokk-indok) ----
+    ["• A játék már fut – nem indítok második példányt. ({s})", "• The game is already running – not starting a second instance. ({s})"],
+    ["• A játék időközben elindult – nem indítok második példányt. ({s})", "• The game started in the meantime – not starting a second instance. ({s})"],
+
     // ---- 0.9.37 (teljes naplófordítás) ----
     ["Log elküldése", "Send log"],
     ["A crash logot még nem küldted el", "You have not sent the crash log yet"],

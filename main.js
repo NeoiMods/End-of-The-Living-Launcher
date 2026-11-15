@@ -18,7 +18,7 @@ const {
 const modinfo = require('./src/modinfo');
 const modlist = require('./src/modlist');
 const news = require('./src/news');
-const { launchGame, isGameRunning } = require('./src/launch');
+const { launchGame, isGameRunning, runningGameReason } = require('./src/launch');
 const setup = require('./src/setup');
 const { runSetup } = setup;
 const { fetchCollection } = require('./src/collection');
@@ -1143,6 +1143,21 @@ ipcMain.handle('blackout:config', async () => {
 
 // ---- indítás -----------------------------------------------------------
 
+// Ha a launcher úgy látja, hogy fut a játék, a napló megmondja, mit lát
+// (folyamatnév, kor, ablak) – így egy téves felismerés kiderül a sorból.
+function alreadyRunningMessage(interim = false) {
+  const base = interim
+    ? '• A játék időközben elindult – nem indítok második példányt.'
+    : '• A játék már fut – nem indítok második példányt.';
+  let reason = '';
+  try {
+    reason = runningGameReason();
+  } catch {
+    reason = '';
+  }
+  return reason ? `${base} (${reason})` : base;
+}
+
 ipcMain.handle('game:launch', async (event, mode) => {
   const blackoutMode = String(mode || '').toLowerCase() === 'blackout';
   if (launchInFlight) return { ok: false, error: 'Már indul a játék – várd meg, míg elindul.' };
@@ -1152,7 +1167,7 @@ ipcMain.handle('game:launch', async (event, mode) => {
     // A játék betöltése nagy modpacknél percekig tart: ilyenkor nem indítunk
     // második példányt (ez okozta a dupla indulást).
     if (isGameRunning()) {
-      log('• A játék már fut – nem indítok második példányt.');
+      log(alreadyRunningMessage());
       return { ok: true, alreadyRunning: true };
     }
     launchInFlight = true;
@@ -1211,7 +1226,7 @@ ipcMain.handle('game:launch', async (event, mode) => {
     // Az előkészítés percekig tarthat: közben elindulhatott a játék (Steamből
     // vagy máshonnan) – ilyenkor sem indítunk másodikat.
     if (isGameRunning()) {
-      log('• A játék időközben elindult – nem indítok második példányt.');
+      log(alreadyRunningMessage(true));
       return { ok: true, alreadyRunning: true };
     }
     // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).

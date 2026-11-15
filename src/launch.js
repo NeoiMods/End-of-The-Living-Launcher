@@ -127,6 +127,23 @@ function isGameRunning(force = false) {
   return running;
 }
 
+// Diagnosztika: melyik folyamat miatt számít futónak a játék. Ha nem fut,
+// üres string. A blokkolt indítás naplósora ezt írja ki, hogy látszódjon, mit lát
+// a launcher (pl. egy beragadt, ablak nélküli exe vagy egy idegen java.exe).
+function runningGameReason() {
+  const rows = gameProcessList().map(splitProcessLine);
+  const jvm = rows.find((p) => /^java/i.test(p.name) && /zombie|projectzomboid/i.test(p.cmd));
+  if (jvm) return `java.exe: ${String(jvm.cmd || '').slice(0, 70)}`;
+  const exe = rows.find(
+    (p) =>
+      /^ProjectZomboid64\.exe/i.test(p.name) &&
+      (p.hasWindow || !p.startedAt || Date.now() - p.startedAt < EXE_STARTUP_GRACE_MS)
+  );
+  if (!exe) return '';
+  const mins = exe.startedAt ? Math.round((Date.now() - exe.startedAt) / 60000) : 0;
+  return `ProjectZomboid64.exe, ${mins} perc, ablak: ${exe.hasWindow ? 'van' : 'nincs'}`;
+}
+
 // A Blackout config mellé adott launcher sablon. A launchert magát NEM futtatjuk:
 // csak a benne leírt JVM kapcsolókat, classpathet és belépő osztályt vesszük át a
 // ProjectZomboid64.json-ba, mert a játék (és a Steam) abból indul.
@@ -507,6 +524,7 @@ module.exports = {
   buildArgs,
   isSteamRunning,
   isGameRunning,
+  runningGameReason,
   splitProcessLine,
   launchGame,
 };

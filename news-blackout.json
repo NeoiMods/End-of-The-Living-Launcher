@@ -1,7 +1,20 @@
 {
-  "version": "0.9.38",
+  "version": "0.9.39",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.39",
+      "version": "0.9.39",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.39 – Kiderül, mit lát futó játéknak a launcher",
+      "text": "Ha a launcher azt írja, hogy már fut a játék, mostantól a naplóban az is ott van, melyik folyamat miatt gondolja ezt: a folyamat neve, kora és hogy van-e ablaka. Így egy téves felismerés (például egy beragadt indító exe) azonnal látszik, és nem kell találgatni, miért nem indul a játék.",
+      "changes": [
+        "A „már fut a játék” naplósor kiírja a felismert folyamatot (név, hány perces, van-e ablaka).",
+        "A futás-észlelés a gyorsítótár ellenére is friss adatot ad a blokk indokához.",
+        "Fejlesztői módban a főfolyamat kódja csak a launcher újraindítása után él – ezt a launcher a naplóban is jelzi."
+      ]
+    },
     {
       "id": "0.9.38",
       "version": "0.9.38",

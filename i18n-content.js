@@ -16,7 +16,18 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                // ---- 0.9.38 (dupla indítás javítása) ----
+                                                                                    // ---- 0.9.39 (blokk-indok a naplóban) ----
+    "0.9.39 – Kiderül, mit lát futó játéknak a launcher":
+      "0.9.39 – You can see what counts as a running game",
+    "Ha a launcher azt írja, hogy már fut a játék, mostantól a naplóban az is ott van, melyik folyamat miatt gondolja ezt: a folyamat neve, kora és hogy van-e ablaka. Így egy téves felismerés (például egy beragadt indító exe) azonnal látszik, és nem kell találgatni, miért nem indul a játék.":
+      "When the launcher says the game is already running, the log now also shows which process makes it think so: the process name, its age and whether it has a window. A false positive (for example a stuck launcher exe) is therefore visible right away instead of leaving you guessing why the game will not start.",
+    "A „már fut a játék” naplósor kiírja a felismert folyamatot (név, hány perces, van-e ablaka).":
+      "The “game is already running” log line prints the detected process (name, age, window).",
+    "A futás-észlelés a gyorsítótár ellenére is friss adatot ad a blokk indokához.":
+      "The detection reports fresh data for the block reason even when the cache is warm.",
+    "Fejlesztői módban a főfolyamat kódja csak a launcher újraindítása után él – ezt a launcher a naplóban is jelzi.":
+      "In developer mode the main-process code only takes effect after restarting the launcher – the log notes this as well.",
+// ---- 0.9.38 (dupla indítás javítása) ----
     "0.9.38 – Nincs több dupla játékindítás":
       "0.9.38 – No more double game launch",
     "A 42.22.2 Windowson már nem külön java.exe viszi a játékot, hanem maga a ProjectZomboid64.exe. A launcher eddig csak a java.exe-t és a legfeljebb 3 perces indító exe-t látta futó játéknak, ezért hosszabb játék után „nem fut” állapotot mutatott, és a következő indítás második példányt nyitott. Mostantól a futó játékot a saját ablaka alapján ismeri fel, így a már futó játékhoz nem indít másodikat.":
