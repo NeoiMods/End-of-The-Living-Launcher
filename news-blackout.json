@@ -1,7 +1,21 @@
 {
-  "version": "0.9.43",
+  "version": "0.9.44",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.44",
+      "version": "0.9.44",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.44 – Nem kínálja fel újra ugyanazt a verziót",
+      "text": "A launcher a commit sha alapján döntötte el, van-e új verzió. Mivel minden commit új sha-t ad, ugyanazt a verziót kínálta fel újra és újra („0.9.43 → 0.9.43”), a frissítés pedig nem cserélt semmit. Mostantól a package.json verziója dönt: ha a repóban lévő verzió nem nagyobb a telepítettnél, a launcher naprakésznek tekinti magát, akkor is, ha közben más commitok születtek. A felugró ablakból kikerült a nyers commit-üzenet is, ami angol felületen magyarul lógott ki.",
+      "changes": [
+        "A frissítés-döntés verzió-alapú, nem commit sha-alapú – nincs végtelen „új verzió” kínálat.",
+        "A célverzió a repóban lévő package.json verziója, nem a commit sha.",
+        "A frissítés-ablakban nem jelenik meg a commit-üzenet (az fejlesztői szöveg, magyarul íródik).",
+        "A build által írt update-baseline.json mostantól a verziót is tartalmazza."
+      ]
+    },
     {
       "id": "0.9.43",
       "version": "0.9.43",

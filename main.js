@@ -410,7 +410,10 @@ async function updateInfoPayload() {
   const newsVersion = String((info && info.version) || '').trim();
   // Csak akkor mutatunk új verziót, ha az tényleg újabb a telepítettnél.
   const newsIsNewer = !!newsVersion && compareVersions(newsVersion, fromVersion) > 0;
-  let toVersion = newsIsNewer ? newsVersion : '';
+  // A célverzió a repóban lévő package.json verziója (a frissítés-indexből),
+  // ha a hírfeedben nincs újabb bejegyzés – így nem „0.9.43 · sha” alak jelenik meg.
+  const remoteVersion = (res && res.remoteVersion) || '';
+  let toVersion = newsIsNewer ? newsVersion : remoteVersion;
   if (!toVersion) toVersion = shortSha ? `${fromVersion} · ${shortSha}` : fromVersion;
   const items = (info && info.items) || [];
   // Az új verzióhoz tartozó újdonságok (ha a hírfeedben meg van jelölve).

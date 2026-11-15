@@ -409,9 +409,8 @@ function renderUpdateInfo(info, res) {
 
   if (res && res.update) {
     box.classList.add('available');
-    const msg = res.remote && res.remote.message ? ' – ' + res.remote.message : '';
     text.textContent =
-      'Új verzió érhető el: #' + String(res.remoteSha).slice(0, 7) + msg + ' • forrás: ' + res.repo;
+      'Új verzió érhető el: #' + String(res.remoteSha).slice(0, 7) + ' • forrás: ' + res.repo;
     if (applyBtn) applyBtn.classList.remove('hidden');
     return;
   }
@@ -1378,12 +1377,9 @@ function renderUpdateModal(payload) {
       }
       box.appendChild(block);
     }
-  } else if (payload.remoteMessage) {
-    const p = document.createElement('p');
-    p.className = 'upd-note';
-    p.textContent = payload.remoteMessage;
-    box.appendChild(p);
   }
+  // A commit-üzenet szándékosan nem jelenik meg: az a fejlesztőnek szól, magyarul
+  // íródik, és angol felületen lefordítatlanul lógott ki a felugró ablakban.
 
   $('#updProgressWrap').classList.add('hidden');
   $('#updBar').style.width = '0%';

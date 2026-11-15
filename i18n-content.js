@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                                    // ---- 0.9.43 (agent DLL ellenőrzés) ----
+                                                                                                        // ---- 0.9.44 (verzió-alapú frissítés) ----
+    "0.9.44 – Nem kínálja fel újra ugyanazt a verziót":
+      "0.9.44 – The same version is no longer offered again",
+    "A launcher a commit sha alapján döntötte el, van-e új verzió. Mivel minden commit új sha-t ad, ugyanazt a verziót kínálta fel újra és újra („0.9.43 → 0.9.43”), a frissítés pedig nem cserélt semmit. Mostantól a package.json verziója dönt: ha a repóban lévő verzió nem nagyobb a telepítettnél, a launcher naprakésznek tekinti magát, akkor is, ha közben más commitok születtek. A felugró ablakból kikerült a nyers commit-üzenet is, ami angol felületen magyarul lógott ki.":
+      "The launcher decided whether an update exists from the commit sha. Since every commit produces a new sha, it offered the same version over and over (“0.9.43 → 0.9.43”) and the update replaced nothing. The package.json version now decides: if the version in the repo is not newer than the installed one, the launcher considers itself up to date even when other commits were made in the meantime. The raw commit message was also removed from the update dialog, where it showed up in Hungarian on the English interface.",
+    "A frissítés-döntés verzió-alapú, nem commit sha-alapú – nincs végtelen „új verzió” kínálat.":
+      "The update decision is version-based instead of commit-sha based – no endless “new version” offer.",
+    "A célverzió a repóban lévő package.json verziója, nem a commit sha.":
+      "The target version is the repo’s package.json version, not the commit sha.",
+    "A frissítés-ablakban nem jelenik meg a commit-üzenet (az fejlesztői szöveg, magyarul íródik).":
+      "The update dialog no longer shows the commit message (it is developer text, written in Hungarian).",
+    "A build által írt update-baseline.json mostantól a verziót is tartalmazza.":
+      "update-baseline.json written by the build now contains the version as well.",
+// ---- 0.9.43 (agent DLL ellenőrzés) ----
     "0.9.43 – A játék nem indul el, ha hiányzik egy agent DLL":
       "0.9.43 – The game no longer dies when an agent DLL is missing",
     "A PZO telepítő néha úgy frissít, hogy a PZOptimEngine.jar-t lecseréli, a pzo_native64.dll-t viszont nem teszi vissza. Ilyenkor a ProjectZomboid64.json továbbra is hivatkozik a natív agentre, a JVM viszont el sem indul („Could not find agent library pzo_native64”), a játék pedig néma csendben kilép – a launcher naplójában csak annyi látszik, hogy 15 mp után sem fut. Mostantól indítás előtt ellenőrizzük, hogy minden -agentlib-hez megvan-e a DLL: előbb visszamásoljuk a launcher csomag-cache-éből, ha ott sincs, kivesszük a JSON-ból, hogy a játék elinduljon.":

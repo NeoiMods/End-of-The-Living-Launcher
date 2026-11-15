@@ -1,6 +1,6 @@
 {
-  "version": "0.9.43",
-  "sha": "631bf8d162ad8ceeec0764173e1bfd03e1512c9e",
+  "version": "0.9.44",
+  "sha": "10dd3b1cca4f17238ac4752740b0d0046f327edc",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -749,13 +749,13 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 89805,
-      "sha256": "eccf49c263abc844a3878ae71def05f94aaf2a0cf3a7b7b3b6422b3b8eb05fac"
+      "size": 91818,
+      "sha256": "15533df0ef1d643a4cb65d9c6fd05d882ed34d375755ce8482f15710da0d9cee"
     },
     {
       "path": "i18n-logs.js",
-      "size": 56167,
-      "sha256": "2692c3813937bdbe2226b0bbd35d6e0d2f90bb0ede539f9b862b5978ad312005"
+      "size": 56305,
+      "sha256": "984b77a2a226d61f35458186138da7349c95d5844aeed3558ac6632e0ad4ccdc"
     },
     {
       "path": "i18n.js",
@@ -769,13 +769,13 @@
     },
     {
       "path": "main.js",
-      "size": 50496,
-      "sha256": "54c040be018320d46806128fa1a5822b437ad69f24dc81804a7456a155b0d952"
+      "size": 50749,
+      "sha256": "100e4dd032aab56bb4a793db17d3e65040d380e6131189f61487800c77b4f906"
     },
     {
       "path": "news-blackout.json",
-      "size": 40390,
-      "sha256": "d930eff355eff8704cd65dccc483a5915ff95ddb139d8ce502d8f9e01ad3a845"
+      "size": 41539,
+      "sha256": "07278347d6f6cfb0a5e28085f9b985b357a5f57d52581fe7f8eefcce6b6a85bf"
     },
     {
       "path": "news.json",
@@ -785,7 +785,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "137dbdd75f1677569f2c1bee70af0bcdfd437f67994c00e0e17da7fcc242c471"
+      "sha256": "dc63fc9d1c2798be2c49340bcf1fde85c64a1d5e9f35a5821c9bb391a006e36e"
     },
     {
       "path": "preload.js",
@@ -794,8 +794,8 @@
     },
     {
       "path": "renderer.js",
-      "size": 80487,
-      "sha256": "125785d71e3076b70690427b19f39fb0db3ae1078aa396da30304961f4b73bd9"
+      "size": 80390,
+      "sha256": "cd0569cb9eb0ab36d87fb31c0aa662c73d3c36f1f60c6c0288eb1a10e3134f56"
     },
     {
       "path": "src/a2s.js",
@@ -929,8 +929,8 @@
     },
     {
       "path": "src/update.js",
-      "size": 35123,
-      "sha256": "836a5db9c719d4d04973d773c1681068788e8c73b476663926e56c1a5eaab187"
+      "size": 37939,
+      "sha256": "f5fd2e3591b7892e4c6e636d96d29a37f86319ff5986188a4e504160793cfed5"
     },
     {
       "path": "src/workshop.js",

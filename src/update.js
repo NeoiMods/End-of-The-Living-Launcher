@@ -30,6 +30,33 @@ function withTimeout(promise, ms, message) {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
+// A „van-e új verzió” döntéshez: a commit sha minden commitnál változik, ezért
+// önmagában alkalmatlan rá (ugyanazt a verziót kínálta fel újra és újra).
+function parseVersion(value) {
+  const m = String(value || '').match(/^v?(\d+)\.(\d+)(?:\.(\d+))?/);
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3] || 0)] : null;
+}
+
+function compareVersions(a, b) {
+  const A = parseVersion(a);
+  const B = parseVersion(b);
+  if (!A || !B) return 0;
+  for (let i = 0; i < 3; i++) {
+    if (A[i] !== B[i]) return A[i] > B[i] ? 1 : -1;
+  }
+  return 0;
+}
+
+// A telepített launcher verziója a saját package.json-jából.
+function localVersion(appRoot) {
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(appRoot, 'package.json'), 'utf8'));
+    return String(pkg.version || '');
+  } catch {
+    return '';
+  }
+}
+
 const DEFAULT_REPO = 'NeoiMods/End-of-The-Living-Launcher';
 const BRANCH = 'main';
 const HTTP_HEADERS = {
@@ -254,6 +281,28 @@ async function checkForUpdate({ cfg = {}, userDataDir, appRoot }) {
     const manifest = manifestForFallback || (await fetchUpdateManifest(repo, cfg));
     if (manifest) {
       const files = changedFilesFromManifest(manifest, appRoot);
+      // Verzió-alapú döntés: ha a repóban lévő verzió nem nagyobb, nincs mit
+      // frissíteni (a fájl-hash eltérés lehet csak CRLF/újragenerált index).
+      const remoteVersion = String(manifest.version || '');
+      const installedVersion = localVersion(appRoot);
+      if (remoteVersion && compareVersions(remoteVersion, installedVersion) <= 0 && installedVersion) {
+        writeState(userDataDir, {
+          lastCheckedAt: Date.now(),
+          lastError: null,
+          remoteSha: typeof manifest.sha === 'string' ? manifest.sha : null,
+          remoteVersion,
+        });
+        return {
+          ok: true,
+          update: false,
+          repo,
+          localSha: installedSha(userDataDir, appRoot),
+          remoteSha: typeof manifest.sha === 'string' ? manifest.sha : null,
+          remoteVersion,
+          remote: { sha: manifest.sha || null, date: null, message: '', via: 'manifest' },
+          reason: 'naprakész (a verzió nem újabb)',
+        };
+      }
       const remoteSha = typeof manifest.sha === 'string' ? manifest.sha : null;
       const remoteInfo = {
         sha: remoteSha,
@@ -359,6 +408,35 @@ async function checkForUpdate({ cfg = {}, userDataDir, appRoot }) {
   // a fájlok nem abból a commitból származnak, amit a launcher telepítettnek
   // hisz: a régi frissítők például nem cserélték a package.json-t, ezért a
   // fejlécben régi verziószám ragadt. Egy újratelepítés helyre teszi a fájlokat.
+  // Verzió-alapú döntés: a commit sha minden commitnál változik, ezért a
+  // baseline/telepített sha összevetése önmagában végtelen frissítés-kínálatot
+  // okozott (0.9.43 → 0.9.43). Ha a repóban lévő verzió nem nagyobb, kész.
+  {
+    const installedVersion = localVersion(appRoot);
+    const remoteVersion = manifestForFallback && manifestForFallback.version
+      ? String(manifestForFallback.version)
+      : '';
+    if (installedVersion && remoteVersion && compareVersions(remoteVersion, installedVersion) <= 0) {
+      writeState(userDataDir, {
+        installedSha: remote.sha,
+        lastCheckedAt: Date.now(),
+        remoteSha: remote.sha,
+        remoteVersion,
+        lastError: null,
+      });
+      return {
+        ok: true,
+        update: false,
+        repo,
+        localSha: remote.sha,
+        remoteSha: remote.sha,
+        remoteVersion,
+        remote,
+        reason: 'naprakész (a verzió nem újabb)',
+      };
+    }
+  }
+
   const state = readState(userDataDir);
   const base = baselineSha(appRoot);
   if (base && state.installedSha && base !== state.installedSha) {

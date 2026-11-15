@@ -63,9 +63,17 @@ function writeUpdateBaseline() {
     console.log('  ! git commit nem olvasható – az auto-updater első indításkor rögzít alapvonalat');
     return;
   }
+  // A verzió is bekerül: a frissítés-döntés verzió-alapú, a sha csak diagnosztika
+  // (minden commitnál változik, ezért önmagában rossz feltétel volt).
+  let version = '';
+  try {
+    version = String(JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version || '');
+  } catch {
+    version = '';
+  }
   fs.writeFileSync(
     path.join(APP_DIR, 'resources', 'app', 'update-baseline.json'),
-    JSON.stringify({ sha, builtAt: new Date().toISOString() }, null, 2),
+    JSON.stringify({ sha, version, builtAt: new Date().toISOString() }, null, 2),
     'utf8'
   );
   console.log('  auto-updater alapvonal: ' + sha.slice(0, 7));
