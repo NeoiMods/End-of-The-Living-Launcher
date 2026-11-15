@@ -1470,7 +1470,7 @@ function pad2(value) {
 
 function eventDateText(time) {
   try {
-    return new Date(time).toLocaleString('hu-HU', {
+    return new Date(time).toLocaleString(uiLocale(), {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

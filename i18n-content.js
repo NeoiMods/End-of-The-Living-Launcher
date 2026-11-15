@@ -16,7 +16,22 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                        // ---- 0.9.36 (egyszerűbb Optimalizálás panel) ----
+                                                                            // ---- 0.9.37 (teljes angol fordítás) ----
+    "0.9.37 – Teljes angol fordítás":
+      "0.9.37 – Full English translation",
+    "Ha angolra váltod a launchert, mostantól a felület és a napló is végig angolul jelenik meg. Pótoltuk azokat a szövegeket, amik eddig magyarul maradtak: a szerver állapotsort, a modlista címkéit (BE/KI, HELYI, NINCS), a frissítés- és hibasorokat, a beállítás- és preset-kérdéseket, valamint a teljes naplót a fő folyamattól a modulokig. Az esemény dátuma is a választott nyelv szerint formázódik.":
+      "If you switch the launcher to English, the whole interface and the log now appear in English. We filled in the texts that stayed Hungarian until now: the server status line, the mod list labels (BE/KI, HELYI, NINCS), the update and error lines, the settings and preset questions, and the entire log from the main process down to the modules. The event date is formatted according to the selected language as well.",
+    "A szerver állapotsora angolul is megjelenik (Server ONLINE / Server OFFLINE).":
+      "The server status line is translated too (Server ONLINE / Server OFFLINE).",
+    "A modlista rövid címkéi is fordítva: ON/OFF, LOCAL, NONE.":
+      "The short mod list labels are translated: ON/OFF, LOCAL, NONE.",
+    "A napló minden sora angolul is olvasható – a launcher és a modulok üzenetei is.":
+      "Every log line can be read in English – launcher and module messages alike.",
+    "A beállítások, a preset-kérdés és a hibaüzenetek szintén le vannak fordítva.":
+      "The settings, the preset question and the error messages are translated as well.",
+    "Az esemény dátuma a választott nyelv formátumát követi (pl. 17 Nov 2026, 14:15).":
+      "The event date follows the selected language (e.g. 17 Nov 2026, 14:15).",
+// ---- 0.9.36 (egyszerűbb Optimalizálás panel) ----
     "0.9.36 – Egyszerűbb Optimalizálás panel":
       "0.9.36 – Simpler Optimisations panel",
     "Kikerültek az Optimalizálás panelről azok a kártyák, amikre már nincs szükség: az ETO textúracsomagok (alap és Max Performance), a 6282 3D modellcsomag és a magyarítás. A panel így rövidebb és átláthatóbb: PZO motor, Viewpoint NIGHTLY, RAM/JVM heap, ZombieBuddy, a workshopos 3D modellek cseréje és a mod mappa maradt benne.":

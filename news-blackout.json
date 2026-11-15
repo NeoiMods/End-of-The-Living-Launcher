@@ -1,7 +1,22 @@
 {
-  "version": "0.9.36",
+  "version": "0.9.37",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.37",
+      "version": "0.9.37",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.37 – Teljes angol fordítás",
+      "text": "Ha angolra váltod a launchert, mostantól a felület és a napló is végig angolul jelenik meg. Pótoltuk azokat a szövegeket, amik eddig magyarul maradtak: a szerver állapotsort, a modlista címkéit (BE/KI, HELYI, NINCS), a frissítés- és hibasorokat, a beállítás- és preset-kérdéseket, valamint a teljes naplót a fő folyamattól a modulokig. Az esemény dátuma is a választott nyelv szerint formázódik.",
+      "changes": [
+        "A szerver állapotsora angolul is megjelenik (Server ONLINE / Server OFFLINE).",
+        "A modlista rövid címkéi is fordítva: ON/OFF, LOCAL, NONE.",
+        "A napló minden sora angolul is olvasható – a launcher és a modulok üzenetei is.",
+        "A beállítások, a preset-kérdés és a hibaüzenetek szintén le vannak fordítva.",
+        "Az esemény dátuma a választott nyelv formátumát követi (pl. 17 Nov 2026, 14:15)."
+      ]
+    },
     {
       "id": "0.9.36",
       "version": "0.9.36",
