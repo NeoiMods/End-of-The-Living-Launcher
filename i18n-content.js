@@ -16,7 +16,22 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                                                // ---- 0.9.46 (teljes fordítás) ----
+                                                                                                                    // ---- 0.9.47 (indítási diagnosztika) ----
+    "0.9.47 – A napló megmondja, miért nem indult el a játék, és melyik mod hiányzik":
+      "0.9.47 – The log now says why the game did not start, and which mod is missing",
+    "Ha a játék nem indul el, a launcher eddig csak annyit írt, hogy „15 mp után sem látszik futónak”. Mostantól kiírja a valódi okot: a folyamat kilépési kódját, a játék konzoljának utolsó hibáit és a JVM összeomlás-naplót (ha van). Indítás előtt pedig névvel és Steam ID-val felsorolja, mely modok hiányoznak a kollekcióból – a „752/753” számból eddig nem derült ki, melyik az az egy. Ugyanez az ellenőrző listában is megjelenik: a szám mellett ott a hiányzó mod neve.":
+      "When the game did not start, the launcher only said “not seen running after 15 s”. It now writes the real reason: the process exit code, the last errors from the game console and the JVM crash log (if any). Before launching it lists the mods missing from the collection by name and Steam ID – the “752/753” number never told you which one it was. The same appears in the checklist: the missing mod’s name is shown next to the number.",
+    "Indítás előtt a napló felsorolja a kollekcióból hiányzó modokat (név + Steam ID, akár 20 tétel).":
+      "Before launching, the log lists the collection mods missing on this machine (name + Steam ID, up to 20).",
+    "Ha a játék kilép, a napló kiírja a kilépési kódot/jelzést.":
+      "If the game exits, the log writes the exit code/signal.",
+    "Ha 15 mp után sem fut, a launcher kiírja a játék konzoljának utolsó hibáit.":
+      "If it is still not running after 15 s, the launcher writes the last errors from the game console.",
+    "JVM-összeomlás esetén a hs_err napló fájlnevét és első sorait is kiírja.":
+      "On a JVM crash it also writes the hs_err log file name and its first lines.",
+    "Az ellenőrző listában a „752/753” mellett a hiányzó mod neve is látszik.":
+      "The checklist shows the missing mod’s name next to “752/753”.",
+// ---- 0.9.46 (teljes fordítás) ----
     "0.9.46 – Teljes angol fordítás: a feliratkozó ablak és minden naplósor":
       "0.9.46 – Full English coverage: the subscribe window and every log line",
     "A Steam-feliratkozó ablak saját sávja eddig mindig magyarul jelent meg – mostantól a launcher nyelvét követi, benne az „Open in Steam” gombbal. Emellett lefordítottuk a napló összes maradék sorát (telepítés, frissítés, Steam, PZO, Viewpoint, magyarítások, Zip csomagok) és a modpack trait/karakter kérdését, ami natív ablakban eddig csak magyarul volt. A szóközre végződő szótárolvasatok soha nem illeszkedtek – ezeket sablonná alakítottuk, így például a „Hiba a keresés közben: …” típusú sorok is angolul jelennek meg.":

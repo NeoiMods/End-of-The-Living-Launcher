@@ -19,7 +19,7 @@ const {
 const modinfo = require('./src/modinfo');
 const modlist = require('./src/modlist');
 const news = require('./src/news');
-const { launchGame, isGameRunning, runningGameReason } = require('./src/launch');
+const { launchGame, isGameRunning, runningGameReason, launchFailureDiagnostics } = require('./src/launch');
 const setup = require('./src/setup');
 const { runSetup } = setup;
 const { fetchCollection } = require('./src/collection');
@@ -63,6 +63,9 @@ app.on('second-instance', () => {
 let launchInFlight = false;
 // Játék bezárásának figyelése a crash loghoz.
 let gameSeenRunning = false;
+// Mikor indítottuk utoljára a játékot: a hiba-diagnosztika csak az azóta
+// keletkezett konzol-hibákat idézi, hogy ne egy hetekkel korábbi sort mutasson.
+let launchStartedAt = 0;
 // Összeomlás után a log beküldése kötelező: amíg nincs elküldve, a launcher
 // ablakát sem lehet csak úgy bezárni (kilépéskor rákérdezünk).
 let crashReportPending = false;
@@ -856,6 +859,31 @@ function logCollectionCountChange(label, prev, next) {
   }
 }
 
+// Mely modok hiányoznak a kollekcióból a gépről? A napló ezeket névvel és
+// Steam ID-val írja ki, mert a „752/753” számból nem derül ki, melyik hiányzik.
+function collectionMissingMods(mode) {
+  const blackoutMode = String(mode || '') === 'blackout';
+  const col = blackoutMode ? cfg.blackout && cfg.blackout.collection : cfg.collection;
+  if (!col || !Array.isArray(col.items) || !col.items.length) return [];
+  const st = status();
+  const libs = st.steamPath ? require('./src/paths').parseLibraryPaths(st.steamPath) : [];
+  const workshop = require('./src/workshop');
+  return col.items.filter((it) => {
+    if (!blackoutMode && setup.SKIP_DOWNLOAD_IDS.has(String(it.id))) return false;
+    return !workshop.itemDir(libs, it.id);
+  });
+}
+
+function logMissingCollectionMods(mode, onLog = log) {
+  const list = collectionMissingMods(mode);
+  if (!list.length) return;
+  const name = String(mode || '') === 'blackout' ? 'Blackout' : 'Steam Workshop';
+  onLog(`⚠ ${list.length} mod hiányzik a(z) ${name} kollekcióból – ezek nélkül indul a játék:`);
+  for (const m of list.slice(0, 20)) onLog(`   • ${m.title || m.id} (${m.id})`);
+  if (list.length > 20) onLog(`   … és még ${list.length - 20} mod.`);
+  onLog('   Telepítés: MODOK TELEPÍTÉSE gomb vagy a feliratkozó ablak.');
+}
+
 // az ellenőrző listának a valós Blackout számokat kell mutatnia.
 ipcMain.handle('collection:refresh', async (e, mode) => {
   const blackoutMode = String(mode || '').toLowerCase() === 'blackout';
@@ -1289,6 +1317,9 @@ ipcMain.handle('game:launch', async (event, mode) => {
     }
     // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).
     // Csak ZGC (a felhasználói kérés): mindkét módban ZGC-vel indul a játék.
+    // Indítás előtt: mely kollekció-mod hiányzik a gépről (névvel és ID-val).
+    logMissingCollectionMods(blackoutMode ? 'blackout' : 'eotl');
+    launchStartedAt = Date.now();
     await launchGame({ gameDir, cfg, onLog: log, zgc: true, userDataDir: app.getPath('userData') });
     // Ebből lesz a launcher következő indításának alapértelmezett módja.
     noteModeUse(blackoutMode ? 'blackout' : 'eotl');
@@ -1308,6 +1339,13 @@ ipcMain.handle('game:launch', async (event, mode) => {
         log('• A játék elindult.');
       } else {
         log('⚠ A játék 15 mp után sem látszik futónak – nézd meg a Steamet és a játék konzolját.');
+        // Miért nem indult el? A játék konzolja és az esetleges JVM-összeomlás
+        // megmondja a valódi okot (agent DLL, memória, Steam, letöltés).
+        try {
+          for (const line of launchFailureDiagnostics(gameDir, zomboidDir(), launchStartedAt)) log(line);
+        } catch {
+          // A diagnosztika sosem boríthatja a launchert.
+        }
       }
     }, 15000);
     return { ok: true };

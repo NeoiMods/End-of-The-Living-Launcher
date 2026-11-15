@@ -133,6 +133,11 @@ function summary(cfg) {
   const libs = steamLibs();
   const st = configStatus();
   const list = st.found ? listCounts(paths.zomboidDir(), st.mods) : { enabled: 0, missing: 0, extra: 0 };
+  // Mely modok hiányoznak konkrétan – a felület ezt nevekkel mutatja, nem csak
+  // a „752/753” számmal (abból nem derül ki, mit kell pótolni).
+  const missingItems = items.length
+    ? items.filter((it) => !workshop.itemDir(libs, it.id))
+    : [];
   return {
     name: NAME,
     collectionId: collectionId(cfg),
@@ -140,7 +145,10 @@ function summary(cfg) {
     title: (b.collection && b.collection.title) || NAME,
     collection: items.length ? b.collection : null,
     total: items.length,
-    downloaded: items.length ? workshop.classify(libs, items).present.size : 0,
+    downloaded: items.length ? items.length - missingItems.length : 0,
+    missingTotal: missingItems.length,
+    missingNames: missingItems.slice(0, 8).map((it) => it.title || it.id),
+    missingIds: missingItems.slice(0, 8).map((it) => String(it.id)),
     enabledCount: list.enabled || (st.installed ? st.enabled : Array.isArray(b.enabledIds) ? b.enabledIds.length : 0),
     listEnabled: list.enabled,
     listMissing: list.missing,

@@ -172,8 +172,15 @@ function render(st) {
             ok: boTotal ? boGot >= boTotal : null,
             warn: boTotal > 0 && boGot < boTotal,
             label: 'Blackout kollekció',
+            // A szám mellé a hiányzó modok neve is kiíródik (a „752/753”-ból
+            // eddig nem derült ki, melyik az az egy).
             detail: boTotal
-              ? `${boGot}/${boTotal} mod letöltve a Blackout kollekcióból`
+              ? `${boGot}/${boTotal} mod letöltve a Blackout kollekcióból` +
+                (bo && bo.missingTotal && bo.missingNames && bo.missingNames.length
+                  ? ` – hiányzik: ${bo.missingNames.slice(0, 3).join(', ')}${
+                      bo.missingTotal > 3 ? ` (+${bo.missingTotal - 3})` : ''
+                    }`
+                  : '')
               : 'A kollekció még nincs betöltve – nyomd meg a „Kollekció frissítése” gombot',
           },
           {

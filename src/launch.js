@@ -620,9 +620,90 @@ async function launchGame({ gameDir, cfg, onLog, zgc = true, userDataDir = '' })
     child.once('error', (err) => reject(new Error(`Nem sikerült elindítani a játékot: ${err.message}`)));
     child.once('spawn', resolve);
   });
+  // Ha a játék a látható indulás előtt kilép, az okot kiírjuk (a játék a
+  // JVM hibát a console.txt-be írja, a kilépési kód önmagában sokat elárul).
+  child.once('exit', (code, signal) => {
+    try {
+      onLog(
+        `✗ A játék folyamata kilépett (${signal ? 'jelzés: ' + signal : 'kód: ' + code}) – ezért nem indult el.`
+      );
+    } catch {
+      // A naplózás sosem boríthatja a launchert.
+    }
+  });
   child.unref();
   onLog(`✓ Játék elindítva (PID ${child.pid}).`);
   return { pid: child.pid, useAgent, args, heapMb };
+}
+
+// A fájl utolsó sorai (a játék konzolja ide írja a JVM hibáit).
+function tailLines(file, maxLines = 400) {
+  try {
+    const text = fs.readFileSync(file, 'utf8');
+    return text.split(/\r?\n/).slice(-maxLines);
+  } catch {
+    return [];
+  }
+}
+
+// Miért nem indult el a játék? A konzol hibái + a legfrissebb hs_err fájl.
+// A naplóba kerülő magyar sorokat az i18n-logs fordítja angolra.
+function launchFailureDiagnostics(gameDir, zomboidDir, sinceMs = 0) {
+  const out = [];
+  const zd = zomboidDir || path.join(require('os').homedir(), 'Zomboid');
+  const consoleFile = path.join(zd, 'console.txt');
+
+  // Ha a konzol naplója nem íródott az indítás óta, nincs értelme hibát
+  // idézni belőle (egy régi hiba félrevezetné a játékost).
+  let fresh = true;
+  if (sinceMs) {
+    try {
+      fresh = fs.statSync(consoleFile).mtimeMs >= sinceMs - 2000;
+    } catch {
+      fresh = false;
+    }
+  }
+
+  const lines = fresh ? tailLines(consoleFile) : [];
+  const interesting = lines.filter((l) => {
+    if (/reportMissingArgumentsFromPastAbuse/i.test(l)) return false; // ártalmatlan fordítási zaj
+    if (/^\s*(WARN|DEBUG|TRACE)\b/i.test(l)) return false;
+    return /error occurred|exception in thread|could not find|could not create|failed to|unable to|no such file|outofmemory/i.test(
+      l
+    );
+  });
+  const unique = [...new Set(interesting.map((l) => l.trim()).filter(Boolean))].slice(-5);
+  if (unique.length) {
+    out.push('✗ A játék nem indult el. A játék konzoljának utolsó hibái:');
+    for (const l of unique) out.push('   ' + String(l).slice(0, 220));
+  }
+
+  // JVM összeomlás: hs_err_pid*.log a Zomboid vagy a játék mappában.
+  for (const dir of [zd, gameDir]) {
+    let files = [];
+    try {
+      files = fs
+        .readdirSync(dir)
+        .filter((f) => /^hs_err_pid\d+\.log$/i.test(f))
+        .map((f) => ({ f, at: fs.statSync(path.join(dir, f)).mtimeMs }))
+        .sort((a, b) => b.at - a.at);
+    } catch {
+      continue;
+    }
+    if (!files.length) continue;
+    const path0 = path.join(dir, files[0].f);
+    const head = tailLines(path0, 60).filter((l) => /^(#|Problematic frame|Command Line)/i.test(l));
+    out.push(`✗ JVM összeomlás-napló: ${files[0].f} (${dir})`);
+    for (const l of head.slice(0, 4)) out.push('   ' + String(l).trim().slice(0, 220));
+    break;
+  }
+
+  if (!out.length) {
+    out.push(
+      '✗ A játék nem indult el, és a konzolban sincs hibaüzenet – nézd meg a Steamben a letöltéseket, illetve küldd el a naplót.'
+    );
+  }
+  return out;
 }
 
 module.exports = {
@@ -641,4 +722,5 @@ module.exports = {
   runningGameReason,
   splitProcessLine,
   launchGame,
+  launchFailureDiagnostics,
 };

@@ -452,6 +452,17 @@
     ["kicsomagolási hiba", "unpacking error"],
     ["SteamCMD kicsomagolása…", "Unpacking SteamCMD…"],
 
+    // ---- 0.9.47 (miért nem indult el / melyik mod hiányzik) ----
+    ["⚠ {n} mod hiányzik a(z) {s} kollekcióból – ezek nélkül indul a játék:", "⚠ {n} mods are missing from the {s} collection – the game starts without them:"],
+    ["   • {s} ({s})", "   • {s} ({s})"],
+    ["   … és még {n} mod.", "   … and {n} more mods."],
+    ["   Telepítés: MODOK TELEPÍTÉSE gomb vagy a feliratkozó ablak.", "   Install: the INSTALL MODS button or the subscribe window."],
+    ["✗ A játék folyamata kilépett ({s}) – ezért nem indult el.", "✗ The game process exited ({s}) – that is why it did not start."],
+    ["✗ A játék nem indult el. A játék konzoljának utolsó hibái:", "✗ The game did not start. Last errors from the game console:"],
+    ["✗ JVM összeomlás-napló: {s}", "✗ JVM crash log: {s}"],
+    ["✗ A játék nem indult el, és a konzolban sincs hibaüzenet – nézd meg a Steamben a letöltéseket, illetve küldd el a naplót.", "✗ The game did not start and the console has no error either – check your Steam downloads, or send the log."],
+    ["{n}/{n} mod letöltve a Blackout kollekcióból – hiányzik: {s}", "{n}/{n} mods downloaded from the Blackout collection – missing: {s}"],
+
 // ---- 0.9.46 (teljes lefedettség) ----
     ["! Mod lista szűrése kihagyva: ", "! Mod list filtering skipped: "],
     ["! A mod lista szűrése nem sikerült: ", "! Could not filter the mod list: "],

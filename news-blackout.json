@@ -1,7 +1,22 @@
 {
-  "version": "0.9.46",
+  "version": "0.9.47",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.47",
+      "version": "0.9.47",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.47 – A napló megmondja, miért nem indult el a játék, és melyik mod hiányzik",
+      "text": "Ha a játék nem indul el, a launcher eddig csak annyit írt, hogy „15 mp után sem látszik futónak”. Mostantól kiírja a valódi okot: a folyamat kilépési kódját, a játék konzoljának utolsó hibáit és a JVM összeomlás-naplót (ha van). Indítás előtt pedig névvel és Steam ID-val felsorolja, mely modok hiányoznak a kollekcióból – a „752/753” számból eddig nem derült ki, melyik az az egy. Ugyanez az ellenőrző listában is megjelenik: a szám mellett ott a hiányzó mod neve.",
+      "changes": [
+        "Indítás előtt a napló felsorolja a kollekcióból hiányzó modokat (név + Steam ID, akár 20 tétel).",
+        "Ha a játék kilép, a napló kiírja a kilépési kódot/jelzést.",
+        "Ha 15 mp után sem fut, a launcher kiírja a játék konzoljának utolsó hibáit.",
+        "JVM-összeomlás esetén a hs_err napló fájlnevét és első sorait is kiírja.",
+        "Az ellenőrző listában a „752/753” mellett a hiányzó mod neve is látszik."
+      ]
+    },
     {
       "id": "0.9.46",
       "version": "0.9.46",
