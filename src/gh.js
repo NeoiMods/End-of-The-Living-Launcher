@@ -155,7 +155,15 @@ async function fetchRepoText({
   cacheBust = false,
 } = {}) {
   let lastError = null;
-  for (const mirror of repoFileUrls({ cfg, repo, file, ref, size })) {
+  // Friss adat kell (pl. frissítés-index): a GitHub API nem cache-el, ezért
+  // ilyenkor azt kérdezzük először, a CDN-es utak csak utána jönnek.
+  const mirrors = repoFileUrls({ cfg, repo, file, ref, size });
+  if (cacheBust) {
+    const api = mirrors.filter((mirror) => mirror.name === 'api');
+    const rest = mirrors.filter((mirror) => mirror.name !== 'api');
+    mirrors.splice(0, mirrors.length, ...api, ...rest);
+  }
+  for (const mirror of mirrors) {
     try {
       const res = await fetchTextRetry(
         cacheBust ? withCacheBust(mirror.url) : mirror.url,
