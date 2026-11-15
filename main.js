@@ -908,6 +908,7 @@ ipcMain.handle('subscribe:open', async (e, mode) => {
       subscribe.openWindow({
         collectionId: blackout.collectionId(cfg),
         missingIds: missing.map((m) => m.id),
+        lang: cfg.uiLang,
         onLog: log,
       });
       return { ok: true };
@@ -929,6 +930,7 @@ ipcMain.handle('subscribe:open', async (e, mode) => {
     subscribe.openWindow({
       collectionId: cfg.collectionId,
       missingIds: missing.map((m) => m.id),
+      lang: cfg.uiLang,
       onLog: log,
     });
     return { ok: true };
@@ -983,6 +985,7 @@ ipcMain.handle('mods:install', async () => {
         subscribe.openWindow({
           collectionId: cfg.collectionId,
           missingIds: missing.map((m) => m.id),
+          lang: cfg.uiLang,
           onLog: () => {},
         }),
       openSteamClient: () => subscribe.openSteamClient(cfg.collectionId),
@@ -1116,6 +1119,7 @@ async function installBlackoutModpack(keepUserPresets = true) {
       subscribe.openWindow({
         collectionId: blackout.collectionId(cfg),
         missingIds: missing.map((m) => m.id),
+        lang: cfg.uiLang,
         onLog: () => {},
       }),
     openSteamClient: () => subscribe.openSteamClient(blackout.collectionId(cfg)),
@@ -1233,18 +1237,28 @@ ipcMain.handle('game:launch', async (event, mode) => {
         try {
           const conflicts = blackout.userPresetConflicts();
           if (conflicts.length && win && !win.isDestroyed()) {
+            // A natív kérdésablak nem megy át a felület fordítóján, ezért itt
+            // kell a választott nyelven megfogalmazni.
+            const en = String(cfg.uiLang || '').toLowerCase() === 'en';
             const { response } = await dialog.showMessageBox(win, {
               type: 'question',
-              buttons: ['Megtartom a sajátomat', 'A pakk alapját kérem'],
+              buttons: en
+                ? ['Keep my own', 'Use the pack defaults']
+                : ['Megtartom a sajátomat', 'A pakk alapját kérem'],
               defaultId: 0,
               cancelId: 0,
               noLink: true,
-              title: 'Trait és karakter presetek',
-              message: 'Megtartsam a saját trait- és karakter-presetjeidet?',
-              detail:
-                'A config frissítése felülírná a játékban mentett trait- és karakter-testreszabás presetjeidet.\n\n' +
-                'Megtartom a sajátomat: a launcher hozzád sem nyúl, a pakk alap presetje nem kerül be.\n' +
-                'A pakk alapját kérem: a pakk szerinti alap lép a helyükre (a régi elmentve).',
+              title: en ? 'Trait and character presets' : 'Trait és karakter presetek',
+              message: en
+                ? 'Should I keep your own trait and character presets?'
+                : 'Megtartsam a saját trait- és karakter-presetjeidet?',
+              detail: en
+                ? 'A config update would overwrite the trait and character customisation presets saved in the game.\n\n' +
+                  'Keep my own: the launcher does not touch them, the pack defaults are not applied.\n' +
+                  'Use the pack defaults: the pack defaults take their place (the old ones are saved).'
+                : 'A config frissítése felülírná a játékban mentett trait- és karakter-testreszabás presetjeidet.\n\n' +
+                  'Megtartom a sajátomat: a launcher hozzád sem nyúl, a pakk alap presetje nem kerül be.\n' +
+                  'A pakk alapját kérem: a pakk szerinti alap lép a helyükre (a régi elmentve).',
             });
             keepUserPresets = response === 0;
           }

@@ -20,7 +20,9 @@ function openSteamClient(collectionId) {
   return shell.openExternal(`steam://url/CommunityFilePage/${encodeURIComponent(collectionId)}`);
 }
 
-function openWindow({ collectionId, missingIds = [], onLog = () => {} }) {
+function openWindow({ collectionId, missingIds = [], onLog = () => {}, lang = 'hu' }) {
+  const en = String(lang).toLowerCase() === 'en';
+  const t = (hu, eng) => (en ? eng : hu);
   if (win && !win.isDestroyed()) {
     win.focus();
     return win;
@@ -112,7 +114,7 @@ async function handlePage({ collectionId, missingIds, onLog }) {
   }
 
   if (!state.loggedIn) {
-    injectBanner(collectionId, onLog);
+    injectBanner(collectionId, onLog, lang);
     return;
   }
 
@@ -212,8 +214,20 @@ async function checkModal(onLog, collectionLevel = false) {
   }
 }
 
-function injectBanner(collectionId, onLog) {
+function injectBanner(collectionId, onLog, lang = 'hu') {
   if (!win || win.isDestroyed()) return;
+  const en = String(lang).toLowerCase() === 'en';
+  const t = (hu, eng) => (en ? eng : hu);
+  // A szövegeket itt (Node oldalon) állítjuk össze, így az injektált szkriptben
+  // nincs idézőjel-gond, és a választott nyelven jelenik meg a sáv.
+  const title = t('Feliratkozás a Steam Workshop kollekcióra', 'Subscribe to the Steam Workshop collection');
+  const body = t(
+    'Jelentkezz be a Steambe az oldalon (ugyanazzal a fiókkal, mint a Steam kliensben) – a launcher ezután automatikusan feliratkozik a modokra.<br>' +
+      'Vagy kattints a gombra, és a <b>Steamben</b> nyomd meg a „Subscribe to all”, majd a „Add” gombot.',
+    'Sign in to Steam on this page (with the same account as in the Steam client) – the launcher then subscribes to the mods automatically.<br>' +
+      'Or click the button and in <b>Steam</b> press “Subscribe to all”, then “Add”.'
+  );
+  const openLabel = t('Megnyitás a Steamben', 'Open in Steam');
   const script = `
     (function () {
       if (document.getElementById('eotl-banner')) return 'exists';
@@ -227,14 +241,12 @@ function injectBanner(collectionId, onLog) {
         'box-shadow:0 6px 24px rgba(0,0,0,.45)',
       ].join(';');
       div.innerHTML =
-        '<div><strong>Feliratkozás a Steam Workshop kollekcióra</strong><br>' +
-        'Jelentkezz be a Steambe az oldalon (ugyanazzal a fiókkal, mint a Steam kliensben) – ' +
-        'a launcher ezután automatikusan feliratkozik a modokra.<br>' +
-        'Vagy kattints a gombra, és a <b>Steamben</b> nyomd meg a „Subscribe to all", majd a „Add" gombot.</div>' +
+        '<div><strong>' + ${JSON.stringify(title)} + '</strong><br>' +
+        ${JSON.stringify(body)} + '</div>' +
         '<button type="button" id="eotl-steam-open" style="' +
         'flex:0 0 auto;padding:12px 20px;border:none;border-radius:8px;cursor:pointer;' +
         'background:linear-gradient(180deg,#a3e635,#6fbf32);color:#0c1408;font-weight:700;font-size:14px;' +
-        '">Megnyitás a Steamben</button>';
+        '">' + ${JSON.stringify(openLabel)} + '</button>';
       document.documentElement.appendChild(div);
       document.getElementById('eotl-steam-open').addEventListener('click', function () {
         window.open('steam://url/CommunityFilePage/${collectionId}', '_blank');
@@ -245,7 +257,13 @@ function injectBanner(collectionId, onLog) {
   win.webContents
     .executeJavaScript(script, true)
     .then((r) => {
-      if (r === 'ok') onLog('Steam bejelentkezés szükséges a feliratkozáshoz – útmutatás megjelent az ablakban.');
+      if (r === 'ok')
+        onLog(
+          t(
+            'Steam bejelentkezés szükséges a feliratkozáshoz – útmutatás megjelent az ablakban.',
+            'Steam sign-in is required to subscribe – instructions appeared in the window.'
+          )
+        );
     })
     .catch(() => {});
 }

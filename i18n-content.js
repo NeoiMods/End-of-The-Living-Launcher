@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                                            // ---- 0.9.45 (ne fagyjon a felület) ----
+                                                                                                                // ---- 0.9.46 (teljes fordítás) ----
+    "0.9.46 – Teljes angol fordítás: a feliratkozó ablak és minden naplósor":
+      "0.9.46 – Full English coverage: the subscribe window and every log line",
+    "A Steam-feliratkozó ablak saját sávja eddig mindig magyarul jelent meg – mostantól a launcher nyelvét követi, benne az „Open in Steam” gombbal. Emellett lefordítottuk a napló összes maradék sorát (telepítés, frissítés, Steam, PZO, Viewpoint, magyarítások, Zip csomagok) és a modpack trait/karakter kérdését, ami natív ablakban eddig csak magyarul volt. A szóközre végződő szótárolvasatok soha nem illeszkedtek – ezeket sablonná alakítottuk, így például a „Hiba a keresés közben: …” típusú sorok is angolul jelennek meg.":
+      "The banner in the Steam subscribe window always appeared in Hungarian – it now follows the launcher language, including the “Open in Steam” button. We also translated every remaining log line (install, update, Steam, PZO, Viewpoint, translations, zip packs) and the modpack trait/character question, which used to be Hungarian-only in a native window. Dictionary entries ending in a space never matched – they are templates now, so lines like “Search failed: …” appear in English too.",
+    "A Steam-feliratkozó ablak sávja és az „Open in Steam” gomb a választott nyelven jelenik meg.":
+      "The Steam subscribe banner and the “Open in Steam” button appear in the selected language.",
+    "A napló minden maradék sora lefordítva (telepítés, frissítés, Steam/SteamCMD, PZO, Viewpoint, magyarítások, csomagok).":
+      "Every remaining log line translated (install, update, Steam/SteamCMD, PZO, Viewpoint, translations, packs).",
+    "A Blackout modpack trait/karakter kérdése natív ablakban is angolul jelenik meg.":
+      "The Blackout modpack trait/character question now appears in English in the native window too.",
+    "A szóközzel végződő naplósablonok javítva – a „… : részletek” sorok is fordítódnak.":
+      "Log templates ending in a space fixed – the “… : details” lines are translated as well.",
+// ---- 0.9.45 (ne fagyjon a felület) ----
     "0.9.45 – Nem fagy a felület, és nem ugrál a modszám":
       "0.9.45 – The interface no longer freezes, and the mod count is stable",
     "A launcher 15 másodpercenként ellenőrizte, fut-e a játék – ehhez egy PowerShell-folyamatot indított, ami a főfolyamatot blokkolta, ezért a felület időnként beragadt. Mostantól ez háttérben fut, gyorsítótárral: a státuszkérés ~0,8 másodperc helyett ~0,13 másodperc, a felület nem fagy meg. A kollekció darabszáma sem ugrál már (753, aztán 752): az ismétlődő tételeket kiszűrjük, és ha a Steam kollekcióban tényleg változás történt, azt a napló kiírja.":

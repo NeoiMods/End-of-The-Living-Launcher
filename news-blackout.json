@@ -1,7 +1,21 @@
 {
-  "version": "0.9.45",
+  "version": "0.9.46",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.46",
+      "version": "0.9.46",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.46 – Teljes angol fordítás: a feliratkozó ablak és minden naplósor",
+      "text": "A Steam-feliratkozó ablak saját sávja eddig mindig magyarul jelent meg – mostantól a launcher nyelvét követi, benne az „Open in Steam” gombbal. Emellett lefordítottuk a napló összes maradék sorát (telepítés, frissítés, Steam, PZO, Viewpoint, magyarítások, Zip csomagok) és a modpack trait/karakter kérdését, ami natív ablakban eddig csak magyarul volt. A szóközre végződő szótárolvasatok soha nem illeszkedtek – ezeket sablonná alakítottuk, így például a „Hiba a keresés közben: …” típusú sorok is angolul jelennek meg.",
+      "changes": [
+        "A Steam-feliratkozó ablak sávja és az „Open in Steam” gomb a választott nyelven jelenik meg.",
+        "A napló minden maradék sora lefordítva (telepítés, frissítés, Steam/SteamCMD, PZO, Viewpoint, magyarítások, csomagok).",
+        "A Blackout modpack trait/karakter kérdése natív ablakban is angolul jelenik meg.",
+        "A szóközzel végződő naplósablonok javítva – a „… : részletek” sorok is fordítódnak."
+      ]
+    },
     {
       "id": "0.9.45",
       "version": "0.9.45",
