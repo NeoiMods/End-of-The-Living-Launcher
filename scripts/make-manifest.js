@@ -142,7 +142,7 @@ function buildUpdateManifest() {
     const untracked = lines.filter((l) => l.startsWith('??')).map((l) => l.slice(3).trim());
     // „ M fájl” = módosítva, de nincs stagelve: az index a régi tartalmat írná le.
     const unstaged = lines
-      .filter((l) => /^ ?M|^ M/.test(l))
+      .filter((l) => /^ M|^MM|^AM/.test(l))
       .map((l) => l.slice(3).trim());
     if (untracked.length) {
       console.log(`! ${untracked.length} fájl nincs a gitben (előbb add hozzá): ${untracked.slice(0, 6).join(', ')}`);

@@ -198,7 +198,16 @@ function parseCommitPayload(kind, data) {
 // méretet és a sha256-ot, így API nélkül is eldönthető, változott-e valami,
 // és csak a megváltozott fájlokat kell letölteni.
 async function fetchUpdateManifest(repo, cfg = {}) {
-  const res = await gh.fetchRepoJson({ cfg, repo, ref: BRANCH, file: 'update-manifest.json' });
+  // Cache-busting + 3 próba: a CDN percekig a régi indexet adhatja, az elavult
+  // méretek miatt pedig a fájlonkénti letöltés méret-ellenőrzése elbukna.
+  const res = await gh.fetchRepoJson({
+    cfg,
+    repo,
+    ref: BRANCH,
+    file: 'update-manifest.json',
+    attempts: 3,
+    cacheBust: true,
+  });
   if (!res.ok || !res.data || !Array.isArray(res.data.files)) return null;
   return res.data;
 }

@@ -136,14 +136,29 @@ function repoFileUrls({ cfg, repo, file, ref = DEFAULT_BRANCH, size = 0 }) {
   return list;
 }
 
+// Cache-busting: a CDN (raw.githubusercontent, jsDelivr) percekig a régi
+// változatot adhatja. Az indexnél ez végzetes lenne: elavult méretekkel
+// hasonlítanánk, és a letöltés méret-ellenőrzése elbukna.
+function withCacheBust(url) {
+  return url + (url.includes('?') ? '&' : '?') + 'cb=' + Date.now();
+}
+
 // Szöveges repó-fájl beolvasása a tartalék utakon (news.json, index fájlok).
 // Visszatérés: { ok, body, source, error }
-async function fetchRepoText({ cfg, repo, file, ref = DEFAULT_BRANCH, size = 0, attempts = 1 } = {}) {
+async function fetchRepoText({
+  cfg,
+  repo,
+  file,
+  ref = DEFAULT_BRANCH,
+  size = 0,
+  attempts = 1,
+  cacheBust = false,
+} = {}) {
   let lastError = null;
   for (const mirror of repoFileUrls({ cfg, repo, file, ref, size })) {
     try {
       const res = await fetchTextRetry(
-        mirror.url,
+        cacheBust ? withCacheBust(mirror.url) : mirror.url,
         { headers: mirror.headers, timeoutMs: 15000 },
         attempts
       );

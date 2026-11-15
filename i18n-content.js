@@ -16,7 +16,18 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                        // ---- 0.9.40 (frissítés javítása) ----
+                                                                                            // ---- 0.9.41 (friss index) ----
+    "0.9.41 – A frissítés-index nem jön a CDN gyorsítótárából":
+      "0.9.41 – The update index no longer comes from the CDN cache",
+    "A GitHub CDN-je (raw.githubusercontent, jsDelivr) percekig a korábbi fájlt adja vissza. Ezért a launcher olyan indexet kaphatott, amiben még a régi méretek és hash-ek voltak, a letöltött fájlok viszont már az új tartalmat hozták – innen jött a „3 fájl nem tölthető le”. Mostantól az index kérése cache-bustinggal, három próbával megy, így mindig a friss index alapján ellenőrzünk.":
+      "GitHub’s CDN (raw.githubusercontent, jsDelivr) keeps serving the previous file for minutes. The launcher could therefore receive an index that still held the old sizes and hashes while the downloaded files already carried the new content – that produced “3 files cannot be downloaded”. The index request now uses cache-busting with three attempts, so the check always runs against a fresh index.",
+    "Az update-manifest.json kérése cache-bustinggal és 3 próbával történik.":
+      "update-manifest.json is requested with cache-busting and three attempts.",
+    "Az index a commitolt (LF) bájtokból számol, nem a Windowsos CRLF munkakönyvtárból.":
+      "The index is computed from committed (LF) bytes, not from the Windows CRLF working tree.",
+    "Ha a fájlonkénti frissítés mégis elbukik, a launcher teljes zipballal folytatja.":
+      "If the per-file update still fails, the launcher continues with the full zipball.",
+// ---- 0.9.40 (frissítés javítása) ----
     "0.9.40 – Megjavított frissítés („3 fájl nem tölthető le”)":
       "0.9.40 – Fixed update (“3 files cannot be downloaded”)",
     "Az update-manifest.json eddig a legutóbbi commit tartalmából készült, miközben a build már az új fájlokat tartalmazta. Ezért az index egy commit-tal lemaradt, a letöltött fájlok mérete nem egyezett vele, és a launcher „3 fájl nem tölthető le – a launcher változatlan maradt” hibát írt. Mostantól az index a kiadásra kerülő fájlokból készül, és ha a fájlonkénti letöltés mégis elbukik, a launcher automatikusan a teljes zipballra vált.":

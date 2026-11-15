@@ -1,7 +1,20 @@
 {
-  "version": "0.9.40",
+  "version": "0.9.41",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.41",
+      "version": "0.9.41",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.41 – A frissítés-index nem jön a CDN gyorsítótárából",
+      "text": "A GitHub CDN-je (raw.githubusercontent, jsDelivr) percekig a korábbi fájlt adja vissza. Ezért a launcher olyan indexet kaphatott, amiben még a régi méretek és hash-ek voltak, a letöltött fájlok viszont már az új tartalmat hozták – innen jött a „3 fájl nem tölthető le”. Mostantól az index kérése cache-bustinggal, három próbával megy, így mindig a friss index alapján ellenőrzünk.",
+      "changes": [
+        "Az update-manifest.json kérése cache-bustinggal és 3 próbával történik.",
+        "Az index a commitolt (LF) bájtokból számol, nem a Windowsos CRLF munkakönyvtárból.",
+        "Ha a fájlonkénti frissítés mégis elbukik, a launcher teljes zipballal folytatja."
+      ]
+    },
     {
       "id": "0.9.40",
       "version": "0.9.40",
