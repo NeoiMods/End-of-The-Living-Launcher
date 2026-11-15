@@ -1,7 +1,21 @@
 {
-  "version": "0.9.42",
+  "version": "0.9.43",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.43",
+      "version": "0.9.43",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.43 – A játék nem indul el, ha hiányzik egy agent DLL",
+      "text": "A PZO telepítő néha úgy frissít, hogy a PZOptimEngine.jar-t lecseréli, a pzo_native64.dll-t viszont nem teszi vissza. Ilyenkor a ProjectZomboid64.json továbbra is hivatkozik a natív agentre, a JVM viszont el sem indul („Could not find agent library pzo_native64”), a játék pedig néma csendben kilép – a launcher naplójában csak annyi látszik, hogy 15 mp után sem fut. Mostantól indítás előtt ellenőrizzük, hogy minden -agentlib-hez megvan-e a DLL: előbb visszamásoljuk a launcher csomag-cache-éből, ha ott sincs, kivesszük a JSON-ból, hogy a játék elinduljon.",
+      "changes": [
+        "Indítás előtt minden -agentlib bejegyzéshez ellenőrizzük a DLL meglétét.",
+        "A hiányzó DLL-t a launcher csomag-cache-éből visszaállítja (pl. pzo_native64.dll).",
+        "Ha a DLL sehol nincs, az agent kikerül a launcher JSON-ból, és a napló figyelmeztet – így a játék elindul, nem lép ki némán.",
+        "A napló kiírja, melyik DLL-t állította vissza vagy hagyta ki."
+      ]
+    },
     {
       "id": "0.9.42",
       "version": "0.9.42",

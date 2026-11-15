@@ -1259,7 +1259,7 @@ ipcMain.handle('game:launch', async (event, mode) => {
     }
     // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).
     // Csak ZGC (a felhasználói kérés): mindkét módban ZGC-vel indul a játék.
-    await launchGame({ gameDir, cfg, onLog: log, zgc: true });
+    await launchGame({ gameDir, cfg, onLog: log, zgc: true, userDataDir: app.getPath('userData') });
     // Ebből lesz a launcher következő indításának alapértelmezett módja.
     noteModeUse(blackoutMode ? 'blackout' : 'eotl');
     // A tényleges futást a figyelő állapítja meg (a B42-nél a java.exe viszi a

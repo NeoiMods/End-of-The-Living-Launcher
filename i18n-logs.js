@@ -391,6 +391,10 @@
     ['alapvonal rögzítve', 'baseline recorded'],
     ['nincs launcher-változás', 'no launcher change'],
 
+    // ---- 0.9.43 (agent DLL) ----
+    ["• Hiányzó agent DLL visszaállítva a launcher csomag-cache-éből: {s}.dll", "• Missing agent DLL restored from the launcher package cache: {s}.dll"],
+    ["⚠ A(z) {s} agent DLL hiányzik a játék mappájából – kivettem a launcher JSON-ból, hogy a játék elinduljon. Telepítsd újra az érintett motort (PZO / ZombieBuddy).", "⚠ The {s} agent DLL is missing from the game folder – I removed it from the launcher JSON so the game can start. Reinstall the affected engine (PZO / ZombieBuddy)."],
+
     // ---- 0.9.42 (naplófájl) ----
     ["• Naplófájl: {s}", "• Log file: {s}"],
     ["  … és még {n} fájl.", "  … and {n} more files."],

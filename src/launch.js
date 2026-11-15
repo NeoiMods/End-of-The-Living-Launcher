@@ -202,7 +202,32 @@ function readLauncherTemplate() {
 // A JVM heap (-Xmx) beállítása a játék saját launcher JSON-jában is, hogy a
 // Steam-ből indított játék is ugyanannyi memóriát kapjon. Ha a fájl írásvédett
 // (Program Files), csak figyelmeztetünk – a parancssori -Xmx akkor is él.
-function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
+// A launcher csomag-cache-ében keressük a hiányzó agent DLL-t (pl. a PZO
+// telepítő néha csak a JAR-t frissíti, a DLL-t nem).
+function findCachedAgentDll(name, userDataDir) {
+  if (!userDataDir) return null;
+  const root = path.join(userDataDir, 'packs');
+  const wanted = `${String(name).toLowerCase()}.dll`;
+  const stack = [root];
+  let guard = 0;
+  while (stack.length && guard++ < 5000) {
+    const dir = stack.pop();
+    let entries = [];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const e of entries) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) stack.push(full);
+      else if (e.name.toLowerCase() === wanted) return full;
+    }
+  }
+  return null;
+}
+
+function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false, userDataDir = '' } = {}) {
   const file = path.join(gameDir, LAUNCHER_JSON);
   let raw;
   try {
@@ -296,6 +321,32 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
     added.push('-agentlib:' + AGENT_LIB);
   }
 
+  // Hiányzó agent DLL: a JSON-ban maradhat -agentlib:X, miközben az X.dll nincs
+  // a játék mappában (a PZO telepítő/eltávolító így tudja otthagyni). Ettől a JVM
+  // el sem indul („Could not find agent library”), a játék pedig némán kilép.
+  // Előbb visszamásoljuk a launcher csomag-cache-éből; ha ott sincs, kivesszük az
+  // argumentumot, hogy a játék elinduljon (és a napló szól róla).
+  const restoredAgents = [];
+  const removedAgents = [];
+  nextVmArgs = nextVmArgs.filter((a) => {
+    const m = typeof a === 'string' ? /^-agentlib:([\w-]+)$/i.exec(a) : null;
+    if (!m) return true;
+    const name = m[1];
+    if (hasFile(`${name}.dll`) || hasFile(`lib${name}.so`) || hasFile(`lib${name}.dylib`)) return true;
+    const cached = findCachedAgentDll(name, userDataDir);
+    if (cached) {
+      try {
+        fs.copyFileSync(cached, path.join(gameDir, `${name}.dll`));
+        restoredAgents.push(name);
+        return true;
+      } catch {
+        // Nem sikerült bemásolni: kivesszük, hogy a játék elinduljon.
+      }
+    }
+    removedAgents.push(name);
+    return false;
+  });
+
   // A windows alatti listákból is kivesszük a GC-kapcsolókat (és a heapet).
   let nestedChanged = false;
   const fixNested = (obj) => {
@@ -317,7 +368,7 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
   const sameVm =
     nextVmArgs.length === fileVmArgs.length && nextVmArgs.every((a, i) => a === fileVmArgs[i]);
   const same = !nestedChanged && added.length === 0 && sameVm;
-  if (same) return { changed: false, file, heapMb, added };
+  if (same) return { changed: false, file, heapMb, added, restoredAgents, removedAgents };
 
   data.vmArgs = nextVmArgs;
   try {
@@ -337,7 +388,7 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
         // Best effort: ha nem megy, a következő indítás úgyis javít.
       }
     }
-    return { changed: true, file, heapMb, locked: zgc, added };
+    return { changed: true, file, heapMb, locked: zgc, added, restoredAgents, removedAgents };
   } catch (err) {
     return {
       changed: false,
@@ -447,7 +498,7 @@ function buildArgs({ useAgent, heapMb }) {
   return jvmArgs;
 }
 
-async function launchGame({ gameDir, cfg, onLog, zgc = true }) {
+async function launchGame({ gameDir, cfg, onLog, zgc = true, userDataDir = '' }) {
   // Csak ZGC: a PZO/optimalizáló G1-re állítja a JSON-t, azt minden indításkor
   // visszaállítjuk ZGC-re, és a fájlt írásvédetté tesszük, hogy ne írja át.
   zgc = true;
@@ -456,11 +507,22 @@ async function launchGame({ gameDir, cfg, onLog, zgc = true }) {
 
   const heapMb = Number((cfg && cfg.jvmMaxMb) || 8192) || 8192;
 
-  const heap = applyHeapToLauncherJson(gameDir, heapMb, { zgc });
+  const heap = applyHeapToLauncherJson(gameDir, heapMb, { zgc, userDataDir });
   if (heap.changed) onLog(`Memória beállítva a játék launcherében: -Xms${heapMb}m -Xmx${heapMb}m${zgc ? ' -XX:+UseZGC' : ''}`);
   else if (heap.reason) onLog('! ' + heap.reason);
   if (heap.added && heap.added.length) {
     onLog('• Launcher JSON kiegészítve: PZO motor (mainClass + classpath + pzo_native64) és ZombieBuddy agent bent van.');
+  }
+  if (heap.restoredAgents && heap.restoredAgents.length) {
+    onLog(
+      `• Hiányzó agent DLL visszaállítva a launcher csomag-cache-éből: ${heap.restoredAgents.join(', ')}.dll`
+    );
+  }
+  if (heap.removedAgents && heap.removedAgents.length) {
+    onLog(
+      `⚠ A(z) ${heap.removedAgents.join(', ')} agent DLL hiányzik a játék mappájából – kivettem a launcher JSON-ból, ` +
+        'hogy a játék elinduljon. Telepítsd újra az érintett motort (PZO / ZombieBuddy).'
+    );
   }
 
   // Az agent-állapotot a JSON írása UTÁN nézzük: ha most írtuk bele, akkor már

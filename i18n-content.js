@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                                // ---- 0.9.42 (tartós napló) ----
+                                                                                                    // ---- 0.9.43 (agent DLL ellenőrzés) ----
+    "0.9.43 – A játék nem indul el, ha hiányzik egy agent DLL":
+      "0.9.43 – The game no longer dies when an agent DLL is missing",
+    "A PZO telepítő néha úgy frissít, hogy a PZOptimEngine.jar-t lecseréli, a pzo_native64.dll-t viszont nem teszi vissza. Ilyenkor a ProjectZomboid64.json továbbra is hivatkozik a natív agentre, a JVM viszont el sem indul („Could not find agent library pzo_native64”), a játék pedig néma csendben kilép – a launcher naplójában csak annyi látszik, hogy 15 mp után sem fut. Mostantól indítás előtt ellenőrizzük, hogy minden -agentlib-hez megvan-e a DLL: előbb visszamásoljuk a launcher csomag-cache-éből, ha ott sincs, kivesszük a JSON-ból, hogy a játék elinduljon.":
+      "The PZO installer sometimes updates by replacing PZOptimEngine.jar but leaving pzo_native64.dll out. ProjectZomboid64.json keeps referencing the native agent, the JVM refuses to start (“Could not find agent library pzo_native64”) and the game exits silently – the launcher log only shows that it is still not running after 15 seconds. Before launching we now check that every -agentlib has its DLL: first we copy it back from the launcher package cache, and if it is not there either, the argument is removed so the game can start.",
+    "Indítás előtt minden -agentlib bejegyzéshez ellenőrizzük a DLL meglétét.":
+      "Every -agentlib entry is checked for its DLL before launching.",
+    "A hiányzó DLL-t a launcher csomag-cache-éből visszaállítja (pl. pzo_native64.dll).":
+      "A missing DLL is restored from the launcher package cache (e.g. pzo_native64.dll).",
+    "Ha a DLL sehol nincs, az agent kikerül a launcher JSON-ból, és a napló figyelmeztet – így a játék elindul, nem lép ki némán.":
+      "If the DLL cannot be found anywhere, the agent is removed from the launcher JSON and the log warns – the game starts instead of exiting silently.",
+    "A napló kiírja, melyik DLL-t állította vissza vagy hagyta ki.":
+      "The log states which DLL was restored or skipped.",
+// ---- 0.9.42 (tartós napló) ----
     "0.9.42 – Tartós naplófájl":
       "0.9.42 – Persistent log file",
     "A launcher naplója eddig csak a felületen élt, bezáráskor elveszett – utólag nem lehetett megnézni, miért nem indult el a játék vagy miért bukott el a frissítés. Mostantól minden naplósor bekerül a launcher.log fájlba, időbélyeggel, és frissítési hiba esetén a hibás fájlok is névvel, okkal együtt. A napló helyét a launcher induláskor kiírja a naplóba.":
