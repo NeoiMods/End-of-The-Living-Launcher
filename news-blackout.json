@@ -1,7 +1,21 @@
 {
-  "version": "0.9.41",
+  "version": "0.9.42",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.42",
+      "version": "0.9.42",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.42 – Tartós naplófájl",
+      "text": "A launcher naplója eddig csak a felületen élt, bezáráskor elveszett – utólag nem lehetett megnézni, miért nem indult el a játék vagy miért bukott el a frissítés. Mostantól minden naplósor bekerül a launcher.log fájlba, időbélyeggel, és frissítési hiba esetén a hibás fájlok is névvel, okkal együtt. A napló helyét a launcher induláskor kiírja a naplóba.",
+      "changes": [
+        "Minden naplósor a launcher.log fájlba is bekerül (időbélyeggel).",
+        "A napló 2 MB felett átforgatódik: launcher.log.1, így nem nő a végtelenségig.",
+        "Sikertelen frissítésnél a hibás fájlok neve és oka is bekerül a naplóba.",
+        "A launcher induláskor kiírja a naplófájl helyét."
+      ]
+    },
     {
       "id": "0.9.41",
       "version": "0.9.41",

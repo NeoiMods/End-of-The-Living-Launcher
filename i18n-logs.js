@@ -391,6 +391,10 @@
     ['alapvonal rögzítve', 'baseline recorded'],
     ['nincs launcher-változás', 'no launcher change'],
 
+    // ---- 0.9.42 (naplófájl) ----
+    ["• Naplófájl: {s}", "• Log file: {s}"],
+    ["  … és még {n} fájl.", "  … and {n} more files."],
+
     // ---- 0.9.40 (frissítés) ----
     ["! A fájlonkénti frissítés nem sikerült ({n} fájl) – teljes zipball következik.", "! The per-file update failed ({n} files) – retrying with the full zipball."],
     ["• Nem volt cserélendő fájl – a verzió megjelölve.", "• No files needed replacing – the version is marked."],

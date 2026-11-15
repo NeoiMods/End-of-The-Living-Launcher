@@ -1,6 +1,6 @@
 {
-  "version": "0.9.41",
-  "sha": "1556ee4938870c0a92153f6549c0fba316a49d35",
+  "version": "0.9.42",
+  "sha": "8d85432e9cb1a50aad11b3d3aabf784104cb77f9",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -749,13 +749,13 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 86187,
-      "sha256": "c6d20f4027050473b5f26aef1fd223fcc6838ae6ac872b79dd71a1006a6aedd7"
+      "size": 87683,
+      "sha256": "3b4327f6165d06b0e81c46ba0c98d79edfcd6302e03d8c075deb06d437919eb7"
     },
     {
       "path": "i18n-logs.js",
-      "size": 55455,
-      "sha256": "62d24d274a23d3f52ec954737858a1ccd5b398ddd8a2fd8e70b3a05bf525c0b5"
+      "size": 55609,
+      "sha256": "11d29f9f0374d52a589275e0d0978ae69f61406dae26c495ac743a4769e51830"
     },
     {
       "path": "i18n.js",
@@ -769,13 +769,13 @@
     },
     {
       "path": "main.js",
-      "size": 49362,
-      "sha256": "532558e7a023d59b0014223bd5cf31acdcbd7e8f2801b556bd16ed62c00718f3"
+      "size": 50458,
+      "sha256": "ba43febbd4185be40b0463f876d0809c605be0a3bb2df1d73049e554ab0962e8"
     },
     {
       "path": "news-blackout.json",
-      "size": 38210,
-      "sha256": "76878d673b6469abd403d80254c30dfa680a253b4b18a073a80e9abb57628f46"
+      "size": 39139,
+      "sha256": "5b5e57ba72d24afa7b2e2dd4b4c7130b43f851b501ad8ba3fbac9abaf24143b8"
     },
     {
       "path": "news.json",
@@ -785,7 +785,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "e47b02acb5a474df75aee0dc7ae3eaa116549864dc34081bdc9bd47a55434f96"
+      "sha256": "133d707565d4f07f8d8af5a6fb79f785c3ea7ba54c9364075c26f5dc2ee9384e"
     },
     {
       "path": "preload.js",
@@ -861,6 +861,11 @@
       "path": "src/launch.js",
       "size": 21658,
       "sha256": "00cf4ec8cd4b2a1b532d2968b8d3418d8d3e7a3e6567a8b33f4f04d510ee3d01"
+    },
+    {
+      "path": "src/logfile.js",
+      "size": 1608,
+      "sha256": "34a0e2eef981a70831adfe5740c0da5ec6a7ccdd24972febd2f89064f1065c98"
     },
     {
       "path": "src/modinfo.js",

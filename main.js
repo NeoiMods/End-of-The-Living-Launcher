@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 const { loadConfig, saveConfig, DEFAULT_CONFIG } = require('./src/config');
+const logfile = require('./src/logfile');
 const {
   getEnvironment,
   resolveGamePath,
@@ -67,8 +68,27 @@ let gameSeenRunning = false;
 let crashReportPending = false;
 let appQuitting = false;
 
+// Tartós naplófájl: a felület naplója memóriában él, ezért minden sor a
+// userData/launcher.log fájlba is bekerül (2 MB felett launcher.log.1-re vált).
+let fileLogger = null;
+function launcherLogPath() {
+  try {
+    if (!fileLogger) fileLogger = logfile.createFileLogger(app.getPath('userData'));
+    return fileLogger.file;
+  } catch {
+    return '';
+  }
+}
+
 function log(line) {
-  if (win && !win.isDestroyed()) win.webContents.send('log', String(line));
+  const text = String(line);
+  try {
+    if (!fileLogger) launcherLogPath();
+    if (fileLogger) fileLogger.write(text);
+  } catch {
+    // Írási hiba: a felületi napló akkor is megvan.
+  }
+  if (win && !win.isDestroyed()) win.webContents.send('log', text);
 }
 
 function progress(payload) {
@@ -155,6 +175,8 @@ app.whenReady().then(() => {
   if (!cfg.installedModIds) cfg.installedModIds = [];
   save();
   createWindow();
+  // Hogy megtalálható legyen a hibák utólagos kivizsgálásához.
+  log(`• Naplófájl: ${launcherLogPath()}`);
   shortcuts.ensureDesktopShortcut().then((res) => {
     if (res && res.created) log('✓ Parancsikon létrehozva az asztalon.');
   });
@@ -484,6 +506,12 @@ ipcMain.handle('update:apply', async () => {
       }, 1500);
     } else {
       log('✗ Frissítés sikertelen: ' + applied.error);
+      // A naplófájlba a részletek is bekerülnek: melyik fájl, milyen okkal.
+      const failed = Array.isArray(applied.failed) ? applied.failed : [];
+      failed.slice(0, 10).forEach((f) => {
+        log(`  ✗ ${f && f.file ? f.file : '?'}: ${f && f.error ? f.error : '?'}`);
+      });
+      if (failed.length > 10) log(`  … és még ${failed.length - 10} fájl.`);
     }
     return applied;
   } catch (err) {

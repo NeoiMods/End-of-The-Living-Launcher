@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                            // ---- 0.9.41 (friss index) ----
+                                                                                                // ---- 0.9.42 (tartós napló) ----
+    "0.9.42 – Tartós naplófájl":
+      "0.9.42 – Persistent log file",
+    "A launcher naplója eddig csak a felületen élt, bezáráskor elveszett – utólag nem lehetett megnézni, miért nem indult el a játék vagy miért bukott el a frissítés. Mostantól minden naplósor bekerül a launcher.log fájlba, időbélyeggel, és frissítési hiba esetén a hibás fájlok is névvel, okkal együtt. A napló helyét a launcher induláskor kiírja a naplóba.":
+      "The launcher log used to live only in the interface and was lost on exit – you could not check afterwards why the game did not start or why an update failed. Every log line now goes into the launcher.log file with a timestamp, and a failed update also records the failing files with their reason. The launcher prints the log file location at start-up.",
+    "Minden naplósor a launcher.log fájlba is bekerül (időbélyeggel).":
+      "Every log line is also written to the launcher.log file (with a timestamp).",
+    "A napló 2 MB felett átforgatódik: launcher.log.1, így nem nő a végtelenségig.":
+      "The log rotates at 2 MB: launcher.log.1, so it never grows without bound.",
+    "Sikertelen frissítésnél a hibás fájlok neve és oka is bekerül a naplóba.":
+      "A failed update records the failing file names and reasons.",
+    "A launcher induláskor kiírja a naplófájl helyét.":
+      "The launcher prints the log file location at start-up.",
+// ---- 0.9.41 (friss index) ----
     "0.9.41 – A frissítés-index nem jön a CDN gyorsítótárából":
       "0.9.41 – The update index no longer comes from the CDN cache",
     "A GitHub CDN-je (raw.githubusercontent, jsDelivr) percekig a korábbi fájlt adja vissza. Ezért a launcher olyan indexet kaphatott, amiben még a régi méretek és hash-ek voltak, a letöltött fájlok viszont már az új tartalmat hozták – innen jött a „3 fájl nem tölthető le”. Mostantól az index kérése cache-bustinggal, három próbával megy, így mindig a friss index alapján ellenőrzünk.":
