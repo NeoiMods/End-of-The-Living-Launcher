@@ -391,6 +391,10 @@
     ['alapvonal rögzítve', 'baseline recorded'],
     ['nincs launcher-változás', 'no launcher change'],
 
+    // ---- 0.9.40 (frissítés) ----
+    ["! A fájlonkénti frissítés nem sikerült ({n} fájl) – teljes zipball következik.", "! The per-file update failed ({n} files) – retrying with the full zipball."],
+    ["• Nem volt cserélendő fájl – a verzió megjelölve.", "• No files needed replacing – the version is marked."],
+
     // ---- 0.9.39 (blokk-indok) ----
     ["• A játék már fut – nem indítok második példányt. ({s})", "• The game is already running – not starting a second instance. ({s})"],
     ["• A játék időközben elindult – nem indítok második példányt. ({s})", "• The game started in the meantime – not starting a second instance. ({s})"],

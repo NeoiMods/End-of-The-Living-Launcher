@@ -1,7 +1,21 @@
 {
-  "version": "0.9.39",
+  "version": "0.9.40",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.40",
+      "version": "0.9.40",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.40 – Megjavított frissítés („3 fájl nem tölthető le”)",
+      "text": "Az update-manifest.json eddig a legutóbbi commit tartalmából készült, miközben a build már az új fájlokat tartalmazta. Ezért az index egy commit-tal lemaradt, a letöltött fájlok mérete nem egyezett vele, és a launcher „3 fájl nem tölthető le – a launcher változatlan maradt” hibát írt. Mostantól az index a kiadásra kerülő fájlokból készül, és ha a fájlonkénti letöltés mégis elbukik, a launcher automatikusan a teljes zipballra vált.",
+      "changes": [
+        "Az update-manifest.json a kiadásra kerülő (munkakönyvtári) fájlokból generálódik, nem a korábbi commitból.",
+        "Ha a fájlonkénti letöltés bármelyik fájlon elbukik, a launcher teljes zipballal próbálkozik.",
+        "A frissítési hiba szövege kiírja az első hibás fájlt és az okot (pl. méret eltérés).",
+        "A build figyelmeztet, ha olyan fájl kerülne az indexbe, ami nincs a gitben."
+      ]
+    },
     {
       "id": "0.9.39",
       "version": "0.9.39",

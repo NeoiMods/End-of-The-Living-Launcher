@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                    // ---- 0.9.39 (blokk-indok a naplóban) ----
+                                                                                        // ---- 0.9.40 (frissítés javítása) ----
+    "0.9.40 – Megjavított frissítés („3 fájl nem tölthető le”)":
+      "0.9.40 – Fixed update (“3 files cannot be downloaded”)",
+    "Az update-manifest.json eddig a legutóbbi commit tartalmából készült, miközben a build már az új fájlokat tartalmazta. Ezért az index egy commit-tal lemaradt, a letöltött fájlok mérete nem egyezett vele, és a launcher „3 fájl nem tölthető le – a launcher változatlan maradt” hibát írt. Mostantól az index a kiadásra kerülő fájlokból készül, és ha a fájlonkénti letöltés mégis elbukik, a launcher automatikusan a teljes zipballra vált.":
+      "update-manifest.json used to be generated from the last commit while the build already contained the new files. The index therefore lagged one commit behind, the downloaded files did not match its sizes, and the launcher reported “3 files cannot be downloaded – the launcher was left unchanged”. The index is now built from the files being released, and if the per-file download still fails, the launcher automatically switches to the full zipball.",
+    "Az update-manifest.json a kiadásra kerülő (munkakönyvtári) fájlokból generálódik, nem a korábbi commitból.":
+      "update-manifest.json is generated from the files being released (working tree), not from the previous commit.",
+    "Ha a fájlonkénti letöltés bármelyik fájlon elbukik, a launcher teljes zipballal próbálkozik.":
+      "If any file fails in per-file mode, the launcher retries with the full zipball.",
+    "A frissítési hiba szövege kiírja az első hibás fájlt és az okot (pl. méret eltérés).":
+      "The update error message now names the first failing file and the reason (e.g. size mismatch).",
+    "A build figyelmeztet, ha olyan fájl kerülne az indexbe, ami nincs a gitben.":
+      "The build warns when a file that is not in git would end up in the index.",
+// ---- 0.9.39 (blokk-indok a naplóban) ----
     "0.9.39 – Kiderül, mit lát futó játéknak a launcher":
       "0.9.39 – You can see what counts as a running game",
     "Ha a launcher azt írja, hogy már fut a játék, mostantól a naplóban az is ott van, melyik folyamat miatt gondolja ezt: a folyamat neve, kora és hogy van-e ablaka. Így egy téves felismerés (például egy beragadt indító exe) azonnal látszik, és nem kell találgatni, miért nem indul a játék.":

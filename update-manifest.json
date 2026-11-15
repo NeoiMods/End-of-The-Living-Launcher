@@ -1,6 +1,6 @@
 {
-  "version": "0.9.39",
-  "sha": "e4d85c3102baffd13a7773cfa5cbbca7724b328e",
+  "version": "0.9.40",
+  "sha": "568df5d821d4401454cb1c12db2919fffdca6f4b",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -14,7 +14,7 @@
     },
     {
       "path": "assets/bg.svg",
-      "size": 60908,
+      "size": 61460,
       "sha256": "37c612294e8535a5227a72ee829918ec945f5ba346a6dd89afaadfd0097e89f0"
     },
     {
@@ -29,12 +29,12 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/AutoLoot_LastUsed.ini",
-      "size": 60890,
+      "size": 63798,
       "sha256": "63fd837f995ba8ee454f838490fdffacc331d1980b1fd0904c6724542233cd4b"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/BetterWorldMap.ini",
-      "size": 10,
+      "size": 11,
       "sha256": "b14d174633fbd525195077ebd7946e57f03a79d5bfbe98acfca4cfa701ba4081"
     },
     {
@@ -44,7 +44,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/CHStatusHUD.ini",
-      "size": 1063,
+      "size": 1130,
       "sha256": "2198a4f477a2e686537962e11cc48da328b99cba21a9c637d24dabb513621323"
     },
     {
@@ -54,12 +54,12 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/CompanionDogs_settings.ini",
-      "size": 560,
+      "size": 595,
       "sha256": "26f6fc8e89863b4bf5e2ef5042bca2411a02470f62628ef54e552f822b78fddc"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ContextMenuCleanup.ini",
-      "size": 98,
+      "size": 106,
       "sha256": "b2ea9ca7e86118205b89856e75557500599d1392df48518e2aa7be9d64948c51"
     },
     {
@@ -69,7 +69,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/FHDebug.txt",
-      "size": 27,
+      "size": 28,
       "sha256": "877293cde96ea84ad4849d598a62e3d869c3e802625f462a026bb593d4c041f1"
     },
     {
@@ -79,7 +79,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/HydeCoUnderGround_HUD.ini",
-      "size": 24,
+      "size": 25,
       "sha256": "e170b745a90720d7ca92c3bcef8f06869575d8ae0c0028744a80669483021ef5"
     },
     {
@@ -119,22 +119,22 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/MPOptim_Settings.ini",
-      "size": 2523,
+      "size": 2621,
       "sha256": "f66629cf9f5173c7fb1443d7649362457560b062bad9f647a7e1e060120044f8"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/MiniCompass_Position_user_GretaThomson.txt",
-      "size": 13,
+      "size": 15,
       "sha256": "4caecb0f9829d67c360470cce084b12333932e70ca67ed9a0e86c7980aa7f0a2"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/MiniCompass_Position_user_MauraMaudlin.txt",
-      "size": 9,
+      "size": 11,
       "sha256": "7fa50ea16c31ebb8fb2b7864bbb9780a1a28fb5786424808c8ea90346c562154"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/MiniCompass_Position_user_SerghioSantos.txt",
-      "size": 9,
+      "size": 11,
       "sha256": "bd73ec76d27c538446dae7f20b5f0f13ca451a6a481615c99462087338e2c4ae"
     },
     {
@@ -149,12 +149,12 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ModManager/HistoryData.cfg",
-      "size": 330165,
+      "size": 330195,
       "sha256": "f5fcd8ea3d814435e30fa1585ff3d8eb30f9074e508b5d14f9a53aa2f745e62c"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ModManager/ModListData.ini",
-      "size": 306033,
+      "size": 316770,
       "sha256": "05d952e91737b5a83875193660cb292fe1a7e30a58cfbac890ce6c19d94f5f4a"
     },
     {
@@ -164,32 +164,32 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ModManagerExtension.ini",
-      "size": 1811,
+      "size": 1895,
       "sha256": "f548e14d40f08ae5512b5a1fd279e90ce6d669afe3c42e07426f9b7ed80e4b7c"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ModManagerExtension/LastOpened.txt",
-      "size": 17,
+      "size": 18,
       "sha256": "776fb787f0cff3c4591156f89b27178a5abec37c248014f5478186f387cc6951"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ModManagerExtension/PresetDates.txt",
-      "size": 35,
+      "size": 36,
       "sha256": "5343945093408d922312b4ae7f836a3fbb569c53e3f43959a71227d8d462a2d0"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ModManagerExtension/SandboxEdited.txt",
-      "size": 1052,
+      "size": 1074,
       "sha256": "edcf2764a6fd9e1dd68e743f7d16a79f7179069cf8750519bc2430e83985aff2"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ModManagerExtension/SandboxLast.txt",
-      "size": 28,
+      "size": 29,
       "sha256": "634a81599ee84a80d2138809c1264a7c2f2e7c1d4878feaf5b09f7bed9658649"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/NVFramework_ClientOptions.ini",
-      "size": 15,
+      "size": 16,
       "sha256": "e6ee22c1d88c8c7a07659ab9de7e6ce757d7679d00c85f78a5aa444130b4689b"
     },
     {
@@ -214,12 +214,12 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ORGM.ini",
-      "size": 999,
+      "size": 1038,
       "sha256": "7a599d8e9d81623a39fd25acc38bd24952ee5841756ae653524f125ba81271c4"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ObNoxPatchNotes.txt",
-      "size": 26,
+      "size": 28,
       "sha256": "9d048d6562309fd9b3f351e1a1d754825808dda43f30f6d734f14b5e037214d2"
     },
     {
@@ -234,7 +234,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/PerformanceProfiler.ini",
-      "size": 28,
+      "size": 31,
       "sha256": "d3a10369c8983b96dbd9c669f58df3c876068183067c05be734836e882335e22"
     },
     {
@@ -249,7 +249,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/PingItemsFriendsHotkey.ini",
-      "size": 31,
+      "size": 34,
       "sha256": "b1137aecbfccade19c60bb7f860e2a567288f6d2f844ddd2f7408fcc6276e887"
     },
     {
@@ -269,7 +269,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/RVVFX_ClientPreferences.ini",
-      "size": 289,
+      "size": 305,
       "sha256": "aca71c7bc8ae33e8b2e75fb78f5458a69395be32176616e18c46b64bba22b168"
     },
     {
@@ -279,7 +279,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ServerList.txt",
-      "size": 271,
+      "size": 279,
       "sha256": "a7deeccba11f0c6efc7a6e988eeec0ba3cc44af06a9a6454e30afbff0fc5aaee"
     },
     {
@@ -289,22 +289,22 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/SurvivorBriefing.ini",
-      "size": 1281,
+      "size": 1355,
       "sha256": "075b804aad394d6d638783ff0119423cfda2eeb9843950b922f49afd1d25f8d6"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/SurvivorBriefing_deaths.ini",
-      "size": 76,
+      "size": 78,
       "sha256": "ac5fa4a20e43e3c1a5a237598662db7b719d58711e91c8be6c49e2e32414eee9"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/SurvivorBriefing_state.ini",
-      "size": 12,
+      "size": 13,
       "sha256": "11fe3a8c9b114564d747a7e8c1dff1fb2654f51103579e98451ec3e9e4b4a94b"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/SurvivorOptions.lua",
-      "size": 716,
+      "size": 758,
       "sha256": "361d4a4882372863e5c2f5260cfdadf6b685100805149f65e0f874d26eda0985"
     },
     {
@@ -329,7 +329,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/TWKeyCombos.ini",
-      "size": 980,
+      "size": 999,
       "sha256": "50d16aff1c74442624196d5f76d3def8988542a22e091431c452eca6f25f8828"
     },
     {
@@ -349,7 +349,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/TetrisDataPack.lua",
-      "size": 1018,
+      "size": 1078,
       "sha256": "81c10714b9c6f0c69a946085b96d826e54c3cd7c4e617106a52b1d2e87f9c63d"
     },
     {
@@ -359,17 +359,17 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/VPS3D_log.txt",
-      "size": 49,
+      "size": 50,
       "sha256": "df95fe2c2f5f6ae91cdb551f8eac81f19e0021ed9576fa2f261ebb7be653b6ca"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/VRS_DebugLog.txt",
-      "size": 85,
+      "size": 86,
       "sha256": "8b31cb05f1cea5ce44b89484e46592dc861d425bd42570cd3eca0c0361d1d4d6"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/VRS_ServerDebugLog.txt",
-      "size": 87,
+      "size": 88,
       "sha256": "5758affaf1fffb597ba422d43bb36bbd77ef1cc2dd7c612df2b53deb78b7e201"
     },
     {
@@ -384,7 +384,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/ViewpointBloodFXAddon.ini",
-      "size": 932,
+      "size": 955,
       "sha256": "612cc9b98a0f917007d26e459abbd5edf08fa8d952925c9716936d7099b6235c"
     },
     {
@@ -479,32 +479,32 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/emote.ini",
-      "size": 417,
+      "size": 446,
       "sha256": "2aeb16d684928090f9a1f74bb9193e92aa2bca94ff34e5b147d9416f954ad9be"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/entityLayout.ini",
-      "size": 239,
+      "size": 258,
       "sha256": "70e93fd95647a2747a86f034513721203174c806c94547937b8bcb424c569190"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/host.ini",
-      "size": 51,
+      "size": 54,
       "sha256": "de8e3cc595cca6e882808907d89b2e80ea37c71809665b10c6adf05f8527d1d7"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/invited.ini",
-      "size": 18,
+      "size": 19,
       "sha256": "1d0d7f7198f57c334dfd3266f574d64730234ea1e4d76879f1e7fca7ccaabc03"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/keys.ini",
-      "size": 3600,
+      "size": 3831,
       "sha256": "7e2f31ecbcd9691cfc43e9330fc4c380cd6c1e83e205f0feb4792178865d44e7"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/keysB42.ini",
-      "size": 4781,
+      "size": 5010,
       "sha256": "fe53bf14e4d83717c0e1fa243816a6f745d378b73ac1c9bbd3d41ac1551885a4"
     },
     {
@@ -524,32 +524,32 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/layout.ini",
-      "size": 7790,
+      "size": 7913,
       "sha256": "35b9370ea7427804f0c20ffc4db2b3cbd83ca2f9192a6a8abc97298551e3d4c8"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/modOptions.ini",
-      "size": 90220,
+      "size": 92212,
       "sha256": "8fa11e2c585f608657eac4974e7126974d827c15b072571c5ee52e24652dbf0b"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/modmanager-mods.txt",
-      "size": 14520,
+      "size": 14521,
       "sha256": "3295849b3193e076cb22458e1930685cafcc2e75d405edffb8d07fdefeb06a3f"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/modmanager.ini",
-      "size": 1137,
+      "size": 1198,
       "sha256": "87249d4e4f3daa91151ba2b564106ddb219adba6d4536d889de3ee6b2c922bc8"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/modprofile.txt",
-      "size": 4836,
+      "size": 4892,
       "sha256": "d2927a081c75f1e8fc33c3190e1dbed0f1d7dadd54e745ce92e91481c53eb4a4"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/mods_options.ini",
-      "size": 7193,
+      "size": 7611,
       "sha256": "2f216f96d879f0a9a92a654aebf3eb86529c1d25a51273b16e09f7c66af19aa2"
     },
     {
@@ -569,12 +569,12 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/saved_modlists.txt",
-      "size": 71192,
+      "size": 71193,
       "sha256": "b2ae32440d71d817d1dfa1d9e8fd3199cdb20c52859ec446f1f7bfa72b855a29"
     },
     {
       "path": "assets/blackout/Zomboid/Lua/saved_modlists_server.txt",
-      "size": 17326,
+      "size": 17330,
       "sha256": "e5684f5d66e6873d0329091c87a0e3287fd71bd666e3f566fa92ac390f510af5"
     },
     {
@@ -584,7 +584,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/screenresolution.ini",
-      "size": 177,
+      "size": 192,
       "sha256": "c7e1908aa4677f87a5f52c8a8c2149a534b56a9b75b14895942d63d560d7b1c2"
     },
     {
@@ -599,7 +599,7 @@
     },
     {
       "path": "assets/blackout/Zomboid/Lua/sup_settings.ini",
-      "size": 44,
+      "size": 46,
       "sha256": "f88a2ca3ad3f80e60429e888eeb990bf884c33b255a841c401b1ed918dd89645"
     },
     {
@@ -614,52 +614,52 @@
     },
     {
       "path": "assets/blackout/Zomboid/PZO_mod_compat.txt",
-      "size": 3962,
+      "size": 4030,
       "sha256": "8cb0af3ff3058ca25c55c79b576aea413732f98691acfc57aa8a5ff1bc958ef7"
     },
     {
       "path": "assets/blackout/Zomboid/Sandbox Presets/LATEST B42 MODS FOR SOLO.cfg",
-      "size": 550605,
+      "size": 562458,
       "sha256": "39ebf8cff0e8cefdceb83cc69dd05893c7a7d7f291cbb2c6284061857ea94ccc"
     },
     {
       "path": "assets/blackout/Zomboid/Sandbox Presets/Neoi-Suggested.cfg",
-      "size": 1100262,
+      "size": 1123392,
       "sha256": "3e23242eee46a97eb02231a8c777d5d16a57d3250a7d21c3ffb860f45933cce6"
     },
     {
       "path": "assets/blackout/Zomboid/Sandbox Presets/NeoiMods Ajanlott.cfg",
-      "size": 1149269,
+      "size": 1172047,
       "sha256": "9dc9b9b5eb98bea4b00a7abe64676f54c855303e51c4217077622e721fe4d97c"
     },
     {
       "path": "assets/blackout/Zomboid/Sandbox Presets/NeoiMods Ajánlott.cfg",
-      "size": 1100262,
+      "size": 1123392,
       "sha256": "3e23242eee46a97eb02231a8c777d5d16a57d3250a7d21c3ffb860f45933cce6"
     },
     {
       "path": "assets/blackout/Zomboid/Sandbox Presets/NeoiMods.cfg",
-      "size": 1292455,
+      "size": 1317115,
       "sha256": "2f7e2fe874da613df70c9f1e8cff08ec95776be98099d65624d6903b9e266e34"
     },
     {
       "path": "assets/blackout/Zomboid/Server/NeoiMods.ini",
-      "size": 31473,
+      "size": 31893,
       "sha256": "29d936cf4065c0cea7649a0d075597c9f1c8917077a744000a408bc3fc43a0e5"
     },
     {
       "path": "assets/blackout/Zomboid/Server/NeoiMods_SandboxVars.lua",
-      "size": 802351,
+      "size": 814209,
       "sha256": "d7fa0192315e32535daef6c67c73b745fd5baff8ce159f7022b8c94063178331"
     },
     {
       "path": "assets/blackout/Zomboid/Server/NeoiMods_spawnpoints.lua",
-      "size": 106,
+      "size": 113,
       "sha256": "8a6accbe44fffad67252417002b5917805432b055fabf60156ababc0b4e72714"
     },
     {
       "path": "assets/blackout/Zomboid/Server/NeoiMods_spawnregions.lua",
-      "size": 912,
+      "size": 927,
       "sha256": "0a1eb0deaf355f809120cd8d4ff177b09f3e4f88ff45abe8a5fce50e74231427"
     },
     {
@@ -674,17 +674,17 @@
     },
     {
       "path": "assets/blackout/Zomboid/latestSave.ini",
-      "size": 28,
+      "size": 30,
       "sha256": "f1932a0da3f6da5f6dc25e4b5cf057535c8c6f482691b29a3f2d00c656b3062d"
     },
     {
       "path": "assets/blackout/Zomboid/options.ini",
-      "size": 3495,
+      "size": 3649,
       "sha256": "4c551ecbba7da9be0daa246609d9807e908744191cc58848825f6fd9be0e2392"
     },
     {
       "path": "assets/blackout/Zomboid/sounds.ini",
-      "size": 815692,
+      "size": 894642,
       "sha256": "366f285556ff1c90f8677a7ed5f1f48e026fc379c79eae25ce71a3fdd65aff97"
     },
     {
@@ -699,32 +699,32 @@
     },
     {
       "path": "assets/blackout/launcher/ProjectZomboid64.bat.txt",
-      "size": 1118,
+      "size": 1138,
       "sha256": "5e4b7563c4e2b308c99cc21d252540d24da1cd12a68b6ea6a74aed5ed8c08b68"
     },
     {
       "path": "assets/blackout/reference/CHANGELOG_modok.txt",
-      "size": 2769,
+      "size": 2885,
       "sha256": "136b35acfb5058b2035edd7f358853ee91a8a8ab8bbd47c3f7afe4af325639e8"
     },
     {
       "path": "assets/blackout/reference/ONFIRE.txt",
-      "size": 2130,
+      "size": 2175,
       "sha256": "8c350d74c051b2635731c3d20c613680d1318e6be341c31672b635b95a61f339"
     },
     {
       "path": "assets/blackout/reference/README.txt",
-      "size": 5687,
+      "size": 5793,
       "sha256": "e77315b3b1b4e98dde193e4ee862519e31fce8116c7462b7bafdad60fe94da1f"
     },
     {
       "path": "assets/blackout/reference/modlist_blackout_protocol.txt",
-      "size": 12814,
+      "size": 13534,
       "sha256": "09ac3bc25d3e4aef6666538d5464b0dd87346713a62c850011059543a0519f6f"
     },
     {
       "path": "assets/blackout/reference/modlist_blackout_protocol_oneline.txt",
-      "size": 12755,
+      "size": 12756,
       "sha256": "c55fdcafbc1b5c3c4e374f1c63f1348eb69cbaf44e7aab3c4a366aa84f7a0df7"
     },
     {
@@ -744,18 +744,18 @@
     },
     {
       "path": "events.json",
-      "size": 360,
+      "size": 372,
       "sha256": "babb18e3f15ba1d2386691d57257c55eca2d1f67e1c7b8a162d4f4da3e04b659"
     },
     {
       "path": "i18n-content.js",
-      "size": 81198,
-      "sha256": "62cc6e206b58f3030d42bd0c76d2bd1bef6ca590122a3ef0e1122a51bd0b8312"
+      "size": 84623,
+      "sha256": "f790ab51d28f5e85f571b09f69f5c4a34b86bf9c353b9612ecebd37f03258a79"
     },
     {
       "path": "i18n-logs.js",
-      "size": 54749,
-      "sha256": "29a9df215623b8ccf173aea4f8cda35426ecaed436441aafa1f3d13b44d223a2"
+      "size": 55455,
+      "sha256": "62d24d274a23d3f52ec954737858a1ccd5b398ddd8a2fd8e70b3a05bf525c0b5"
     },
     {
       "path": "i18n.js",
@@ -764,18 +764,18 @@
     },
     {
       "path": "index.html",
-      "size": 26433,
+      "size": 27020,
       "sha256": "c4719c4dd6b3184735a62778d519cac0b958436832c6b025598785d46965a539"
     },
     {
       "path": "main.js",
-      "size": 48899,
-      "sha256": "10a7ed98cc51792f54a60c6245aa1b6dffa03b2d95c64a56452bc56c6797431a"
+      "size": 50792,
+      "sha256": "532558e7a023d59b0014223bd5cf31acdcbd7e8f2801b556bd16ed62c00718f3"
     },
     {
       "path": "news-blackout.json",
-      "size": 35218,
-      "sha256": "2b3f08764ab2febdc155d411139e750d74c9ae636aa17cd78b4da145ff265949"
+      "size": 37266,
+      "sha256": "fd4084d3da1b014e81e01135ea76a76a224821c1ab737fe513bac61bb73894b5"
     },
     {
       "path": "news.json",
@@ -785,26 +785,26 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "0757d8c90e99ce18eade02a17b760e95c7c0c69287bfcf1322fd3985c3b69732"
+      "sha256": "7686b3d859ef2487c1bc2e3b322ed6eee23b461006a81b32c644f60a4458b33d"
     },
     {
       "path": "preload.js",
-      "size": 4314,
+      "size": 4401,
       "sha256": "6a1049b4762c00e6fd1ceeb9b57a02af5ec9161446809a9681c29cdd34115b5d"
     },
     {
       "path": "renderer.js",
-      "size": 80487,
+      "size": 82802,
       "sha256": "125785d71e3076b70690427b19f39fb0db3ae1078aa396da30304961f4b73bd9"
     },
     {
       "path": "src/a2s.js",
-      "size": 7346,
+      "size": 7586,
       "sha256": "3ff013be8be56adccbf50ca5efaa01ddd882c9e65419a4bfe5c2d2fb6d9bb31a"
     },
     {
       "path": "src/approvals.js",
-      "size": 5212,
+      "size": 5370,
       "sha256": "a82166ad3aa5e868f64b0770bd7a9e5dc402b69b95294cd28ab5667f42673d25"
     },
     {
@@ -814,17 +814,17 @@
     },
     {
       "path": "src/collection.js",
-      "size": 6583,
+      "size": 6749,
       "sha256": "e7425f527cc78ab5d4dfc594f4d52281961a9aea0e3a68907b11510879f3f44f"
     },
     {
       "path": "src/config.js",
-      "size": 7295,
+      "size": 7468,
       "sha256": "36e0e3cb04a009cb08a82027703416a4f9841ea73e9af28e0967b09c3d1b6c70"
     },
     {
       "path": "src/crash.js",
-      "size": 6395,
+      "size": 6615,
       "sha256": "5bd5902a9d767398935ada75de598b586d6243973623663e6dfa18c38224832a"
     },
     {
@@ -834,7 +834,7 @@
     },
     {
       "path": "src/download.js",
-      "size": 3394,
+      "size": 3485,
       "sha256": "9b8f69538f50d399df60ee3c9b9c7168627fe5a97157f1dcd818338c530ea30d"
     },
     {
@@ -854,22 +854,22 @@
     },
     {
       "path": "src/hu.js",
-      "size": 8157,
+      "size": 8380,
       "sha256": "0641404e370a7a3bf5f8917c0ed06625d531630fff076626122ed6a61eff4e0a"
     },
     {
       "path": "src/launch.js",
-      "size": 20758,
-      "sha256": "efc832b1fdd80de80ebc7df2e524a040e19a144df878ea31362fcf9637a94f5e"
+      "size": 22188,
+      "sha256": "00cf4ec8cd4b2a1b532d2968b8d3418d8d3e7a3e6567a8b33f4f04d510ee3d01"
     },
     {
       "path": "src/modinfo.js",
-      "size": 3717,
+      "size": 3843,
       "sha256": "e7f8a44f32bc9da9ddaea96e40c358ccec56716119bdfabe41a99070f6a8782b"
     },
     {
       "path": "src/modlist.js",
-      "size": 3865,
+      "size": 3990,
       "sha256": "1c437878d4b03ccbb0501f7b017d6a51a8412b8637c8d18c9a437ccbc9f0f810"
     },
     {
@@ -884,12 +884,12 @@
     },
     {
       "path": "src/packs.js",
-      "size": 10036,
+      "size": 10352,
       "sha256": "ff2da2231d7cfd25f57feb05c87e3723a78749268a13953223e3e4bb91062e21"
     },
     {
       "path": "src/paths.js",
-      "size": 8484,
+      "size": 8753,
       "sha256": "39df27425161d714006131baf3dc79a3a4a28bf5ce12c64c4f684a54e8399e29"
     },
     {
@@ -899,12 +899,12 @@
     },
     {
       "path": "src/setup.js",
-      "size": 18647,
+      "size": 19075,
       "sha256": "f7b22f76bcc987dacd1387722803abb584836587d35d9a52aa265357858170d4"
     },
     {
       "path": "src/shortcut.js",
-      "size": 5323,
+      "size": 5477,
       "sha256": "30a61c17463441214b03bb1cd992b53798861252146fc48379e7cbe0491ff958"
     },
     {
@@ -914,27 +914,27 @@
     },
     {
       "path": "src/subscribe.js",
-      "size": 9536,
+      "size": 9800,
       "sha256": "4e1f471c42020493ffd02e45f13d372b81c4dae21fe2ced906629de02458b4b3"
     },
     {
       "path": "src/system.js",
-      "size": 1438,
+      "size": 1477,
       "sha256": "9c2db55a5111f4a35df5f69f5f9dd6a735f9c58483bbd964dba85275b223ec63"
     },
     {
       "path": "src/update.js",
-      "size": 33817,
-      "sha256": "c6d439993c64675c626e3ba1124c8dcd5b5e3432b82b9e866efaffa013ddfe1c"
+      "size": 34901,
+      "sha256": "24e2ce969e309a030bdeda81e423596538dd83603eb3a45d747f66363497f511"
     },
     {
       "path": "src/workshop.js",
-      "size": 5607,
+      "size": 5794,
       "sha256": "e3f3b3b2a73ae47d7ca09d8771fd3868b4d34c60bb96898b59cf89066e6b4a9a"
     },
     {
       "path": "src/zb-installer.js",
-      "size": 23287,
+      "size": 23978,
       "sha256": "2e436d63674c58ff27707fb8097ff16ca7187a90c8ff03684405a31522878448"
     },
     {
@@ -949,7 +949,7 @@
     },
     {
       "path": "themes/basic-idea.css",
-      "size": 25752,
+      "size": 26696,
       "sha256": "7ffe7f95057e9bedf4fa90cebd6b22eddd76a120e80e18dd14f7b3727e5f3e8c"
     }
   ]

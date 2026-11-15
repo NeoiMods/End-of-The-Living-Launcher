@@ -63,8 +63,19 @@ function launcherFileList() {
   return [...files].sort();
 }
 
-// A repóban lévő (committolt) tartalmat használjuk: így az index mindig azt
-// írja le, ami a GitHubon tényleg letölthető. Committolatlan fájl kimarad.
+// A LEMEZEN lévő tartalmat használjuk, nem a HEAD-ét: a build a munkakönyvtár
+// fájljait csomagolja, és ugyanezek kerülnek a következő commitba. Korábban a
+// `git show HEAD:fájl` miatt az index mindig egy commit-tal lemaradt, ezért a
+// frissítés letöltése „méret eltérés”-sel elbukott (a main már az új fájlt adta).
+function diskContent(rel) {
+  try {
+    return fs.readFileSync(path.join(ROOT, rel));
+  } catch {
+    return null;
+  }
+}
+
+// Csak akkor jelezzük hiányzóként, ha a fájl se a lemezen, se a HEAD-ban nincs.
 function headContent(rel) {
   try {
     return execFileSync('git', ['show', `HEAD:${rel}`], {
@@ -81,7 +92,7 @@ function buildUpdateManifest() {
   const files = [];
   const missing = [];
   for (const rel of launcherFileList()) {
-    const content = headContent(rel);
+    const content = diskContent(rel) || headContent(rel);
     if (!content) {
       missing.push(rel);
       continue;
@@ -100,10 +111,24 @@ function buildUpdateManifest() {
   fs.writeFileSync(path.join(ROOT, 'update-manifest.json'), JSON.stringify(manifest, null, 2) + '\n', 'utf8');
   if (missing.length) {
     console.log(
-      `! ${missing.length} fájl még nincs commitolva, ezért kimaradt az indexből: ${missing
+      `! ${missing.length} fájl se a lemezen, se a HEAD-ban nincs, ezért kimaradt az indexből: ${missing
         .slice(0, 6)
         .join(', ')}${missing.length > 6 ? '…' : ''}`
     );
+  }
+  // A commitolatlan (untracked) fájl nem tölthető le a repóból: figyelmeztetünk,
+  // hogy ne kerüljön be olyan fájl az indexbe, ami nincs a GitHubon.
+  try {
+    const status = git(['status', '--porcelain', '--', ...Array.from(new Set([...APP_FILES, ...APP_DIRS]))]);
+    const untracked = status
+      .split(/\r?\n/)
+      .filter((l) => l.startsWith('??'))
+      .map((l) => l.slice(3).trim());
+    if (untracked.length) {
+      console.log(`! ${untracked.length} fájl nincs a gitben (előbb add hozzá): ${untracked.slice(0, 6).join(', ')}`);
+    }
+  } catch {
+    /* a git nem elérhető: marad a csendes build */
   }
   return manifest;
 }

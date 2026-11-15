@@ -610,7 +610,9 @@ async function applyFileUpdate({ cfg = {}, repo, files, appRoot, userDataDir, re
     });
     return {
       ok: false,
-      error: `${failed.length} fájl nem tölthető le – a launcher változatlan maradt, próbáld újra később`,
+      error:
+        `${failed.length} fájl nem tölthető le – a launcher változatlan maradt, próbáld újra később` +
+        (failed[0] ? ` (pl. ${failed[0].file}: ${failed[0].error})` : ''),
       changed: 0,
       failed,
       rolledBack: true,
@@ -722,17 +724,42 @@ async function applyFileUpdate({ cfg = {}, repo, files, appRoot, userDataDir, re
 }
 
 // Visszatérés: { ok, newVersion, changed, failed, error, restartRequired }
-async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}, progress = () => {} }) {
+async function applyUpdate({
+  cfg = {},
+  userDataDir,
+  appRoot,
+  res,
+  log = () => {},
+  progress = () => {},
+  skipFileMode = false,
+}) {
   const repo = (res && res.repo) || resolveRepo(cfg, appRoot);
 
   // 1) Ha van frissítés-index (vagy azt kaptuk kézhez), fájlonként frissítünk:
   // ez kicsi, gyors, és akkor is működik, amikor a GitHub API vagy a zipball
   // végpont kiesik.
-  if (res && Array.isArray(res.files) && res.files.length) {
-    return applyFileUpdate({ cfg, repo, files: res.files, appRoot, userDataDir, res, log, progress });
+  if (!skipFileMode && res && Array.isArray(res.files) && res.files.length) {
+    const fileRes = await applyFileUpdate({
+      cfg,
+      repo,
+      files: res.files,
+      appRoot,
+      userDataDir,
+      res,
+      log,
+      progress,
+    });
+    if (fileRes.ok || !(fileRes.failed && fileRes.failed.length)) return fileRes;
+    // Az index és a repó tartalma eltérhet (pl. a fájl-összevetés elavult
+    // indexet kapott): a zipball a teljes fát hozza, ezért ilyenkor arra
+    // váltunk, hogy a frissítés ne akadjon el egy-két fájlon.
+    log(
+      `! A fájlonkénti frissítés nem sikerült (${fileRes.failed.length} fájl) – teljes zipball következik.`
+    );
+    return applyUpdate({ cfg, userDataDir, appRoot, res, log, progress, skipFileMode: true });
   }
   try {
-    const manifest = await fetchUpdateManifest(repo, cfg);
+    const manifest = skipFileMode ? null : await fetchUpdateManifest(repo, cfg);
     if (manifest) {
       const changed = changedFilesFromManifest(manifest, appRoot);
       if (!changed.length) {
@@ -741,7 +768,7 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
         log('✓ Nincs eltérő fájl a repóhoz képest – a verzió megjelölve.');
         return { ok: true, newVersion: sha ? sha.slice(0, 7) : '', remoteSha: sha, changed: 0, failed: [], restartRequired: false };
       }
-      return applyFileUpdate({
+      const fileRes = await applyFileUpdate({
         cfg,
         repo,
         files: changed,
@@ -751,6 +778,11 @@ async function applyUpdate({ cfg = {}, userDataDir, appRoot, res, log = () => {}
         log,
         progress,
       });
+      if (fileRes.ok || !(fileRes.failed && fileRes.failed.length)) return fileRes;
+      // Elavult index miatt elbukott a letöltés: a zipball a teljes fát hozza.
+      log(
+        `! A fájlonkénti frissítés nem sikerült (${fileRes.failed.length} fájl) – teljes zipball következik.`
+      );
     }
   } catch (err) {
     log('! Frissítés-index nem elérhető (' + (err && err.message ? err.message : err) + ') – zipball következik.');
