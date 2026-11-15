@@ -63,10 +63,28 @@ function launcherFileList() {
   return [...files].sort();
 }
 
-// A LEMEZEN lévő tartalmat használjuk, nem a HEAD-ét: a build a munkakönyvtár
-// fájljait csomagolja, és ugyanezek kerülnek a következő commitba. Korábban a
-// `git show HEAD:fájl` miatt az index mindig egy commit-tal lemaradt, ezért a
-// frissítés letöltése „méret eltérés”-sel elbukott (a main már az új fájlt adta).
+// A STAGED (index) tartalmat használjuk: ez pontosan az, ami a következő
+// commitba kerül, és ugyanolyan bájtok (LF), mint amit a GitHub kiszolgál.
+//
+// Két korábbi hiba miatt kell így:
+//  • `git show HEAD` → az index egy commit-tal lemaradt, ezért a letöltött fájl
+//    mérete nem egyezett („3 fájl nem tölthető le”);
+//  • lemezről olvasás → a munkakönyvtár CRLF, a blob LF, így minden szöveg-
+//    fájl mérete eltért.
+// Ezért a build előtt `git add` kell; ha valamelyik app-fájl nincs stagelve,
+// figyelmeztetünk (különben régi tartalom kerülne az indexbe).
+function stagedContent(rel) {
+  try {
+    return execFileSync('git', ['show', `:${rel}`], {
+      cwd: ROOT,
+      maxBuffer: 64 * 1024 * 1024,
+      windowsHide: true,
+    });
+  } catch {
+    return null;
+  }
+}
+
 function diskContent(rel) {
   try {
     return fs.readFileSync(path.join(ROOT, rel));
@@ -92,7 +110,7 @@ function buildUpdateManifest() {
   const files = [];
   const missing = [];
   for (const rel of launcherFileList()) {
-    const content = diskContent(rel) || headContent(rel);
+    const content = stagedContent(rel) || headContent(rel) || diskContent(rel);
     if (!content) {
       missing.push(rel);
       continue;
@@ -120,12 +138,21 @@ function buildUpdateManifest() {
   // hogy ne kerüljön be olyan fájl az indexbe, ami nincs a GitHubon.
   try {
     const status = git(['status', '--porcelain', '--', ...Array.from(new Set([...APP_FILES, ...APP_DIRS]))]);
-    const untracked = status
-      .split(/\r?\n/)
-      .filter((l) => l.startsWith('??'))
+    const lines = status.split(/\r?\n/).filter(Boolean);
+    const untracked = lines.filter((l) => l.startsWith('??')).map((l) => l.slice(3).trim());
+    // „ M fájl” = módosítva, de nincs stagelve: az index a régi tartalmat írná le.
+    const unstaged = lines
+      .filter((l) => /^ ?M|^ M/.test(l))
       .map((l) => l.slice(3).trim());
     if (untracked.length) {
       console.log(`! ${untracked.length} fájl nincs a gitben (előbb add hozzá): ${untracked.slice(0, 6).join(', ')}`);
+    }
+    if (unstaged.length) {
+      console.log(
+        `! ${unstaged.length} módosított fájl nincs stagelve – futtasd előbb: git add <fájlok>, majd újra a buildet: ${unstaged
+          .slice(0, 6)
+          .join(', ')}`
+      );
     }
   } catch {
     /* a git nem elérhető: marad a csendes build */
