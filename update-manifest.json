@@ -1,6 +1,6 @@
 {
-  "version": "0.9.34",
-  "sha": "7a6f5e5a0d0a25169abab7a0e84e019466dde03f",
+  "version": "0.9.35",
+  "sha": "eafa56bd76fdb2c63fc44047465d289f08bbb243",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -749,8 +749,8 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 75076,
-      "sha256": "e6ed5cebe2c50888917d90ff316571ddeebe009f2bf2425b3ffca4ef223c42b3"
+      "size": 76318,
+      "sha256": "feb4d14fb854e56fc2c959c1cccaa82d5aaeefda00c9f9782a5393346b366f5b"
     },
     {
       "path": "i18n-logs.js",
@@ -769,13 +769,13 @@
     },
     {
       "path": "main.js",
-      "size": 47764,
-      "sha256": "d4d4f43a87f081d073b58549c73be808cb7ebd6420be7eaedb5f1deef890472d"
+      "size": 48899,
+      "sha256": "10a7ed98cc51792f54a60c6245aa1b6dffa03b2d95c64a56452bc56c6797431a"
     },
     {
       "path": "news-blackout.json",
-      "size": 31463,
-      "sha256": "7a2f61a570e0281b42fb3c35a01101e3dfb0c4518caec3e7c339cc77d7a1f084"
+      "size": 32280,
+      "sha256": "9726f151e4458fc6e88501573ef9c9d9a8cce4280818cdbba566c34c3b434fa1"
     },
     {
       "path": "news.json",
@@ -785,17 +785,17 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "52be55e5e82ddae58a712f6eae039cce15f75d5140477917a470c8d46e1666e2"
+      "sha256": "c0a638dc58364a52a304dc5de76633d21e68364c2e4abc368f2bde722c39df69"
     },
     {
       "path": "preload.js",
-      "size": 4127,
-      "sha256": "a3db9487a433db11a5363cb2985c0196cafee7eee5801f832971f4e0ad8b73d4"
+      "size": 4314,
+      "sha256": "6a1049b4762c00e6fd1ceeb9b57a02af5ec9161446809a9681c29cdd34115b5d"
     },
     {
       "path": "renderer.js",
-      "size": 80053,
-      "sha256": "98a9764668b477a8937218855bd596723c63086f1926e476db010c10aac87ff7"
+      "size": 80484,
+      "sha256": "ef1470d7088ee9b44cb9029956df1dd03496bb5521b14e07cfca91e6a7f229a1"
     },
     {
       "path": "src/a2s.js",
@@ -819,8 +819,8 @@
     },
     {
       "path": "src/config.js",
-      "size": 6870,
-      "sha256": "2bf20bd4484852eb725258b5f0bad56f4b383d51cca78485e22f97a1d5d88b22"
+      "size": 7295,
+      "sha256": "36e0e3cb04a009cb08a82027703416a4f9841ea73e9af28e0967b09c3d1b6c70"
     },
     {
       "path": "src/crash.js",
