@@ -1,7 +1,21 @@
 {
-  "version": "0.9.35",
+  "version": "0.9.36",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.36",
+      "version": "0.9.36",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.36 – Egyszerűbb Optimalizálás panel",
+      "text": "Kikerültek az Optimalizálás panelről azok a kártyák, amikre már nincs szükség: az ETO textúracsomagok (alap és Max Performance), a 6282 3D modellcsomag és a magyarítás. A panel így rövidebb és átláthatóbb: PZO motor, Viewpoint NIGHTLY, RAM/JVM heap, ZombieBuddy, a workshopos 3D modellek cseréje és a mod mappa maradt benne.",
+      "changes": [
+        "ETO – alap és ETO – Max Performance kártya eltávolítva.",
+        "6282 3D modell kártya eltávolítva.",
+        "Magyarítás kártya eltávolítva.",
+        "A többi kártya (PZO, NIGHTLY, heap, ZombieBuddy, 3D models for Viewpoint, mod mappa) változatlanul működik."
+      ]
+    },
     {
       "id": "0.9.35",
       "version": "0.9.35",

@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                    // ---- 0.9.35 (induló mód) ----
+                                                                        // ---- 0.9.36 (egyszerűbb Optimalizálás panel) ----
+    "0.9.36 – Egyszerűbb Optimalizálás panel":
+      "0.9.36 – Simpler Optimisations panel",
+    "Kikerültek az Optimalizálás panelről azok a kártyák, amikre már nincs szükség: az ETO textúracsomagok (alap és Max Performance), a 6282 3D modellcsomag és a magyarítás. A panel így rövidebb és átláthatóbb: PZO motor, Viewpoint NIGHTLY, RAM/JVM heap, ZombieBuddy, a workshopos 3D modellek cseréje és a mod mappa maradt benne.":
+      "The cards that are no longer needed are gone from the Optimisations panel: the ETO texture packs (base and Max Performance), the 6282 3D model pack and the Hungarian translation. The panel is shorter and clearer: PZO engine, Viewpoint NIGHTLY, RAM/JVM heap, ZombieBuddy, the workshop 3D model swap and the mods folder remain.",
+    "ETO – alap és ETO – Max Performance kártya eltávolítva.":
+      "ETO – base and ETO – Max Performance cards removed.",
+    "6282 3D modell kártya eltávolítva.":
+      "6282 3D model card removed.",
+    "Magyarítás kártya eltávolítva.":
+      "Hungarian translation card removed.",
+    "A többi kártya (PZO, NIGHTLY, heap, ZombieBuddy, 3D models for Viewpoint, mod mappa) változatlanul működik.":
+      "Every other card (PZO, NIGHTLY, heap, ZombieBuddy, 3D models for Viewpoint, mods folder) works unchanged.",
+// ---- 0.9.35 (induló mód) ----
     "0.9.35 – A launcher a kedvenc módodban indul":
       "0.9.35 – The launcher starts in your usual mode",
     "Aki többet játszik egyjátékosban, annak a launcher Blackout módban nyílik meg; aki a szerveren játszik, annak a többjátékos módban. A launcher számolja az indításokat, és mindig a gyakrabban használt módot állítja be belépéskor; egyenlőségnél a legutóbbit használt módot hozza.":
