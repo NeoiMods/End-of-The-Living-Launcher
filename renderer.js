@@ -2256,6 +2256,19 @@ async function init() {
       .setUiLang(window.eotlI18n ? window.eotlI18n.lang : 'hu')
       .catch(() => {});
   }
+  // Az induló mód attól függ, melyiket használja többet a játékos: az
+  // egyjátékost sűrűn játszóknál Blackout, a többjátékosoknál a szerver mód jön be.
+  try {
+    if (bridge.getDefaultMode) {
+      const res = await bridge.getDefaultMode();
+      if (res && res.mode && res.mode !== gameMode) {
+        gameMode = res.mode;
+        applyMode();
+      }
+    }
+  } catch {
+    /* marad a gyári alap */
+  }
   await refresh();
 
   // Ha a legutóbbi játék összeomlott, felajánljuk a crash log elküldését.

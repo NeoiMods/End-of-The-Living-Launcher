@@ -25,6 +25,9 @@ const DEFAULT_CONFIG = {
   unresolved: {},
   // Local mod copies created by the launcher (removed if Steam gains them).
   localCopies: [],
+  // Melyik módot használja többet a játékos? Ebből lesz a launcher induló módja.
+  modeUse: { eotl: 0, blackout: 0 },
+  lastMode: '',
   // ZombieBuddy installer metadata from the last successful run.
   zbInstaller: null,
   // Mod IDs recorded after a successful install, used by the status checklist.
@@ -114,6 +117,12 @@ function loadConfig(dir) {
     installedModIds: Array.isArray(raw.installedModIds)
       ? raw.installedModIds.map(String).filter(Boolean)
       : [],
+    modeUse: {
+      eotl: Math.max(0, Number((raw.modeUse && raw.modeUse.eotl) || 0) || 0),
+      blackout: Math.max(0, Number((raw.modeUse && raw.modeUse.blackout) || 0) || 0),
+    },
+    lastMode:
+      raw.lastMode === 'blackout' || raw.lastMode === 'eotl' ? raw.lastMode : '',
     extraWorkshopIds: normalizeExtras(raw.extraWorkshopIds),
     blackout: {
       ...DEFAULT_CONFIG.blackout,

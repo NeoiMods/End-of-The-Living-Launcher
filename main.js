@@ -1217,6 +1217,8 @@ ipcMain.handle('game:launch', async (event, mode) => {
     // Egyjátékos módban a modpackhoz ajánlott JVM beállítás (Xms=Xmx + ZGC).
     // Csak ZGC (a felhasználói kérés): mindkét módban ZGC-vel indul a játék.
     await launchGame({ gameDir, cfg, onLog: log, zgc: true });
+    // Ebből lesz a launcher következő indításának alapértelmezett módja.
+    noteModeUse(blackoutMode ? 'blackout' : 'eotl');
     // A tényleges futást a figyelő állapítja meg (a B42-nél a java.exe viszi a
     // játékot, nem az indító exe) – így nem lesz hamis „bezárult” üzenet.
     gameSeenRunning = false;
@@ -1300,6 +1302,33 @@ ipcMain.handle('discord:widget', async (e, mode) => {
       error: err && err.message ? err.message : String(err),
     };
   }
+});
+
+// Melyik mód legyen az induló? Amelyiket a játékos többször indította.
+// Egyenlőségnél a legutóbbi, ha az sincs: a többjátékos (szerver) mód.
+function defaultMode() {
+  const use = (cfg && cfg.modeUse) || {};
+  const eotl = Number(use.eotl) || 0;
+  const blackout = Number(use.blackout) || 0;
+  if (blackout > eotl) return 'blackout';
+  if (eotl > blackout) return 'eotl';
+  return cfg && cfg.lastMode === 'blackout' ? 'blackout' : 'eotl';
+}
+
+// Egy indítás rögzítése: ebből tudjuk, melyik módot használja többet.
+function noteModeUse(mode) {
+  const m = String(mode || '').toLowerCase() === 'blackout' ? 'blackout' : 'eotl';
+  const use = { ...(cfg.modeUse || {}) };
+  use[m] = (Number(use[m]) || 0) + 1;
+  cfg = { ...cfg, modeUse: use, lastMode: m };
+  save();
+  return m;
+}
+
+ipcMain.handle('mode:default', () => ({ mode: defaultMode() }));
+ipcMain.handle('mode:used', (e, mode) => {
+  noteModeUse(mode);
+  return { ok: true, mode: defaultMode(), use: cfg.modeUse };
 });
 
 // A választott felületi nyelv a főfolyamatnak is kell (natív ablakok, üzenetek).

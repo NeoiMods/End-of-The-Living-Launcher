@@ -51,6 +51,10 @@ contextBridge.exposeInMainWorld('api', {
   // mode: 'eotl' (szerver) vagy 'blackout' (egyjátékos modpack)
   launch: (mode) => ipcRenderer.invoke('game:launch', mode),
 
+  // Induló mód: amelyiket a játékos többet használja.
+  getDefaultMode: () => ipcRenderer.invoke('mode:default'),
+  noteModeUsed: (mode) => ipcRenderer.invoke('mode:used', mode),
+
   // ---- Blackout Protocol egyjátékos modpack ----
   getBlackoutStatus: () => ipcRenderer.invoke('blackout:status'),
   installBlackout: () => ipcRenderer.invoke('blackout:install'),

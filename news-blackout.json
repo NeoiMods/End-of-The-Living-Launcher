@@ -1,7 +1,20 @@
 {
-  "version": "0.9.34",
+  "version": "0.9.35",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.35",
+      "version": "0.9.35",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.35 – A launcher a kedvenc módodban indul",
+      "text": "Aki többet játszik egyjátékosban, annak a launcher Blackout módban nyílik meg; aki a szerveren játszik, annak a többjátékos módban. A launcher számolja az indításokat, és mindig a gyakrabban használt módot állítja be belépéskor; egyenlőségnél a legutóbbit használt módot hozza.",
+      "changes": [
+        "Induló mód = a gyakrabban használt mód (Blackout vagy szerver).",
+        "Egyenlő számnál a legutóbb játszott mód jön be; ha még nincs adat, a szerver mód (a régi viselkedés).",
+        "A módváltó gomb továbbra is kézzel átvált, és azonnal érvényes."
+      ]
+    },
     {
       "id": "0.9.34",
       "version": "0.9.34",

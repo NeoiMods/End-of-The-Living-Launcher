@@ -16,7 +16,18 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                // ---- 0.9.34 (saját presetek védelme) ----
+                                                                    // ---- 0.9.35 (induló mód) ----
+    "0.9.35 – A launcher a kedvenc módodban indul":
+      "0.9.35 – The launcher starts in your usual mode",
+    "Aki többet játszik egyjátékosban, annak a launcher Blackout módban nyílik meg; aki a szerveren játszik, annak a többjátékos módban. A launcher számolja az indításokat, és mindig a gyakrabban használt módot állítja be belépéskor; egyenlőségnél a legutóbbit használt módot hozza.":
+      "Players who mostly play single-player get the launcher in Blackout mode; server players get the multiplayer mode. The launcher counts launches and always opens in the mode used more often, falling back to the last used mode on a tie.",
+    "Induló mód = a gyakrabban használt mód (Blackout vagy szerver).":
+      "Start-up mode = the mode you use more often (Blackout or server).",
+    "Egyenlő számnál a legutóbb játszott mód jön be; ha még nincs adat, a szerver mód (a régi viselkedés).":
+      "On a tie the last played mode is used; with no data yet the server mode (the old behaviour).",
+    "A módváltó gomb továbbra is kézzel átvált, és azonnal érvényes.":
+      "The mode switch button still changes it by hand, effective immediately.",
+// ---- 0.9.34 (saját presetek védelme) ----
     "0.9.34 – A saját presetjeid nem vesznek el frissítéskor":
       "0.9.34 – Your own presets survive an update",
     "A config frissítése eddig felülírta a játékban mentett trait- és karakter-preseteket. Mostantól a launcher indulásnál rákérdez: megtartsa-e a sajátjaidat. Ha a „Megtartom a sajátomat” gombot választod, a trait/karakter presetjeidhez hozzá sem nyúl. Emellett a frissítés letöltése párhuzamosan fut (6 szál, fájlonként 90 mp-es időkorláttal), így nem ragad be, és a verziószám sem ugrál visszafelé: csak akkor mutat új verziót, ha az tényleg újabb a telepítettnél.":
