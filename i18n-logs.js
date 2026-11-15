@@ -6,6 +6,10 @@
   if (!i18n) return;
 
   i18n.addTemplates([
+    // ---- 0.9.34 (saját presetek védelme) ----
+    "• A saját presetjeid megmaradtak (trait/karakter) – a pakk nem írta felül őket.", "• Your own presets were kept (traits/character) – the pack did not overwrite them.",
+    "• A saját trait/karakter presetjeid megmaradnak.", "• Your own trait/character presets will be kept.",
+    "• A pakk alap trait/karakter presetjei kerülnek be.", "• The pack default trait/character presets will be used.",
     // ---- 0.9.32 (PZO motor a JSON-ban) ----
     "• Launcher JSON kiegészítve: PZO motor (mainClass + classpath + pzo_native64) és ZombieBuddy agent bent van.", "• Launcher JSON completed: the PZO engine (mainClass + classpath + pzo_native64) and the ZombieBuddy agent are in place.",
     // ---- 0.9.31 (a Viewpoint nem törlődik) ----

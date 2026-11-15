@@ -543,34 +543,54 @@ async function applyFileUpdate({ cfg = {}, repo, files, appRoot, userDataDir, re
   const stageDir = path.join(userDataDir, 'update-staging', String(stamp));
   const backupDir = path.join(userDataDir, 'update-backup', String(stamp));
   const staged = [];
-  let done = 0;
+  // A fájlokat párhuzamosan töltjük (6 szál): ~190 fájl egymás után percekig
+  // tartott, a felület pedig közben "beragadtnak" látszott. Egy fájl legfeljebb
+  // 90 mp-et kap, hogy egy lassú kiszolgáló ne akassza meg az egészet.
+  const queue = [];
   for (const file of files) {
-    done++;
     const rel = String(file.path || '').replace(/^\.?\/+/, '');
     if (!rel || rel.includes('..')) continue;
-    if (progress) {
-      progress({ label: 'Frissítés letöltése…', done: done - 1, total: files.length });
-    }
-    const dest = path.join(stageDir, rel);
-    try {
-      await gh.downloadRepoFile({
-        cfg,
-        repo,
-        ref: BRANCH,
-        file: rel,
-        dest,
-        size: file.size || 0,
-        log,
-      });
-      const hash = gh.hashFile(dest);
-      if (file.sha256 && hash && hash !== file.sha256) {
-        throw new Error('a letöltött fájl tartalma nem egyezik az indexben lévővel');
-      }
-      staged.push(rel);
-    } catch (err) {
-      failed.push({ file: rel, error: err && err.message ? err.message : String(err) });
-    }
+    queue.push({ rel, size: file.size || 0, sha256: file.sha256 || '' });
   }
+  const total = queue.length;
+  let done = 0;
+  if (progress) progress({ label: 'Frissítés letöltése…', done: 0, total });
+
+  const downloadOne = async () => {
+    while (queue.length) {
+      const item = queue.shift();
+      const dest = path.join(stageDir, item.rel);
+      try {
+        await withTimeout(
+          gh.downloadRepoFile({
+            cfg,
+            repo,
+            ref: BRANCH,
+            file: item.rel,
+            dest,
+            size: item.size,
+            log,
+          }),
+          90000,
+          `időtúllépés: ${item.rel}`
+        );
+        const hash = gh.hashFile(dest);
+        if (item.sha256 && hash && hash !== item.sha256) {
+          throw new Error('a letöltött fájl tartalma nem egyezik az indexben lévővel');
+        }
+        staged.push(item.rel);
+      } catch (err) {
+        failed.push({ file: item.rel, error: err && err.message ? err.message : String(err) });
+      } finally {
+        done++;
+        if (progress) progress({ label: 'Frissítés letöltése…', done, total });
+      }
+    }
+  };
+
+  await Promise.all(
+    Array.from({ length: Math.min(6, Math.max(1, total)) }, () => downloadOne())
+  );
 
   // Valamelyik fájl nem jött le: semmit nem írunk felül, csak jelentjük.
   if (failed.length) {

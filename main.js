@@ -359,6 +359,24 @@ function localVersion() {
   }
 }
 
+// "1.2.3" / "v1.2" összehasonlítás. A hírfeed verziója külön fájlban él, ezért
+// előfordulhat, hogy régebbi, mint a telepített launcher – ilyenkor nem szabad
+// visszafelé ugrálni a verziószámmal a frissítés-ablakban.
+function parseVersion(value) {
+  const m = String(value || '').match(/^v?(\d+)\.(\d+)(?:\.(\d+))?/);
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3] || 0)] : null;
+}
+
+function compareVersions(a, b) {
+  const A = parseVersion(a);
+  const B = parseVersion(b);
+  if (!A || !B) return 0;
+  for (let i = 0; i < 3; i++) {
+    if (A[i] !== B[i]) return A[i] > B[i] ? 1 : -1;
+  }
+  return 0;
+}
+
 async function updateInfoPayload() {
   const userDataDir = app.getPath('userData');
   const fromVersion = localVersion();
@@ -367,15 +385,15 @@ async function updateInfoPayload() {
     news.fetchNews({ cfg, appRoot: __dirname }).catch(() => ({ items: [], version: '' })),
   ]);
   const shortSha = res && res.remoteSha ? res.remoteSha.slice(0, 7) : '';
-  let toVersion = (info && info.version) || shortSha;
-  // Ugyanaz a verziószám, csak újabb commit: ne írjunk "0.7.5 → 0.7.5"-öt.
-  if (toVersion && toVersion === fromVersion && shortSha) {
-    toVersion = fromVersion + ' · ' + shortSha;
-  }
+  const newsVersion = String((info && info.version) || '').trim();
+  // Csak akkor mutatunk új verziót, ha az tényleg újabb a telepítettnél.
+  const newsIsNewer = !!newsVersion && compareVersions(newsVersion, fromVersion) > 0;
+  let toVersion = newsIsNewer ? newsVersion : '';
+  if (!toVersion) toVersion = shortSha ? `${fromVersion} · ${shortSha}` : fromVersion;
   const items = (info && info.items) || [];
-  // Az új verzióhoz tartozó újdonságok (ha a news.json-ban meg van jelölve).
+  // Az új verzióhoz tartozó újdonságok (ha a hírfeedben meg van jelölve).
   const changes = items
-    .filter((it) => (it.version ? it.version === toVersion : true))
+    .filter((it) => (it.version ? it.version === (newsIsNewer ? newsVersion : '') : true))
     .slice(0, 3);
   return {
     ok: !!(res && res.ok),
@@ -1043,10 +1061,11 @@ ipcMain.handle('shortcut:create', async () => {
 
 // A modpack telepítése a szerver kollekcióval azonos úton megy (feliratkozás,
 // letöltés, engedélyezés), utána a config fájl bemásolása következik.
-async function installBlackoutModpack() {
+async function installBlackoutModpack(keepUserPresets = true) {
   const res = await blackout.install({
     cfg,
     userDataDir: app.getPath('userData'),
+    keepUserPresets,
     onLog: log,
     onProgress: progress,
     openSubscribe: (missing) =>
@@ -1149,7 +1168,33 @@ ipcMain.handle('game:launch', async (event, mode) => {
       busy = true;
       try {
         log('— Blackout egyjátékos mód: a modpack előkészítése —');
-        await installBlackoutModpack();
+        // A játékban mentett trait- és karakter-presetek a játékoséi: csak
+        // engedéllyel írjuk felül őket (config-frissítés ne törölje a munkáját).
+        let keepUserPresets = true;
+        try {
+          const conflicts = blackout.userPresetConflicts();
+          if (conflicts.length && win && !win.isDestroyed()) {
+            const { response } = await dialog.showMessageBox(win, {
+              type: 'question',
+              buttons: ['Megtartom a sajátomat', 'A pakk alapját kérem'],
+              defaultId: 0,
+              cancelId: 0,
+              noLink: true,
+              title: 'Trait és karakter presetek',
+              message: 'Megtartsam a saját trait- és karakter-presetjeidet?',
+              detail:
+                'A config frissítése felülírná a játékban mentett trait- és karakter-testreszabás presetjeidet.\n\n' +
+                'Megtartom a sajátomat: a launcher hozzád sem nyúl, a pakk alap presetje nem kerül be.\n' +
+                'A pakk alapját kérem: a pakk szerinti alap lép a helyükre (a régi elmentve).',
+            });
+            keepUserPresets = response === 0;
+          }
+        } catch (err) {
+          log('! A preset-kérdés nem jelent meg: ' + (err && err.message ? err.message : err));
+        }
+        if (keepUserPresets) log('• A saját trait/karakter presetjeid megmaradnak.');
+        else log('• A pakk alap trait/karakter presetjei kerülnek be.');
+        await installBlackoutModpack(keepUserPresets);
       } catch (err) {
         log('! A modpack előkészítése nem sikerült teljesen: ' + err.message);
       } finally {

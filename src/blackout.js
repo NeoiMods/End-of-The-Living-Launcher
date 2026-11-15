@@ -160,7 +160,15 @@ function summary(cfg) {
 // --------------------------------------------------------------- telepítés
 
 // Feliratkozás + letöltés + engedélyezés, majd a config csomag bemásolása.
-async function install({ cfg, userDataDir, onLog = () => {}, onProgress = () => {}, openSubscribe, openSteamClient }) {
+async function install({
+  cfg,
+  userDataDir,
+  onLog = () => {},
+  onProgress = () => {},
+  openSubscribe,
+  openSteamClient,
+  keepUserPresets = true,
+}) {
   const id = collectionId(cfg);
   onLog(`— ${NAME} modpack (Steam kollekció ${id}) —`);
 
@@ -190,7 +198,12 @@ async function install({ cfg, userDataDir, onLog = () => {}, onProgress = () => 
 
   // A config a modok után jön: felülírja a listát a modpack profiljára, így a
   // kihagyott (crash-t okozó) modok nem maradnak engedélyezve.
-  const config = applyConfig({ onLog, onProgress, lang: (cfg && cfg.uiLang) || 'hu' });
+  const config = applyConfig({
+    onLog,
+    onProgress,
+    lang: (cfg && cfg.uiLang) || 'hu',
+    keepUserPresets,
+  });
 
   return {
     collection: res.collection,
@@ -302,7 +315,31 @@ function applyLanguageVariant(zomboidDir, lang) {
   }
 }
 
-function applyConfig({ onLog = () => {}, onProgress = () => {}, lang = 'hu' } = {}) {
+// A játékos SAJÁT presetjei: a config frissítése ezeket csak kifejezett
+// engedéllyel írja felül. A trait/foglalkozás preset és a karakter-testreszabás
+// (CHC) él itt – ezeket a játékban menti a játékos, nem a pakk részei.
+const USER_PRESET_FILES = ['Lua/PlayerTraits.txt', 'Lua/CHC_presets.lua'];
+
+// Melyik saját preset tér el a pakk által szállítottól? Ha üres, nincs mit
+// kérdezni: a játékos nem mentett sajátot, vagy még nincs fájlja.
+function userPresetConflicts() {
+  const zomboidDir = paths.zomboidDir();
+  const out = [];
+  for (const rel of USER_PRESET_FILES) {
+    const src = path.join(CONFIG_TREE, rel);
+    const dest = path.join(zomboidDir, rel);
+    try {
+      if (!fs.existsSync(src) || !fs.existsSync(dest)) continue;
+      if (!fs.readFileSync(src).equals(fs.readFileSync(dest))) out.push(rel);
+    } catch {
+      // Nem olvasható: inkább nem kérdezünk, és nem is írjuk felül.
+      out.push(rel);
+    }
+  }
+  return out;
+}
+
+function applyConfig({ onLog = () => {}, onProgress = () => {}, lang = 'hu', keepUserPresets = true } = {}) {
   if (!fs.existsSync(CONFIG_TREE)) {
     const error = 'A launcherhez mellékelt Blackout config csomag hiányzik (assets/blackout).';
     onLog('✗ ' + error);
@@ -322,6 +359,7 @@ function applyConfig({ onLog = () => {}, onProgress = () => {}, lang = 'hu' } = 
   let copied = 0;
   let backedUp = 0;
   const failed = [];
+  const skipped = [];
   let done = 0;
 
   for (const rel of files) {
@@ -330,6 +368,13 @@ function applyConfig({ onLog = () => {}, onProgress = () => {}, lang = 'hu' } = 
     const src = path.join(CONFIG_TREE, rel);
     const dest = path.join(zomboidDir, rel);
     try {
+      // A játékos saját trait/karakter presetje marad, ha így kérte.
+      // (Windowson a walk() visszaperjelet ad, ezért normalizálunk.)
+      const relKey = rel.replace(/\\/g, '/');
+      if (keepUserPresets && USER_PRESET_FILES.includes(relKey) && fs.existsSync(dest)) {
+        skipped.push(relKey);
+        continue;
+      }
       fs.mkdirSync(path.dirname(dest), { recursive: true });
       const srcBuf = fs.readFileSync(src);
       if (fs.existsSync(dest)) {
@@ -368,6 +413,9 @@ function applyConfig({ onLog = () => {}, onProgress = () => {}, lang = 'hu' } = 
     mods.logNightlyCompat({ log: onLog });
   }
 
+  if (skipped.length) {
+    onLog('• A saját presetjeid megmaradtak (trait/karakter) – a pakk nem írta felül őket.');
+  }
   onLog(
     `✓ Modpack config a helyén: ${copied} fájl a játék Zomboid mappájában` +
       (backedUp ? `, ${backedUp} felülírt fájl mentve: ${backupDir}` : '')
@@ -382,6 +430,7 @@ function applyConfig({ onLog = () => {}, onProgress = () => {}, lang = 'hu' } = 
   return {
     ok: after.installed && failed.length === 0,
     copied,
+    skipped,
     backedUp: backedUp ? backupDir : null,
     failed,
     profile: PROFILE_NAME,
@@ -401,6 +450,8 @@ module.exports = {
   CONFIG_SENTINELS,
   LANG_VARIANTS,
   applyLanguageVariant,
+  USER_PRESET_FILES,
+  userPresetConflicts,
   collectionId,
   summary,
   install,

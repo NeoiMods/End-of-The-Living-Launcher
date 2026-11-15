@@ -1,7 +1,22 @@
 {
-  "version": "0.9.33",
+  "version": "0.9.34",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.34",
+      "version": "0.9.34",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.34 – A saját presetjeid nem vesznek el frissítéskor",
+      "text": "A config frissítése eddig felülírta a játékban mentett trait- és karakter-preseteket. Mostantól a launcher indulásnál rákérdez: megtartsa-e a sajátjaidat. Ha a „Megtartom a sajátomat” gombot választod, a trait/karakter presetjeidhez hozzá sem nyúl. Emellett a frissítés letöltése párhuzamosan fut (6 szál, fájlonként 90 mp-es időkorláttal), így nem ragad be, és a verziószám sem ugrál visszafelé: csak akkor mutat új verziót, ha az tényleg újabb a telepítettnél.",
+      "changes": [
+        "Indulásnál felugrik a kérdés: megtartsam-e a saját trait- és karakter-presetjeidet?",
+        "„Megtartom a sajátomat” esetén a launcher nem írja felül a PlayerTraits.txt-t és a CHC (karakter-testreszabás) preseteket.",
+        "A pakk alap presetjei csak kifejezett kérésre („A pakk alapját kérem”) kerülnek be, a régi elmentve.",
+        "A frissítés letöltése 6 párhuzamos szállal + fájlonkénti 90 mp-es időkorláttal fut – nem ragad be a frissítés.",
+        "A verziószám nem ugrál visszafelé: a hírfeed régebbi verziója nem jelenik meg új verzióként."
+      ]
+    },
     {
       "id": "0.9.33",
       "version": "0.9.33",

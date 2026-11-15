@@ -16,7 +16,22 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                            // ---- 0.9.33 (új Blackout config) ----
+                                                                // ---- 0.9.34 (saját presetek védelme) ----
+    "0.9.34 – A saját presetjeid nem vesznek el frissítéskor":
+      "0.9.34 – Your own presets survive an update",
+    "A config frissítése eddig felülírta a játékban mentett trait- és karakter-preseteket. Mostantól a launcher indulásnál rákérdez: megtartsa-e a sajátjaidat. Ha a „Megtartom a sajátomat” gombot választod, a trait/karakter presetjeidhez hozzá sem nyúl. Emellett a frissítés letöltése párhuzamosan fut (6 szál, fájlonként 90 mp-es időkorláttal), így nem ragad be, és a verziószám sem ugrál visszafelé: csak akkor mutat új verziót, ha az tényleg újabb a telepítettnél.":
+      "Updating the config used to overwrite the trait and character presets saved in the game. Now the launcher asks on launch whether to keep yours. If you pick “Keep mine”, it will not touch your trait/character presets at all. The update download also runs in parallel (6 threads, 90 s per-file limit) so it no longer hangs, and the version number no longer jumps backwards: a new version is only shown when it is really newer than the installed one.",
+    "Indulásnál felugrik a kérdés: megtartsam-e a saját trait- és karakter-presetjeidet?":
+      "On launch a question appears: keep your own trait and character presets?",
+    "„Megtartom a sajátomat” esetén a launcher nem írja felül a PlayerTraits.txt-t és a CHC (karakter-testreszabás) preseteket.":
+      "With “Keep mine” the launcher does not overwrite PlayerTraits.txt or the CHC (character customisation) presets.",
+    "A pakk alap presetjei csak kifejezett kérésre („A pakk alapját kérem”) kerülnek be, a régi elmentve.":
+      "The pack defaults are only written on explicit request (“Use the pack defaults”), with the old files backed up.",
+    "A frissítés letöltése 6 párhuzamos szállal + fájlonkénti 90 mp-es időkorláttal fut – nem ragad be a frissítés.":
+      "The update download uses 6 parallel threads with a 90 s per-file timeout, so the update no longer hangs.",
+    "A verziószám nem ugrál visszafelé: a hírfeed régebbi verziója nem jelenik meg új verzióként.":
+      "The version number no longer jumps backwards: an older news feed version is not shown as a new version.",
+// ---- 0.9.33 (új Blackout config) ----
     "0.9.33 – Új Blackout Protocol config: 719 mod, 2 új mod":
       "0.9.33 – New Blackout Protocol config: 719 mods, 2 new mods",
     "2 új mod a pakkban: Visible Laser Sights és HydeCo Knox Underground Viewpoint-támogatás (csatornák). Az Escape From Zomboid visszatért, az A-Life újra hangolva – kevesebb NPC, ugyanaz a világ. Hátra: collection puccolás és bugfix (Viewpoint Roofs, RV/camper interiorok). A launcher a ProjectZomboid64.json-t mostantól a config mellé adott launcher fájlból írja, ezért a PZO motor és a ZombieBuddy agent mindig bent van.":
