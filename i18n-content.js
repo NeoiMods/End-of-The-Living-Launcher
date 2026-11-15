@@ -16,7 +16,18 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                                                    // ---- 0.9.47 (indítási diagnosztika) ----
+                                                                                                                        // ---- 0.9.48 (modok kikapcsolása) ----
+    "0.9.48 – Javítva: nem kapcsolódnak ki a modok („csak 8 mod aktív”)":
+      "0.9.48 – Fixed: mods no longer get disabled (“only 8 mods active”)",
+    "Megtaláltuk a hibát: a launcher minden verziófrissítés után egyszer lefuttatott egy szűrést, ami a szerver kollekció (8 mod) alapján kikapcsolta az összes olyan modot, ami nincs benne – vagyis az egyjátékos Blackout modpack ~740 modját. Ezért maradt néha csak 8 aktív mod. Mostantól a szűrés a Blackout kollekciót is engedélyezettnek tekinti, így csak a valóban kollekción kívüli modok kapcsolódnak ki. Indításkor a launcher azt is észleli, ha egy korábbi verzió már kikapcsolta a modokat, és visszakapcsolja a gépen meglévő kollekció-modokat.":
+      "We found the bug: after every launcher version change it ran a prune once that treated the server collection (8 mods) as the only allowed set, so it disabled every mod outside it – the ~740 mods of the single-player Blackout pack. That is why sometimes only 8 mods stayed active. The prune now counts the Blackout collection as allowed too, so only mods genuinely outside both collections get disabled. At launch the launcher also detects mods disabled by an earlier version and re-enables the collection mods present on the machine.",
+    "A mod-szűrés már nem a szerver kollekció (8 mod) alapján dönt, hanem a Blackout modpack modjait is engedélyezettnek veszi.":
+      "The mod prune no longer decides from the server collection (8 mods); it accepts the Blackout pack’s mods too.",
+    "Indításkor javítás: a korábbi verzió által kikapcsolt kollekció-modok visszakapcsolódnak (a napló kiírja, hány darab).":
+      "Repair at launch: collection mods disabled by an earlier version are re-enabled (the log shows how many).",
+    "A valóban kollekción kívüli modok továbbra is kikapcsolódnak.":
+      "Mods genuinely outside the collections are still disabled.",
+// ---- 0.9.47 (indítási diagnosztika) ----
     "0.9.47 – A napló megmondja, miért nem indult el a játék, és melyik mod hiányzik":
       "0.9.47 – The log now says why the game did not start, and which mod is missing",
     "Ha a játék nem indul el, a launcher eddig csak annyit írt, hogy „15 mp után sem látszik futónak”. Mostantól kiírja a valódi okot: a folyamat kilépési kódját, a játék konzoljának utolsó hibáit és a JVM összeomlás-naplót (ha van). Indítás előtt pedig névvel és Steam ID-val felsorolja, mely modok hiányoznak a kollekcióból – a „752/753” számból eddig nem derült ki, melyik az az egy. Ugyanez az ellenőrző listában is megjelenik: a szám mellett ott a hiányzó mod neve.":

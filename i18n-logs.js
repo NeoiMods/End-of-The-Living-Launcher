@@ -452,7 +452,11 @@
     ["kicsomagolási hiba", "unpacking error"],
     ["SteamCMD kicsomagolása…", "Unpacking SteamCMD…"],
 
-    // ---- 0.9.47 (miért nem indult el / melyik mod hiányzik) ----
+        // ---- 0.9.48 (csak 8 mod aktív javítás) ----
+    ["✓ {n} mod újra engedélyezve a mod listában (egy korábbi launcher-hiba kikapcsolta őket).", "✓ {n} mods re-enabled in the mod list (an earlier launcher bug had disabled them)."],
+    ["! A mod lista javítása nem sikerült: ", "! Could not repair the mod list: "],
+
+// ---- 0.9.47 (miért nem indult el / melyik mod hiányzik) ----
     ["⚠ {n} mod hiányzik a(z) {s} kollekcióból – ezek nélkül indul a játék:", "⚠ {n} mods are missing from the {s} collection – the game starts without them:"],
     ["   • {s} ({s})", "   • {s} ({s})"],
     ["   … és még {n} mod.", "   … and {n} more mods."],

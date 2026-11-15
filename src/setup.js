@@ -404,10 +404,23 @@ function launcherManagedIds(userDataDir) {
 // Induláskor: a Steam workshop mappából derítjük ki, melyik mod tartozik a
 // kollekció egyik eleméhez, és a többi bekapcsolt modot kikapcsoljuk. Ha a
 // kollekció vagy a workshop mappa nem olvasható, nem nyúlunk a mod listához.
-function pruneToCollection({ cfg, userDataDir, libs, onLog = () => {} }) {
-  const items = (cfg && cfg.collection && Array.isArray(cfg.collection.items)) ? cfg.collection.items : [];
+function pruneToCollection({ cfg, userDataDir, libs, onLog = () => {}, zomboidDir = null }) {
+  // FONTOS: a szerver kollekció (cfg.collection) mellett az egyjátékos Blackout
+  // modpack (cfg.blackout.collection) elemei is engedélyezettek. Korábban csak a
+  // szerver kollekció számított, ezért minden launcher-frissítés után a
+  // Blackout játékosok ~740 modja kikapcsolt, és csak a 8 szerver-mod maradt.
+  const itemIds = new Set();
+  const addItems = (list) => {
+    for (const it of list || []) {
+      const id = String((it && it.id) || '').trim();
+      if (/^\d+$/.test(id)) itemIds.add(id);
+    }
+  };
+  if (cfg && cfg.collection && Array.isArray(cfg.collection.items)) addItems(cfg.collection.items);
+  if (cfg && cfg.blackout && cfg.blackout.collection && Array.isArray(cfg.blackout.collection.items)) {
+    addItems(cfg.blackout.collection.items);
+  }
   const extras = Array.isArray(cfg && cfg.extraWorkshopIds) ? cfg.extraWorkshopIds : [];
-  const itemIds = new Set(items.map((it) => String(it.id)));
   for (const extra of extras) {
     const id = String((extra && extra.id) || '').trim();
     if (/^\d+$/.test(id)) itemIds.add(id);
@@ -422,7 +435,7 @@ function pruneToCollection({ cfg, userDataDir, libs, onLog = () => {} }) {
     return { removed: [], skipped: true, reason: 'a Steam workshop mappa nem olvasható' };
   }
   for (const id of launcherManagedIds(userDataDir)) allowed.add(id);
-  return pruneOutsideMods({ zomboidDir: paths.zomboidDir(), allowed, onLog });
+  return pruneOutsideMods({ zomboidDir: zomboidDir || paths.zomboidDir(), allowed, onLog });
 }
 
 module.exports = { runSetup, SKIP_DOWNLOAD_IDS, pruneOutsideMods, pruneToCollection };

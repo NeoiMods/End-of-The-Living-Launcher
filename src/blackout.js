@@ -240,6 +240,37 @@ function walk(dir, base = dir, out = []) {
   return out;
 }
 
+// Javítás arra az esetre, amikor egy korábbi launcher-verzió (0.9.44–0.9.47)
+// a szerver kollekcióhoz szűrve kikapcsolta a Blackout modok nagy részét: az
+// engedélyezett lista ilyenkor jóval rövidebb a kollekciónál. A gépen meglévő
+// kollekció-modokat visszakapcsoljuk (a profil szerinti sorrendet a config
+// telepítése adja vissza).
+function repairDisabledMods(cfg, onLog = () => {}) {
+  const items = cfg && cfg.blackout && cfg.blackout.collection && Array.isArray(cfg.blackout.collection.items)
+    ? cfg.blackout.collection.items
+    : [];
+  if (!items.length) return { added: [] };
+  const wanted = new Set(items.map((it) => String(it.id)));
+  let index;
+  try {
+    index = require('./modinfo').buildWorkshopIndex(steamLibs(), paths.PZ_APP_ID);
+  } catch {
+    return { added: [] };
+  }
+  const modIds = [];
+  for (const [modId, m] of index) {
+    if (m && m.itemId && wanted.has(String(m.itemId))) modIds.push(modId);
+  }
+  if (!modIds.length) return { added: [] };
+  const res = modlist.ensureEnabled(paths.zomboidDir(), modIds);
+  if (res.added && res.added.length) {
+    onLog(
+      `✓ ${res.added.length} mod újra engedélyezve a mod listában (egy korábbi launcher-hiba kikapcsolta őket).`
+    );
+  }
+  return res;
+}
+
 // A default.txt (a launcher által is használt engedélyezett lista) a modpack
 // profiljára állítva – a maps blokkot és a többi sort nem bántja.
 function syncModList(zomboidDir, ids, onLog) {
@@ -466,4 +497,5 @@ module.exports = {
   applyConfig,
   configStatus,
   profileOf,
+  repairDisabledMods,
 };

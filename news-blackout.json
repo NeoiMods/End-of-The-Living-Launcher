@@ -1,7 +1,20 @@
 {
-  "version": "0.9.47",
+  "version": "0.9.48",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.48",
+      "version": "0.9.48",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.48 – Javítva: nem kapcsolódnak ki a modok („csak 8 mod aktív”)",
+      "text": "Megtaláltuk a hibát: a launcher minden verziófrissítés után egyszer lefuttatott egy szűrést, ami a szerver kollekció (8 mod) alapján kikapcsolta az összes olyan modot, ami nincs benne – vagyis az egyjátékos Blackout modpack ~740 modját. Ezért maradt néha csak 8 aktív mod. Mostantól a szűrés a Blackout kollekciót is engedélyezettnek tekinti, így csak a valóban kollekción kívüli modok kapcsolódnak ki. Indításkor a launcher azt is észleli, ha egy korábbi verzió már kikapcsolta a modokat, és visszakapcsolja a gépen meglévő kollekció-modokat.",
+      "changes": [
+        "A mod-szűrés már nem a szerver kollekció (8 mod) alapján dönt, hanem a Blackout modpack modjait is engedélyezettnek veszi.",
+        "Indításkor javítás: a korábbi verzió által kikapcsolt kollekció-modok visszakapcsolódnak (a napló kiírja, hány darab).",
+        "A valóban kollekción kívüli modok továbbra is kikapcsolódnak."
+      ]
+    },
     {
       "id": "0.9.47",
       "version": "0.9.47",

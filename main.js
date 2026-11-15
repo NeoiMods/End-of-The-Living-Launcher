@@ -1319,6 +1319,15 @@ ipcMain.handle('game:launch', async (event, mode) => {
     // Csak ZGC (a felhasználói kérés): mindkét módban ZGC-vel indul a játék.
     // Indítás előtt: mely kollekció-mod hiányzik a gépről (névvel és ID-val).
     logMissingCollectionMods(blackoutMode ? 'blackout' : 'eotl');
+    // Korábbi launcher-verzió kikapcsolhatta a modpack modjait (a szerver
+    // kollekcióhoz szűrt) – indítás előtt visszakapcsoljuk őket.
+    if (blackoutMode) {
+      try {
+        blackout.repairDisabledMods(cfg, log);
+      } catch (err) {
+        log('! A mod lista javítása nem sikerült: ' + (err && err.message ? err.message : err));
+      }
+    }
     launchStartedAt = Date.now();
     await launchGame({ gameDir, cfg, onLog: log, zgc: true, userDataDir: app.getPath('userData') });
     // Ebből lesz a launcher következő indításának alapértelmezett módja.
