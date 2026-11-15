@@ -1,15 +1,17 @@
-BLACKOUT PROTOCOL — MODLISTA VALTOZAS
-elozo: 756 mod  ->  most: 714 mod
+BLACKOUT PROTOCOL - MODLISTA VALTOZAS
+kiindulas (2026-11-12 backup): 756 mod  ->  most: 719 mod
+nettó: -37
 
-=== BEKERULT (32) ===
+=== BEKERULT (34) ===
   + B42_FIX_KI5_Hood_Trunk_and_etc
   + BulkPallets
-  + CDAJCompatPatch
-  + CDALifePatch
   + CompanionDogsSwissShepherd
+  + FunctionalLaserSights
   + HDsGasBurner
   + HandsOnInteractionsVP
+  + HydeCoUnderGroundViewpoint
   + JullesPortableLadders
+  + KafeenasCannabisViewpoint
   + NeatUI_Mechanics
   + PZCustomIntros
   + PZVoxelStudioViewpoint
@@ -33,9 +35,10 @@ elozo: 756 mod  ->  most: 714 mod
   + SuporteFuzis
   + TarkovInventory
   + VilaZMap
+  + XCarDismantle
   + undying_optimizer
 
-=== KIKERULT (74) ===
+=== KIKERULT (71) ===
   - AmbientCityLights
   - ArcadiaKI5F350AmbulanceInterior
   - ArcadiaRVInterior_B42_MP
@@ -62,10 +65,7 @@ elozo: 756 mod  ->  most: 714 mod
   - Diederiks Tile Palooza
   - DylansTiles
   - DynamicVehicleSnow
-  - EFZGroundModels
-  - EFZPvadsBridge
   - Erikas_Tiles
-  - EscapeFromZomboidFirearms
   - FortisQuests
   - HereGoesTheSun
   - HordeOptimizer
@@ -73,7 +73,6 @@ elozo: 756 mod  ->  most: 714 mod
   - INVENTORY_TETRIS
   - ImmersiveAmmoCountB42
   - JohnnyBandolierCapacity
-  - KafeenasCannabisB42
   - KentuckyCannabis
   - LT
   - LeaveAMessageNote
@@ -83,6 +82,7 @@ elozo: 756 mod  ->  most: 714 mod
   - MoodleEffectsExplainedB42
   - Multi-CPU
   - N&CsNarcotics
+  - NepWreckWorkingCars
   - NicksBookTracker
   - PertsPartyTiles
   - ProjectViewpointQOL
@@ -110,3 +110,7 @@ elozo: 756 mod  ->  most: 714 mod
   - modPerformanceProfiler42
   - phunmart2
   - tm_musicasbrasileiras_null_up
+
+=== MEGJEGYZES ===
+  ViewpointALife  ->  NINCS a Blackout Protocol listaban (kell az A-Life-hez Viewpointban!)
+  CDA patches     ->  nem kellenek, az A-Life 1.5.2 magaban hozza a compatot

@@ -113,6 +113,61 @@ function isGameRunning(force = false) {
   return running;
 }
 
+// A Blackout config mellé adott launcher sablon. A launchert magát NEM futtatjuk:
+// csak a benne leírt JVM kapcsolókat, classpathet és belépő osztályt vesszük át a
+// ProjectZomboid64.json-ba, mert a játék (és a Steam) abból indul.
+const LAUNCHER_TEMPLATE = path.join(__dirname, '..', 'assets', 'blackout', 'launcher', 'ProjectZomboid64.bat.txt');
+
+function readLauncherTemplate() {
+  let raw;
+  try {
+    raw = fs.readFileSync(LAUNCHER_TEMPLATE, 'utf8');
+  } catch {
+    return null;
+  }
+
+  const grab = (name) => {
+    const m = raw.match(new RegExp('^\\s*SET\\s+' + name + '=(.*)$', 'im'));
+    return m ? m[1].trim() : '';
+  };
+
+  const pzArgs = grab('PZ_ARGS');
+  if (!pzArgs) return null;
+
+  // Classpath: "./;PZOptimEngine.jar;ZombieBuddy.jar;projectzomboid.jar"
+  const classpath = grab('PZ_CLASSPATH')
+    .split(';')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((s) => (s === './' || s === '.' ? '.' : s));
+
+  // A PZ_ARGS szavai, a `-cp` és a rá következő classpath token nélkül.
+  const tokens = pzArgs.split(/\s+/).filter(Boolean);
+  const vmArgs = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    if (t.toLowerCase() === '-cp') {
+      i++;
+      continue;
+    }
+    if (/%PZ_CLASSPATH%/i.test(t)) continue;
+    // A .bat-ban ez csak a konzolos indításhoz kell; a játék ablakos módban fut.
+    if (/^-Djava\.awt\.headless=/i.test(t)) continue;
+    vmArgs.push(t);
+  }
+
+  // A .bat az agentet környezeti változóban (_JAVA_OPTIONS) adja át – a JSON-ba
+  // viszont be kell írni, különben a ZombieBuddy nem tölt be.
+  for (const t of grab('_JAVA_OPTIONS').split(/\s+/).filter(Boolean)) {
+    if (!vmArgs.includes(t)) vmArgs.push(t);
+  }
+
+  const mainMatch = raw.match(/java\.exe"?\s+%PZ_ARGS%\s+([\w.$/]+)/i);
+  const mainClass = mainMatch ? mainMatch[1].replace(/\./g, '/') : PZO_MAIN_CLASS;
+
+  return { vmArgs, classpath, mainClass, file: LAUNCHER_TEMPLATE };
+}
+
 // A JVM heap (-Xmx) beállítása a játék saját launcher JSON-jában is, hogy a
 // Steam-ből indított játék is ugyanannyi memóriát kapjon. Ha a fájl írásvédett
 // (Program Files), csak figyelmeztetünk – a parancssori -Xmx akkor is él.
@@ -144,8 +199,12 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
   const stripGc = (a) =>
     typeof a === 'string' && !GC_FLAG.test(a) && !G1_ONLY.test(a) && !G1_TUNING.test(a);
 
-  const vmArgs = Array.isArray(data.vmArgs) ? data.vmArgs : [];
-  const filtered = vmArgs.filter((a) => typeof a === 'string' && !/^-Xm[sx]/i.test(a) && stripGc(a));
+  const fileVmArgs = Array.isArray(data.vmArgs) ? data.vmArgs : [];
+  // A config launcher sablonja az elsődleges forrás; ha nincs, a JSON saját
+  // listájából dolgozunk (a régi viselkedés).
+  const tpl = readLauncherTemplate();
+  const baseVmArgs = tpl && tpl.vmArgs.length ? tpl.vmArgs : fileVmArgs;
+  const filtered = baseVmArgs.filter((a) => typeof a === 'string' && !/^-Xm[sx]/i.test(a) && stripGc(a));
   let nextVmArgs = [...filtered, ...wanted];
 
   // A PZO motor csak akkor tölt be, ha a launcher JSON-ben benne van a saját
@@ -167,7 +226,18 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
   const zbJar = hasFile(AGENT_JAR);
   const zbNative = hasFile(AGENT_DLL);
 
-  if (pzoJar) {
+  if (tpl && pzoJar) {
+    // A sablonból: belépő osztály és classpath (PZO motor + ZombieBuddy + játék).
+    if (String(data.mainClass || '') !== tpl.mainClass) {
+      data.mainClass = tpl.mainClass;
+      added.push('mainClass');
+    }
+    const cp = Array.isArray(data.classpath) ? data.classpath.filter((x) => typeof x === 'string') : [];
+    if (tpl.classpath.length && tpl.classpath.join('\n') !== cp.join('\n')) {
+      data.classpath = tpl.classpath;
+      added.push('classpath');
+    }
+  } else if (pzoJar) {
     if (String(data.mainClass || '') !== PZO_MAIN_CLASS) {
       data.mainClass = PZO_MAIN_CLASS;
       added.push('mainClass');
@@ -183,11 +253,11 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
       data.classpath = nextCp;
       added.push('classpath');
     }
+  }
 
-    if (pzoNative && !hasArg(nextVmArgs, /^-agentlib:pzo_native64$/i)) {
-      nextVmArgs.push('-agentlib:' + PZO_AGENT_LIB);
-      added.push('-agentlib:' + PZO_AGENT_LIB);
-    }
+  if (pzoJar && pzoNative && !hasArg(nextVmArgs, /^-agentlib:pzo_native64$/i)) {
+    nextVmArgs.push('-agentlib:' + PZO_AGENT_LIB);
+    added.push('-agentlib:' + PZO_AGENT_LIB);
   }
 
   if (zbJar && zbNative && !hasArg(nextVmArgs, /^-agentlib:zbNative$/i)) {
@@ -213,12 +283,9 @@ function applyHeapToLauncherJson(gameDir, heapMb, { zgc = false } = {}) {
   };
   fixNested(data.windows);
 
-  const sameVm = nextVmArgs.length === vmArgs.length && nextVmArgs.every((a, i) => a === vmArgs[i]);
-  const same =
-    !nestedChanged &&
-    added.length === 0 &&
-    sameVm &&
-    wanted.every((w) => vmArgs.some((a) => typeof a === 'string' && a.toLowerCase() === w.toLowerCase()));
+  const sameVm =
+    nextVmArgs.length === fileVmArgs.length && nextVmArgs.every((a, i) => a === fileVmArgs[i]);
+  const same = !nestedChanged && added.length === 0 && sameVm;
   if (same) return { changed: false, file, heapMb, added };
 
   data.vmArgs = nextVmArgs;
@@ -420,6 +487,7 @@ module.exports = {
   agentStatus,
   applyHeapToLauncherJson,
   applyHeapToLauncherBat,
+  readLauncherTemplate,
   launcherGcFlags,
   readHeapFromLauncherJson,
   buildArgs,

@@ -1,5 +1,5 @@
-BLACKOUT PROTOCOL — CONFIG PACK v2
-Project Zomboid B42.22.2  |  714 aktiv mod  |  frissitve: 2026-11-14
+BLACKOUT PROTOCOL — CONFIG PACK v3
+Project Zomboid B42.22.2  |  719 aktiv mod  |  frissitve: 2026-11-15
 
 ====================================================================
 ELOFELTETEL (ezt nem lehet becsomagolni)
@@ -14,26 +14,23 @@ MAGYAR
 ====================================================================
 MI VAN BENNE
   config/options.ini ........................ grafika (fullscreen, textura-lepcs)
-  config/pz_modlist_settings.cfg ............ modprofilok, benne a "Blackout Protocol" (714 mod)
+  config/pz_modlist_settings.cfg ............ modprofilok, benne a "Blackout Protocol" (719 mod)
   config/ModListData.ini .................... a ModManager katalogusa (workshop ID-k)
-  config/keys.ini, keysB42.ini .............. TELJES billentyukiosztas (a te beallitasod)
+  config/keys.ini, keysB42.ini .............. TELJES billentyukiosztas
   config/modlist_blackout_protocol.txt ...... a lista, egy sor egy mod (ellenorzeshez)
-  Sandbox Presets/Neoi-Suggested.cfg ........ ujrahangolt sandbox preset (angol nev)
+  Sandbox Presets/Neoi-Suggested.cfg ........ sandbox preset (angol nev)
   Sandbox Presets/NeoiMods Ajanlott.cfg ..... ugyanaz, magyar nevvel (AZONOS tartalom)
   launcher/ProjectZomboid64.bat ............. a ZGC-s indito (+ .txt masolat)
-  ONFIRE.txt ................................ Viewpoint nightly rc4 + A-Life 1.5.2 reszletek
-  CHANGELOG_modok.txt ....................... mi jott be, mi ment ki (+32 / -74)
+  ONFIRE.txt ................................ Viewpoint nightly rc4 + A-Life 1.5.2
+  CHANGELOG_modok.txt ....................... mi jott be, mi ment ki (+34 / -71)
 
-MI VALTOZOTT A BALANCE-BAN (sandbox preset)
-  Zombik: Alacsony (Zombies=5), varosra osszpontositott eloszlas
-  Respawn: ritkan, migracio BE
+BALANCE (sandbox preset)
+  Zombik: Alacsony, varosra osszpontositott eloszlas | Respawn: ritkan, migracio BE
   Loot: elelmiszer 0.4 / fegyver 0.2 / gazdalkodas 0.4
-  Viz es aram: 7-14 nap kozott megy el (nem azonnal, nem is soha)
-  Ido: 1 oras napok, indulás julius 1.
-  Idojaras: mersekelt homerseklet, gyakrabb csapadek, lassabb erozio
-  Helikopter/meta esemeny: ritka
-  Generator: 0.1 uzemanyag-fogyasztas (sokkal tovabb bir)
-  Ez BALANCE, nem FPS-beallitas. A teljesitmenyt a launcher es a modlista adja.
+  Viz es aram: 7-14. nap kozott megy el | Ido: 1 oras napok, julius 1.
+  Idojaras: mersekelt homerseklet, gyakoribb csapadek, lassabb erozio
+  Helikopter/meta esemeny: ritka | Generator: 0.1 uzemanyag-fogyasztas
+  Ez BALANCE, nem FPS-beallitas.
 
 TELEPITES
   1. Zar be a jatekot.
@@ -50,7 +47,6 @@ BILLENTYUKIOSZTAS
   A keys.ini a regi (B41-es) rendszer, a keysB42.ini a B42-es. MINDKETTO
   kell, kulonben a jatek visszaallitja a defaultot. A jatekban:
   Options -> Key Bindings - itt latod listas formaban, mi mire van kotve.
-  Ha valamit at akarsz irni, tedd a jatekban, mert inditaskor felulirja a fajlt.
 
 FONTOS
   - A jatek a ProjectZomboid64.bat-ot inditja, NEM a JSON-t.
@@ -67,26 +63,23 @@ REQUIREMENT (cannot be packaged)
 
 WHAT IS INSIDE
   config/options.ini ........................ graphics settings
-  config/pz_modlist_settings.cfg ............ mod profiles incl. "Blackout Protocol" (714 mods)
+  config/pz_modlist_settings.cfg ............ mod profiles incl. "Blackout Protocol" (719 mods)
   config/ModListData.ini .................... ModManager catalogue (workshop IDs)
-  config/keys.ini, keysB42.ini .............. FULL key bindings (your setup)
+  config/keys.ini, keysB42.ini .............. FULL key bindings
   config/modlist_blackout_protocol.txt ...... the list, one mod per line
-  Sandbox Presets/Neoi-Suggested.cfg ........ rebalanced sandbox preset (English name)
+  Sandbox Presets/Neoi-Suggested.cfg ........ sandbox preset (English name)
   Sandbox Presets/NeoiMods Ajanlott.cfg ..... identical file, Hungarian name
   launcher/ProjectZomboid64.bat ............. the ZGC launcher (+ .txt copy)
-  ONFIRE.txt ................................ Viewpoint nightly rc4 + A-Life 1.5.2 details
-  CHANGELOG_modok.txt ....................... what came in, what went out (+32 / -74)
+  ONFIRE.txt ................................ Viewpoint nightly rc4 + A-Life 1.5.2
+  CHANGELOG_modok.txt ....................... what came in, what went out (+34 / -71)
 
-WHAT CHANGED IN THE BALANCE (sandbox preset)
-  Zombies: Low (Zombies=5), urban-focused distribution
-  Respawn: rare, migration ON
+BALANCE (sandbox preset)
+  Zombies: Low, urban-focused | Respawn: rare, migration ON
   Loot: food 0.4 / weapons 0.2 / farming 0.4
-  Water and power: gone between day 7 and 14 (not instantly, not never)
-  Time: 1-hour days, starting July 1
-  Weather: moderate temperature, more frequent rain, slower erosion
-  Helicopter/meta events: rare
-  Generator: 0.1 fuel consumption (lasts far longer)
-  This is BALANCE, not an FPS setting. Performance comes from the launcher and the mod list.
+  Water and power: gone between day 7 and 14 | Time: 1-hour days, July 1
+  Weather: moderate temperature, more rain, slower erosion
+  Heli/meta events: rare | Generator: 0.1 fuel consumption
+  This is BALANCE, not an FPS setting.
 
 INSTALL
   1. Close the game.
@@ -102,8 +95,7 @@ INSTALL
 KEY BINDINGS
   keys.ini is the old (B41) system, keysB42.ini is the B42 one. BOTH are
   required, otherwise the game resets them to default. In game:
-  Options -> Key Bindings shows the full list in readable form.
-  If you want to change something, do it in game - the file is overwritten on launch.
+  Options -> Key Bindings shows the full list.
 
 IMPORTANT
   - The game launches through ProjectZomboid64.bat, NOT the JSON.

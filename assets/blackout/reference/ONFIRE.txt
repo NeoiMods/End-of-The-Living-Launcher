@@ -1,0 +1,45 @@
+ON FIRE — AMI MOST A LEGFONTOSABB
+==================================================
+
+1) PROJECT VIEWPOINT — NIGHTLY 1.7.0 rc4
+   Ez NEM a Steam Workshop-os alpha-0.1.6! A nightly a hivatalos
+   Project Viewpoint Discord "nightly-releases" csatornajabol jon
+   (role: "select roles" -> nightly test).
+   - Kell hozza: ZombieBuddy (Java loader) >= 2.3.0
+   - Allapot: teszt build, az addonok egy resze meg nem megy vele,
+     es van olyan regi addon, ami miatt a Viewpoint egyaltalan nem rajzol.
+   - Ezert: eloszor CSAK a magot + ZombieBuddy-t tedd be, minden Viewpoint
+     addont utana, egyesevel. Ha fekete a kep, addon a bunos.
+
+2) PROJECT A-LIFE — 1.5.2 (1.5 "Major Update")
+   Steam Workshop ID: 3803984183  |  mod id: ProjectALifeNPCs
+   - NPC-k vezetnek autot, utasokkal erkeznek; javitott offline spawn
+   - 148 frakcio, outpostok, radio, rablas, raid
+   - Kell hozza: ZombieBuddy + Viewpoint x A-LIFE (3822854313)
+   - FIGYELEM: a ViewpointALife NINCS benne a Blackout Protocol listaban.
+     Ha Viewpointban akarod hasznalni az A-Life-ot, tedd be kezzel!
+   - Az A-Life 1.5.2 mar MAGABAN hozza a kompatibilitast, ezert a
+     CDALifePatch es a CDAJCompatPatch kikerult (foloslegesek).
+   - Az A-Life NPC-k belul ZOMBIK (getModData().ProjectALifeOwned),
+     vagyis a zombi-keretbol esznek. Ha sok az NPC / lagol:
+     A-Life sandbox -> Performance level = Auto,
+     Zombie path/sec 16 -> 10,
+     es a plafonok: Population rate, Populate max,
+     Persistent/Offline squad cap, Hostile ceiling.
+
+3) A PRESETEK
+   Sandbox Presets/Neoi-Suggested.cfg        (angol nev)
+   Sandbox Presets/NeoiMods Ajanlott.cfg     (magyar nev)
+   A ket fajl TARTALMA AZONOS. Uj jateknál ezt valaszd, ne a defaultot.
+
+4) OPTIMALIZALAS
+   undying_optimizer bent van (a PZO utodja).
+   Tempo_PerfKit es Multi-CPU KIKERULT: a Multi-CPU csak egy vanilla
+   ProjectZomboid64.json-t szallit, az tonkretenne a ZGC-s inditot.
+
+5) JARMU-BONTAS
+   Dismantle Any Cars -> XCarDismantle (Dismantle Working Cars),
+   mert az elozo nem mukodott rendesen.
+
+TELJES MODLISTA: config/modlist_blackout_protocol.txt
+VALTOZASOK:     CHANGELOG_modok.txt

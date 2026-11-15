@@ -16,7 +16,26 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                        // ---- 0.9.32 (PZO motor a JSON-ban) ----
+                                                            // ---- 0.9.33 (új Blackout config) ----
+    "0.9.33 – Új Blackout Protocol config: 719 mod, 2 új mod":
+      "0.9.33 – New Blackout Protocol config: 719 mods, 2 new mods",
+    "2 új mod a pakkban: Visible Laser Sights és HydeCo Knox Underground Viewpoint-támogatás (csatornák). Az Escape From Zomboid visszatért, az A-Life újra hangolva – kevesebb NPC, ugyanaz a világ. Hátra: collection puccolás és bugfix (Viewpoint Roofs, RV/camper interiorok). A launcher a ProjectZomboid64.json-t mostantól a config mellé adott launcher fájlból írja, ezért a PZO motor és a ZombieBuddy agent mindig bent van.":
+      "2 new mods in the pack: Visible Laser Sights and HydeCo Knox Underground Viewpoint support (sewers). Escape From Zomboid is back, A-Life retuned – fewer NPCs, same living world. Left: collection cleanup and bug fixing (Viewpoint Roofs, RV/camper interiors). The launcher now writes ProjectZomboid64.json from the launcher file shipped with the config, so the PZO engine and the ZombieBuddy agent are always in place.",
+    "Új modok: FunctionalLaserSights (látható lézer) és HydeCoUnderGroundViewpoint (HydeCo Knox Underground csatornák).":
+      "New mods: FunctionalLaserSights (visible laser) and HydeCoUnderGroundViewpoint (HydeCo Knox Underground sewers).",
+    "Escape From Zomboid visszatért: EscapeFromZomboidFirearms + EFZGroundModels + EFZPvadsBridge.":
+      "Escape From Zomboid is back: EscapeFromZomboidFirearms + EFZGroundModels + EFZPvadsBridge.",
+    "XCarDismantle: bármelyik autó szétszedhető működő autóért.":
+      "XCarDismantle: any car can be dismantled into a working car.",
+    "A-Life újra hangolva – kevesebb NPC, ugyanaz az élő világ.":
+      "A-Life retuned – fewer NPCs, same living world.",
+    "3 mod kikerült: NepWreckWorkingCars, CDALifePatch, CDAJCompatPatch (az A-Life 1.5.2 maga hozza a kompatot).":
+      "3 mods removed: NepWreckWorkingCars, CDALifePatch, CDAJCompatPatch (A-Life 1.5.2 brings its own compat).",
+    "A profil 719 mod (előtte 714), a sandbox preset változatlanul NeoiMods Ajánlott / Neoi-Suggested.":
+      "The profile is 719 mods (was 714); the sandbox preset is still NeoiMods Ajánlott / Neoi-Suggested.",
+    "A launcher JSON a config launcher fájljából készül: PZO motor, classpath és mindkét agent fixen bent.":
+      "The launcher JSON is built from the config launcher file: PZO engine, classpath and both agents always present.",
+// ---- 0.9.32 (PZO motor a JSON-ban) ----
     "0.9.32 – A launcher a JSON-ba írja a PZO motort és a ZombieBuddy agentet":
       "0.9.32 – The launcher writes the PZO engine and the ZombieBuddy agent into the JSON",
     "A játék a ProjectZomboid64.json-ból indul, és ha abból kimarad a PZO motor (mainClass, classpath) vagy valamelyik agent, a motor nem tölt be. A telepítők (PZO, ZombieBuddy) néha felülírják a fájlt, ezért a launcher mostantól minden indítás előtt ellenőrzi és pótolja: mainClass = com/pzoptimizer/PZOEntrypoint, classpath (PZO + ZombieBuddy + játék jar), -agentlib:pzo_native64 és -agentlib:zbNative. A fájl továbbra is csak ZGC-t tartalmaz és írásvédett marad, hogy a PZO ne írja vissza a G1-et.":

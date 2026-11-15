@@ -1,7 +1,24 @@
 {
-  "version": "0.9.32",
-  "updatedAt": "2026-11-14",
+  "version": "0.9.33",
+  "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.33",
+      "version": "0.9.33",
+      "date": "2026-11-15",
+      "tag": "BLACKOUT",
+      "title": "0.9.33 – Új Blackout Protocol config: 719 mod, 2 új mod",
+      "text": "2 új mod a pakkban: Visible Laser Sights és HydeCo Knox Underground Viewpoint-támogatás (csatornák). Az Escape From Zomboid visszatért, az A-Life újra hangolva – kevesebb NPC, ugyanaz a világ. Hátra: collection puccolás és bugfix (Viewpoint Roofs, RV/camper interiorok). A launcher a ProjectZomboid64.json-t mostantól a config mellé adott launcher fájlból írja, ezért a PZO motor és a ZombieBuddy agent mindig bent van.",
+      "changes": [
+        "Új modok: FunctionalLaserSights (látható lézer) és HydeCoUnderGroundViewpoint (HydeCo Knox Underground csatornák).",
+        "Escape From Zomboid visszatért: EscapeFromZomboidFirearms + EFZGroundModels + EFZPvadsBridge.",
+        "XCarDismantle: bármelyik autó szétszedhető működő autóért.",
+        "A-Life újra hangolva – kevesebb NPC, ugyanaz az élő világ.",
+        "3 mod kikerült: NepWreckWorkingCars, CDALifePatch, CDAJCompatPatch (az A-Life 1.5.2 maga hozza a kompatot).",
+        "A profil 719 mod (előtte 714), a sandbox preset változatlanul NeoiMods Ajánlott / Neoi-Suggested.",
+        "A launcher JSON a config launcher fájljából készül: PZO motor, classpath és mindkét agent fixen bent."
+      ]
+    },
     {
       "id": "0.9.32",
       "version": "0.9.32",

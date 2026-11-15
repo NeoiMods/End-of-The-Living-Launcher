@@ -1,4 +1,4 @@
-# Blackout Protocol - aktiv modok (714 db), egy sor egy mod
+# Blackout Protocol - aktiv modok (719 db), egy sor egy mod
 ZombieBuddy
 ModLoadOrderSorter_b42
 ModManager
@@ -436,7 +436,6 @@ ChuckleberryFinnAlertSystem
 1299328280/ToadTraitsDisablePrepared
 NeatUI_XPDrop
 NeatUI_CharacterInfo
-NepWreckWorkingCars
 errorMagnifier
 NightVisionChucked
 PNV
@@ -705,11 +704,17 @@ BulkPallets
 JullesPortableLadders
 ProjectALifeNPCs
 ProjectALifeJimmy
-CDALifePatch
-CDAJCompatPatch
 PZCustomIntros
 B42_FIX_KI5_Hood_Trunk_and_etc
 SuporteFuzis
 TarkovInventory
 MPOptimizer
 undying_optimizer
+FunctionalLaserSights
+HydeCoUnderGroundViewpoint
+EscapeFromZomboidFirearms
+EFZPvadsBridge
+EFZGroundModels
+XCarDismantle
+KafeenasCannabisB42
+KafeenasCannabisViewpoint
