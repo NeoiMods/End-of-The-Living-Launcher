@@ -1,0 +1,49 @@
+name: Did you know?
+
+# 15 percenként egy „Did you know?” üzenet a data/did-you-know.json listából.
+# A sorrend idősáv-alapú (nincs állapotfájl, nincs commit), ezért két egymást
+# követő futás mindig más üzenetet küld, és a lista végére érve újraindul.
+#
+# Beállítás: Settings → Secrets and variables → Actions → New repository secret
+#   Name:  DISCORD_WEBHOOK
+#   Value: https://discord.com/api/webhooks/...
+# Ha a webhookot lecseréled, csak a secretet kell frissíteni.
+
+on:
+  schedule:
+    # GitHub Actions cron (UTC). A GitHub néhány percet késhet, ez nem hiba.
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Csak kiírja az üzenetet, nem küldi el'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: did-you-know
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Üzenet küldése
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            node scripts/did-you-know/post.js --dry-run
+          else
+            node scripts/did-you-know/post.js
+          fi

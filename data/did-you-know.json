@@ -1,0 +1,5 @@
+{
+  "_help": "Ide jön a lista. Minden elem: { \"title\": \"A-Life\", \"text\": \"1-2 mondat, mit tud / miért OP\", \"tag\": \"opcionális címke\", \"source\": \"opcionális hivatkozás\" }. A sorrend számít: a launcher 15 percenként a következő elemet küldi, körbe-körbe, ismétlés nélkül. Ami nem mehet még ki, azt hagyd ki, vagy tedd bele \"draft\": true-val – a draft elemeket a küldő kihagyja.",
+  "intervalMinutes": 15,
+  "messages": []
+}
