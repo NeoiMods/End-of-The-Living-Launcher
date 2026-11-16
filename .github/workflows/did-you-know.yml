@@ -1,6 +1,6 @@
 name: Did you know?
 
-# 15 percenként egy „Did you know?” üzenet a data/did-you-know.json listából.
+# 20 percenként egy „Did you know?” üzenet a data/did-you-know.json listából.
 # A sorrend idősáv-alapú (nincs állapotfájl, nincs commit), ezért két egymást
 # követő futás mindig más üzenetet küld, és a lista végére érve újraindul.
 #
@@ -12,7 +12,7 @@ name: Did you know?
 on:
   schedule:
     # GitHub Actions cron (UTC). A GitHub néhány percet késhet, ez nem hiba.
-    - cron: '*/15 * * * *'
+    - cron: '*/20 * * * *'
   workflow_dispatch:
     inputs:
       dry_run:

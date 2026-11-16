@@ -1,5 +1,1508 @@
 {
-  "_help": "Ide jön a lista. Minden elem: { \"title\": \"A-Life\", \"text\": \"1-2 mondat, mit tud / miért OP\", \"tag\": \"opcionális címke\", \"source\": \"opcionális hivatkozás\" }. A sorrend számít: a launcher 15 percenként a következő elemet küldi, körbe-körbe, ismétlés nélkül. Ami nem mehet még ki, azt hagyd ki, vagy tedd bele \"draft\": true-val – a draft elemeket a küldő kihagyja.",
-  "intervalMinutes": 15,
-  "messages": []
+  "_help": "A launcher 20 percenként a következő elemet küldi, körbe-körbe, ismétlés nélkül. Új tipp: { \"title\": \"…\", \"text\": \"…\", \"tag\": \"opcionális\" }. Ami nem mehet ki, azt \"draft\": true-val jelöld.",
+  "intervalMinutes": 20,
+  "messages": [
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know A-Life factions own real camps, outposts and patrol routes across Knox County, and they keep working while you are asleep?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know A-Life patrol the modded map and even use modded vehicle's?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know you can walk up to a working camp and watch one survivor swing the axe while another saws the logs into planks, with the stack growing in front of you?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know patrols actually walk their routes, stop, scan the street and move on, instead of standing frozen like set dressing?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know every faction has its own relations, so two crews can hate each other far more than they hate you?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know hostile factions fight each other, and that the winner is usually hurt enough for you to finish the job?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know NPCs loot bodies after a fight, but only once nothing dangerous is within 15 tiles?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know wounded hostile NPCs retreat from a losing fight instead of standing there waiting to die?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know an NPC with a melee weapon will sprint the gap to reach you?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know NPCs with guns shoot zombies they spot, not just you, which can save your life in a crowd?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a rifle round can pass through a zombie into the one directly behind it, up to three squares deep?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know shotgun pellets stop at two squares, so the crowd you shoot into matters?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know NPC firearms can jam, and a jammed NPC has to clear it like a human would?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know an outpost only spawns its garrison when a player comes within 90 tiles, so you can genuinely sneak up on one?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know an NPC you talk to stops walking, turns to face you, and picks its old job back up the moment the conversation ends?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know NPCs remember how many questions they will answer, and NPCs who like you allow far more before they lose patience?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a hostile NPC will not land the first blow unless you had a fair chance to notice: a shouted warning, a weapon raised, a demand?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know pulling a gun at close range ends a hold-up, a standoff or an interrogation instantly?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know some groups would rather rob you than kill you, and handing over supplies is a real option?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know your reputation is broadcast on the radio, and people who hear about you react differently when you meet them?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a bad reputation can be heard by strangers before they ever see your face?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know raids are not random: a crew needs a scout report, and an expired report means new scouts have to be sent out?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know you can break a raid before it starts by catching the scouts?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know an armed group can spend days \"working up a raid\" before it hits your door, and the warnings are real?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a hostile crew in a car slows to shooting speed within 25 tiles to let its passengers fire, then drives on?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a hostile car that has passed you will turn around and come back if it has your name?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a wrecked car makes the crew bail out, and a hostile crew bails out fighting?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a car with a dead engine or three flat tyres is how you stop a drive-by?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a Black Hawk with door gunners can circle your position, and the gunners only fire when the crew is hostile to you?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know helicopters unload raiders, sweep the ground with searchlights at night, and just fly over sometimes?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a circling helicopter gives up after a set time and does not come back to the same place for six game hours?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know NPCs force doors quietly or smash windows loudly, and the noise decides how many zombies join the party?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know skilled squad members are better at breaking into your base, so the crew you laugh at early is not the crew that arrives on day 40?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know squads can cut your power by burning out the wiring instead of kicking the door in?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a base siege is simulated properly, with defenders and attackers, and the game reports who held and who broke through?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know some factions warn strangers away but never send hunting parties, so not every camp is a future raid?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know cautious survivor communities can hold outposts next to hostile crews, and the two will trade shots without you?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know NPCs take supplies from the area when nobody is watching, so a stash outside your walls is not really yours?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a friend can warn you about a real raid before it happens?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know you can ask an NPC group to let you travel with them without recruiting or commanding them?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know you can build your own faction from scratch with the in-game faction and NPC creator, including its relations, roster and behaviour?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know every faction can have its own behaviour profile, defining priorities, engagement style and what abilities its people are allowed to use?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know stealth works on people too: an NPC has to notice you before it can react to you?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know \"Unknown faction disposition\" is a setting, so a stranger's first reaction can genuinely be a coin flip?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know hostile NPCs can be disabled as a whole in sandbox if you want a quiet world, and the mod stays functional?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know CLEANUP A-LIFE is a real command that shuts the mod down cleanly so a save can survive it being removed?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know NPC cars exist as ambient traffic and only become real vehicles when you get close?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know start-of-game traffic is simulated, so the roads feel used before you ever walk them?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know an NPC crew sent out \"for a shopping list\" works the street and carries what it finds home, one item at a time?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know a hunting or revenge crew gets exactly one tip about where you are, and the tip can be off by dozens of tiles?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know you can outrun a revenge crew simply by not being where the tip said you would be?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know injured NPCs can be patched up by their own people, and a camp with a medic recovers faster?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "A world that does not wait for you",
+      "text": "Did you know NPCs use the same guns, clothes and loot as you, so the jacket you want might be on a person who wants your car?",
+      "tag": "A-LIFE"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know the Jeem extension turns a safehouse into an actual base with residents, jobs, stores and a reputation?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know residents work real jobs: guard duty, scavenging runs, patrolling the area, medicine and quartermaster duty?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know a resident medic will not work without a marked medical store, so an empty shelf means an idle doctor?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know the quartermaster keeps the base stores running and can be assigned like any other role?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know you can radio your own base and get an answer, but only if you are inside the radio's range?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know the base tells you exactly how far away it is and how far your call actually reaches when nobody answers?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know residents return the kit you lent them to the base stores instead of quietly keeping it?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know the base refuses to send everyone out scavenging if it would leave too few people home, and tells you why?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know you can order people to come home, hold the base, or man the nearest outpost from a distance?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know captured buildings get boarded up and become outposts you can man, defend and lose?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know outposts fall and get retaken, and the game keeps a running tally of sieges held, sieges broken through and defenders lost?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know wandering traders visit your base, set up a stall and stay if they like it there?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know you can be rude enough that traders and refugees avoid your base for hours afterwards?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know base credit with a trader can cover the difference when your own pockets are empty?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know a resident can be promoted to the base's medic or quartermaster permanently, changing what the whole base can do?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know residents on guard duty gain experience faster with a teacher present at the base?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know base missions are mailed to you, with named characters asking how a job is going?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know reputation is per faction and per crew, and can be reset if you want a clean slate?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know a base invite from another player is a real decision: you can visit, join as a resident, or ignore it?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know \"There is nobody home\" is a real answer: a base with everyone outside cannot pick up the radio?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know the base tracks how many of its people are still standing during an attack and reports it back to you?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "Run a base, not just a shelter",
+      "text": "Did you know the Jeem layer is what makes A-Life bases feel inhabited instead of spawned?",
+      "tag": "JEEM"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know the Survivor PDA adds 8 classes, class hybrids and prestige professions on a single in-game device?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know the world has 5 danger stages, and the top stage sends actual horde raids at you?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know there are 8 traders with their own shops, jobs and relationships, and they remember how you treat them?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know the PDA delivers survivor missions and mail, including personal letters from named characters?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know mystery boxes are a real gamble with real odds you can read before opening?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know there is a casino wheel, and winning a prize still lets you claim it later even if the wheel is switched off afterwards?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know kills can drop ammunition, with the chance configurable from 2% to 5% per zombie?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know danger difficulty can set zombie health, damage and world population independently?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know a single miscalculated raid can wipe a trader's whole stock, and the PDA will tell you when they come back?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know the PDA works in singleplayer and multiplayer, with the same missions and the same traders?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know some mails are written as intercepted transmissions from people who are already dead?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know one broadcast in the mail chain ends with \"if this is the last mail anyone reads, let it say: someone is still listening\"?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know the PDA's stories reference real places in Knox County, so reading them actually tells you where to go?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know a trader relationship can unlock jobs that are not on the board for anyone else?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know the skill tree supports hybrid builds, so you are not locked into one class fantasy?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know prestige professions exist for players who max out a class and want more?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "An rpg in your pocket",
+      "text": "Did you know the PDA's danger stages escalate, so the zone you cleared on day 5 is not the zone you walk into on day 50?",
+      "tag": "SURVIVOR PDA"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know Extraction Mode turns Project Zomboid into a raid game with a persistent hideout you build between runs?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know raid destinations rotate, so the place you learned last night is not necessarily tonight's target?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know the horde escalation is real: every raid you survive makes the next one worse?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know a flare gun calls an extraction helicopter, and the arrival delay is measured in real seconds you have to survive?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know you have to physically board at the extraction line before the helicopter leaves without you?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know you can extract by vehicle as well as by helicopter?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know escaping across the raid boundary counts as an extraction?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know the vaccine run is its own nightmare: the carrier has to hold the helipad for three full minutes?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know extracted corpses are placed in your hideout garage, so your dead come home with you?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know hideout upgrades are persistent and shared, and materials can be pulled from ground-floor containers, bags included?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know a hideout generator controls electricity and water for the whole base, and everyone gets told when it goes on or off?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know players in the same faction share raid destinations, readiness, raid instances, quests and contact trust?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know a vehicle raid needs a driver seated before anyone can ready up?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know the game announces faction raids, A-Life raider arrivals and imminent hordes on the raid HUD?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know an A-Life raiding force can arrive mid-raid and the only correct answer is to move?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know the Comm Array upgrade is what lets you call things in when the normal array is down?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know admins can force the next raid destination, and the rotation countdown restarts for everyone?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know death handling is configurable: vanilla death, keep the character and lose gear, or keep everything?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know players can invite each other as hideout residents, and a real invitation menu handles the answer?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know your hideout can be visited by other players, and the game tracks who extracted and who came home?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Raid in, extract out",
+      "text": "Did you know Bandits can be plugged into Extraction Mode so the raid zone has human enemies as well as the dead?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know your companion dog can attack an NPC that is threatening you?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know your dog can fight beside a companion NPC, so you are never actually alone in a firefight?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know a Rottweiler's Front Line moodle makes your own melee swings cost less endurance while it fights next to you?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know a Belgian Malinois has its own K9 Scent moodle that marks where it last smelled a zombie you cannot see?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know a cat is a lookout: it notices zombies farther out than any dog, but it will never fight the dead?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know cats and dogs will not breed with each other, but dogs absolutely will breed with dogs, puppies included?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know every breed has a different training curve, and a Labrador learns Hunting twice as fast while being one of the worst fighters?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know a Pug trains Obedience faster than anything else and its bond never fades on its own, so it stays loyal however long you are gone?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know a Doberman is weak while untrained and deadlier than any other breed once fully trained, but soaks up less punishment?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know obedience unlocks a trick tree: go to a spot at level 1, distract zombies at level 3, sniff out an item at level 5, fetch it while you sleep at level 10?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know an untrained dog can simply ignore an order, and sandbox can turn that off if you hate being judged by a dog?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know dogs can carry saddlebags, so your loot capacity grows with a well-trained animal?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know dogs can work livestock, and livestock guardians like the Anatolian Shepherd and Swiss Mountain Dog exist just for that?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know there is vet care, so a wounded dog is a patient and not a corpse waiting to happen?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know wild wolf packs roam the map and will absolutely test whether your dog was worth training?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know stray Rottweilers guard warehouses and factories, which is a warning and an opportunity at the same time?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know Animal Crates supports companions, so a dog can travel in a crate instead of being left behind?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know dog names show in first and third person, and dogs have their own rest animations inside vehicles?"
+    },
+    {
+      "title": "Companion dogs and cats",
+      "text": "Did you know a cat riding along is a mobile early-warning system when you are looting with your back turned?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know Reactive Sound Events turns 7 meta event types, gunfights, crashes, screams and more, into physical scenes you can walk into and loot?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know a distant gunfight is not just a sound: if you follow it, there are bodies, casings and sometimes survivors?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know the Knox Relay survivor radio station hands out intel, story and even skill learning?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know the radio can wake you up, spike your panic and point you toward a scene that is actually happening?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know Aftermath Radio runs seven serial arcs, each written and localised, with named characters who get killed off?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know Radio Voices makes the radio, TV, VHS tapes and CDs actually voiced instead of silent text?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know Viewpoint's working TVs and radios can play real media, with spatial audio and 3D screens you can scale up to 300%?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know the visible helicopter event can swap vanilla flybys for a 3D MiG-29, and it randomises which helicopter shows up?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know extraction helicopters in Viewpoint have positional audio, a simulated 3D rope, boarding markers and a red flare gun?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know Survivor Briefing gives you a real briefing at midnight and when you wake up: day count, weather, location, kills and occupation?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know Survivor Briefing has a mode that only shows what your character could actually know, so no cheating with the clock?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know 30 new character traits from Survivor Quirks can change how a run plays before you fire a single shot?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know Hidden/Removed context menu entries now exist because this pack has 1400+ different right-click options?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know the whole pack runs on Under the Hood vehicle simulation, where coolant, oil, belts, batteries and thermostats all fail individually?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know you can drain a car's oil onto the ground, refill it, and hear the difference?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know a car with a clogged cabin filter, a stuck thermostat and a slipping belt will feel wrong long before it dies?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know some vehicle faults only show up as a smell, a sound or a temperature reading, and the car has no check engine light for that?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know you can diagnose an engine by reading its fault codes with a diagnostic reader, like an actual mechanic?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know the pack's water and plumbing systems mean a base can have running water, pressure problems and shutoffs you have to manage?"
+    },
+    {
+      "title": "Meta events, radio and atmosphere",
+      "text": "Did you know blackouts are their own mod, so the grid failing is a mechanic and not a cutscene?"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know NPCs loot player corpses, including former companions, which is how your old gear ends up on a stranger?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know an uninvited visitor waiting outside a resident's door is a warning, not a bug?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know a raid can be called off if the scouts never come back?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know a base with a medic, a quartermaster and a teacher is functionally a different base from one with three guards?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know your reputation with a faction can drop just because of who you were seen travelling with?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know the game tracks outposts taken, outposts lost and defenders killed, and shows it as a session summary?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know a trader who moves in brings their own stock, their own prices and their own opinion of you?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know the pack has 700+ mods, and the two biggest CPU hogs were measured, not guessed?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know the loudest thing in the world is not a gunshot, it is a window being smashed by someone who knows you are inside?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know you can survive a hold-up by talking, a standoff by lowering your weapon, and a raid by never being where the tip said you were?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Details people miss",
+      "text": "Did you know the county has a memory: burned barns, emptied camps and dead traders stay that way?",
+      "tag": "THE QUIET ONES"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know you can amputate your own limb in this pack, and cauterise the stump to survive it?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know there is a prosthetic workbench, so losing an arm becomes a build decision instead of a death sentence?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know you can force an amputation when there is genuinely no other option left?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know burns are treated in stages: ointment, cleaning, and skin that stays damaged for a long time?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know removing a bullet and removing glass are two different procedures with two different risks?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know stitching, splinting and bandaging all have their own failure states, not just a progress bar?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know body damage is tracked per limb and quietly changes how you move, aim and carry?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know dirty hands cause infection, and a pair of gloves is genuinely medical equipment?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know a dirty bandage is worse than no bandage at all?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know you can draw blood, test it, and find out something you did not want to know?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know there is an autopsy table, and bodies can be examined instead of just buried?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know corpses can be tagged, bagged and moved onto a morgue slab?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know tainted water infects you, and boiling is not a suggestion in this pack?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know a gas mask filter clogs, and the filter gauge is something you actually watch?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know a gas mask with a spent filter is just a plastic bag strapped to your face?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know night vision eats batteries and its light cone follows your real view direction?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know a ballistic helmet stops rounds with a protection value you can configure, and a helmet without it is a fashion statement?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know armour plates go in and out of a plate carrier, and a cracked plate is just dead weight?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know an integral suppressor is a gunsmith conversion that keeps the original gun and changes how it behaves?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know improvised suppressors exist, and they are exactly as reliable as they sound?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know weapon jams, heat and condition are tracked, so a clean gun is not a cosmetic choice?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know you can hang a rifle on a 3D gun rack and see the actual model sitting there?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know a weapon sling is a real attachment with attach and detach steps, not a menu toggle?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know the inventory is grid-based, so a rifle occupies the space a rifle should occupy?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know a backpack with a bedroll strapped to it is a separate item state, not a line of description text?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Medicine that hurts",
+      "text": "Did you know a bite through clothing is calculated per covered body part, so what you wear actually matters?",
+      "tag": "BODY HORROR"
+    },
+    {
+      "title": "Knox county is not the whole country",
+      "text": "Did you know Real USA is the single largest item in this pack at 7.5 GB, and it is a country-scale map bolted onto Knox County?",
+      "tag": "THE MAP"
+    },
+    {
+      "title": "Knox county is not the whole country",
+      "text": "Did you know Louisville Military Complex, Nellis AFB, Raven Creek, Camden County and Yanghu Town are all set up as extraction destinations?",
+      "tag": "THE MAP"
+    },
+    {
+      "title": "Knox county is not the whole country",
+      "text": "Did you know military checkpoints, vehicle military zones and army factions all sit on the same map, so the military presence is not scenery?",
+      "tag": "THE MAP"
+    },
+    {
+      "title": "Knox county is not the whole country",
+      "text": "Did you know a community tile pack keeps abandoned map assets alive so old map mods do not rot?",
+      "tag": "THE MAP"
+    },
+    {
+      "title": "Knox county is not the whole country",
+      "text": "Did you know the map overhaul gives you a full-screen map and can disable the pause when the map opens, for people who like living dangerously?",
+      "tag": "THE MAP"
+    },
+    {
+      "title": "Knox county is not the whole country",
+      "text": "Did you know you can drop a waypoint on your compass and actually navigate to an extraction point?",
+      "tag": "THE MAP"
+    },
+    {
+      "title": "Knox county is not the whole country",
+      "text": "Did you know some locations are only reachable by helicopter, and that is the entire point of the extraction system?",
+      "tag": "THE MAP"
+    },
+    {
+      "title": "Knox county is not the whole country",
+      "text": "Did you know one single map mod is bigger than the rest of the pack combined, which is exactly why removing it mattered so much?",
+      "tag": "THE MAP"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know you can milk an entire barn in one action with \"Milk All\", and shear, pet and feed the same way?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know a livestock panel shows you what every animal actually needs instead of making you guess?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know animals can be loaded into a vehicle and hauled to a better pasture?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know an animal crate lets a companion dog travel safely instead of being left at home?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know breeding is simulated, puppies grow, and pregnancy can be tracked?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know a mature pup becomes a working animal with its own stats, not a respawned copy?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know there are beavers, squirrels, frogs and bees, each with its own little ecosystem and its own debug menu?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know a beaver lodge can be broken up for wood, and the beavers will not enjoy it?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know mushrooms grow underground in the dark, and a fungal zombie might be down there with them?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know an orchard and a beehive can turn a base into a food supply instead of a pantry?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know crops track disease, pests, water and growth stage individually, so one bad row does not ruin the whole field?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know irrigation runs on pressure, timers and filters, and one clogged head quietly starves a whole plot?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know compost tea is a real fertiliser in this pack, and it is worth carrying?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know hydroponics exists indoors with lamps, reservoirs and nutrient cartridges?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know a grow box tracks ventilation, light intensity and temperature, and getting one wrong stalls the entire thing?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know drying and curing are separate steps, and rushing them wastes the batch?"
+    },
+    {
+      "title": "Animals, farming and the slow life",
+      "text": "Did you know a greenhouse, a generator, a water tank and a fence is a complete food economy?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know plumbing is a network with pressure, and a pressure gauge is a real item you can carry?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know a water main can be shut off globally, and the taps simply stop?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know gutters collect rain, and a downspout into a barrel is a working water supply?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know water can be purified, stored, hauled and moved between containers by hand?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know solar panels feed a battery bank, and a tripped breaker has to be physically flipped back up?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know a generator needs fuel hauled to it, and a fuel pump network can move that fuel for you?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know propane tanks exist for cooking and heating, and a truck can refill them?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know the blackout is a mod of its own, so the grid failing is a mechanic you can watch happen?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know ice can be frozen, caught as meltwater and used to keep food alive without power?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know a cooler full of real ice is a fridge when the grid is gone?"
+    },
+    {
+      "title": "Water, power and the base that fights back",
+      "text": "Did you know a base without water, power and a fence is just a house with extra steps?"
+    },
+    {
+      "title": "Secrets, c4 and the things in the basement",
+      "text": "Did you know you can arm C4 with a timer, a remote trigger or a quick fuse, and disarm it again if you are brave?"
+    },
+    {
+      "title": "Secrets, c4 and the things in the basement",
+      "text": "Did you know security keycards, computer terminals and user ID codes are a whole locked-door system you can hack?"
+    },
+    {
+      "title": "Secrets, c4 and the things in the basement",
+      "text": "Did you know you can take a virus test, and there is more than one version of the test with different results?"
+    },
+    {
+      "title": "Secrets, c4 and the things in the basement",
+      "text": "Did you know a compound treatment machine exists, which means somebody was working on a cure before you arrived?"
+    },
+    {
+      "title": "Secrets, c4 and the things in the basement",
+      "text": "Did you know evidence bags, sealed baggies and vacuum-sealed packs are real containers with real opening steps?"
+    },
+    {
+      "title": "Secrets, c4 and the things in the basement",
+      "text": "Did you know you can write multi-page notes, rename them and leave them for other players to find?"
+    },
+    {
+      "title": "Secrets, c4 and the things in the basement",
+      "text": "Did you know some books in this pack are fully readable literary works, not a paragraph of flavour text?"
+    },
+    {
+      "title": "Secrets, c4 and the things in the basement",
+      "text": "Did you know a morgue table, a holding cell and an examination room are all buildable, which says a lot about the players this pack expects?"
+    },
+    {
+      "title": "Secrets, c4 and the things in the basement",
+      "text": "Did you know a hidden bunker with a working terminal is a better loot run than any supermarket?"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know a car tracks coolant, engine oil, gear oil, transmission fluid, brake fluid and power steering fluid separately?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know a stuck-open thermostat and a stuck-closed thermostat fail in completely different ways?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know a missing radiator cap means the system cannot hold pressure at all?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know a slipped belt, a seized idler bearing and a failed water pump all sound different before they kill the engine?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know you can pull engine fault codes with a diagnostic reader and actually read them?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know fuel has an octane rating of 87, 89 or 93, and the tank can hold a mix of petrol and diesel?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know an A/C system needs the right refrigerant, R-12 or R-134a, and the wrong one is a very expensive mistake?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know a clogged cabin filter is a comfort problem, and a blocked condenser is an overheating problem?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know you can damage a part on purpose to test a repair, which is how you learn the system without dying?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know brake calipers seize, pads glaze and the master cylinder can fail completely while you are doing 60?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know glow plugs, spark plugs and an ignition coil are three different reasons a car will not start?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know a car can be stripped, chopped, salvaged or converted into a cargo hauler, and each one is a different mod?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know tyre chains exist for snow, and repairing a heavy set of chains is its own skill check?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know a bicycle can be thrown over a fence, put in a trunk, or mounted in a sidecar?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "Every part is a separate failure",
+      "text": "Did you know an animal can ride in a sidecar, which is both adorable and a terrible idea in a horde?",
+      "tag": "VEHICLES"
+    },
+    {
+      "title": "The small stuff people never notice",
+      "text": "Did you know one mod adds visible shell casings, so a firefight leaves physical brass on the ground?"
+    },
+    {
+      "title": "The small stuff people never notice",
+      "text": "Did you know another mod makes vehicle corpses visible, so the road tells you who died there?"
+    },
+    {
+      "title": "The small stuff people never notice",
+      "text": "Did you know a third lets you push a car out of the way instead of walking around it forever?"
+    },
+    {
+      "title": "The small stuff people never notice",
+      "text": "Did you know some mods exist purely to make a door lockable, a window barricaded, or a chair wedged under a handle?"
+    },
+    {
+      "title": "The small stuff people never notice",
+      "text": "Did you know you can lock a door with a padlock and then genuinely lose the key?"
+    },
+    {
+      "title": "The small stuff people never notice",
+      "text": "Did you know a fire pole can be climbed up and slid down, and sliding down from the ground floor has its own animation?"
+    },
+    {
+      "title": "The small stuff people never notice",
+      "text": "Did you know you can throw a bicycle over a fence and then climb after it?"
+    },
+    {
+      "title": "The small stuff people never notice",
+      "text": "Did you know a crowing rooster, a barking dog and a screaming survivor all pull zombies, and only one of them is your fault?"
+    },
+    {
+      "title": "The small stuff people never notice",
+      "text": "Did you know the biggest danger in this pack is not a zombie, it is the noise you made three streets ago?"
+    },
+    {
+      "title": "The small stuff people never notice",
+      "text": "Did you know a 700 mod pack still has a load order, and a wrong one breaks things the game will never explain?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know the Caramelo is a Brazilian street mutt, and it is one of the five original breeds in the pack?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know the Husky is the rare winter breed, which makes it the one dog that does not hate the snow?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know the Border Collie is the farm dog, built for livestock work rather than firefights?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know the Golden Retriever sits between the extremes: decent at everything, exceptional at nothing?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know the German Shepherd is the benchmark every other breed is measured against?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know there are eleven cat coats, from black and tuxedo to calico and tortoiseshell?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know a cat will never work your livestock, never breed with a dog, and will still out-detect every dog you own?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know the Anatolian Shepherd and the Greater Swiss Mountain Dog were added specifically as livestock guardians?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know the White Swiss Shepherd arrived later and needs API 11 of the Companion Dogs framework, which is why load order matters?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know an order can be refused by an untrained dog, and there is a sandbox switch for people who cannot handle that kind of honesty?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know a dog that has been away from you for a long time keeps its bond, and a Pug keeps it permanently?"
+    },
+    {
+      "title": "The dogs have backstories",
+      "text": "Did you know the pack supports co-op and dedicated servers, so other players can meet your dog?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know encounters can be restricted to selected towns, wilderness only, roads and highways, or specific building types?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know ambient NPC cars never appear closer than a configurable distance, so nothing spawns on top of your face?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know animals and NPCs can be tuned independently, so a noisy world can still have quiet wildlife?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know NPC gun discipline is a setting: they can shoot any zombie they see, or only when it is genuinely in the way?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know automatic raids can be blocked for the first N game days, and 21 is the default grace period?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know an outpost has to exist for a set number of days before it will send a large group or three squads at you?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know base hit points are configurable, and the world health setting scales them on spawn?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know squads can be told to force doors quietly instead of smashing windows loudly, and the difference is how many zombies hear it?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know hostile factions can be switched off entirely, and the mod still runs its camps, patrols and traders?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know you can set how long a helicopter keeps circling before it gives up, and where it is not allowed to return?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know the mod can be removed from a save cleanly, which almost no NPC mod can honestly claim?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know NPCs choose targets with a \"fair chance to notice\" rule, so stealth is a real defence and not luck?"
+    },
+    {
+      "title": "A-life is tuned like a simulation, not a spawner",
+      "text": "Did you know a driver NPC can bail out of a burning car, and what happens next depends on whether it liked you?"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know a raid instance is per faction, so your team's raid is not the same raid as the other team's?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know readiness is shared: one person not ready holds the whole deployment?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know vehicle insertions are limited, so \"everyone grab a car\" is not a strategy?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know the extraction line has to be physically reached and stood on before the helicopter leaves?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know the flare gun is a real item, and firing it starts a timer you cannot cancel?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know a raid horde spawns at a configurable distance from the players, so it can arrive from behind you?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know hideout upgrades have prerequisites, so skipping a tier does not work even if you have the materials?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know materials for an upgrade can be pulled from ground-floor furniture containers, including bags inside them?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know the game reports useless things too, like who added gasoline to the hideout generator, because that is how a shared base works?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know extracted corpses go into your hideout garage, so the bodies of your friends come home with you?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know an admin can change the next raid destination, and the countdown restarts for everyone?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know death handling can keep your character and drop your gear, which is the closest thing to a softcore raid mode?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know resident invitations are a real menu, and ignoring one is a valid answer?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The rules of the run",
+      "text": "Did you know the hideout exists even when nobody is online, and its generator state decides whether the lights work when you get back?",
+      "tag": "EXTRACTION MODE"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know the PDA mail chain contains a courier's terminal full of names, and the Major's handwriting on all of it?",
+      "tag": "PDA"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know one mail thread is an intercepted transmission where the dead are described as learning to hide behind cars and wait by doors?",
+      "tag": "PDA"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know a survivor writes that the dead knocked on his door, and that is the whole horror of the entry?",
+      "tag": "PDA"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know a broadcast signs off for the last time because the generator fuel runs out that night?",
+      "tag": "PDA"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know a mail thread ends with the line \"if this is the last mail anyone reads, let it say: someone is still listening\"?",
+      "tag": "PDA"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know the network nodes remaining, the messages in the queue and the delivered-today counter are all visible on the terminal?",
+      "tag": "PDA"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know named characters like Dusty, Gus, Hank and Sgt. Hollis mail you about missions you have not finished?",
+      "tag": "PDA"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know one story arc is about a camp that survived two hours of barricade fighting, and half of it still escaped?",
+      "tag": "PDA"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know a mail can simply be a library fine notice for a book nobody will ever return?",
+      "tag": "PDA"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know traders can be killed, and the game tracks how many were killed and how many were replaced?",
+      "tag": "PDA"
+    },
+    {
+      "title": "The stories are the content",
+      "text": "Did you know the danger stage changes zombie health, zombie damage and world population, and all three can be set separately?",
+      "tag": "PDA"
+    },
+    {
+      "title": "Radio, tv and the voices in the dark",
+      "text": "Did you know the Knox Relay is a survivor radio station that hands out intel, story and even skill learning?"
+    },
+    {
+      "title": "Radio, tv and the voices in the dark",
+      "text": "Did you know a meta event can wake you up, spike your panic and point you at a scene that is actually happening right now?"
+    },
+    {
+      "title": "Radio, tv and the voices in the dark",
+      "text": "Did you know Aftermath Radio has seven serial arcs, and each one is written and localised rather than procedurally generated?"
+    },
+    {
+      "title": "Radio, tv and the voices in the dark",
+      "text": "Did you know one arc is called the Hollow Choir, which tells you exactly what kind of apocalypse this is?"
+    },
+    {
+      "title": "Radio, tv and the voices in the dark",
+      "text": "Did you know Radio Voices turns the radio, the TV, VHS tapes and CDs into actual voice acting?"
+    },
+    {
+      "title": "Radio, tv and the voices in the dark",
+      "text": "Did you know a working TV can play a real video file, rendered in 3D on the screen, with spatial audio in the room?"
+    },
+    {
+      "title": "Radio, tv and the voices in the dark",
+      "text": "Did you know you can scale a TV screen up to 300%, which is either immersive or a mistake, depending on your graphics card?"
+    },
+    {
+      "title": "The pack is a group game",
+      "text": "Did you know raids, hideouts, traders, reputation and factions all work in multiplayer, not just singleplayer?"
+    },
+    {
+      "title": "The pack is a group game",
+      "text": "Did you know faction members share raid destinations, quests and contact trust, so a group is genuinely a team?"
+    },
+    {
+      "title": "The pack is a group game",
+      "text": "Did you know an NPC can be set to treat other players as hostile, and that decision belongs to a player, not the AI?"
+    },
+    {
+      "title": "The pack is a group game",
+      "text": "Did you know your base can be visited by other players, and residents can be invited in?"
+    },
+    {
+      "title": "The pack is a group game",
+      "text": "Did you know a companion dog needs its mod enabled in the main-menu mod list on a co-op host, or it spawns without a model?"
+    },
+    {
+      "title": "The pack is a group game",
+      "text": "Did you know a dedicated server runs A-Life base events as long as at least one resident is online?"
+    },
+    {
+      "title": "The pack is a group game",
+      "text": "Did you know a server can publish no radio broadcasts at all, and the radio will tell you so?"
+    },
+    {
+      "title": "The pack is a group game",
+      "text": "Did you know an admin can force a power or water shutoff for the whole server, and everyone's taps stop at once?"
+    },
+    {
+      "title": "The pack is a group game",
+      "text": "Did you know a firefight in multiplayer leaves brass, blood and bodies that other players will find later?"
+    },
+    {
+      "title": "The pack is a group game",
+      "text": "Did you know a player's bad reputation can be broadcast on the radio for everyone on the server to hear?"
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // „Did you know?” – időzített Discord-üzenő.
 //
-// 15 percenként egy üzenet a listából, sorban, ismétlés nélkül: az aktuális
+// 20 percenként egy üzenet a listából, sorban, ismétlés nélkül: az aktuális
 // időpontból számolt sorszám (idősáv) dönti el, melyik következik, ezért nincs
 // szükség állapotfájlra vagy commitra a repóban. Két egymást követő futás
 // (15 perc) mindig másik üzenetet ad, és a lista végére érve újraindul.
@@ -17,7 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DEFAULT_INTERVAL_MIN = 15;
+const DEFAULT_INTERVAL_MIN = 20;
 const MAX_TEXT = 3800; // Discord embed leírás limit (4096), biztonsági tartalékkal
 
 function parseArgs(argv) {
