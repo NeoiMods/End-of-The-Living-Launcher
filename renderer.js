@@ -1601,7 +1601,7 @@ function totalRamGb() {
 // Az Optimalizálás panelen két külön lista van: egyjátékos (Blackout modpack)
 // és többjátékos (End of The Living szerver). A váltó alapból a mostani módra áll.
 let optMode = null;
-let eotlStatus = null;
+
 
 function setOptMode(mode) {
   optMode = mode === 'multi' ? 'multi' : 'single';
@@ -1633,22 +1633,8 @@ function openOptimize() {
   syncOptCards();
   refreshPzoState();
   refreshModsState();
-  refreshEotlState();
 }
 
-async function refreshEotlState() {
-  if (browserMode) {
-    eotlStatus = { zb: false, voxel: { installed: false, patched: false } };
-    syncOptCards();
-    return;
-  }
-  try {
-    eotlStatus = await bridge.getEotlStatus();
-  } catch {
-    eotlStatus = null;
-  }
-  syncOptCards();
-}
 
 function closeOptimize() {
   $('#optOverlay').classList.add('hidden');
@@ -1880,23 +1866,6 @@ function syncOptCards() {
     setDelVisible('voxel', done);
   }
 
-  // ---- többjátékos (End of The Living) kártya ----
-  const voxelMpState = $('#voxelMpState');
-  if (voxelMpState) {
-    const v = (eotlStatus && eotlStatus.voxel) || {};
-    const patched = !!v.patched;
-    voxelMpState.classList.toggle('go', true);
-    voxelMpState.classList.toggle('warn', !!v.installed && !patched ? false : false);
-    voxelMpState.textContent = patched ? 'KÉSZ' : v.installed ? 'CSERE' : 'NINCS MOD';
-    const hintEl = $('#voxelMpHint');
-    if (hintEl) {
-      hintEl.textContent = patched
-        ? 'Kész – a saját mod.info van a workshop modban'
-        : v.installed
-          ? 'A 3810302175 workshop mod – kattints a mod.info cseréjéhez'
-          : 'Előbb iratkozz fel a kollekcióra (3810302175), utána cserélhető a mod.info';
-    }
-  }
 
   // Magyarítás: opcionális, a játékos dönti el – soha nem települ magától.
   const huState = $('#huState');
@@ -1998,14 +1967,6 @@ function runOptAction(action) {
         appendLog('✓ PZO Launcher kicsomagolva – a telepítő konzolban fut tovább.');
         await refreshPzoState();
       }
-      return res;
-    }, { reload: false });
-    return;
-  }
-  if (action === 'voxel-mp') {
-    runBusy(async () => {
-      const res = await bridge.applyVoxelModInfo();
-      await refreshEotlState();
       return res;
     }, { reload: false });
     return;

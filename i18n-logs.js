@@ -247,7 +247,6 @@
     ['⚠ A ZombieBuddy agent fájljai (ZombieBuddy.jar + zbNative.dll) nincsenek a játék mappában.', '⚠ The ZombieBuddy agent files (ZombieBuddy.jar + zbNative.dll) are missing from the game folder.'],
     ['⚠ A ZombieBuddy telepítő nem járt sikerül – a launcher saját telepítése továbbra is működik.', '⚠ The ZombieBuddy installer was not successful – the launcher’s own installation still works.'],
     ['⚠ A telepítő a Steam bezárását kéri. Zárd be a Steamet (tálca → Kilépés), a launcher nem teszi meg automatikusan.', '⚠ The installer asks you to close Steam. Close it (tray → Exit); the launcher does not do that automatically.'],
-    ['⚠ A(z) {s} modcsomagjában nincs mod.info.', '⚠ The package of {s} has no mod.info.'],
     ['⚠ Időtúllépés a letöltés várakozásakor ({n}/{n} kész).', '⚠ Timeout while waiting for the download ({n}/{n} done).'],
     ['⚠ Ismeretlen telepítő kérdés – válasz nélkül marad.', '⚠ Unknown installer question – it stays unanswered.'],
     ['⚠ ZombieBuddy nincs telepítve – a Java modok nem fognak betöltődni. Futtasd a modok telepítését.', '⚠ ZombieBuddy is not installed – Java mods will not load. Run the mod installation.'],
@@ -452,7 +451,13 @@
     ["kicsomagolási hiba", "unpacking error"],
     ["SteamCMD kicsomagolása…", "Unpacking SteamCMD…"],
 
-        // ---- 0.9.48 (csak 8 mod aktív javítás) ----
+            // ---- 0.9.49 (mod.infora figyelmeztetés névvel) ----
+    [
+      '⚠ {s}: a csomagban még nincs mod.info – a Steam valószínűleg még tölti, vagy ez az elem nem mod. Indítsd újra a launchert a letöltés után.',
+      '⚠ {s}: this package has no mod.info yet – Steam is probably still downloading it, or this item is not a mod. Restart the launcher after the download.',
+    ],
+
+// ---- 0.9.48 (csak 8 mod aktív javítás) ----
     ["✓ {n} mod újra engedélyezve a mod listában (egy korábbi launcher-hiba kikapcsolta őket).", "✓ {n} mods re-enabled in the mod list (an earlier launcher bug had disabled them)."],
     ["! A mod lista javítása nem sikerült: ", "! Could not repair the mod list: "],
 

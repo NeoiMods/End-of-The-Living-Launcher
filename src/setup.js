@@ -207,10 +207,18 @@ async function runSetup({
   const enabledIds = [];
   const seen = new Set();
 
+  // A figyelmeztetéshez a kollekcióból vesszük a mod nevét (a nyers workshop
+  // ID-ből a játékos nem tudta, melyik modról van szó).
+  const titleOf = new Map((col.items || []).map((it) => [String(it.id), String(it.title || '')]));
+
   for (const [wsId, source] of sources) {
     const found = modinfo.discoverMods(source);
     if (!found.length) {
-      onLog(`⚠ A(z) ${wsId} modcsomagjában nincs mod.info.`);
+      const name = titleOf.get(String(wsId));
+      onLog(
+        `⚠ ${name ? `${name} (${wsId})` : `#${wsId}`}: a csomagban még nincs mod.info – ` +
+          'a Steam valószínűleg még tölti, vagy ez az elem nem mod. Indítsd újra a launchert a letöltés után.'
+      );
       continue;
     }
     for (const mod of found) {

@@ -1,6 +1,6 @@
 {
-  "version": "0.9.48",
-  "sha": "0ac2a38ec9b780d3672a77c7f2b251ffb84163dd",
+  "version": "0.9.49",
+  "sha": "008b923927dbfe2d09378800cc9ecafc0ec7edf7",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -749,13 +749,13 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 100118,
-      "sha256": "60070a9629095e73db5d81895e121795cc7cc5ef7e836df6bacdf414b1be3523"
+      "size": 102118,
+      "sha256": "a47805c199a6f7ccf4d160120d55155e75f0577dd6d2704b6ee8113a67a8ae96"
     },
     {
       "path": "i18n-logs.js",
-      "size": 71122,
-      "sha256": "9f33d0cbcb2d46b7e18e243c9196e2b70f03aa57d4cf1499ff0bd0dfa65118c8"
+      "size": 71426,
+      "sha256": "b9b96588b8e5654a7ad8b971c905a37423db685f7d91bbc1299ee17e5e8877e4"
     },
     {
       "path": "i18n.js",
@@ -764,18 +764,18 @@
     },
     {
       "path": "index.html",
-      "size": 26433,
-      "sha256": "c4719c4dd6b3184735a62778d519cac0b958436832c6b025598785d46965a539"
+      "size": 26039,
+      "sha256": "e3bc17091317a2aa22c8d2675b1c40cedfcadabdee8d08a21b74cfd8a2ea8159"
     },
     {
       "path": "main.js",
-      "size": 54796,
-      "sha256": "0e447033d51743f972a733d2ff839117639c07774950c576d6cdc6a56991d4b7"
+      "size": 53396,
+      "sha256": "a976b7a900cbd3f4bd6e1d87d491deef848dc96ae04e94fe980ac175652f6b9d"
     },
     {
       "path": "news-blackout.json",
-      "size": 46443,
-      "sha256": "082ebab79906fc13f4b2341344b6bf64a6067f16b245b16390a08a699ef64396"
+      "size": 47632,
+      "sha256": "f5848dc7fd0c44b74d9289694c6b99acfbdf1973ee6fd261d270631cbc41bfe5"
     },
     {
       "path": "news.json",
@@ -785,17 +785,17 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "a8733bec954449c956ebc85e693023b47570936b9133b8b67de168971f3567fe"
+      "sha256": "a0a2a3ca049a71e826c1b08bd902f0ce22c1dbdcf786be6425985bcaff4c76ce"
     },
     {
       "path": "preload.js",
-      "size": 4314,
-      "sha256": "6a1049b4762c00e6fd1ceeb9b57a02af5ec9161446809a9681c29cdd34115b5d"
+      "size": 4195,
+      "sha256": "d9af181e1a8c58bc8fea03e255d8a8e2b15c53d43ee9b9312b137dbe78c8b632"
     },
     {
       "path": "renderer.js",
-      "size": 80827,
-      "sha256": "4f413ca6ee5da0cf051f4256287ef6cc62dea70862ef59791fc896f8fb2c34bd"
+      "size": 79509,
+      "sha256": "b5c988388a70f9143e95929f1cd499441a4ac1a224caedab3f10825867867309"
     },
     {
       "path": "src/a2s.js",
@@ -836,11 +836,6 @@
       "path": "src/download.js",
       "size": 3394,
       "sha256": "9b8f69538f50d399df60ee3c9b9c7168627fe5a97157f1dcd818338c530ea30d"
-    },
-    {
-      "path": "src/eotl-mods.js",
-      "size": 5696,
-      "sha256": "6b2dc5d74334e6a53671edbb8851ef95d20feafbc1e558ae0f09357716a87caf"
     },
     {
       "path": "src/events.js",
@@ -904,8 +899,8 @@
     },
     {
       "path": "src/setup.js",
-      "size": 19298,
-      "sha256": "1debdc9e7fb753560eca42203b4212218e82f2509f2e348b51d3ab366ebc6566"
+      "size": 19764,
+      "sha256": "c9afd90264ed20d12169b969eb52d3070d858cdfc7abc19f0dec031e5ed02475"
     },
     {
       "path": "src/shortcut.js",

@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                                                        // ---- 0.9.48 (modok kikapcsolása) ----
+                                                                                                                            // ---- 0.9.49 (mod.info figyelmeztetés) ----
+    "0.9.49 – Érthető „nincs mod.info” figyelmeztetés, és kikerült a mod.info csere":
+      "0.9.49 – Clearer “no mod.info” warning, and the mod.info swap is gone",
+    "A figyelmeztetés eddig csak a nyers workshop ID-t írta ki, abból senki nem tudta, melyik modról van szó. Mostantól a kollekcióból vett modnév szerepel benne, rövid teendővel: a Steam valószínűleg még tölti, vagy az elem nem mod – indítsd újra a launchert a letöltés után. A 3D models for Viewpoint mod.info cseréje (a 3810302175 workshop mod saját mod.info-val) teljesen kikerült a launcherből, az Optimalizálás panel kártyájával együtt – már nincs rá szükség.":
+      "The warning used to print the raw workshop ID only, so nobody knew which mod it meant. It now shows the mod name from the collection with a short action: Steam is probably still downloading it, or the item is not a mod – restart the launcher after the download. The 3D models for Viewpoint mod.info swap (using our own mod.info for workshop mod 3810302175) is gone from the launcher, together with its Optimiser card – it is no longer needed.",
+    "A „nincs mod.info” figyelmeztetés a mod nevét írja ki (a kollekcióból), nem a workshop ID-t.":
+      "The “no mod.info” warning names the mod (from the collection) instead of the workshop ID.",
+    "A figyelmeztetés rövid teendőt is ad: tölthet még a Steam, vagy az elem nem mod – indítsd újra a launchert.":
+      "The warning includes a short action: Steam may still be downloading, or the item is not a mod – restart the launcher.",
+    "A mod.info csere funkció és a hozzá tartozó kártya kikerült (a 3810302175 mod saját mod.info-ja már nem kell).":
+      "The mod.info swap feature and its card were removed (the custom mod.info for 3810302175 is no longer needed).",
+    "A figyelmeztetés angolul is megjelenik.":
+      "The warning also appears in English.",
+// ---- 0.9.48 (modok kikapcsolása) ----
     "0.9.48 – Javítva: nem kapcsolódnak ki a modok („csak 8 mod aktív”)":
       "0.9.48 – Fixed: mods no longer get disabled (“only 8 mods active”)",
     "Megtaláltuk a hibát: a launcher minden verziófrissítés után egyszer lefuttatott egy szűrést, ami a szerver kollekció (8 mod) alapján kikapcsolta az összes olyan modot, ami nincs benne – vagyis az egyjátékos Blackout modpack ~740 modját. Ezért maradt néha csak 8 aktív mod. Mostantól a szűrés a Blackout kollekciót is engedélyezettnek tekinti, így csak a valóban kollekción kívüli modok kapcsolódnak ki. Indításkor a launcher azt is észleli, ha egy korábbi verzió már kikapcsolta a modokat, és visszakapcsolja a gépen meglévő kollekció-modokat.":

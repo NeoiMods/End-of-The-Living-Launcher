@@ -37,7 +37,6 @@ const mods = require('./src/mods');
 const discord = require('./src/discord');
 const crash = require('./src/crash');
 const blackout = require('./src/blackout');
-const eotl = require('./src/eotl-mods');
 
 // A launcher csak akkor ellenőrzi frissítést, ha a cfg.updateCheckUrl be van állítva.
 // A GitHub projektben át lett állítva erre a repo-ra:
@@ -1032,19 +1031,6 @@ ipcMain.handle('mods:install', async () => {
         : cfg.zbInstaller,
     };
 
-    // A szerver 3D modellje (3810302175) a saját mod.info-val fut: amint a
-    // workshop mod megvan, a Master mappában lévő mod.info-t ráírjuk.
-    try {
-      const voxel = await eotl.applyVoxelModInfo({
-        cfg,
-        userDataDir: app.getPath('userData'),
-        log,
-      });
-      if (voxel && voxel.changed) save();
-    } catch (err) {
-      log('! 3D models for Viewpoint: ' + (err && err.message ? err.message : err));
-    }
-
     save();
     progress(null);
     return { ok: true };
@@ -1083,36 +1069,6 @@ ipcMain.handle('zb:install', async () => {
   }
 });
 
-// ---- End of The Living (többjátékos) saját kiegészítői ------------------
-// Ezek csak a szerveres Optimalizálás panelen jelennek meg.
-
-ipcMain.handle('eotl:status', () => {
-  try {
-    return { ok: true, voxel: eotl.status().voxel };
-  } catch (err) {
-    return { ok: false, error: err && err.message ? err.message : String(err), voxel: { installed: false, patched: false } };
-  }
-});
-
-ipcMain.handle('eotl:voxel', async () => {
-  if (busy) return { ok: false, error: 'Már fut egy művelet.' };
-  if (isGameRunning(true)) return { ok: false, error: 'A játék fut – zárd be, és utána cserélhető.' };
-  busy = true;
-  try {
-    const res = await eotl.applyVoxelModInfo({
-      cfg,
-      userDataDir: app.getPath('userData'),
-      log,
-    });
-    progress(null);
-    return res;
-  } catch (err) {
-    progress(null);
-    return reportError(err);
-  } finally {
-    busy = false;
-  }
-});
 
 ipcMain.handle('mods:openFolder', async () => {
   const dir = path.join(zomboidDir(), 'mods');

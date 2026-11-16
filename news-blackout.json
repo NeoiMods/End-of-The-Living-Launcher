@@ -1,7 +1,21 @@
 {
-  "version": "0.9.48",
+  "version": "0.9.49",
   "updatedAt": "2026-11-15",
   "items": [
+    {
+      "id": "0.9.49",
+      "version": "0.9.49",
+      "date": "2026-11-15",
+      "tag": "LAUNCHER",
+      "title": "0.9.49 – Érthető „nincs mod.info” figyelmeztetés, és kikerült a mod.info csere",
+      "text": "A figyelmeztetés eddig csak a nyers workshop ID-t írta ki, abból senki nem tudta, melyik modról van szó. Mostantól a kollekcióból vett modnév szerepel benne, rövid teendővel: a Steam valószínűleg még tölti, vagy az elem nem mod – indítsd újra a launchert a letöltés után. A 3D models for Viewpoint mod.info cseréje (a 3810302175 workshop mod saját mod.info-val) teljesen kikerült a launcherből, az Optimalizálás panel kártyájával együtt – már nincs rá szükség.",
+      "changes": [
+        "A „nincs mod.info” figyelmeztetés a mod nevét írja ki (a kollekcióból), nem a workshop ID-t.",
+        "A figyelmeztetés rövid teendőt is ad: tölthet még a Steam, vagy az elem nem mod – indítsd újra a launchert.",
+        "A mod.info csere funkció és a hozzá tartozó kártya kikerült (a 3810302175 mod saját mod.info-ja már nem kell).",
+        "A figyelmeztetés angolul is megjelenik."
+      ]
+    },
     {
       "id": "0.9.48",
       "version": "0.9.48",
