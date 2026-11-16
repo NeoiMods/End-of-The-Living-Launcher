@@ -4,9 +4,10 @@ name: Did you know?
 # A sorrend idősáv-alapú (nincs állapotfájl, nincs commit), ezért két egymást
 # követő futás mindig más üzenetet küld, és a lista végére érve újraindul.
 #
-# Beállítás: Settings → Secrets and variables → Actions → New repository secret
-#   Name:  DISCORD_WEBHOOK
-#   Value: https://discord.com/api/webhooks/...
+# Beállítás: a webhook a DISCORD_WEBHOOK nevű environment secretben van
+# (Settings → Environments → DISCORD_WEBHOOK → Environment secrets), ezért a job
+# alatt szerepel az `environment:` sor – enélkül az environment secret nem
+# látszana. Repository secret is jó: akkor az `environment:` sor törölhető.
 # Ha a webhookot lecseréled, csak a secretet kell frissíteni.
 
 on:
@@ -31,6 +32,8 @@ jobs:
   post:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # Az environment secret (DISCORD_WEBHOOK) csak így érhető el.
+    environment: DISCORD_WEBHOOK
     steps:
       - uses: actions/checkout@v4
 
