@@ -457,6 +457,9 @@
       '⚠ {s}: this package has no mod.info yet – Steam is probably still downloading it, or this item is not a mod. Restart the launcher after the download.',
     ],
 
+    // ---- 0.9.50 (törölt workshop elemek) ----
+    ["– {n} kollekció-elem már nem érhető el a Steam Workshopon (törölt/elrejtett), kivettem a listából: {s}", "– {n} collection items are no longer available on the Steam Workshop (deleted/hidden), removed from the list: {s}"],
+
 // ---- 0.9.48 (csak 8 mod aktív javítás) ----
     ["✓ {n} mod újra engedélyezve a mod listában (egy korábbi launcher-hiba kikapcsolta őket).", "✓ {n} mods re-enabled in the mod list (an earlier launcher bug had disabled them)."],
     ["! A mod lista javítása nem sikerült: ", "! Could not repair the mod list: "],

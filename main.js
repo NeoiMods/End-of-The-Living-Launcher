@@ -216,7 +216,7 @@ app.whenReady().then(() => {
   if (!cfg.collection) {
     setTimeout(async () => {
       try {
-        const col = await fetchCollection(cfg.collectionId);
+        const col = await fetchCollection(cfg.collectionId, { log });
         cfg = { ...cfg, collection: { ...col, fetchedAt: Date.now() } };
         save();
         log(`✓ Kollekció betöltve: ${col.title} – ${col.items.length} mod.`);
@@ -233,7 +233,7 @@ app.whenReady().then(() => {
     setTimeout(async () => {
       try {
         const id = blackout.collectionId(cfg);
-        const col = await fetchCollection(id);
+        const col = await fetchCollection(id, { log });
         cfg = {
           ...cfg,
           blackout: { ...(cfg.blackout || {}), collectionId: id, collection: { ...col, fetchedAt: Date.now() } },

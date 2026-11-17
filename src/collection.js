@@ -129,6 +129,50 @@ async function fetchTitles(ids) {
   return titles;
 }
 
+// Csak a Steam által tényleg kiszolgált elemek maradnak a listában. A törölt,
+// elrejtett vagy priváttá tett workshop elemek (API: result 9) soha nem
+// tölthetők le, ezért a launcher ne számolja őket hiányzónak („689/691”).
+// Hálózati hiba esetén megtartjuk az elemet (fail-open): egy Steam-kiesés ne
+// tüntessen el modokat a listából.
+async function filterAvailable(items, { log = () => {} } = {}) {
+  if (!items.length) return items;
+  const alive = new Set();
+  for (let i = 0; i < items.length; i += 100) {
+    const chunk = items.slice(i, i + 100);
+    const body = [
+      'itemcount=' + chunk.length,
+      ...chunk.map((it, n) => `publishedfileids[${n}]=${encodeURIComponent(it.id)}`),
+    ].join('&');
+    try {
+      const out = await postForm('https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/', body);
+      const details = (out.response && out.response.publishedfiledetails) || [];
+      for (const d of details) {
+        const id = String((d && d.publishedfileid) || '');
+        if (id && Number(d.result) === 1) alive.add(id);
+      }
+    } catch {
+      for (const it of chunk) alive.add(String(it.id));
+    }
+  }
+  const removed = items.filter((it) => !alive.has(String(it.id)));
+  if (removed.length) {
+    const list = removed.slice(0, 5).map((r) => (r.title && r.title !== r.id ? `${r.title} (${r.id})` : r.id));
+    log(
+      `– ${removed.length} kollekció-elem már nem érhető el a Steam Workshopon (törölt/elrejtett), kivettem a listából: ` +
+        list.join(', ') +
+        (removed.length > 5 ? '…' : '')
+    );
+  }
+  return items.filter((it) => alive.has(String(it.id)));
+}
+
+// A kollekció-objektumra alkalmazott szűrés (a törölt elemek kiesnek).
+async function onlyAvailable(collection, { log } = {}) {
+  if (!collection || !Array.isArray(collection.items)) return collection;
+  const items = await filterAvailable(collection.items, { log });
+  return { ...collection, items, childCount: items.length };
+}
+
 async function fetchCollectionViaApi(collectionId) {
   const body = `collectioncount=1&publishedfileids[0]=${encodeURIComponent(collectionId)}`;
   const out = await postForm('https://api.steampowered.com/ISteamRemoteStorage/GetCollectionDetails/v1/', body);
@@ -152,7 +196,7 @@ async function fetchCollectionViaApi(collectionId) {
 }
 
 // Fetches and parses a Steam Workshop collection. Retries on failure/empty result.
-async function fetchCollection(collectionId, { retries = 2 } = {}) {
+async function fetchCollection(collectionId, { retries = 2, log = () => {} } = {}) {
   const url = `https://steamcommunity.com/sharedfiles/filedetails/?id=${encodeURIComponent(collectionId)}`;
   let lastError = null;
   for (let attempt = 0; attempt <= retries; attempt++) {
@@ -164,7 +208,7 @@ async function fetchCollection(collectionId, { retries = 2 } = {}) {
       if (status === 429 || status === 503) {
         // Steam rate limit: előbb az API-ból próbáljuk, csak utána várunk.
         try {
-          return await fetchCollectionViaApi(collectionId);
+          return await onlyAvailable(await fetchCollectionViaApi(collectionId), { log });
         } catch {
           await sleep(8000 * (attempt + 1));
         }
@@ -177,7 +221,7 @@ async function fetchCollection(collectionId, { retries = 2 } = {}) {
           'A kollekció üresnek tűnik vagy a Steam nem adta vissza a modok listáját (lehet, hogy privát vagy törölt).'
         );
       }
-      return parsed;
+      return await onlyAvailable(parsed, { log });
     } catch (err) {
       lastError = err;
       if (attempt < retries) await sleep(1500 * (attempt + 1));
@@ -186,4 +230,5 @@ async function fetchCollection(collectionId, { retries = 2 } = {}) {
   throw lastError || new Error('A kollekció lekérése ismeretlen hibával végződött.');
 }
 
-module.exports = { fetchCollection, parseCollectionHtml, fetchCollectionViaApi };
+module.exports = {
+  filterAvailable, fetchCollection, parseCollectionHtml, fetchCollectionViaApi };

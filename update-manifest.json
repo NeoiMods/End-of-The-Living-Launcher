@@ -1,6 +1,6 @@
 {
-  "version": "0.9.49",
-  "sha": "008b923927dbfe2d09378800cc9ecafc0ec7edf7",
+  "version": "0.9.50",
+  "sha": "ceb05a5fe30df1e4e91085523993c5366cad8db1",
   "files": [
     {
       "path": "assets/bg-blackout.jpg",
@@ -749,13 +749,13 @@
     },
     {
       "path": "i18n-content.js",
-      "size": 102118,
-      "sha256": "a47805c199a6f7ccf4d160120d55155e75f0577dd6d2704b6ee8113a67a8ae96"
+      "size": 103879,
+      "sha256": "5dca9317d2f8cb5b66c4695c982f7cdeda7be6b489a3b20a9918d4efcbe61d35"
     },
     {
       "path": "i18n-logs.js",
-      "size": 71426,
-      "sha256": "b9b96588b8e5654a7ad8b971c905a37423db685f7d91bbc1299ee17e5e8877e4"
+      "size": 71719,
+      "sha256": "890584148eec60fae929e38f32cbaca42ad1f8f2515aa4055a22789e7bc8a827"
     },
     {
       "path": "i18n.js",
@@ -769,13 +769,13 @@
     },
     {
       "path": "main.js",
-      "size": 53396,
-      "sha256": "a976b7a900cbd3f4bd6e1d87d491deef848dc96ae04e94fe980ac175652f6b9d"
+      "size": 53414,
+      "sha256": "e02b4136f1c486abd7157288da4a0f189edeee40ec47eead8defd93cae03793a"
     },
     {
       "path": "news-blackout.json",
-      "size": 47632,
-      "sha256": "f5848dc7fd0c44b74d9289694c6b99acfbdf1973ee6fd261d270631cbc41bfe5"
+      "size": 48729,
+      "sha256": "ae31a832f4efa4285eb5eca35ce65bbe9f09fd59c253235ef525829c3f13b5f6"
     },
     {
       "path": "news.json",
@@ -785,7 +785,7 @@
     {
       "path": "package.json",
       "size": 865,
-      "sha256": "a0a2a3ca049a71e826c1b08bd902f0ce22c1dbdcf786be6425985bcaff4c76ce"
+      "sha256": "32fd406affc7bde359c7ef6a02b528a66c9396d0df89c654d5d0ed037e028ffb"
     },
     {
       "path": "preload.js",
@@ -814,8 +814,8 @@
     },
     {
       "path": "src/collection.js",
-      "size": 7342,
-      "sha256": "f4c1b7fad20b8329d61ae1457788b81d5d56165c5e45d5c3ba12b0e934176110"
+      "size": 9450,
+      "sha256": "99d2cef4c64b77b35396c9a56a76a4d9e65da2aa62c7dc6e34c345af1a992046"
     },
     {
       "path": "src/config.js",
@@ -899,8 +899,8 @@
     },
     {
       "path": "src/setup.js",
-      "size": 19764,
-      "sha256": "c9afd90264ed20d12169b969eb52d3070d858cdfc7abc19f0dec031e5ed02475"
+      "size": 19780,
+      "sha256": "ac65349c18660fd4413475a135602e259cc1330953fd6bd6c9c8a0aa95754874"
     },
     {
       "path": "src/shortcut.js",

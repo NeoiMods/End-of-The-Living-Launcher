@@ -75,7 +75,7 @@ async function runSetup({
 
   // ---- 1) kollekció -------------------------------------------------------
   onProgress({ label: 'Steam Workshop kollekció lekérése…' });
-  const col = await collection.fetchCollection(collectionId);
+  const col = await collection.fetchCollection(collectionId, { log: onLog });
 
   // A kollekción kívül megadott workshop elemek (pl. a szerver saját főmenüje)
   // ugyanúgy részt vesznek a letöltésben és az engedélyezésben.

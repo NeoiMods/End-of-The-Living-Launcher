@@ -16,7 +16,20 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                                                            // ---- 0.9.49 (mod.info figyelmeztetés) ----
+                                                                                                                                // ---- 0.9.50 (törölt workshop elemek) ----
+    "0.9.50 – Nem számolja hiányzónak a törölt workshop modokat":
+      "0.9.50 – Deleted workshop mods no longer count as missing",
+    "A launcher a kollekció teljes listáját kérte számon, akkor is, ha a Steam közben törölt vagy elrejtett belőle elemeket – ezért mutatott 689/691-et, miközben a Workshopon tényleg csak 689 mod van. Mostantól a kollekció frissítésekor a Steam API-val ellenőrzi, hogy az elem még létezik-e, és a törölt/elrejtett elemeket kiveszi a listából, a naplóban névvel kiírja őket. Hálózati hiba esetén nem töröl semmit (egy Steam-kiesés nem tüntet el modokat).":
+      "The launcher used to expect the whole collection list even when Steam had removed or hidden items from it – that is why it showed 689/691 while the Workshop really has 689 mods. On refresh it now asks the Steam API whether each item still exists, drops deleted/hidden items from the list and logs them by name. On a network error nothing is dropped (a Steam outage cannot remove mods).",
+    "A kollekció frissítésekor a Steam API-ból ellenőrzi, hogy minden elem még elérhető-e.":
+      "On collection refresh it checks with the Steam API that every item is still available.",
+    "A törölt/elrejtett workshop elemek kiesnek a listából – a „689/691” helyett 689/689 lesz.":
+      "Deleted/hidden workshop items are dropped from the list – 689/689 instead of “689/691”.",
+    "A kivett elemek a naplóban névvel és ID-val szerepelnek.":
+      "Removed items are logged with their name and ID.",
+    "Hálózati hiba esetén az elemek megmaradnak a listában (fail-open).":
+      "On a network error the items stay in the list (fail-open).",
+// ---- 0.9.49 (mod.info figyelmeztetés) ----
     "0.9.49 – Érthető „nincs mod.info” figyelmeztetés, és kikerült a mod.info csere":
       "0.9.49 – Clearer “no mod.info” warning, and the mod.info swap is gone",
     "A figyelmeztetés eddig csak a nyers workshop ID-t írta ki, abból senki nem tudta, melyik modról van szó. Mostantól a kollekcióból vett modnév szerepel benne, rövid teendővel: a Steam valószínűleg még tölti, vagy az elem nem mod – indítsd újra a launchert a letöltés után. A 3D models for Viewpoint mod.info cseréje (a 3810302175 workshop mod saját mod.info-val) teljesen kikerült a launcherből, az Optimalizálás panel kártyájával együtt – már nincs rá szükség.":

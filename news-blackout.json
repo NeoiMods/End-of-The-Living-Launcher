@@ -1,7 +1,21 @@
 {
-  "version": "0.9.49",
-  "updatedAt": "2026-11-15",
+  "version": "0.9.50",
+  "updatedAt": "2026-11-16",
   "items": [
+    {
+      "id": "0.9.50",
+      "version": "0.9.50",
+      "date": "2026-11-16",
+      "tag": "LAUNCHER",
+      "title": "0.9.50 – Nem számolja hiányzónak a törölt workshop modokat",
+      "text": "A launcher a kollekció teljes listáját kérte számon, akkor is, ha a Steam közben törölt vagy elrejtett belőle elemeket – ezért mutatott 689/691-et, miközben a Workshopon tényleg csak 689 mod van. Mostantól a kollekció frissítésekor a Steam API-val ellenőrzi, hogy az elem még létezik-e, és a törölt/elrejtett elemeket kiveszi a listából, a naplóban névvel kiírja őket. Hálózati hiba esetén nem töröl semmit (egy Steam-kiesés nem tüntet el modokat).",
+      "changes": [
+        "A kollekció frissítésekor a Steam API-ból ellenőrzi, hogy minden elem még elérhető-e.",
+        "A törölt/elrejtett workshop elemek kiesnek a listából – a „689/691” helyett 689/689 lesz.",
+        "A kivett elemek a naplóban névvel és ID-val szerepelnek.",
+        "Hálózati hiba esetén az elemek megmaradnak a listában (fail-open)."
+      ]
+    },
     {
       "id": "0.9.49",
       "version": "0.9.49",
