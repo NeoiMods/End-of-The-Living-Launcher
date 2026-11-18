@@ -1,2 +1,0 @@
-seen=1.10.16b
-tab=news

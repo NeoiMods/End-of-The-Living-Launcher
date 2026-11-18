@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "patch": "pzo/phobos-zrevaccin-stub-uiname",
+  "kind": "override-mod",
+  "created": "2026-11-16",
+  "mod_id": "PZOPatchPhobosZReVaccinStub",
+  "target": {
+    "mod_id": "PhobosChemistryPathways",
+    "workshop_id": "3668197831",
+    "modversion_tested": "1.11.1"
+  },
+  "override": {
+    "path": "42/media/scripts/characters/PCP_ZReVaccinStubs.txt",
+    "sha256_target_original": "b1b91e9332d6f8ed876a7536fa85c2087d6005faa21b9f6d596bff0e8af69a95",
+    "sha256_our_file": "4a88dfcb4caabcb6255e67fecadf9eba915d18fff27f2ad594df371e67581c3a"
+  },
+  "load_order": {
+    "require": "PhobosChemistryPathways",
+    "loadModAfter": "PhobosChemistryPathways"
+  },
+  "verify_in_log": "mod \"PZOPatchPhobosZReVaccinStub\" overrides media/scripts/characters/PCP_ZReVaccinStubs.txt",
+  "rollback": "disable this mod in the mod list; the workshop file is untouched",
+  "notes": [
+    "Target file must stay UNMODIFIED in the workshop folder - the override only wins if our copy loads later.",
+    "If the override log line does not appear, the game loaded both copies (duplicate definition) and the crash will remain.",
+    "Not verified by running the game yet."
+  ]
+}

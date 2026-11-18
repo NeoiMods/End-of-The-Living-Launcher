@@ -1,4 +1,0 @@
-VERSION=1
-Shanna Skaggs:face=DefaultFace;bodyhair=2;bodydetails=;
-Serghio Santos:face=DefaultFace;bodyhair=1;bodydetails=;
-Elvera Alvarez:face=DefaultFace;bodyhair=1;bodydetails=;

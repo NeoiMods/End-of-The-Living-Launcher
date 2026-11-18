@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "pack": "Blackout Protocol",
+  "generated": "2026-11-18",
+  "items": [
+    {
+      "source": "mods.txt",
+      "target": "%USERPROFILE%\\Zomboid\\mods\\default.txt",
+      "merge": "replace",
+      "backup": true,
+      "note": "global active list, 671 mods in load order"
+    },
+    {
+      "source": "configs/Zomboid/Lua/pz_modlist_settings.cfg",
+      "target": "%USERPROFILE%\\Zomboid\\Lua\\pz_modlist_settings.cfg",
+      "merge": "preset-line",
+      "backup": true,
+      "note": "Mod Manager preset 'Blackout Protocol' = same 671 order as default.txt"
+    },
+    {
+      "source": "configs/Zomboid/Sandbox Presets/Neoi-Suggested.cfg",
+      "target": "%USERPROFILE%\\Zomboid\\Sandbox Presets\\Neoi-Suggested.cfg",
+      "merge": "replace",
+      "backup": true
+    },
+    {
+      "source": "configs/Zomboid/Lua/saved_builds.txt",
+      "target": "%USERPROFILE%\\Zomboid\\Lua\\saved_builds.txt",
+      "merge": "append-missing",
+      "backup": true,
+      "note": "trait presets: NeoiSurvivor, EOTLNEOI, NeoiUltimate"
+    },
+    {
+      "source": "configs/Zomboid/Lua/keysB42.ini",
+      "target": "%USERPROFILE%\\Zomboid\\Lua\\keysB42.ini",
+      "merge": "replace",
+      "backup": true,
+      "note": "keybinds only - do NOT ship options.ini (language + graphics)"
+    },
+    {
+      "source": "configs/zombie_buddy/mod_approvals.json",
+      "target": "%USERPROFILE%\\.zombie_buddy\\mod_approvals.json",
+      "merge": "replace",
+      "backup": true
+    },
+    {
+      "source": "configs/game/ProjectZomboid64.bat",
+      "target": "%PZ_GAME_DIR%\\ProjectZomboid64.bat",
+      "merge": "replace",
+      "backup": true,
+      "note": "needs ZombieBuddy.jar, PZOptimEngine.jar, zbNative.dll, pzo_native64.dll and 8 GB heap"
+    },
+    {
+      "source": "configs/game/ProjectZomboid64.json",
+      "target": "%PZ_GAME_DIR%\\ProjectZomboid64.json",
+      "merge": "replace",
+      "backup": true,
+      "note": "same requirements as the .bat"
+    },
+    {
+      "source": "workshop_ids.txt",
+      "target": "steam://url/CommunityFilePage/<id> loop",
+      "merge": "n/a",
+      "note": "574 workshop items to subscribe"
+    },
+    {
+      "source": "local_mods/*",
+      "target": "%USERPROFILE%\\Zomboid\\mods\\<name>",
+      "merge": "replace",
+      "backup": false
+    }
+  ],
+  "excluded_on_purpose": [
+    {
+      "file": "%USERPROFILE%\\Zomboid\\options.ini",
+      "why": "contains language + resolution + graphics; shipping it would force Hungarian UI and overwrite the player's video settings"
+    },
+    {
+      "file": "%USERPROFILE%\\Zomboid\\Lua\\modOptions.ini",
+      "why": "101 KB of per-mod (MCM) settings - not requested; mods fall back to their defaults without it"
+    }
+  ]
+}

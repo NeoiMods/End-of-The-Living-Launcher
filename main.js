@@ -1092,11 +1092,10 @@ ipcMain.handle('shortcut:create', async () => {
 
 // A modpack telepítése a szerver kollekcióval azonos úton megy (feliratkozás,
 // letöltés, engedélyezés), utána a config fájl bemásolása következik.
-async function installBlackoutModpack(keepUserPresets = true) {
+async function installBlackoutModpack() {
   const res = await blackout.install({
     cfg,
     userDataDir: app.getPath('userData'),
-    keepUserPresets,
     onLog: log,
     onProgress: progress,
     openSubscribe: (missing) =>
@@ -1215,43 +1214,11 @@ ipcMain.handle('game:launch', async (event, mode) => {
       busy = true;
       try {
         log('— Blackout egyjátékos mód: a modpack előkészítése —');
-        // A játékban mentett trait- és karakter-presetek a játékoséi: csak
-        // engedéllyel írjuk felül őket (config-frissítés ne törölje a munkáját).
-        let keepUserPresets = true;
-        try {
-          const conflicts = blackout.userPresetConflicts();
-          if (conflicts.length && win && !win.isDestroyed()) {
-            // A natív kérdésablak nem megy át a felület fordítóján, ezért itt
-            // kell a választott nyelven megfogalmazni.
-            const en = String(cfg.uiLang || '').toLowerCase() === 'en';
-            const { response } = await dialog.showMessageBox(win, {
-              type: 'question',
-              buttons: en
-                ? ['Keep my own', 'Use the pack defaults']
-                : ['Megtartom a sajátomat', 'A pakk alapját kérem'],
-              defaultId: 0,
-              cancelId: 0,
-              noLink: true,
-              title: en ? 'Trait and character presets' : 'Trait és karakter presetek',
-              message: en
-                ? 'Should I keep your own trait and character presets?'
-                : 'Megtartsam a saját trait- és karakter-presetjeidet?',
-              detail: en
-                ? 'A config update would overwrite the trait and character customisation presets saved in the game.\n\n' +
-                  'Keep my own: the launcher does not touch them, the pack defaults are not applied.\n' +
-                  'Use the pack defaults: the pack defaults take their place (the old ones are saved).'
-                : 'A config frissítése felülírná a játékban mentett trait- és karakter-testreszabás presetjeidet.\n\n' +
-                  'Megtartom a sajátomat: a launcher hozzád sem nyúl, a pakk alap presetje nem kerül be.\n' +
-                  'A pakk alapját kérem: a pakk szerinti alap lép a helyükre (a régi elmentve).',
-            });
-            keepUserPresets = response === 0;
-          }
-        } catch (err) {
-          log('! A preset-kérdés nem jelent meg: ' + (err && err.message ? err.message : err));
-        }
-        if (keepUserPresets) log('• A saját trait/karakter presetjeid megmaradnak.');
-        else log('• A pakk alap trait/karakter presetjei kerülnek be.');
-        await installBlackoutModpack(keepUserPresets);
+        // A játékban mentett presetek (trait, karakter, mod, sandbox) a
+        // játékoséi: a config csak MELLÉJÜK teszi be a pakk presetjeit, soha
+        // nem írja felül őket – ezért itt nincs mit kérdezni.
+        log('• A saját presetjeid megmaradnak – a pakk presetjei melléjük kerülnek.');
+        await installBlackoutModpack();
       } catch (err) {
         log('! A modpack előkészítése nem sikerült teljesen: ' + err.message);
       } finally {

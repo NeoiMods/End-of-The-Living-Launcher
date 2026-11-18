@@ -1,0 +1,6 @@
+name=PZO Patch - Phobos zReVaccin Stub
+id=PZOPatchPhobosZReVaccinStub
+description=Standalone override for PhobosChemistryPathways. Adds the missing UIName and UIDescription to the zrevac:zreantibodies stub trait; without them the script loader calls Translator.getTextInternal(null), throws NullPointerException and the game exits before the main menu ("Script load errors"). Overrides common/media/scripts/characters/PCP_ZReVaccinStubs.txt, so it must load AFTER PhobosChemistryPathways.
+versionMin=42.14
+require=\PhobosChemistryPathways
+loadModAfter=PhobosChemistryPathways

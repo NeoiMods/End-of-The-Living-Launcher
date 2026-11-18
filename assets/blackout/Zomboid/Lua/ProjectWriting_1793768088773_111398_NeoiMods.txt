@@ -1,2 +1,0 @@
-NW-PLAYER 1
-{sv;n1;}

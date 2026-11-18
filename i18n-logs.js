@@ -457,7 +457,25 @@
       '⚠ {s}: this package has no mod.info yet – Steam is probably still downloading it, or this item is not a mod. Restart the launcher after the download.',
     ],
 
-    // ---- 0.9.50 (törölt workshop elemek) ----
+        // ---- 0.9.51 (Blackout v2 config) ----
+    ["⚠ A játék fut – a config csak zárt játék mellett másolható be. Zárd be, és indítsd újra.", "⚠ The game is running – the config can only be copied with the game closed. Close it and start again."],
+    ["✗ A launcherhez mellékelt Blackout config csomag hiányzik (assets/blackout/install-map.json).", "✗ The Blackout config pack bundled with the launcher is missing (assets/blackout/install-map.json)."],
+    ["✗ A csomag install-map.json fájljában nincs telepíthető elem.", "✗ The pack has no installable items in its install-map.json."],
+    ["✓ Helyi patch mod a helyén: Zomboid\\mods\\{s}", "✓ Local patch mod in place: Zomboid\\mods\\{s}"],
+    ["! A(z) {s} patch mod csak részben került be.", "! The {s} patch mod was only partly installed."],
+    ["! {s}: a játék mappája nem található – a fájl nem cserélhető le.", "! {s}: the game folder was not found – the file cannot be replaced."],
+    ["⚠ A játék indítója nem cserélhető le: hiányzik a játék mappájából: {s}. Enélkül a pakk .bat/.json fájlja nem indítaná el a játékot – maradt a jelenlegi.", "⚠ The game launcher cannot be replaced: missing from the game folder: {s}. Without them the pack’s .bat/.json would not start the game – the current one was kept."],
+    ["! A játék mappája védett – indítsd a launchert rendszergazdaként.", "! The game folder is protected – run the launcher as administrator."],
+    ["✓ A saját presetjeid megmaradtak – a pakk presetjei melléjük kerültek.", "✓ Your own presets were kept – the pack’s presets were added alongside them."],
+    ["• A saját presetjeid megmaradnak – a pakk presetjei melléjük kerülnek.", "• Your own presets will be kept – the pack’s presets are added alongside them."],
+    ["✓ Modpack config a helyén: {n} fájl a játék Zomboid mappájában", "✓ Modpack config in place: {n} files in the game’s Zomboid folder"],
+    ["✓ Modpack config a helyén: {n} fájl a játék Zomboid mappájában, {n} felülírt fájl mentve: {s}", "✓ Modpack config in place: {n} files in the game’s Zomboid folder, {n} replaced files backed up: {s}"],
+    ["✓ {n} mod engedélyezve a(z) „{s}” profil szerint", "✓ {n} mods enabled according to the “{s}” profile"],
+    ["✗ A {s} nem tartalmazza a(z) „{s}” profilt.", "✗ {s} does not contain the “{s}” profile."],
+    ["! {s} formátumát nem ismerem fel – a modok engedélyezését a játék profilja adja.", "! I do not recognise the format of {s} – mods are enabled by the game’s profile."],
+    ["! A default.txt frissítése nem sikerült: {s}", "! Could not update default.txt: {s}"],
+
+// ---- 0.9.50 (törölt workshop elemek) ----
     ["– {n} kollekció-elem már nem érhető el a Steam Workshopon (törölt/elrejtett), kivettem a listából: {s}", "– {n} collection items are no longer available on the Steam Workshop (deleted/hidden), removed from the list: {s}"],
 
 // ---- 0.9.48 (csak 8 mod aktív javítás) ----

@@ -1,0 +1,371 @@
+{
+  "formatVersion": 2,
+  "mods": [
+    {
+      "id": "KnoxAcoustics",
+      "workshop_id": 3774192369,
+      "jar_hash": "647c4481646d87f4bd6c551154322df708dc2c3a170a5984ac83807bc5c3c87a",
+      "decision": true
+    },
+    {
+      "id": "Viewpoint",
+      "workshop_id": 3809306528,
+      "jar_hash": "8d0d5a73227d3ba0724cab076f621435ebaed8ed2c73bfaf7d32a90b0a249e1f",
+      "decision": true
+    },
+    {
+      "id": "ViewpointFPS",
+      "workshop_id": 3820156996,
+      "jar_hash": "173cc21f11c89e8a2c0b83d6295b7067fbb7a1f9462f608a8f14282f8a0e7c46",
+      "decision": true
+    },
+    {
+      "id": "ViewpointTrueBallistics",
+      "workshop_id": 3812864848,
+      "jar_hash": "aaee2b68fd04aa516a388880cf000ef6e0775a5bdf30355a8d937048a16fea40",
+      "decision": true
+    },
+    {
+      "id": "ViewpointBodycam",
+      "workshop_id": 3818432217,
+      "jar_hash": "5981a216abdb64760cf1dffc676788a62900ba3b5b51b821fb39979641a05d8e",
+      "decision": true
+    },
+    {
+      "id": "ViewpointWorkingTVs",
+      "workshop_id": 3821610732,
+      "jar_hash": "6185a6e1ceb0aa5875572990b4afc32854dcc4828693ef0a415885ad801234ba",
+      "decision": true
+    },
+    {
+      "id": "ViewpointBarricade",
+      "workshop_id": 3815033191,
+      "jar_hash": "cbe10c19938bee69e93da02bb4058da433f7180d41d2f9f375d185e9d177dab0",
+      "decision": true,
+      "author_id": 76561198205856420
+    },
+    {
+      "id": "VisibleHelicopterEvent",
+      "workshop_id": 3819322670,
+      "jar_hash": "946b16c708f64b1ed2b6f0682a0474a42ac5bf70819b9938c691d2d3212965fd",
+      "decision": true
+    },
+    {
+      "id": "ProjectViewpointStars",
+      "workshop_id": 3821241473,
+      "jar_hash": "8521ecf8c551faa3d76c76a910f05628743db6336229988d11478d7ac26e8172",
+      "decision": true
+    },
+    {
+      "id": "HotBrassViewpoint",
+      "workshop_id": 3819976507,
+      "jar_hash": "eede64cf3e5b4766ea6e2f86848f76b1cd8ba71a304ca62c3f5e9dc6d519d939",
+      "decision": true
+    },
+    {
+      "id": "ViewpointRadialCursor",
+      "workshop_id": 3821900767,
+      "jar_hash": "c81f4fdd8547791178af4cec3ceeeefea87190fa5f95e968a95ae046369aac03",
+      "decision": true,
+      "author_id": 76561198045530652
+    },
+    {
+      "id": "ViewpointBinoculars",
+      "workshop_id": 3818585720,
+      "jar_hash": "1a07ad8d237dd6d4ad58ad20da35bab57a51f32a99e185a8f76c5853b1da35c7",
+      "decision": true
+    },
+    {
+      "id": "ViewpointDeathCam",
+      "workshop_id": 3816588758,
+      "jar_hash": "3972152478f6bd299ad1f6a7671bf17ccfbe823e9b9ade81a68a1a0fe5fa8c58",
+      "decision": true
+    },
+    {
+      "id": "EinarAnimalHitboxes",
+      "workshop_id": 3824718209,
+      "jar_hash": "44dae0333ac5f65fa1545a3714ee623ba2427f736891ff6fa5160eaf22ccca1d",
+      "decision": true
+    },
+    {
+      "id": "Barricades3D",
+      "workshop_id": 3823978904,
+      "jar_hash": "eddfd8b6c66586ba994ef77459ed01a34c3765fb9bf0e8acd2bb64f814ba8677",
+      "decision": true
+    },
+    {
+      "id": "CeilingLights",
+      "workshop_id": 3823979843,
+      "jar_hash": "2078fbaa32bc7d933ddb8fe48bba39ed7e584d57b924ba1ee0aadc9f674456c3",
+      "decision": true
+    },
+    {
+      "id": "Chinook",
+      "workshop_id": 3811987208,
+      "jar_hash": "3fcd2c8f9a8f45d5d185d4f961ca2dff96e2d1394348daab7359468092919400",
+      "decision": true
+    },
+    {
+      "id": "CraftFromContainers",
+      "workshop_id": 3747984090,
+      "jar_hash": "2ea60bdd40ef732d18c59190e4f47117c91b53aad3034dce96c70174ca34b7f8",
+      "decision": true,
+      "author_id": 76561198063443193
+    },
+    {
+      "id": "DeadwoodShaders",
+      "workshop_id": 3818656834,
+      "jar_hash": "5f63bb8cd58fa9bbac8bcd4fe8ba2d885033dd5521a36af8807c56c7e792e2cc",
+      "decision": true
+    },
+    {
+      "id": "ImmersiveDriving",
+      "workshop_id": 3817413313,
+      "jar_hash": "aac6377203b3a4d0d5a126141641b1b4e723644cd2b3f9fe92e5d30729d719f0",
+      "decision": true
+    },
+    {
+      "id": "InteractionsAmmoCheck",
+      "workshop_id": 3834950823,
+      "jar_hash": "28c2d3df81133663fefb7eb06d3182d854f011930e4d3063aac67102de016ccf",
+      "decision": true
+    },
+    {
+      "id": "LevelFurniture",
+      "workshop_id": 3823984682,
+      "jar_hash": "6ee1a524184fc818a16e293276167b3459220cb75a9878d810d010b6036d6087",
+      "decision": true
+    },
+    {
+      "id": "ViewpointVanillaSteering",
+      "workshop_id": 3835182791,
+      "jar_hash": "68cc2590b65287d01541270ef854772da0f6a65e87487407379430e753458f77",
+      "decision": true
+    },
+    {
+      "id": "ViewpointVehicleTopSpeed",
+      "workshop_id": 3817276586,
+      "jar_hash": "b3d72013097676634271a388c6da4780dd2026228afba7e130abaeb8951c7197",
+      "decision": true
+    },
+    {
+      "id": "LiveWristwatch",
+      "workshop_id": 3828228765,
+      "jar_hash": "4e670f6a723923076dad04ee84a5213fb1b6b73f170281fe9f176f8bd813557e",
+      "decision": true
+    },
+    {
+      "id": "UH1",
+      "workshop_id": 3821934230,
+      "jar_hash": "d22a7ace480cb4846eaf452fe078464f1eb7635d2b2c21ba719788c8f27b3c53",
+      "decision": true
+    },
+    {
+      "id": "UH1Viewpoint",
+      "workshop_id": 3821934230,
+      "jar_hash": "89f8f30c4727fa572d839a4d8434483c1b22c0227cf6deae78701c4f9692f5fa",
+      "decision": true
+    },
+    {
+      "id": "ViewpointAdvancedThrowables",
+      "workshop_id": 3813194971,
+      "jar_hash": "4e51004f3c3f7c2737f18e065076789c8753c6923f063d3fd7cbc1ff222e955e",
+      "decision": true
+    },
+    {
+      "id": "ViewpointImmersiveEffects",
+      "workshop_id": 3812984535,
+      "jar_hash": "bf54ae154a2ececa97f3f21189aa9daa00ff95a061047df91752b12d47b5ee4f",
+      "decision": true
+    },
+    {
+      "id": "ViewpointRealisticGunSmoke",
+      "workshop_id": 3832914606,
+      "jar_hash": "6fadf22a1e87c8cbf41a810c12606749b3fc0919f9062c29815fb956ba50c9ac",
+      "decision": true
+    },
+    {
+      "id": "ViewpointImmersiveMap",
+      "workshop_id": 3815544725,
+      "jar_hash": "f2b03fd3aeae48de1e2cc46dd608c972e89718d49ee582cd147c6b557ef5891e",
+      "decision": true
+    },
+    {
+      "id": "VisibleVehicleCorpsesCore",
+      "workshop_id": 3832452920,
+      "jar_hash": "ca00c3154dc1f75ee82ae8749d3533402c3ad9232614afef3638b090b37369ad",
+      "decision": true
+    },
+    {
+      "id": "VisibleVehicleCorpses",
+      "workshop_id": 3832452920,
+      "jar_hash": "3eaad3d9b5d60ba073ac34e47eff61141c4380813432d10c6d895d3b0ae5c6db",
+      "decision": true
+    },
+    {
+      "id": "ZDVTBCompat",
+      "workshop_id": 3819623420,
+      "jar_hash": "2a5a32f19e6a07ff150c760068c92f9b259347b3ed0eef0671ad7f2c4a1bf947",
+      "decision": true
+    },
+    {
+      "id": "ViewpointVehicleInteriorFix",
+      "workshop_id": 3828075703,
+      "jar_hash": "dcb10ba49b59b130c0a9a5a29cd17a85ffae3d14965f9a275c27b0b60514c84c",
+      "decision": true
+    },
+    {
+      "id": "ModLoadOrderSorterExtensionZB",
+      "workshop_id": 3809995878,
+      "jar_hash": "efcc310c1b86c85206229f1019ebc05c906a700c69aa9e0ac87687e56d9caf52",
+      "decision": true,
+      "author_id": 76561199113018152
+    },
+    {
+      "id": "ModManagerExtensionZB",
+      "workshop_id": 3809991837,
+      "jar_hash": "687c01ab08294bd3e45cd672beb1d950795cc72750662e31dbf3c44f8741f47e",
+      "decision": true,
+      "author_id": 76561199113018152
+    },
+    {
+      "id": "VisibleLootRealGlass",
+      "workshop_id": 3818189653,
+      "jar_hash": "544f9842f66cf194926a9ae54371b63f011994588cb8a8f07e246ad61edb945c",
+      "decision": true
+    },
+    {
+      "id": "ViewpointInteriors",
+      "workshop_id": 3826550325,
+      "jar_hash": "685f776be2af5504e63c0155014736bd7b04a3ba91e237578fb3522289232280",
+      "decision": true
+    },
+    {
+      "id": "MZInteriorsPetyarbuilt",
+      "workshop_id": 3826175971,
+      "jar_hash": "2f7faa18f85ad51c4e3ad316ccc348505e9fbf20d3a66b3473de5baa83c0b76a",
+      "decision": true
+    },
+    {
+      "id": "MZInteriorsSteering",
+      "workshop_id": 3826175971,
+      "jar_hash": "546f9da1db1808d766daabd09de95736466aec7feb92d43eaca93db582e4178d",
+      "decision": true
+    },
+    {
+      "id": "ViewpointEmissiveEyes",
+      "workshop_id": 3821252123,
+      "jar_hash": "96b2911d21b3115d401c01e12d0018f7d481c544d483672395a24ca26ffd6ae1",
+      "decision": true
+    },
+    {
+      "id": "RealisticDoorImpacts",
+      "workshop_id": 3820462383,
+      "jar_hash": "461a58829125b520b34e5da1c39c5bef5f775522642109b22389915eb0b02f5a",
+      "decision": true
+    },
+    {
+      "id": "PZCustomIntros",
+      "workshop_id": 3830292718,
+      "jar_hash": "8511219cb0ef59d2da60189efef2adaf284c4006326b2011cd044986233bb438",
+      "decision": true
+    },
+    {
+      "id": "FunctionalLaserSights",
+      "workshop_id": 3837617201,
+      "jar_hash": "a134cdeca215f175555e3018ebccbb085d627a7cfa1e2afd6394d0e70ec7a7ed",
+      "decision": true
+    },
+    {
+      "id": "ProjectReflectionsV2",
+      "workshop_id": 3835034413,
+      "jar_hash": "10230531501c2049978646591a7c6b5834572b7848f64940b52ee0cb9c530e5a",
+      "decision": true
+    },
+    {
+      "id": "KafeenasCannabisViewpoint",
+      "workshop_id": 3819427134,
+      "jar_hash": "85d3e26d67ba390c30034941b2dc1beb3c9b13f196eac8edd7fe6dec403a3055",
+      "decision": true
+    },
+    {
+      "id": "ZombiMZInteriorsBridge",
+      "workshop_id": 3832217878,
+      "jar_hash": "20194e3b4be1f2f509bf46ec825eaacdc38bbe1841b822e5fc61854a63a2fa8f",
+      "decision": true
+    },
+    {
+      "id": "VisibleVehicleCorpsesVanilla",
+      "workshop_id": 3832452920,
+      "jar_hash": "8ebccbb3681f6fb5fc0b963b2162766d7748a4f4830ca1a9240a4c26e3b6a91b",
+      "decision": true
+    },
+    {
+      "id": "ZomboidRichPresence",
+      "workshop_id": 3785376350,
+      "jar_hash": "c6db891dfe16530eabef0b0c94733152d4a5c669b280c0a2e9455e80b644a4d6",
+      "decision": true,
+      "author_id": 76561198014024358
+    },
+    {
+      "id": "KnoxInventoryBeta",
+      "workshop_id": 3816775774,
+      "jar_hash": "4146f414bea1ebd878c5bd7a374697f6c00b7645c3a446f196de062d3d57f8df",
+      "decision": true
+    },
+    {
+      "id": "ViewpointDLSS",
+      "workshop_id": 3818838508,
+      "jar_hash": "d72d212c121e3084d1bf6ad143e6f6c37666b6297a5a5a22e8df82f3e2ba3df9",
+      "decision": true
+    },
+    {
+      "id": "RealLimbs",
+      "workshop_id": 3827957976,
+      "jar_hash": "b1ee96c10700cbbc7e9b1851aed1783b6810e20b81fabcfabc8c0e19689d530f",
+      "decision": true
+    },
+    {
+      "id": "ViewpointPZOCompatibility",
+      "workshop_id": 3815225881,
+      "jar_hash": "a08cd7c98ae50ce830386bfa02a3de5a483baa09dd6ed963cd4b7458f3e56a9f",
+      "decision": true
+    },
+    {
+      "id": "CDViewpointNameTags",
+      "workshop_id": 3825990309,
+      "jar_hash": "3c8a47bbfd8bcfd369f526c9ff199613b2c2fc305a1f8da25b34051747968a7d",
+      "decision": true
+    },
+    {
+      "id": "HandsOnInteractionsVP",
+      "workshop_id": 3827791363,
+      "jar_hash": "8eaac6e33094b6d25133c8cc5628ab980bd327fedf2f949a49f82873ba37e374",
+      "decision": true
+    },
+    {
+      "id": "ViewpointProperRoofs",
+      "workshop_id": 3818941548,
+      "jar_hash": "cc3366af171a6d5078425f7ea1cc265613ccb62d024cbdb059cfdccb614839f2",
+      "decision": true
+    },
+    {
+      "id": "EscapeFromZomboidFirearms",
+      "workshop_id": 3824755284,
+      "jar_hash": "f45b208c67e16193442e2da72358689bae049219aa4e77005f270b2b1dbf96c7",
+      "decision": true
+    },
+    {
+      "id": "ProjectViewpointParkour",
+      "workshop_id": 3811645644,
+      "jar_hash": "d00529a92b53b2d006c8589a5fe3201f75e8dfc09558d7afebb52d42a40985ce",
+      "decision": true
+    },
+    {
+      "id": "TarkovMovement",
+      "workshop_id": 3830796987,
+      "jar_hash": "dcddf7b3a777d96647d057c1cdc0823bfe6c68dc1c5f9e56eb2d08cb0cd76d9e",
+      "decision": true
+    }
+  ]
+}

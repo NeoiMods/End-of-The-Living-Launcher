@@ -196,10 +196,18 @@ function runningGameReason() {
   return `ProjectZomboid64.exe, ${mins} perc, ablak: ${exe.hasWindow ? 'van' : 'nincs'}`;
 }
 
-// A Blackout config mellé adott launcher sablon. A launchert magát NEM futtatjuk:
+// A Blackout v2 config csomag launcher sablonja. A launchert magát NEM futtatjuk:
 // csak a benne leírt JVM kapcsolókat, classpathet és belépő osztályt vesszük át a
 // ProjectZomboid64.json-ba, mert a játék (és a Steam) abból indul.
-const LAUNCHER_TEMPLATE = path.join(__dirname, '..', 'assets', 'blackout', 'launcher', 'ProjectZomboid64.bat.txt');
+const LAUNCHER_TEMPLATE = path.join(
+  __dirname,
+  '..',
+  'assets',
+  'blackout',
+  'configs',
+  'game',
+  'ProjectZomboid64.bat'
+);
 
 function readLauncherTemplate() {
   let raw;

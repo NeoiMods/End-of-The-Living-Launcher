@@ -1,0 +1,42 @@
+{
+    "mainClass": "com/pzoptimizer/PZOEntrypoint",
+    "classpath": [
+        ".",
+        "PZOptimEngine.jar",
+        "ZombieBuddy.jar",
+        "projectzomboid.jar"
+    ],
+    "vmArgs": [
+        "-XX:+EnableDynamicAgentLoading",
+        "-agentlib:zbNative",
+        "--enable-native-access=ALL-UNNAMED",
+        "--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED",
+        "-Djava.library.path=win64/;.;natives/",
+        "-Dzomboid.steam=1",
+        "-Dzomboid.znetlog=1",
+        "-XX:-CreateCoredumpOnCrash",
+        "-XX:-OmitStackTraceInFastThrow",
+        "-XX:+PerfDisableSharedMem",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+UseSuperWord",
+        "-XX:MaxInlineLevel=15",
+        "-XX:InlineSmallCode=2500",
+        "-XX:+UseNUMA",
+        "-Xms8192m",
+        "-Xmx8192m",
+        "-XX:+UseG1GC",
+        "-XX:MaxGCPauseMillis=16",
+        "-XX:+AlwaysPreTouch",
+        "-XX:+IgnoreUnrecognizedVMOptions",
+        "-XX:-UseTypeSpeculation",
+        "-Doshi.util.wmi.timeout=5000"
+    ],
+    "windows": {
+        "6.1": {
+            "vmArgs": []
+        },
+        "10.0.17134": {
+            "vmArgs": []
+        }
+    }
+}

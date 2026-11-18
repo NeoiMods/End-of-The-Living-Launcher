@@ -1,4 +1,0 @@
-scale=1.00
-opacity=0.92
-locked=0
-batopen=0

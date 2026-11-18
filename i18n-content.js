@@ -16,7 +16,26 @@
     '0.7 – Blackout Protocol hírek': '0.7 – Blackout Protocol news',
     'Ebben a hírfolyamban a modpack változásai vannak.': 'This feed holds the modpack changes.',
 
-                                                                                                                                // ---- 0.9.50 (törölt workshop elemek) ----
+                                                                                                                                    // ---- 0.9.51 (Blackout v2 config) ----
+    "0.9.51 – Blackout Protocol v2 config: a saját presetjeid megmaradnak":
+      "0.9.51 – Blackout Protocol v2 config: your own presets stay",
+    "A launcher mostantól a BLACKOUT PROTOCOL v2 config csomagot telepíti, az install-map.json szerint. A saját presetjeid (trait, karakter, mod, sandbox) SOHA nem törlődnek: a pakk presetjei melléjük kerülnek – a NeoiUltimate trait preset, a Neoi-Suggested sandbox preset és a „Blackout Protocol” mod preset. A pakk 671 modos listája azonnal aktív, a billentyűk (keysB42.ini), a ZombieBuddy jóváhagyások (.zombie_buddy/mod_approvals.json) és a játék indítója (ProjectZomboid64.bat/.json) a pakk szerinti, a PZOPatchPhobosZReVaccinStub patch mod pedig a Zomboid\\mods mappába kerül. Minden felülírt fájlról mentés készül.":
+      "The launcher now installs the BLACKOUT PROTOCOL v2 config pack, following its install-map.json. Your own presets (traits, character, mods, sandbox) are NEVER deleted: the pack’s presets are added alongside them – the NeoiUltimate trait preset, the Neoi-Suggested sandbox preset and the “Blackout Protocol” mod preset. The pack’s 671-mod list is active immediately, the keybinds (keysB42.ini), the ZombieBuddy approvals (.zombie_buddy/mod_approvals.json) and the game launcher (ProjectZomboid64.bat/.json) follow the pack, and the PZOPatchPhobosZReVaccinStub patch mod goes into Zomboid\\mods. Every replaced file is backed up.",
+    "A config telepítése az install-map.json szerint történik (forrás → cél, egyesítési mód).":
+      "The config is installed according to install-map.json (source → target, merge mode).",
+    "A saját presetjeid megmaradnak – a pakk presetjei melléjük kerülnek.":
+      "Your own presets stay – the pack’s presets are added alongside them.",
+    "Új presetek: NeoiUltimate (trait) és Neoi-Suggested (sandbox).":
+      "New presets: NeoiUltimate (traits) and Neoi-Suggested (sandbox).",
+    "A .zombie_buddy/mod_approvals.json lecserélődik a pakk jóváhagyásaira (a régi mentve).":
+      ".zombie_buddy/mod_approvals.json is replaced with the pack’s approvals (the old one is backed up).",
+    "A ProjectZomboid64.bat és .json a pakk szerinti – csak akkor, ha a ZombieBuddy/PZO agent fájlok bent vannak.":
+      "ProjectZomboid64.bat and .json follow the pack – only when the ZombieBuddy/PZO agent files are present.",
+    "A PZOPatchPhobosZReVaccinStub handmade patch a Zomboid\\mods alá kerül.":
+      "The PZOPatchPhobosZReVaccinStub handmade patch goes into Zomboid\\mods.",
+    "A 671 modos mod lista (default.txt) azonnal aktív, a billentyűk (keysB42.ini) a pakk szerintiek.":
+      "The 671-mod list (default.txt) is active immediately and the keybinds (keysB42.ini) follow the pack.",
+// ---- 0.9.50 (törölt workshop elemek) ----
     "0.9.50 – Nem számolja hiányzónak a törölt workshop modokat":
       "0.9.50 – Deleted workshop mods no longer count as missing",
     "A launcher a kollekció teljes listáját kérte számon, akkor is, ha a Steam közben törölt vagy elrejtett belőle elemeket – ezért mutatott 689/691-et, miközben a Workshopon tényleg csak 689 mod van. Mostantól a kollekció frissítésekor a Steam API-val ellenőrzi, hogy az elem még létezik-e, és a törölt/elrejtett elemeket kiveszi a listából, a naplóban névvel kiírja őket. Hálózati hiba esetén nem töröl semmit (egy Steam-kiesés nem tüntet el modokat).":

@@ -1,7 +1,24 @@
 {
-  "version": "0.9.50",
-  "updatedAt": "2026-11-16",
+  "version": "0.9.51",
+  "updatedAt": "2026-11-18",
   "items": [
+    {
+      "id": "0.9.51",
+      "version": "0.9.51",
+      "date": "2026-11-18",
+      "tag": "LAUNCHER",
+      "title": "0.9.51 – Blackout Protocol v2 config: a saját presetjeid megmaradnak",
+      "text": "A launcher mostantól a BLACKOUT PROTOCOL v2 config csomagot telepíti, az install-map.json szerint. A saját presetjeid (trait, karakter, mod, sandbox) SOHA nem törlődnek: a pakk presetjei melléjük kerülnek – a NeoiUltimate trait preset, a Neoi-Suggested sandbox preset és a „Blackout Protocol” mod preset. A pakk 671 modos listája azonnal aktív, a billentyűk (keysB42.ini), a ZombieBuddy jóváhagyások (.zombie_buddy/mod_approvals.json) és a játék indítója (ProjectZomboid64.bat/.json) a pakk szerinti, a PZOPatchPhobosZReVaccinStub patch mod pedig a Zomboid\\mods mappába kerül. Minden felülírt fájlról mentés készül.",
+      "changes": [
+        "A config telepítése az install-map.json szerint történik (forrás → cél, egyesítési mód).",
+        "A saját presetjeid megmaradnak – a pakk presetjei melléjük kerülnek.",
+        "Új presetek: NeoiUltimate (trait) és Neoi-Suggested (sandbox).",
+        "A .zombie_buddy/mod_approvals.json lecserélődik a pakk jóváhagyásaira (a régi mentve).",
+        "A ProjectZomboid64.bat és .json a pakk szerinti – csak akkor, ha a ZombieBuddy/PZO agent fájlok bent vannak.",
+        "A PZOPatchPhobosZReVaccinStub handmade patch a Zomboid\\mods alá kerül.",
+        "A 671 modos mod lista (default.txt) azonnal aktív, a billentyűk (keysB42.ini) a pakk szerintiek."
+      ]
+    },
     {
       "id": "0.9.50",
       "version": "0.9.50",
